@@ -1,8 +1,0 @@
-{
-    "name": "Winnie_Bot",
-    "version": "1.0.0",
-    "description": "Provides commands for Discord-based writing groups, including word wars, sprints and goals. Created for NaNoWriMo Melbourne Region",
-    "main": "main.js",
-    "author": "Dawn E. Collett",
-    "dependencies": {}
-  }
