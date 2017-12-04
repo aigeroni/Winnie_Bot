@@ -1,25 +1,26 @@
 const Discord = require('discord.js');
 const client = new Discord.Client();
 var config = require('./config.json');
-var war_running;
-var sprint_running;
+var runningArray = [];
+var timerID = 1;
 
 client.on('ready', () => {
   console.log('Winnie_Bot is online');
 });
 
-function Sprint(creator, displayName, timeToStart, goal, timeout, channel) {
+function Sprint(uniqueID, creator, displayName, timeToStart, goal, timeout, channel) {
+    this.countID = uniqueID;
     this.creator = creator;
     this.displayName = displayName;
     this.timeToStart = timeToStart;
     this.goal = goal;
     this.timeout = timeout;
-    this.notify = new Array();
+    this.notify = [];
 
     this.startData = this.timeToStart * 60000;
     this.timeoutData = this.timeout * 60000;
 
-    channel.send("Your sprint, " + this.displayName + ", starts in " + this.timeToStart + " minutes.")
+    channel.send("Your sprint, " + this.displayName + " (ID " + this.countID + "), starts in " + this.timeToStart + " minutes.")
     this.sprint_start = setTimeout(function(){
         var sprintNotifyList = '';
         for(var i in this.notify)
@@ -38,7 +39,8 @@ function Sprint(creator, displayName, timeToStart, goal, timeout, channel) {
     }, this.startData + this.timeoutData);
   }
 
-function War(creator, displayName, timeToStart, duration, channel) {
+function War(uniqueID, creator, displayName, timeToStart, duration, channel) {
+    this.countID = uniqueID;
     this.creator = creator;
     this.displayName = displayName;
     this.timeToStart = timeToStart;
@@ -48,7 +50,7 @@ function War(creator, displayName, timeToStart, duration, channel) {
     this.startData = this.timeToStart * 60000;
     this.durationData = this.duration * 60000;
 
-    channel.send("Your war, " + this.displayName + ", starts in " + this.timeToStart + " minutes.")
+    channel.send("Your war, " + this.displayName + " (ID " + this.countID + "), starts in " + this.timeToStart + " minutes.")
     this.war_start = setTimeout(function(){
         var warNotifyList = '';
         for(var i in this.notify)
@@ -69,10 +71,96 @@ function War(creator, displayName, timeToStart, duration, channel) {
   }
 
 var cmd_list = {
+    "sprint": {
+        description: "Starts a sprint of n words in m minutes",
+        process: function(client,msg,suffix) {
+            var args = suffix.split(" ");
+            var words = args.shift();
+            var start = args.shift();
+            var timeout = args.shift();
+            var sprint_name = args.join(' ');
+            if(!Number.isInteger(Number(words)) || isNaN(start) || isNaN(timeout)){
+                msg.channel.send("Invalid input - start interval must be numeric, word goal must be an integer")
+            } else {
+                try{
+                    creatorID = msg.author.id;
+                    startTime = start * 60000;
+                    if(sprint_name == '') {
+                        sprint_name = msg.author.username + "'s sprint";
+                    }
+                    runningArray.push(new Sprint(timerID, creatorID, sprint_name, start, words, timeout, msg.channel));
+                    timerID = timerID + 1;
+                } catch(e) {
+                    msg.channel.send("If you are seeing this message, Winnie_Bot has gone on holiday.");
+                    console.log(e);
+                }
+            }
+        }
+    },
+	"war": {
+	    description: "Starts a word war of n minutes' length in m minutes",
+	    process: function(client,msg,suffix) {
+	    	var args = suffix.split(" ");
+            var length = args.shift();
+            var start = args.shift();
+            var war_name = args.join(' ');
+            if(isNaN(length) || isNaN(start)){
+                msg.channel.send("Invalid input - start interval and length must be numeric")
+            } else {
+                try{
+                    creatorID = msg.author.id;
+                    if(war_name == '') {
+                        war_name = msg.author.username + "'s war";
+                    }
+                    runningArray.push(new War(timerID, creatorID, war_name, start, length, msg.channel));
+                    timerID = timerID + 1;
+                } catch(e) {
+                    msg.channel.send("If you are seeing this message, Winnie_Bot has gone on holiday.");
+                    console.log(e);
+                }
+            }
+	    }
+    },
+    "join": {
+	    description: "Joins war/sprint",
+	    process: function(client,msg,suffix) {
+            var userLookup = sprint_running.notify.indexOf(msg.author);
+            if (userLookup = -1) {
+                sprint_running.notify.push(msg.author);
+                msg.channel.send(msg.author + ", you have joined " + sprint_running.displayName);
+            } else {
+                msg.channel.send(msg.author + ", you have already joined the sprint.");
+            }
+	    }
+    },
+    "leave": {
+	    description: "Leaves war/sprint",
+	    process: function(client,msg,suffix) {
+            var userLookup = sprint_running.notify.indexOf(msg.author);
+            if (userLookup = -1) {
+                sprint_running.notify.push(msg.author);
+                msg.channel.send(msg.author + ", you have joined " + sprint_running.displayName);
+            } else {
+                msg.channel.send(msg.author + ", you have already joined the sprint.");
+            }
+	    }
+    },
+    "exterminate": {
+	    description: "Ends war/sprint. Can only be performed by creator.",
+	    process: function(client,msg,suffix) {
+            var userLookup = sprint_running.notify.indexOf(msg.author);
+            if (userLookup = -1) {
+                sprint_running.notify.push(msg.author);
+                msg.channel.send(msg.author + ", you have joined " + sprint_running.displayName);
+            } else {
+                msg.channel.send(msg.author + ", you have already joined the sprint.");
+            }
+	    }
+    },
     "endsprint": {
-		description: "Ends sprint. Can only be used by creator.",
-		process: function(client,msg,suffix) {
-			if(sprint_running.creator == msg.author.id) {
+	    description: "Ends sprint. Can only be used by creator.",
+	    process: function(client,msg,suffix) {
+	    	if(sprint_running.creator == msg.author.id) {
                 msg.channel.send(sprint_running.displayName + " has been terminated.");
                 clearTimeout(sprint_running.sprint_start);
                 clearTimeout(sprint_running.sprint_close);
@@ -80,26 +168,24 @@ var cmd_list = {
             } else {
                 msg.channel.send(msg.author + ", you are not the creator of this sprint.")
             }
-		}
+	    }
     },
     "joinsprint": {
-		description: "Joins sprint",
-		process: function(client,msg,suffix) {
+	    description: "Joins sprint",
+	    process: function(client,msg,suffix) {
             var userLookup = sprint_running.notify.indexOf(msg.author);
-            
             if (userLookup = -1) {
                 sprint_running.notify.push(msg.author);
                 msg.channel.send(msg.author + ", you have joined " + sprint_running.displayName);
             } else {
                 msg.channel.send(msg.author + ", you have already joined the sprint.");
             }
-		}
+	    }
     },
     "leavesprint": {
-		description: "Leaves sprint",
-		process: function(client,msg,suffix) {
+	    description: "Leaves sprint",
+	    process: function(client,msg,suffix) {
             var userLookup = sprint_running.notify.indexOf(msg.author);
-            
             if (userLookup > -1) {
                 sprint_running.notify.splice(userLookup, 1);
                 msg.channel.send(msg.author + ", you have left " + sprint_running.displayName);
@@ -148,80 +234,27 @@ var cmd_list = {
 		}
     },
     "list": {
-		description: "Lists all running sprints/wars",
-		process: function(client,msg,suffix) {
-			if(sprint_running === undefined) {
-                msg.channel.send("There are no sprints running.")
+        description: "Lists all running sprints/wars",
+        process: function(client,msg,suffix) {
+            if(runningArray.length == 0) {
+                msg.channel.send("There are no sprints or wars running. Why don't you start one?");
             } else {
-                msg.channel.send(sprint_running.displayName + " is running.")
+                if(runningArray.length == 1) {
+                    timerInfo = "There is " + runningArray.length + " timer running:\n";
+                } else {
+                    timerInfo = "There are " + runningArray.length + " timers running:\n";
+                }
+                for(var i in runningArray) {
+                    timerInfo += runningArray[i].countID + " " + runningArray[i].displayName +  "\n";
+                }
+                msg.channel.send(timerInfo);
             }
-            if(war_running === undefined) {
-                msg.channel.send("There are no wars running.")
-            } else {
-                msg.channel.send(war_running.displayName + " is running.")
-            }
-		}
+        }
     },
     "set_goal": {
-		description: "Sets a goal of w words in m minutes",
+		description: "Sets a goal of w words in m minutes (under construction)",
 		process: function(client,msg,suffix) {
 			msg.channel.send("This command is under construction.")
-		}
-    },
-    "sprint": {
-		description: "Starts a sprint of n words in m minutes",
-		process: function(client,msg,suffix) {
-			var args = suffix.split(" ");
-            var words = args.shift();
-            var start = args.shift();
-            var timeout = args.shift();
-            var sprint_name = args.join(' ');
-            if(isNaN(parseInt(words)) || isNaN(start) || isNaN(timeout)){
-                msg.channel.send("Invalid input - start interval must be numeric, word goal must be an integer")
-            } else {
-                try{
-                    creatorID = msg.author.id;
-                    startTime = start * 60000;
-                    if(sprint_name == '') {
-                        sprint_name = msg.author.username + "'s sprint";
-                    }
-                    if(sprint_running === undefined) {
-                        sprint_running = new Sprint(creatorID, sprint_name, start, words, timeout, msg.channel);    
-                    } else {
-                        msg.channel.send("Only one sprint can run at once.");
-                    }
-                } catch(e) {
-                    msg.channel.send("If you are seeing this message, Winnie_Bot has gone on holiday.");
-                    console.log(e);
-                }
-            }
-		}
-    },
-	"war": {
-		description: "Starts a word war of n minutes' length in m minutes",
-		process: function(client,msg,suffix) {
-			var args = suffix.split(" ");
-            var length = args.shift();
-            var start = args.shift();
-            var war_name = args.join(' ');
-            if(isNaN(length) || isNaN(start)){
-                msg.channel.send("Invalid input - start interval and length must be numeric")
-            } else {
-                try{
-                    creatorID = msg.author.id;
-                    if(war_name == '') {
-                        war_name = msg.author.username + "'s war";
-                    }
-                    if(war_running === undefined) {
-                        war_running = new War(creatorID, war_name, start, length, msg.channel);    
-                    } else {
-                        msg.channel.send("Only one war can run at once.");
-                    }
-                } catch(e) {
-                    msg.channel.send("If you are seeing this message, Winnie_Bot has gone on holiday.");
-                    console.log(e);
-                }
-            }
 		}
     }
 }
@@ -249,10 +282,6 @@ client.on('message', (msg) => {
 							for(var i=0;i<cmds.length;i++) {
 								var cmd = cmds[i];
 								info += "**"+config.cmd_prefix + cmd+"**";
-								var usage = commands[cmd].usage;
-								if(usage){
-									info += " " + usage;
-								}
 								var description = commands[cmd].description;
 								if(description instanceof Function){
 									description = description();
@@ -264,34 +293,21 @@ client.on('message', (msg) => {
 							}
 							msg.channel.send(info);
 						} else {
-							msg.author.send("**Available Commands:**").then(function(){
-								var batch = "";
-								var sortedCommands = Object.keys(commands).sort();
-								for(var i in sortedCommands) {
-									var cmd = sortedCommands[i];
-									var info = "**"+config.cmd_prefix + cmd+"**";
-									var usage = commands[cmd].usage;
-									if(usage){
-										info += " " + usage;
-									}
-									var description = commands[cmd].description;
+							msg.author.send("Winnie_Bot Commands:").then(function(){
+                                var commands = Object.keys(cmd_list);
+                                var helpMsg = '';
+                                for(var i in commands) {
+									var info = config.cmd_prefix + commands[i];
+									var description = commands[i].description;
 									if(description instanceof Function){
 										description = description();
 									}
 									if(description){
 										info += "\n\t" + description;
-									}
-									var newBatch = batch + "\n" + info;
-									if(newBatch.length > (1024 - 8)){ //limit message length
-										msg.author.send(batch);
-										batch = info;
-									} else {
-										batch = newBatch
-									}
-								}
-								if(batch.length > 0){
-									msg.author.send(batch);
-								}
+                                    }
+                                    helpMsg += info + "\n";
+                                }
+                                msg.author.send(helpMsg);		
 						});
 					}
         }
@@ -303,7 +319,7 @@ client.on('message', (msg) => {
                 console.log(e);
 			}
 		} else {
-			msg.channel.send(cmd_data + " not recognized as a command!").then((message => message.delete(5000)))
+			msg.channel.send(cmd_data + " is not a valid command. Type !help for a list of commands.").then((message => message.delete(2500)))
 		}
 	} else {
 		return
