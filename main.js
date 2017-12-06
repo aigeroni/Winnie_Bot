@@ -1,72 +1,49 @@
 const Discord = require('discord.js');
 const client = new Discord.Client();
 var config = require('./config.json');
-var runningArray = [];
+var runningArray = {};
 var timerID = 1;
 
 client.on('ready', () => {
   console.log('Winnie_Bot is online');
 });
 
-function Sprint(uniqueID, creator, displayName, timeToStart, goal, timeout, channel) {
-    this.countID = uniqueID;
+function Sprint(creator, displayName, timeToStart, goal, timeout, channel) {
     this.creator = creator;
     this.displayName = displayName;
     this.timeToStart = timeToStart;
     this.goal = goal;
     this.timeout = timeout;
-    this.notify = [];
+    this.joinedUsers = {};
 
     this.startData = this.timeToStart * 60000;
     this.timeoutData = this.timeout * 60000;
 
-    channel.send("Your sprint, " + this.displayName + " (ID " + this.countID + "), starts in " + this.timeToStart + " minutes.")
-    this.sprint_start = setTimeout(function(){
-        var sprintNotifyList = '';
-        for(var i in this.notify)
-        {
-            sprintNotifyList += i + ' ';
-        }
-        channel.send(displayName + " starts now! Race to " + goal + " words! " + sprintNotifyList);
+    channel.send("Your sprint, " + this.displayName + " (ID " + timerID + "), starts in " + this.timeToStart + " minutes.")
+    this.challenge_start = setTimeout(function(){
+        channel.send(displayName + " starts now! Race to " + goal + " words!");
     }, this.startData);
-    this.sprint_close = setTimeout(function(){
-        var sprintNotifyList = '';
-        for(var i in this.notify)
-        {
-            sprintNotifyList += i + ' ';
-        }
+    this.challenge_end = setTimeout(function(){
         channel.send(displayName + " has timed out.");
     }, this.startData + this.timeoutData);
   }
 
-function War(uniqueID, creator, displayName, timeToStart, duration, channel) {
-    this.countID = uniqueID;
+function War(creator, displayName, timeToStart, duration, channel) {
     this.creator = creator;
     this.displayName = displayName;
     this.timeToStart = timeToStart;
     this.duration = duration;
-    this.notify = new Array();
+    this.joinedUsers = {};
 
     this.startData = this.timeToStart * 60000;
     this.durationData = this.duration * 60000;
 
-    channel.send("Your war, " + this.displayName + " (ID " + this.countID + "), starts in " + this.timeToStart + " minutes.")
-    this.war_start = setTimeout(function(){
-        var warNotifyList = '';
-        for(var i in this.notify)
-        {
-            warNotifyList += i + ' ';
-        }
-        channel.send(displayName + " starts now! " + warNotifyList);
+    channel.send("Your war, " + this.displayName + " (ID " + timerID + "), starts in " + this.timeToStart + " minutes.")
+    this.challenge_start = setTimeout(function(){
+        channel.send(displayName + " starts now!");
     }, this.startData);
-    this.war_end = setTimeout(function(){
-        var warNotifyList = '';
-        for(var i in this.notify)
-        {
-            warNotifyList += i + ' ';
-        }
-        channel.send(displayName + " has ended! " + warNotifyList);
-        war_running = undefined;
+    this.challenge_end = setTimeout(function(){
+        channel.send(displayName + " has ended!");
     }, this.startData + this.durationData);
   }
 
@@ -88,7 +65,7 @@ var cmd_list = {
                     if(sprint_name == '') {
                         sprint_name = msg.author.username + "'s sprint";
                     }
-                    runningArray.push(new Sprint(timerID, creatorID, sprint_name, start, words, timeout, msg.channel));
+                    runningArray[timerID] = new Sprint(creatorID, sprint_name, start, words, timeout, msg.channel);
                     timerID = timerID + 1;
                 } catch(e) {
                     msg.channel.send("If you are seeing this message, Winnie_Bot has gone on holiday.");
@@ -112,7 +89,7 @@ var cmd_list = {
                     if(war_name == '') {
                         war_name = msg.author.username + "'s war";
                     }
-                    runningArray.push(new War(timerID, creatorID, war_name, start, length, msg.channel));
+                    runningArray[timerID] = new War(creatorID, war_name, start, length, msg.channel);
                     timerID = timerID + 1;
                 } catch(e) {
                     msg.channel.send("If you are seeing this message, Winnie_Bot has gone on holiday.");
@@ -124,137 +101,115 @@ var cmd_list = {
     "join": {
 	    description: "Joins war/sprint",
 	    process: function(client,msg,suffix) {
-            var userLookup = sprint_running.notify.indexOf(msg.author);
-            if (userLookup = -1) {
-                sprint_running.notify.push(msg.author);
-                msg.channel.send(msg.author + ", you have joined " + sprint_running.displayName);
+            var args = suffix.split(" ");
+            var joinTimerID = args.shift();
+            console.log(joinTimerID);
+            console.log(Object.keys(runningArray));
+            if (joinTimerID in runningArray) {
+                if(msg.author.id in runningArray[joinTimerID].joinedUsers) {
+                    msg.channel.send(msg.author + ", you already have notifications enabled for this challenge.");
+                } else {
+                    runningArray[joinTimerID].joinedUsers[msg.author.id] = msg.author;
+                    msg.channel.send(msg.author + ", you have joined " + runningArray[joinTimerID].displayName);
+                }
             } else {
-                msg.channel.send(msg.author + ", you have already joined the sprint.");
+                msg.channel.send("There is no such challenge!");
             }
 	    }
     },
     "leave": {
 	    description: "Leaves war/sprint",
 	    process: function(client,msg,suffix) {
-            var userLookup = sprint_running.notify.indexOf(msg.author);
-            if (userLookup = -1) {
-                sprint_running.notify.push(msg.author);
-                msg.channel.send(msg.author + ", you have joined " + sprint_running.displayName);
+            var args = suffix.split(" ");
+            var leaveTimerID = args.shift();
+            console.log(leaveTimerID);
+            console.log(Object.keys(runningArray));
+            if (leaveTimerID in runningArray) {
+                if(msg.author.id in runningArray[leaveTimerID].joinedUsers) {
+                    delete runningArray[leaveTimerID].joinedUsers[msg.author.id];
+                    msg.channel.send(msg.author + ", you have left " + runningArray[leaveTimerID].displayName);
+                } else {
+                    msg.channel.send(msg.author + ", you have not yet joined this challenge.");
+                }
             } else {
-                msg.channel.send(msg.author + ", you have already joined the sprint.");
+                msg.channel.send("There is no such challenge!");
             }
 	    }
     },
     "exterminate": {
 	    description: "Ends war/sprint. Can only be performed by creator.",
 	    process: function(client,msg,suffix) {
-            var userLookup = sprint_running.notify.indexOf(msg.author);
-            if (userLookup = -1) {
-                sprint_running.notify.push(msg.author);
-                msg.channel.send(msg.author + ", you have joined " + sprint_running.displayName);
+            var args = suffix.split(" ");
+            var exterminateID = args.shift();
+            if (exterminateID in runningArray) {
+                console.log(runningArray[exterminateID].creator);
+                console.log(msg.author);
+                if(runningArray[exterminateID].creator == msg.author.id) {
+                    exName = runningArray[exterminateID].displayName;
+                    clearTimeout(runningArray[exterminateID].challenge_start);
+                    clearTimeout(runningArray[exterminateID].challenge_end);
+                    delete runningArray[exterminateID];
+                    msg.channel.send(exName + " has been successfully exterminated.");
+                    
+                } else {
+                    msg.channel.send("If you did not create it, you cannot exterminate it.");
+                }
             } else {
-                msg.channel.send(msg.author + ", you have already joined the sprint.");
+                msg.channel.send("You cannot end a challenge that has not been started!");
             }
+            console.log(exterminateID);
+            console.log(Object.keys(runningArray));
 	    }
-    },
-    "endsprint": {
-	    description: "Ends sprint. Can only be used by creator.",
-	    process: function(client,msg,suffix) {
-	    	if(sprint_running.creator == msg.author.id) {
-                msg.channel.send(sprint_running.displayName + " has been terminated.");
-                clearTimeout(sprint_running.sprint_start);
-                clearTimeout(sprint_running.sprint_close);
-                sprint_running = undefined;
-            } else {
-                msg.channel.send(msg.author + ", you are not the creator of this sprint.")
-            }
-	    }
-    },
-    "joinsprint": {
-	    description: "Joins sprint",
-	    process: function(client,msg,suffix) {
-            var userLookup = sprint_running.notify.indexOf(msg.author);
-            if (userLookup = -1) {
-                sprint_running.notify.push(msg.author);
-                msg.channel.send(msg.author + ", you have joined " + sprint_running.displayName);
-            } else {
-                msg.channel.send(msg.author + ", you have already joined the sprint.");
-            }
-	    }
-    },
-    "leavesprint": {
-	    description: "Leaves sprint",
-	    process: function(client,msg,suffix) {
-            var userLookup = sprint_running.notify.indexOf(msg.author);
-            if (userLookup > -1) {
-                sprint_running.notify.splice(userLookup, 1);
-                msg.channel.send(msg.author + ", you have left " + sprint_running.displayName);
-            } else {
-                msg.channel.send(msg.author + ", you had not joined the sprint.");
-            }
-		}
-    },
-    "endwar": {
-		description: "Ends sprint. Can only be used by creator.",
-		process: function(client,msg,suffix) {
-			if(war_running.creator == msg.author.id) {
-                msg.channel.send(war_running.displayName + " has been terminated.");
-                clearTimeout(war_running.war_start);
-                clearTimeout(war_running.war_end);
-                war_running = undefined;
-            } else {
-                msg.channel.send(msg.author + ", you are not the creator of this war.")
-            }
-		}
-    },
-    "joinwar": {
-		description: "Joins war",
-		process: function(client,msg,suffix) {
-            var userLookup = war_running.notify.indexOf(msg.author);
-            
-            if (userLookup = -1) {
-                war_running.notify.push(msg.author);
-                msg.channel.send(msg.author + ", you have joined " + war_running.displayName);
-            } else {
-                msg.channel.send(msg.author + ", you have already joined the war.");
-            }
-		}
-    },
-    "leavewar": {
-		description: "Leaves war",
-        process: function(client,msg,suffix) {
-            var userLookup = war_running.notify.indexOf(msg.author);
-        
-            if (userLookup > -1) {
-                war_running.notify.splice(userLookup, 1);
-                msg.channel.send(msg.author + ", you have left " + war_running.displayName);
-            } else {
-                msg.channel.send(msg.author + ", you had not joined the war.");
-            }
-		}
     },
     "list": {
         description: "Lists all running sprints/wars",
         process: function(client,msg,suffix) {
-            if(runningArray.length == 0) {
+            if(Object.keys(runningArray).length == 0) {
                 msg.channel.send("There are no sprints or wars running. Why don't you start one?");
             } else {
-                if(runningArray.length == 1) {
-                    timerInfo = "There is " + runningArray.length + " timer running:\n";
+                if(Object.keys(runningArray).length == 1) {
+                    timerInfo = "There is " + Object.keys(runningArray).length + " challenge running:\n";
                 } else {
-                    timerInfo = "There are " + runningArray.length + " timers running:\n";
+                    timerInfo = "There are " + Object.keys(runningArray).length + " challenges running:\n";
                 }
                 for(var i in runningArray) {
-                    timerInfo += runningArray[i].countID + " " + runningArray[i].displayName +  "\n";
+                    timerInfo += i + ": " + runningArray[i].displayName +  "\n";
                 }
                 msg.channel.send(timerInfo);
             }
         }
     },
-    "set_goal": {
+    "goal": {
 		description: "Sets a goal of w words in m minutes (under construction)",
 		process: function(client,msg,suffix) {
-			msg.channel.send("This command is under construction.")
+			msg.channel.send("This command is under construction.");
+		}
+    },
+    "roll": {
+		description: "Rolls a die",
+		process: function(client,msg,suffix) {
+            var faces = suffix.split(" ");
+            if (faces.length == 1) {
+                if(Number.isInteger(Number(faces[0]))) {
+                    msg.channel.send("You rolled " + (Math.floor(Math.random() * faces[0]) + 1));
+                } else {
+                    msg.channel.send("Invalid input - face count must be an integer");
+                }
+            } else if (faces.length == 2) {
+                if(Number.isInteger(Number(faces[0])) && Number.isInteger(Number(faces[1]))) {
+                    msg.channel.send("You rolled " + (Math.floor(Math.random() * (1 + Number(faces[1]) - Number(faces[0])) + Number(faces[0]))));
+                } else {
+                    msg.channel.send("Invalid input - face count must be an integer");
+                }
+            } else {
+                msg.channel.send("Invalid input - face count must be an integer");
+            }
+		}
+    },
+    "select": {
+		description: "Selects between an array of objects (under construction)",
+		process: function(client,msg,suffix) {
+			msg.channel.send("This command is under construction.");
 		}
     }
 }

@@ -1,10 +1,11 @@
 {
   "name": "winnie_bot",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Provides commands for Discord-based writing groups, including word wars, sprints and goals. Created for NaNoWriMo Melbourne Region",
   "main": "main.js",
   "dependencies": {
     "discord.js": "^11.2.1",
+    "eslint": "^4.12.1",
     "jslint": "^0.11.0"
   },
   "devDependencies": {},
