@@ -3,9 +3,10 @@ const client = new Discord.Client();
 var config = require('./config.json');
 var runningArray = {};
 var timerID = 1;
+var logger = require('./logger.js');
 
 client.on('ready', () => {
-  console.log('Winnie_Bot is online');
+    logger.info('Winnie_Bot is online');
 });
 
 function Sprint(creator, displayName, timeToStart, goal, timeout, channel) {
@@ -69,7 +70,7 @@ var cmd_list = {
                     timerID = timerID + 1;
                 } catch(e) {
                     msg.channel.send("If you are seeing this message, Winnie_Bot has gone on holiday.");
-                    console.log(e);
+                    logger.info(e);
                 }
             }
         }
@@ -93,7 +94,7 @@ var cmd_list = {
                     timerID = timerID + 1;
                 } catch(e) {
                     msg.channel.send("If you are seeing this message, Winnie_Bot has gone on holiday.");
-                    console.log(e);
+                    logger.info(e);
                 }
             }
 	    }
@@ -103,8 +104,8 @@ var cmd_list = {
 	    process: function(client,msg,suffix) {
             var args = suffix.split(" ");
             var joinTimerID = args.shift();
-            console.log(joinTimerID);
-            console.log(Object.keys(runningArray));
+            logger.info(joinTimerID);
+            logger.info(Object.keys(runningArray));
             if (joinTimerID in runningArray) {
                 if(msg.author.id in runningArray[joinTimerID].joinedUsers) {
                     msg.channel.send(msg.author + ", you already have notifications enabled for this challenge.");
@@ -122,8 +123,8 @@ var cmd_list = {
 	    process: function(client,msg,suffix) {
             var args = suffix.split(" ");
             var leaveTimerID = args.shift();
-            console.log(leaveTimerID);
-            console.log(Object.keys(runningArray));
+            logger.info(leaveTimerID);
+            logger.info(Object.keys(runningArray));
             if (leaveTimerID in runningArray) {
                 if(msg.author.id in runningArray[leaveTimerID].joinedUsers) {
                     delete runningArray[leaveTimerID].joinedUsers[msg.author.id];
@@ -142,8 +143,8 @@ var cmd_list = {
             var args = suffix.split(" ");
             var exterminateID = args.shift();
             if (exterminateID in runningArray) {
-                console.log(runningArray[exterminateID].creator);
-                console.log(msg.author);
+                logger.info(runningArray[exterminateID].creator);
+                logger.info(msg.author);
                 if(runningArray[exterminateID].creator == msg.author.id) {
                     exName = runningArray[exterminateID].displayName;
                     clearTimeout(runningArray[exterminateID].challenge_start);
@@ -157,8 +158,8 @@ var cmd_list = {
             } else {
                 msg.channel.send("You cannot end a challenge that has not been started!");
             }
-            console.log(exterminateID);
-            console.log(Object.keys(runningArray));
+            logger.info(exterminateID);
+            logger.info(Object.keys(runningArray));
 	    }
     },
     "list": {
@@ -216,7 +217,7 @@ var cmd_list = {
 
 client.on('message', (msg) => {
     if(msg.author.id != client.user.id && (msg.content.startsWith(config.cmd_prefix))){
-        console.log("treating " + msg.content + " from " + msg.author + " as command");
+        logger.info("treating " + msg.content + " from " + msg.author + " as command");
 		var cmd_data = msg.content.split(" ")[0].substring(config.cmd_prefix.length);
         var suffix = msg.content.substring(cmd_data.length+config.cmd_prefix.length+1);//add one for the ! and one for the space
         if(msg.isMentioned(client.user)){
@@ -271,7 +272,7 @@ client.on('message', (msg) => {
 				cmd.process(client,msg,suffix);
 			} catch(e){
                 msg.channel.send("If you are reading this message, Winnie_Bot has gone on holiday.");
-                console.log(e);
+                logger.info(e);
 			}
 		} else {
 			msg.channel.send(cmd_data + " is not a valid command. Type !help for a list of commands.").then((message => message.delete(2500)))
