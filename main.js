@@ -28,7 +28,7 @@ function Sprint(objectID, creator, displayName, timeToStart, goal, timeout, chan
     let timeoutData = this.timeoutData;
     this.challengeTimer = gameloop.setGameLoop(function(delta) {
         if(timerData > 0) {
-            console.log('(Seconds remaining in countdown=%s, delta=%s)', timerData--, delta);
+            logger.info('(Seconds remaining in countdown=%s, delta=%s)', timerData--, delta);
             if(timerData == 0) {
                 channel.send(displayName + " starts now! Race to " + goal + " words!");
             } else if(timerData == 60) {
@@ -39,7 +39,7 @@ function Sprint(objectID, creator, displayName, timeToStart, goal, timeout, chan
                 channel.send(displayName + " starts in " + timerData + " seconds.");
             }
         } else {
-            console.log('(Seconds remaining in sprint=%s, delta=%s)', timeoutData--, delta);
+            logger.info('(Seconds remaining in sprint=%s, delta=%s)', timeoutData--, delta);
             if(timeoutData == 0) {
                 channel.send(displayName + " has timed out.");
                 gameloop.clearGameLoop(this.challengeTimer);
@@ -73,7 +73,7 @@ function War(objectID, creator, displayName, timeToStart, duration, channel) {
     let durationData = this.durationData;
     this.challengeTimer = gameloop.setGameLoop(function(delta) {
         if(timerData > 0) {
-            console.log('(Seconds remaining in countdown=%s, delta=%s)', timerData--, delta);
+            logger.info('(Seconds remaining in countdown=%s, delta=%s)', timerData--, delta);
             if(timerData == 0) {
                 channel.send(displayName + " starts now!");
             } else if(timerData == 60) {
@@ -84,7 +84,7 @@ function War(objectID, creator, displayName, timeToStart, duration, channel) {
                 channel.send(displayName + " starts in " + timerData + " seconds.");
             }
         } else {
-            console.log('(Seconds remaining in war=%s, delta=%s)', durationData--, delta);
+            logger.info('(Seconds remaining in war=%s, delta=%s)', durationData--, delta);
             if(durationData == 0) {
                 channel.send(displayName + " has ended!");
                 delete runningArray[termObjectID];
