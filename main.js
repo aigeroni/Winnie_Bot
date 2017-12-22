@@ -4,12 +4,14 @@ var config = require('./config.json');
 var runningArray = {};
 var timerID = 1;
 var logger = require('./logger.js');
+const gameloop = require('node-gameloop');
 
 client.on('ready', () => {
     logger.info('Winnie_Bot is online');
 });
 
-function Sprint(creator, displayName, timeToStart, goal, timeout, channel) {
+function Sprint(objectID, creator, displayName, timeToStart, goal, timeout, channel) {
+    this.objectID = objectID;
     this.creator = creator;
     this.displayName = displayName;
     this.timeToStart = timeToStart;
@@ -17,35 +19,85 @@ function Sprint(creator, displayName, timeToStart, goal, timeout, channel) {
     this.timeout = timeout;
     this.joinedUsers = {};
 
-    this.startData = this.timeToStart * 60000;
-    this.timeoutData = this.timeout * 60000;
+    this.startData = this.timeToStart * 60;
+    this.timeoutData = this.timeout * 60;
 
-    channel.send("Your sprint, " + this.displayName + " (ID " + timerID + "), starts in " + this.timeToStart + " minutes.")
-    this.challenge_start = setTimeout(function(){
-        channel.send(displayName + " starts now! Race to " + goal + " words!");
-    }, this.startData);
-    this.challenge_end = setTimeout(function(){
-        channel.send(displayName + " has timed out.");
-    }, this.startData + this.timeoutData);
+    channel.send("Your sprint, " + this.displayName + " (ID " + this.objectID + "), starts in " + this.timeToStart + " minutes.");
+    let termObjectID = this.objectID;
+    let timerData = this.startData;
+    let timeoutData = this.timeoutData;
+    this.challengeTimer = gameloop.setGameLoop(function(delta) {
+        if(timerData > 0) {
+            console.log('(Seconds remaining in countdown=%s, delta=%s)', timerData--, delta);
+            if(timerData == 0) {
+                channel.send(displayName + " starts now! Race to " + goal + " words!");
+            } else if(timerData == 60) {
+                channel.send(displayName + " starts in 1 minute.");
+            } else if(timerData % 60 == 0) {
+                channel.send(displayName + " starts in " + timerData / 60 + " minutes.");
+            } else if(timerData < 60 && timerData % 15 == 0) {
+                channel.send(displayName + " starts in " + timerData + " seconds.");
+            }
+        } else {
+            console.log('(Seconds remaining in sprint=%s, delta=%s)', timeoutData--, delta);
+            if(timeoutData == 0) {
+                channel.send(displayName + " has timed out.");
+                gameloop.clearGameLoop(this.challengeTimer);
+                delete runningArray[termObjectID];
+            } else if(timeoutData == 60) {
+                channel.send("There is 1 minute remaining in " + displayName + ".");
+            } else if(timeoutData % 300 == 0) {
+                channel.send("There are " + timeoutData/60 + " minutes remaining in " + displayName + ".");
+            } else if(timeoutData < 60 && timeoutData % 15 == 0) {
+                channel.send("There are " + timeoutData + " seconds remaining in " + displayName + ".");
+            }
+        }
+    }, 1000);
   }
 
-function War(creator, displayName, timeToStart, duration, channel) {
+function War(objectID, creator, displayName, timeToStart, duration, channel) {
+    this.objectID = objectID;
     this.creator = creator;
     this.displayName = displayName;
     this.timeToStart = timeToStart;
     this.duration = duration;
     this.joinedUsers = {};
+    this.channel = channel;
 
-    this.startData = this.timeToStart * 60000;
-    this.durationData = this.duration * 60000;
+    this.startData = this.timeToStart * 60;
+    this.durationData = this.duration * 60;
 
-    channel.send("Your war, " + this.displayName + " (ID " + timerID + "), starts in " + this.timeToStart + " minutes.")
-    this.challenge_start = setTimeout(function(){
-        channel.send(displayName + " starts now!");
-    }, this.startData);
-    this.challenge_end = setTimeout(function(){
-        channel.send(displayName + " has ended!");
-    }, this.startData + this.durationData);
+    channel.send("Your war, " + this.displayName + " (ID " + this.objectID + "), starts in " + this.timeToStart + " minutes.");
+    let termObjectID = this.objectID;
+    let timerData = this.startData;
+    let durationData = this.durationData;
+    this.challengeTimer = gameloop.setGameLoop(function(delta) {
+        if(timerData > 0) {
+            console.log('(Seconds remaining in countdown=%s, delta=%s)', timerData--, delta);
+            if(timerData == 0) {
+                channel.send(displayName + " starts now!");
+            } else if(timerData == 60) {
+                channel.send(displayName + " starts in 1 minute.");
+            } else if(timerData % 60 == 0) {
+                channel.send(displayName + " starts in " + timerData / 60 + " minutes.");
+            } else if(timerData < 60 && timerData % 15 == 0) {
+                channel.send(displayName + " starts in " + timerData + " seconds.");
+            }
+        } else {
+            console.log('(Seconds remaining in war=%s, delta=%s)', durationData--, delta);
+            if(durationData == 0) {
+                channel.send(displayName + " has ended!");
+                delete runningArray[termObjectID];
+                gameloop.clearGameLoop(this.challengeTimer);
+            } else if(durationData == 60) {
+                channel.send("There is 1 minute remaining in " + displayName + ".");
+            } else if(durationData % 300 == 0) {
+                channel.send("There are " + durationData/60 + " minutes remaining in " + displayName + ".");
+            } else if(durationData < 60 && durationData % 15 == 0) {
+                channel.send("There are " + durationData + " seconds remaining in " + displayName + ".");
+            }
+        }
+    }, 1000);
   }
 
 var cmd_list = {
@@ -62,11 +114,10 @@ var cmd_list = {
             } else {
                 try{
                     creatorID = msg.author.id;
-                    startTime = start * 60000;
                     if(sprint_name == '') {
                         sprint_name = msg.author.username + "'s sprint";
                     }
-                    runningArray[timerID] = new Sprint(creatorID, sprint_name, start, words, timeout, msg.channel);
+                    runningArray[timerID] = new Sprint(timerID, creatorID, sprint_name, start, words, timeout, msg.channel);
                     timerID = timerID + 1;
                 } catch(e) {
                     msg.channel.send("If you are seeing this message, Winnie_Bot has gone on holiday.");
@@ -90,7 +141,7 @@ var cmd_list = {
                     if(war_name == '') {
                         war_name = msg.author.username + "'s war";
                     }
-                    runningArray[timerID] = new War(creatorID, war_name, start, length, msg.channel);
+                    runningArray[timerID] = new War(timerID, creatorID, war_name, start, length, msg.channel);
                     timerID = timerID + 1;
                 } catch(e) {
                     msg.channel.send("If you are seeing this message, Winnie_Bot has gone on holiday.");
@@ -112,6 +163,7 @@ var cmd_list = {
                 } else {
                     runningArray[joinTimerID].joinedUsers[msg.author.id] = msg.author;
                     msg.channel.send(msg.author + ", you have joined " + runningArray[joinTimerID].displayName);
+                    // logger.info(runningArray[joinTimerID].joinedUsers[msg.author.id]);
                 }
             } else {
                 msg.channel.send("There is no such challenge!");
@@ -143,12 +195,9 @@ var cmd_list = {
             var args = suffix.split(" ");
             var exterminateID = args.shift();
             if (exterminateID in runningArray) {
-                logger.info(runningArray[exterminateID].creator);
-                logger.info(msg.author);
                 if(runningArray[exterminateID].creator == msg.author.id) {
                     exName = runningArray[exterminateID].displayName;
-                    clearTimeout(runningArray[exterminateID].challenge_start);
-                    clearTimeout(runningArray[exterminateID].challenge_end);
+                    gameloop.clearGameLoop(runningArray[exterminateID].challengeTimer);
                     delete runningArray[exterminateID];
                     msg.channel.send(exName + " has been successfully exterminated.");
                     
@@ -158,8 +207,6 @@ var cmd_list = {
             } else {
                 msg.channel.send("You cannot end a challenge that has not been started!");
             }
-            logger.info(exterminateID);
-            logger.info(Object.keys(runningArray));
 	    }
     },
     "list": {
