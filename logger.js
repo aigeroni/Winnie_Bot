@@ -16,6 +16,7 @@ var logger = new (winston.Logger)({
         maxSize: 10 * 1024 * 1024,
         maxFiles: 25,
         tailable: true,
+        timestamp: true,
         depth: 5
     })
   ],
