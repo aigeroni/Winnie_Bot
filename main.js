@@ -22,7 +22,11 @@ function Sprint(objectID, creator, displayName, timeToStart, goal, timeout, chan
     this.startData = this.timeToStart * 60;
     this.timeoutData = this.timeout * 60;
 
-    channel.send("Your sprint, " + this.displayName + " (ID " + this.objectID + "), starts in " + this.timeToStart + " minutes.");
+    if(this.timeToStart == 1) {
+        channel.send("Your sprint, " + this.displayName + " (ID " + this.objectID + "), starts in " + this.timeToStart + " minute.");
+    } else {
+        channel.send("Your sprint, " + this.displayName + " (ID " + this.objectID + "), starts in " + this.timeToStart + " minutes.");
+    }
     let termObjectID = this.objectID;
     let timerData = this.startData;
     let timeoutData = this.timeoutData;
@@ -67,7 +71,11 @@ function War(objectID, creator, displayName, timeToStart, duration, channel) {
     this.startData = this.timeToStart * 60;
     this.durationData = this.duration * 60;
 
-    channel.send("Your war, " + this.displayName + " (ID " + this.objectID + "), starts in " + this.timeToStart + " minutes.");
+    if(this.timeToStart == 1) {
+        channel.send("Your war, " + this.displayName + " (ID " + this.objectID + "), starts in " + this.timeToStart + " minute.");
+    } else {
+        channel.send("Your war, " + this.displayName + " (ID " + this.objectID + "), starts in " + this.timeToStart + " minutes.");
+    }
     let termObjectID = this.objectID;
     let timerData = this.startData;
     let durationData = this.durationData;
@@ -102,7 +110,9 @@ function War(objectID, creator, displayName, timeToStart, duration, channel) {
 
 var cmd_list = {
     "sprint": {
-        description: "Starts a sprint of n words in m minutes",
+        name: "!sprint",
+        description: "Starts a sprint of <words> words in <delay> minutes which times out in <timeout> minutes with optional [name]",
+        usage: "<words> <delay> <timeout> [name]",
         process: function(client,msg,suffix) {
             var args = suffix.split(" ");
             var words = args.shift();
@@ -127,7 +137,9 @@ var cmd_list = {
         }
     },
 	"war": {
-	    description: "Starts a word war of n minutes' length in m minutes",
+        name: "!war",
+        description: "Starts a word war of <length> minutes in <delay> minutes with optional [name]",
+        usage: "<length> <delay> [name]",
 	    process: function(client,msg,suffix) {
 	    	var args = suffix.split(" ");
             var length = args.shift();
@@ -151,7 +163,9 @@ var cmd_list = {
 	    }
     },
     "join": {
-	    description: "Joins war/sprint",
+        name: "!join",
+        description: "Joins war/sprint with ID <id>",
+        usage: "<id>",
 	    process: function(client,msg,suffix) {
             var args = suffix.split(" ");
             var joinTimerID = args.shift();
@@ -171,7 +185,9 @@ var cmd_list = {
 	    }
     },
     "leave": {
-	    description: "Leaves war/sprint",
+        name: "!leave",
+        description: "Leaves war/sprint with ID <id>",
+        usage: "<id>",
 	    process: function(client,msg,suffix) {
             var args = suffix.split(" ");
             var leaveTimerID = args.shift();
@@ -190,7 +206,9 @@ var cmd_list = {
 	    }
     },
     "exterminate": {
-	    description: "Ends war/sprint. Can only be performed by creator.",
+        name: "!exterminate",
+        description: "Ends war/sprint with ID <id>. Can only be performed by creator.",
+        usage: "<id>",
 	    process: function(client,msg,suffix) {
             var args = suffix.split(" ");
             var exterminateID = args.shift();
@@ -210,7 +228,9 @@ var cmd_list = {
 	    }
     },
     "list": {
+        name: "!list",
         description: "Lists all running sprints/wars",
+        usage: "",
         process: function(client,msg,suffix) {
             if(Object.keys(runningArray).length == 0) {
                 msg.channel.send("There are no sprints or wars running. Why don't you start one?");
@@ -228,12 +248,15 @@ var cmd_list = {
         }
     },
     "goal": {
-		description: "Sets a goal of w words in m minutes (under construction)",
+        name: "!goal",
+        description: "Sets a goal of <words> words in <time> minutes (under construction)",
+        usage: "<words> <time>",
 		process: function(client,msg,suffix) {
 			msg.channel.send("This command is under construction.");
 		}
     },
     "roll": {
+        name: "!roll",
 		description: "Rolls a die",
 		process: function(client,msg,suffix) {
             var faces = suffix.split(" ");
@@ -241,11 +264,36 @@ var cmd_list = {
                 if(Number.isInteger(Number(faces[0]))) {
                     msg.channel.send("You rolled " + (Math.floor(Math.random() * faces[0]) + 1));
                 } else {
-                    msg.channel.send("Invalid input - face count must be an integer");
+                    if(true) {
+                        var diceType = faces[0].split("d");
+                        if (diceType.length == 2) {
+                            if(Number.isInteger(Number(diceType[0])) && Number.isInteger(Number(diceType[1]))) {
+                                var diceSum = 0;
+                                for (i = 0; i < Number(diceType[0]); i++){
+                                    var roll = (Math.floor(Math.random() * diceType[1]) + 1)
+                                    msg.channel.send(roll);
+                                    diceSum += roll;
+                                }
+                                msg.channel.send("Total = " + diceSum);
+                            } else {
+                                msg.channel.send("Invalid input - face count must be an integer");
+                            }
+                        } else {
+                            msg.channel.send("Invalid input - face count must be an integer");
+                        }
+                    } else {
+                        msg.channel.send("Invalid input - face count must be an integer");
+                    }  
                 }
             } else if (faces.length == 2) {
-                if(Number.isInteger(Number(faces[0])) && Number.isInteger(Number(faces[1]))) {
-                    msg.channel.send("You rolled " + (Math.floor(Math.random() * (1 + Number(faces[1]) - Number(faces[0])) + Number(faces[0]))));
+                if(Number.isInteger(Number(faces[0])) && Number.isInteger(Number(faces[1]))){
+                    if(Number(faces[0]) < Number(faces[1])){
+                        msg.channel.send("You rolled " + (Math.floor(Math.random() * (1 + Number(faces[1]) - Number(faces[0])) + Number(faces[0]))));
+                    }
+                    else {
+                        msg.channel.send("Invalid input - first number must be less than second");
+                    }
+                    
                 } else {
                     msg.channel.send("Invalid input - face count must be an integer");
                 }
@@ -255,6 +303,7 @@ var cmd_list = {
 		}
     },
     "select": {
+        name: "!select",
 		description: "Selects between an array of objects (under construction)",
 		process: function(client,msg,suffix) {
 			msg.channel.send("This command is under construction.");
@@ -271,46 +320,53 @@ client.on('message', (msg) => {
 			try {
 				cmd_data = msg.content.split(" ")[1];
 				suffix = msg.content.substring(client.user.mention().length+cmd_data.length+Config.commandPrefix.length+1);
-			} catch(e){ //no command
+			} catch(e){
 				msg.channel.send("Yes?");
 				return;
 			}
         }
 		var cmd = cmd_list[cmd_data];
         if(cmd_data === "help"){
-            //help is special since it iterates over the other commands
 						if(suffix){
-							var cmds = suffix.split(" ").filter(function(cmd){return commands[cmd]});
-							var info = "";
-							for(var i=0;i<cmds.length;i++) {
+							var cmds = suffix.split(" ").filter(function(cmd){return cmd_data[cmd]});
+							var helpMsg = "";
+							for(var i=0; i<cmds.length; i++) {
 								var cmd = cmds[i];
-								info += "**"+config.cmd_prefix + cmd+"**";
-								var description = commands[cmd].description;
-								if(description instanceof Function){
-									description = description();
-								}
-								if(description){
-									info += "\n\t" + description;
-								}
-								info += "\n"
-							}
-							msg.channel.send(info);
-						} else {
-							msg.author.send("Winnie_Bot Commands:").then(function(){
-                                var commands = Object.keys(cmd_list);
-                                var helpMsg = '';
-                                for(var i in commands) {
-									var info = config.cmd_prefix + commands[i];
-									var description = commands[i].description;
-									if(description instanceof Function){
-										description = description();
-									}
-									if(description){
-										info += "\n\t" + description;
-                                    }
-                                    helpMsg += info + "\n";
+								helpMsg += "Data for " + cmd.name;
+								var cmdName = cmd.name;
+                                if(cmdName){
+									helpMsg += cmdName + " ";
                                 }
-                                msg.author.send(helpMsg);		
+                                var cmdUse = cmd.usage;
+                                if(cmdUse){
+									helpMsg += cmdUse;
+								}
+                                var cmdDesc = cmd.description;
+                                if(cmdDesc){
+									helpMsg += ": " + cmdDesc;
+								}
+								helpMsg += "\n"
+							}
+							msg.channel.send(helpMsg);
+						} else {
+                            msg.author.send("Winnie_Bot Commands:").then(function(){
+                                var helpMsg = "";
+                                for(var i in cmd_list) {
+                                    var cmdName = cmd_list[i].name;
+                                    if(cmdName){
+										helpMsg += cmdName + " ";
+                                    }
+                                    var cmdUse = cmd_list[i].usage;
+                                    if(cmdUse){
+										helpMsg += cmdUse;
+									}
+                                    var cmdDesc = cmd_list[i].description;
+                                    if(cmdDesc){
+										helpMsg += ": " + cmdDesc;
+									}
+                                    helpMsg += "\n";
+                                }
+                                msg.author.send(helpMsg);	
 						});
 					}
         }
