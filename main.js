@@ -34,7 +34,11 @@ function Sprint(objectID, creator, displayName, timeToStart, goal, timeout, chan
         if(timerData > 0) {
             logger.info('(Seconds remaining in countdown=%s, delta=%s)', timerData--, delta);
             if(timerData == 0) {
-                channel.send(displayName + " starts now! Race to " + goal + " words!");
+                userList = "";
+                for(user in joinedUsers) {
+                    userList += " " + joinedUsers[user];
+                }
+                channel.send(displayName + " starts now! Race to " + goal + " words!" + userList);
             } else if(timerData == 60) {
                 channel.send(displayName + " starts in 1 minute.");
             } else if(timerData % 60 == 0) {
@@ -45,7 +49,11 @@ function Sprint(objectID, creator, displayName, timeToStart, goal, timeout, chan
         } else {
             logger.info('(Seconds remaining in sprint=%s, delta=%s)', timeoutData--, delta);
             if(timeoutData == 0) {
-                channel.send(displayName + " has timed out.");
+                userList = "";
+                for(user in joinedUsers) {
+                    userList += " " + joinedUsers[user];
+                }
+                channel.send(displayName + " has timed out." + userList);
                 gameloop.clearGameLoop(this.challengeTimer);
                 delete runningArray[termObjectID];
             } else if(timeoutData == 60) {
@@ -76,6 +84,7 @@ function War(objectID, creator, displayName, timeToStart, duration, channel) {
     } else {
         channel.send("Your war, " + this.displayName + " (ID " + this.objectID + "), starts in " + this.timeToStart + " minutes.");
     }
+    let joinedUsers = this.joinedUsers;
     let termObjectID = this.objectID;
     let timerData = this.startData;
     let durationData = this.durationData;
@@ -83,7 +92,11 @@ function War(objectID, creator, displayName, timeToStart, duration, channel) {
         if(timerData > 0) {
             logger.info('(Seconds remaining in countdown=%s, delta=%s)', timerData--, delta);
             if(timerData == 0) {
-                channel.send(displayName + " starts now!");
+                userList = "";
+                for(user in joinedUsers) {
+                    userList += " " + joinedUsers[user];
+                }
+                channel.send(displayName + " starts now!" + userList);
             } else if(timerData == 60) {
                 channel.send(displayName + " starts in 1 minute.");
             } else if(timerData % 60 == 0) {
@@ -94,7 +107,11 @@ function War(objectID, creator, displayName, timeToStart, duration, channel) {
         } else {
             logger.info('(Seconds remaining in war=%s, delta=%s)', durationData--, delta);
             if(durationData == 0) {
-                channel.send(displayName + " has ended!");
+                userList = "";
+                for(user in joinedUsers) {
+                    userList += " " + joinedUsers[user];
+                }
+                channel.send(displayName + " has ended!" + userList);
                 delete runningArray[termObjectID];
                 gameloop.clearGameLoop(this.challengeTimer);
             } else if(durationData == 60) {
