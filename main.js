@@ -257,7 +257,8 @@ var cmd_list = {
     },
     "roll": {
         name: "!roll",
-		description: "Rolls a die",
+        description: "Rolls a die",
+        usage: "<x> [y], <x>d<y>",
 		process: function(client,msg,suffix) {
             var faces = suffix.split(" ");
             if (faces.length == 1) {
@@ -268,13 +269,17 @@ var cmd_list = {
                         var diceType = faces[0].split("d");
                         if (diceType.length == 2) {
                             if(Number.isInteger(Number(diceType[0])) && Number.isInteger(Number(diceType[1]))) {
-                                var diceSum = 0;
-                                for (i = 0; i < Number(diceType[0]); i++){
-                                    var roll = (Math.floor(Math.random() * diceType[1]) + 1)
-                                    msg.channel.send(roll);
-                                    diceSum += roll;
+                                if(diceType[0] > 100) {
+                                    msg.channel.send("ERROR. TOO BIG.");
+                                } else {
+                                    var diceSum = 0;
+                                    for (i = 0; i < Number(diceType[0]); i++){
+                                        var roll = (Math.floor(Math.random() * diceType[1]) + 1)
+                                        msg.channel.send(roll);
+                                        diceSum += roll;
+                                        msg.channel.send("Total = " + diceSum);
+                                    }
                                 }
-                                msg.channel.send("Total = " + diceSum);
                             } else {
                                 msg.channel.send("Invalid input - face count must be an integer");
                             }
@@ -327,48 +332,45 @@ client.on('message', (msg) => {
         }
 		var cmd = cmd_list[cmd_data];
         if(cmd_data === "help"){
-						if(suffix){
-							var cmds = suffix.split(" ").filter(function(cmd){return cmd_data[cmd]});
-							var helpMsg = "";
-							for(var i=0; i<cmds.length; i++) {
-								var cmd = cmds[i];
-								helpMsg += "Data for " + cmd.name;
-								var cmdName = cmd.name;
-                                if(cmdName){
-									helpMsg += cmdName + " ";
-                                }
-                                var cmdUse = cmd.usage;
-                                if(cmdUse){
-									helpMsg += cmdUse;
-								}
-                                var cmdDesc = cmd.description;
-                                if(cmdDesc){
-									helpMsg += ": " + cmdDesc;
-								}
-								helpMsg += "\n"
-							}
-							msg.channel.send(helpMsg);
-						} else {
-                            msg.author.send("Winnie_Bot Commands:").then(function(){
-                                var helpMsg = "";
-                                for(var i in cmd_list) {
-                                    var cmdName = cmd_list[i].name;
-                                    if(cmdName){
-										helpMsg += cmdName + " ";
-                                    }
-                                    var cmdUse = cmd_list[i].usage;
-                                    if(cmdUse){
-										helpMsg += cmdUse;
-									}
-                                    var cmdDesc = cmd_list[i].description;
-                                    if(cmdDesc){
-										helpMsg += ": " + cmdDesc;
-									}
-                                    helpMsg += "\n";
-                                }
-                                msg.author.send(helpMsg);	
-						});
+            if(suffix){
+                var cmd = cmd_list[suffix];
+                var helpMsg = "";
+                try {
+                    helpMsg += "Data for " + cmd.name;
+                var cmdUse = cmd.usage;
+                if(cmdUse){
+					helpMsg += " " + cmdUse;
+				}
+                var cmdDesc = cmd.description;
+                if(cmdDesc){
+					helpMsg += ": " + cmdDesc;
+				}
+				helpMsg += "\n"
+				msg.channel.send(helpMsg);
+                } catch(e) {
+                    msg.channel.send("That command does not exist.");
+                }
+			} else {
+                msg.author.send("Winnie_Bot Commands:").then(function(){
+                var helpMsg = "";
+                for(var i in cmd_list) {
+                    var cmdName = cmd_list[i].name;
+                    if(cmdName){
+						helpMsg += cmdName + " ";
+                    }
+                    var cmdUse = cmd_list[i].usage;
+                    if(cmdUse){
+						helpMsg += cmdUse;
 					}
+                    var cmdDesc = cmd_list[i].description;
+                    if(cmdDesc){
+						helpMsg += ": " + cmdDesc;
+					}
+                    helpMsg += "\n";
+                }
+                msg.author.send(helpMsg);	
+			});
+		    }
         }
 		else if(cmd) {
 		    try{
