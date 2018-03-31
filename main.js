@@ -2,9 +2,56 @@ const Discord = require('discord.js');
 const client = new Discord.Client();
 var config = require('./config.json');
 var runningArray = {};
+var postMortemArray = {};
 var timerID = 1;
 var logger = require('./logger.js');
 const gameloop = require('node-gameloop');
+const promptList = ["One of your characters receives an anonymous gift.",
+    "Your character invites someone they don’t like over for dinner.",
+    "A character is scared that someone will find out about something they did.",
+    "Your character goes to the other side of town for a day.",
+    "Two characters get into a heated argument about work.",
+    "A character suddenly has to travel a long distance.",
+    "Your character makes a new friend in an unexpected place.",
+    "Your characters get dressed up.",
+    "One of your characters isn’t who they claim to be.",
+    "Your character is presented with a meal they don’t like.",
+    "The scenery suddenly changes.",
+    "An inanimate object moves.",
+    "Your character turns off the music.",
+    "Two things are unexpectedly related.",
+    "The lights go out.",
+    "Choose an object you can see; write it into your story.",
+    "Today’s headlines make an announcement that is important to your character.",
+    "Your character tries something wild.",
+    "A character tells a lie.",
+    "The right thing is there for your character, but at the wrong time.",
+    "Your character has a skill that has not been mentioned before.",
+    "A character breaks a rule.",
+    "A character is late.",
+    "Someone is injured.",
+    "Mars is bright tonight.",
+    "Something doesn’t work as it’s supposed to.",
+    "A character loses something, but then finds or gets it back.",
+    "A character changes careers.",
+    "Start and end a paragraph with the same sentence, but different meanings.",
+    "A character goes for a walk and discovers something strange.",
+    "A character gets into a fight.",
+    "Something has gone horribly wrong.",
+    "A character misses something important.",
+    "A character leaves their comfort zone.",
+    "A character loses someone.",
+    "A character passes out.",
+    "A character hallucinates.",
+    "A character leaves home for the last time.",
+    "Someone is searching for something.",
+    "A character forgets something important.",
+    "A character is angry at someone they feel is more powerful than them.",
+    "It starts to rain.",
+    "Someone unexpected arrives.",
+    "A character notices someone watching them.",
+    "A crowd has gathered.",
+    "Something has a dual function."];
 
 client.on('ready', () => {
     logger.info('Winnie_Bot is online');
@@ -88,6 +135,7 @@ function War(objectID, creator, displayName, timeToStart, duration, channel) {
     let termObjectID = this.objectID;
     let timerData = this.startData;
     let durationData = this.durationData;
+    let postMortemTimer = 120;
     this.challengeTimer = gameloop.setGameLoop(function(delta) {
         if(timerData > 0) {
             logger.info('(Seconds remaining in countdown=%s, delta=%s)', timerData--, delta);
@@ -104,6 +152,16 @@ function War(objectID, creator, displayName, timeToStart, duration, channel) {
             } else if(timerData < 60 && timerData % 15 == 0) {
                 channel.send(displayName + " starts in " + timerData + " seconds.");
             }
+        } else if(postMortemTimer < 120) {
+            logger.info('(Seconds remaining in post-mortem=%s, delta=%s)', postMortemTimer--, delta);
+            if(postMortemTimer == 0) {
+                userList = "";
+                for(user in joinedUsers) {
+                    userList += " " + joinedUsers[user];
+                }
+                channel.send(displayName + " starts now!" + userList);
+                gameloop.clearGameLoop(this.challengeTimer);
+            }
         } else {
             logger.info('(Seconds remaining in war=%s, delta=%s)', durationData--, delta);
             if(durationData == 0) {
@@ -111,9 +169,9 @@ function War(objectID, creator, displayName, timeToStart, duration, channel) {
                 for(user in joinedUsers) {
                     userList += " " + joinedUsers[user];
                 }
-                channel.send(displayName + " has ended!" + userList);
+                channel.send(displayName + " has ended! Post your total to be included in the summary." + userList);
                 delete runningArray[termObjectID];
-                gameloop.clearGameLoop(this.challengeTimer);
+                postMortemTimer--;
             } else if(durationData == 60) {
                 channel.send("There is 1 minute remaining in " + displayName + ".");
             } else if(durationData % 300 == 0) {
@@ -137,7 +195,7 @@ var cmd_list = {
             var timeout = args.shift();
             var sprint_name = args.join(' ');
             if(!Number.isInteger(Number(words)) || isNaN(start) || isNaN(timeout)){
-                msg.channel.send("Invalid input - start interval must be numeric, word goal must be an integer")
+                msg.channel.send("Invalid input. Start interval must be a number, word goal must be a whole number.")
             } else {
                 try{
                     creatorID = msg.author.id;
@@ -163,7 +221,7 @@ var cmd_list = {
             var start = args.shift();
             var war_name = args.join(' ');
             if(isNaN(length) || isNaN(start)){
-                msg.channel.send("Invalid input - start interval and length must be numeric")
+                msg.channel.send("Invalid input. Start interval and length must be numbers.")
             } else {
                 try{
                     creatorID = msg.author.id;
@@ -194,10 +252,9 @@ var cmd_list = {
                 } else {
                     runningArray[joinTimerID].joinedUsers[msg.author.id] = msg.author;
                     msg.channel.send(msg.author + ", you have joined " + runningArray[joinTimerID].displayName);
-                    // logger.info(runningArray[joinTimerID].joinedUsers[msg.author.id]);
                 }
             } else {
-                msg.channel.send("There is no such challenge!");
+                msg.channel.send("Challenge " + joinTimerID + " does not exist!");
             }
 	    }
     },
@@ -218,7 +275,7 @@ var cmd_list = {
                     msg.channel.send(msg.author + ", you have not yet joined this challenge.");
                 }
             } else {
-                msg.channel.send("There is no such challenge!");
+                msg.channel.send("Challenge " + joinTimerID + " does not exist!");
             }
 	    }
     },
@@ -237,10 +294,10 @@ var cmd_list = {
                     msg.channel.send(exName + " has been successfully exterminated.");
                     
                 } else {
-                    msg.channel.send("If you did not create it, you cannot exterminate it.");
+                    msg.channel.send("Only the creator of " + exName + " can end this challenge.");
                 }
             } else {
-                msg.channel.send("You cannot end a challenge that has not been started!");
+                msg.channel.send("Challenge " + exterminateID + " does not exist!");
             }
 	    }
     },
@@ -250,7 +307,7 @@ var cmd_list = {
         usage: "",
         process: function(client,msg,suffix) {
             if(Object.keys(runningArray).length == 0) {
-                msg.channel.send("There are no sprints or wars running. Why don't you start one?");
+                msg.channel.send("There are no challenges running. Why don't you start one?");
             } else {
                 if(Object.keys(runningArray).length == 1) {
                     timerInfo = "There is " + Object.keys(runningArray).length + " challenge running:\n";
@@ -264,12 +321,69 @@ var cmd_list = {
             }
         }
     },
-    "goal": {
-        name: "!goal",
-        description: "Sets a goal of <words> words in <time> minutes (under construction)",
-        usage: "<words> <time>",
+    "target": {
+        name: "!target",
+        description: "Generates an <easy/average/hard> target for <time> minutes",
+        usage: "<easy/average/hard> <time>",
 		process: function(client,msg,suffix) {
-			msg.channel.send("This command is under construction.");
+            var args = suffix.split(" ");
+            var difficulty = args.shift();
+            var time = args.shift();
+            var base = null;
+            if(!Number.isInteger(Number(time))){
+                msg.channel.send("Invalid input. Duration must be a whole number.")
+            } else {
+                switch(difficulty) {
+                    case "easy":
+                        base = 12;
+                        break;
+                    case "average":
+                        base = 24;
+                        break;
+                    case "hard":
+                        base = 36;
+                        break;    
+                }
+                goalPerMinute = ((Math.ceil(Math.random() * 12) + base));
+                goalTotal = (goalPerMinute * time);
+                msg.channel.send(msg.author + ", your goal is **" + goalTotal + "**.");
+            }
+	    }
+    },
+    "set": {
+        name: "!set",
+        description: "Sets a daily goal of <words>",
+        usage: "<words>",
+		process: function(client,msg,suffix) {
+	    	var words = suffix.split(" ");
+            if(!Number.isInteger(Number(words))){
+                msg.channel.send("Invalid input. Your goal must be a whole number.")
+            } else {
+                msg.channel.send(msg.author + ", your goal for today is **" + goal + "**.");
+            }
+	    }
+    },
+    "update": {
+        name: "!update",
+        description: "Updates your daily goal with <words> you have completed",
+        usage: "<words>",
+		process: function(client,msg,suffix) {
+	    	var words = suffix.split(" ");
+            if(!Number.isInteger(Number(words))){
+                msg.channel.send("Invalid input. Your goal must be a whole number.")
+            } else {
+                msg.channel.send(msg.author + ", your goal for today is **" + goal + "**.");
+            }
+	    }
+    },
+    "prompt": {
+        name: "!prompt",
+        description: "Provides a writing prompt",
+		process: function(client,msg,suffix) {
+            logger.info(promptList.length);
+            var choiceID = (Math.floor(Math.random() * promptList.length))
+            logger.info(choiceID);
+            msg.channel.send(msg.author + ", your prompt is: **" + promptList[choiceID].trim() + "**");
 		}
     },
     "roll": {
@@ -298,13 +412,13 @@ var cmd_list = {
                                     }
                                 }
                             } else {
-                                msg.channel.send("Invalid input - face count must be an integer");
+                                msg.channel.send("Invalid input. Face count must be a whole number.");
                             }
                         } else {
-                            msg.channel.send("Invalid input - face count must be an integer");
+                            msg.channel.send("Invalid input. Face count must be a whole number.");
                         }
                     } else {
-                        msg.channel.send("Invalid input - face count must be an integer");
+                        msg.channel.send("Invalid input. Face count must be a whole number.");
                     }  
                 }
             } else if (faces.length == 2) {
@@ -313,40 +427,45 @@ var cmd_list = {
                         msg.channel.send("You rolled " + (Math.floor(Math.random() * (1 + Number(faces[1]) - Number(faces[0])) + Number(faces[0]))));
                     }
                     else {
-                        msg.channel.send("Invalid input - first number must be less than second");
+                        msg.channel.send("Invalid input. First number must be less than second number.");
                     }
                     
                 } else {
-                    msg.channel.send("Invalid input - face count must be an integer");
+                    msg.channel.send("Invalid input. Face count must be a whole number.");
                 }
             } else {
-                msg.channel.send("Invalid input - face count must be an integer");
+                msg.channel.send("Invalid input. Face count must be a whole number.");
             }
 		}
     },
-    "select": {
-        name: "!select",
-		description: "Selects between an array of objects (under construction)",
+    "choose": {
+        name: "!choose",
+        description: "Selects an item from a list <list> of items, separated by commas",
+        usage: "<list>",
 		process: function(client,msg,suffix) {
-			msg.channel.send("This command is under construction.");
+            var items = suffix.split(",");
+            logger.info(items.length);
+            var choiceID = (Math.floor(Math.random() * items.length))
+            logger.info(choiceID);
+            msg.channel.send(msg.author + ", from " + suffix + ", I selected **" + items[choiceID].trim() + "**");
 		}
     }
 }
 
 client.on('message', (msg) => {
+    if(msg.isMentioned(client.user)){
+		try {
+			cmd_data = msg.content.split(" ")[1];
+			suffix = msg.content.substring(client.user.mention().length+cmd_data.length+Config.commandPrefix.length+1);
+        } catch(e){
+			msg.channel.send("Yes?");
+			return;
+		}
+    }
     if(msg.author.id != client.user.id && (msg.content.startsWith(config.cmd_prefix))){
         logger.info("treating " + msg.content + " from " + msg.author + " as command");
 		var cmd_data = msg.content.split(" ")[0].substring(config.cmd_prefix.length);
         var suffix = msg.content.substring(cmd_data.length+config.cmd_prefix.length+1);//add one for the ! and one for the space
-        if(msg.isMentioned(client.user)){
-			try {
-				cmd_data = msg.content.split(" ")[1];
-				suffix = msg.content.substring(client.user.mention().length+cmd_data.length+Config.commandPrefix.length+1);
-			} catch(e){
-				msg.channel.send("Yes?");
-				return;
-			}
-        }
 		var cmd = cmd_list[cmd_data];
         if(cmd_data === "help"){
             if(suffix){
@@ -354,16 +473,16 @@ client.on('message', (msg) => {
                 var helpMsg = "";
                 try {
                     helpMsg += "Data for " + cmd.name;
-                var cmdUse = cmd.usage;
-                if(cmdUse){
-					helpMsg += " " + cmdUse;
-				}
-                var cmdDesc = cmd.description;
-                if(cmdDesc){
-					helpMsg += ": " + cmdDesc;
-				}
-				helpMsg += "\n"
-				msg.channel.send(helpMsg);
+                    var cmdUse = cmd.usage;
+                    if(cmdUse){
+                        helpMsg += " " + cmdUse;
+                    }
+                    var cmdDesc = cmd.description;
+                    if(cmdDesc){
+                        helpMsg += ": " + cmdDesc;
+                    }
+                    helpMsg += "\n"
+                    msg.channel.send(helpMsg);
                 } catch(e) {
                     msg.channel.send("That command does not exist.");
                 }
