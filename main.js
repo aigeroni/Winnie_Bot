@@ -5,6 +5,7 @@ var runningArray = {};
 var postMortemArray = {};
 var timerID = 1;
 var logger = require('./logger.js');
+var goalList = {};
 const gameloop = require('node-gameloop');
 const promptList = ["One of your characters receives an anonymous gift.",
     "Your character invites someone they don’t like over for dinner.",
@@ -83,7 +84,7 @@ function Sprint(objectID, creator, displayName, timeToStart, goal, timeout, chan
             if(timerData == 0) {
                 userList = "";
                 for(user in joinedUsers) {
-                    userList += " " + joinedUsers[user];
+                    userList += " " + joinedUsers[user].userData;
                 }
                 channel.send(displayName + " starts now! Race to " + goal + " words!" + userList);
             } else if(timerData == 60) {
@@ -98,7 +99,7 @@ function Sprint(objectID, creator, displayName, timeToStart, goal, timeout, chan
             if(timeoutData == 0) {
                 userList = "";
                 for(user in joinedUsers) {
-                    userList += " " + joinedUsers[user];
+                    userList += " " + joinedUsers[user].userData;
                 }
                 channel.send(displayName + " has timed out." + userList);
                 gameloop.clearGameLoop(this.challengeTimer);
@@ -135,14 +136,14 @@ function War(objectID, creator, displayName, timeToStart, duration, channel) {
     let termObjectID = this.objectID;
     let timerData = this.startData;
     let durationData = this.durationData;
-    let postMortemTimer = 120;
+    let postMortemTimer = 10;
     this.challengeTimer = gameloop.setGameLoop(function(delta) {
         if(timerData > 0) {
             logger.info('(Seconds remaining in countdown=%s, delta=%s)', timerData--, delta);
             if(timerData == 0) {
                 userList = "";
                 for(user in joinedUsers) {
-                    userList += " " + joinedUsers[user];
+                    userList += " " + joinedUsers[user].userData;
                 }
                 channel.send(displayName + " starts now!" + userList);
             } else if(timerData == 60) {
@@ -152,24 +153,15 @@ function War(objectID, creator, displayName, timeToStart, duration, channel) {
             } else if(timerData < 60 && timerData % 15 == 0) {
                 channel.send(displayName + " starts in " + timerData + " seconds.");
             }
-        } else if(postMortemTimer < 120) {
-            logger.info('(Seconds remaining in post-mortem=%s, delta=%s)', postMortemTimer--, delta);
-            if(postMortemTimer == 0) {
-                userList = "";
-                for(user in joinedUsers) {
-                    userList += " " + joinedUsers[user];
-                }
-                channel.send(displayName + " starts now!" + userList);
-                gameloop.clearGameLoop(this.challengeTimer);
-            }
-        } else {
+        }  else if(durationData > 0) {
             logger.info('(Seconds remaining in war=%s, delta=%s)', durationData--, delta);
             if(durationData == 0) {
                 userList = "";
                 for(user in joinedUsers) {
-                    userList += " " + joinedUsers[user];
+                    userList += " " + joinedUsers[user].userData;
                 }
                 channel.send(displayName + " has ended! Post your total to be included in the summary." + userList);
+                postMortemArray[termObjectID] = runningArray[termObjectID];
                 delete runningArray[termObjectID];
                 postMortemTimer--;
             } else if(durationData == 60) {
@@ -178,6 +170,19 @@ function War(objectID, creator, displayName, timeToStart, duration, channel) {
                 channel.send("There are " + durationData/60 + " minutes remaining in " + displayName + ".");
             } else if(durationData < 60 && durationData % 15 == 0) {
                 channel.send("There are " + durationData + " seconds remaining in " + displayName + ".");
+            }
+        } else {
+            logger.info('(Seconds remaining in post-mortem=%s, delta=%s)', postMortemTimer--, delta);
+            if(postMortemTimer == 0) {
+                userTotal = "";
+                totalWords = 0;
+                for(user in joinedUsers) {
+                    userTotal += "\n" + joinedUsers[user].userData + ": **" + joinedUsers[user].countData + "** words";
+                    totalWords += parseInt(joinedUsers[user].countData);
+                }
+                channel.send("Statistics for " + displayName + ":\n" + userTotal + "\n\nTotal: **" + totalWords + "** words");
+                delete postMortemArray[termObjectID];
+                gameloop.clearGameLoop(this.challengeTimer);
             }
         }
     }, 1000);
@@ -250,7 +255,7 @@ var cmd_list = {
                 if(msg.author.id in runningArray[joinTimerID].joinedUsers) {
                     msg.channel.send(msg.author + ", you already have notifications enabled for this challenge.");
                 } else {
-                    runningArray[joinTimerID].joinedUsers[msg.author.id] = msg.author;
+                    runningArray[joinTimerID].joinedUsers[msg.author.id] = {"userData": msg.author, "countData": undefined};
                     msg.channel.send(msg.author + ", you have joined " + runningArray[joinTimerID].displayName);
                 }
             } else {
@@ -355,24 +360,30 @@ var cmd_list = {
         description: "Sets a daily goal of <words>",
         usage: "<words>",
 		process: function(client,msg,suffix) {
-	    	var words = suffix.split(" ");
+            var words = suffix.split(" ");
             if(!Number.isInteger(Number(words))){
                 msg.channel.send("Invalid input. Your goal must be a whole number.")
+            } else if(typeof(goalList[msg.author.id]) != "undefined") {
+                msg.channel.send(msg.author + ", you have already set a goal today. Use !update to record your progress.");
             } else {
-                msg.channel.send(msg.author + ", your goal for today is **" + goal + "**.");
+                goalList[msg.author.id] = {"words": words, "written": 0};
+                msg.channel.send(msg.author + ", your goal for today is **" + words + "** words.");
             }
 	    }
     },
     "update": {
         name: "!update",
-        description: "Updates your daily goal with <words> you have completed",
+        description: "Updates your daily goal with the number of <words> you have completed",
         usage: "<words>",
 		process: function(client,msg,suffix) {
 	    	var words = suffix.split(" ");
             if(!Number.isInteger(Number(words))){
                 msg.channel.send("Invalid input. Your goal must be a whole number.")
+            } else if(typeof(goalList[msg.author.id]) == "undefined") {
+                msg.channel.send(msg.author + ", you have not yet set a goal for today. Use !set to do so.");
             } else {
-                msg.channel.send(msg.author + ", your goal for today is **" + goal + "**.");
+                goalList[msg.author.id].written += parseInt(words);
+                msg.channel.send(msg.author + ", you have written **" + goalList[msg.author.id].written + "** words of your **" + goalList[msg.author.id].words + "**-word goal.");
             }
 	    }
     },
@@ -455,8 +466,20 @@ var cmd_list = {
 client.on('message', (msg) => {
     if(msg.isMentioned(client.user)){
 		try {
-			cmd_data = msg.content.split(" ")[1];
-			suffix = msg.content.substring(client.user.mention().length+cmd_data.length+Config.commandPrefix.length+1);
+			for(item in postMortemArray) {
+                for(user in postMortemArray[item].joinedUsers) {
+                    if((postMortemArray[item].joinedUsers[user].userData.id == msg.author.id) && (typeof(postMortemArray[item].joinedUsers[user].countData) == "undefined")) {
+                        logger.info(msg.content);
+                        var pmTotal = msg.content.slice(22);
+                        logger.info(pmTotal);
+                        if (!Number.isInteger(Number(pmTotal))) {
+                            msg.channel.send(msg.author + ", I need a whole number of words to include in the summary!");
+                        } else {
+                            postMortemArray[item].joinedUsers[user].countData = pmTotal;
+                        }
+                    }
+                }
+            }
         } catch(e){
 			msg.channel.send("Yes?");
 			return;
