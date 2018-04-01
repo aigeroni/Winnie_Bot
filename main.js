@@ -387,11 +387,7 @@ var cmd_list = {
             } else if(typeof(goalList[msg.author.id]) != "undefined") {
                 msg.channel.send(msg.author + ", you have already set a goal today. Use !update to record your progress.");
             } else {
-                goalList[msg.author.id] = {"words": words, "written": 0};
-                setTimeout(function(){
-                    goalList[msg.author.id] = undefined; },
-                    (moment("24:00:00", "hh:mm:ss").diff(moment()) * 1000)
-                 );
+                goalList[msg.author.id] = {"words": parseInt(words), "written": 0};
                 msg.channel.send(msg.author + ", your goal for today is **" + words + "** words.");
             }
 	    }
