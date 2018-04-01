@@ -4,11 +4,12 @@
   "description": "Provides commands for Discord-based writing groups, including word wars, sprints and goals. Created for NaNoWriMo Melbourne Region",
   "main": "main.js",
   "dependencies": {
-    "discord.js": "^11.2.1",
-    "eslint": "^4.12.1",
+    "discord.js": "^11.3.2",
+    "eslint": "^4.19.1",
     "jslint": "^0.11.0",
+    "moment": "^2.22.0",
     "node-gameloop": "^0.1.4",
-    "winston": "^2.4.0"
+    "winston": "^2.4.1"
   },
   "devDependencies": {},
   "scripts": {

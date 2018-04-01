@@ -5,6 +5,7 @@ var runningArray = {};
 var postMortemArray = {};
 var timerID = 1;
 var logger = require('./logger.js');
+var moment = require('moment');
 var goalList = {};
 const gameloop = require('node-gameloop');
 const promptList = ["One of your characters receives an anonymous gift.",
@@ -367,8 +368,8 @@ var cmd_list = {
                 msg.channel.send(msg.author + ", you have already set a goal today. Use !update to record your progress.");
             } else {
                 goalList[msg.author.id] = {"words": words, "written": 0};
-                setTimeout(
-                    goalList[msg.author.id] = undefined,
+                setTimeout(function(){
+                    goalList[msg.author.id] = undefined; },
                     moment("24:00:00", "hh:mm:ss").diff(moment(), 'seconds')
                  );
                 msg.channel.send(msg.author + ", your goal for today is **" + words + "** words.");
