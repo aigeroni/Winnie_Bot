@@ -70,7 +70,7 @@ class Sprint {
         this.joinedUsers = {};
 
         this.startData = this.timeToStart * 60;
-        this.timeoutData = this.timeout * 60;
+        this.durationData = this.timeout * 60;
 
         if(this.timeToStart == 1) {
             channel.send("Your sprint, " + this.displayName + " (ID " + this.objectID + "), starts in " + this.timeToStart + " minute.");
@@ -95,8 +95,8 @@ class Sprint {
                     channel.send(self.displayName + " starts in " + self.startData + " seconds.");
                 }
             } else {
-                logger.info('(Seconds remaining in sprint=%s, delta=%s)', self.timeoutData--, delta);
-                if(self.timeoutData == 0) {
+                logger.info('(Seconds remaining in sprint=%s, delta=%s)', self.durationData--, delta);
+                if(self.durationData == 0) {
                     var userList = "";
                     for(var user in self.joinedUsers) {
                         userList += " " + self.joinedUsers[user].userData;
@@ -104,12 +104,12 @@ class Sprint {
                     channel.send(self.displayName + " has timed out." + userList);
                     gameloop.clearGameLoop(self.challengeTimer);
                     delete runningArray[self.objectID];
-                } else if(self.timeoutData == 60) {
+                } else if(self.durationData == 60) {
                     channel.send("There is 1 minute remaining in " + self.displayName + ".");
-                } else if(self.timeoutData % 300 == 0) {
-                    channel.send("There are " + self.timeoutData/60 + " minutes remaining in " + self.displayName + ".");
-                } else if(self.timeoutData < 60 && self.timeoutData % 15 == 0) {
-                    channel.send("There are " + self.timeoutData + " seconds remaining in " + self.displayName + ".");
+                } else if(self.durationData % 300 == 0) {
+                    channel.send("There are " + self.durationData/60 + " minutes remaining in " + self.displayName + ".");
+                } else if(self.durationData < 60 && self.durationData % 15 == 0) {
+                    channel.send("There are " + self.durationData + " seconds remaining in " + self.displayName + ".");
                 }
             }
         }, 1000);
@@ -322,7 +322,26 @@ var cmd_list = {
                     timerInfo = "There are " + Object.keys(runningArray).length + " challenges running:\n";
                 }
                 for(var i in runningArray) {
-                    timerInfo += i + ": " + runningArray[i].displayName +  "\n";
+                    if(runningArray[i].startData == 0) {
+                        var timeout = "";
+                        if ((runningArray[i].durationData % 60) < 10) {
+                            timeout = "0" + (runningArray[i].durationData % 60).toString();
+                        } else {
+                            timeout = runningArray[i].durationData % 60;
+                        }
+                        logger.info(timeout);
+                        timerInfo += i + ": " + runningArray[i].displayName +  " (" + Math.floor(runningArray[i].durationData / 60) + ":" + timeout + " remaining)\n";
+                    } else {
+                        var timeout = "";
+                        if ((runningArray[i].startData % 60) < 10) {
+                            timeout = "0" + (runningArray[i].startData % 60).toString();
+                        } else {
+                            timeout = runningArray[i].startData % 60;
+                        }
+                        logger.info(timeout);
+                        timerInfo += i + ": " + runningArray[i].displayName +  " (starts in " + Math.floor(runningArray[i].startData / 60) + ":" + timeout + ")\n";
+                    }
+                    
                 }
                 msg.channel.send(timerInfo);
             }
