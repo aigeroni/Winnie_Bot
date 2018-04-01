@@ -379,7 +379,7 @@ var cmd_list = {
     },
     "update": {
         name: "!update",
-        description: "Updates your daily goal with the number of <words> you have completed",
+        description: "Updates your daily goal with the number of <words> you have completed since your last update",
         usage: "<words>",
 		process: function(client,msg,suffix) {
 	    	var words = suffix.split(" ");
@@ -393,6 +393,34 @@ var cmd_list = {
             }
 	    }
     },
+    "progress": {
+        name: "!progress",
+        description: "Updates your daily goal with the total number of <words> you have completed today",
+        usage: "<words>",
+		process: function(client,msg,suffix) {
+	    	var words = suffix.split(" ");
+            if(!Number.isInteger(Number(words))){
+                msg.channel.send("Invalid input. Your goal must be a whole number.")
+            } else if(typeof(goalList[msg.author.id]) == "undefined") {
+                msg.channel.send(msg.author + ", you have not yet set a goal for today. Use !set to do so.");
+            } else {
+                goalList[msg.author.id].written = parseInt(words);
+                msg.channel.send(msg.author + ", you have written **" + goalList[msg.author.id].written + "** words of your **" + goalList[msg.author.id].words + "**-word goal.");
+            }
+	    }
+    },
+    "reset": {
+        name: "!reset",
+        description: "Resets your daily goal",
+		process: function(client,msg,suffix) {
+            if(typeof(goalList[msg.author.id]) == "undefined") {
+                msg.channel.send(msg.author + ", you have not yet set a goal for today. Use !set to do so.");
+            } else {
+                goalList[msg.author.id] = undefined;
+                msg.channel.send(msg.author + ", you have successfully reset your daily goal.");
+            }
+	    }
+    },
     "prompt": {
         name: "!prompt",
         description: "Provides a writing prompt",
@@ -401,6 +429,17 @@ var cmd_list = {
             var choiceID = (Math.floor(Math.random() * promptList.length))
             logger.info(choiceID);
             msg.channel.send(msg.author + ", your prompt is: **" + promptList[choiceID].trim() + "**");
+		}
+    },
+    "goalinfo": {
+        name: "!goalinfo",
+        description: "Displays progress towards your daily goal",
+		process: function(client,msg,suffix) {
+            if(typeof(goalList[msg.author.id]) == "undefined") {
+                msg.channel.send(msg.author + ", you have not yet set a goal for today. Use !set to do so.");
+            } else {
+                msg.channel.send(msg.author + ", you have written **" + goalList[msg.author.id].written + "** words of your **" + goalList[msg.author.id].words + "**-word goal.");
+            }
 		}
     },
     "roll": {
