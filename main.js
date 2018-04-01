@@ -390,7 +390,7 @@ var cmd_list = {
                 goalList[msg.author.id] = {"words": words, "written": 0};
                 setTimeout(function(){
                     goalList[msg.author.id] = undefined; },
-                    moment("24:00:00", "hh:mm:ss").diff(moment(), 'seconds')
+                    (moment("24:00:00", "hh:mm:ss").diff(moment()) * 1000)
                  );
                 msg.channel.send(msg.author + ", your goal for today is **" + words + "** words.");
             }
