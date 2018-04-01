@@ -176,7 +176,8 @@ class War{
                     var userTotal = "";
                     var totalWords = 0;
                     for(var user in self.joinedUsers) {
-                        if(Number.isInteger(self.joinedUsers[user].countData)){
+                        logger.info(self.joinedUsers[user].countData);
+                        if(Number.isInteger(Number(self.joinedUsers[user].countData))){
                             userTotal += "\n" + self.joinedUsers[user].userData + ": **" + self.joinedUsers[user].countData + "** words";
                             totalWords += parseInt(self.joinedUsers[user].countData);
                         }
