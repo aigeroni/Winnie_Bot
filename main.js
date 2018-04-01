@@ -145,12 +145,12 @@ class War{
                         userList += " " + self.joinedUsers[user].userData;
                     }
                     channel.send(self.displayName + " starts now!" + userList);
-                } else if(self.timerData == 60) {
+                } else if(self.startData == 60) {
                     channel.send(self.displayName + " starts in 1 minute.");
-                } else if(self.timerData % 60 == 0) {
-                    channel.send(self.displayName + " starts in " + self.timerData / 60 + " minutes.");
-                } else if(self.timerData < 60 && self.timerData % 15 == 0) {
-                    channel.send(self.displayName + " starts in " + self.timerData + " seconds.");
+                } else if(self.startData % 60 == 0) {
+                    channel.send(self.displayName + " starts in " + self.startData / 60 + " minutes.");
+                } else if(self.startData < 60 && self.startData % 15 == 0) {
+                    channel.send(self.displayName + " starts in " + self.startData + " seconds.");
                 }
             }  else if(self.durationData > 0) {
                 logger.info('(Seconds remaining in war=%s, delta=%s)', self.durationData--, delta);
