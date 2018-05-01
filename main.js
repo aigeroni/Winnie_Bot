@@ -357,13 +357,15 @@ var cmd_list = {
                                 runningArray[item].joinedUsers[user].countData = wordsWritten;
                             }
                         }
+                        msg.channel.send("Total added to summary.");
                     } else {
                         msg.channel.send(msg.author + ", I need a whole number of words to include in the summary!");
                     }
+                } else {
+                    msg.channel.send("This challenge has not ended yet!");
                 }
-                runningArray[challengeID].channel.send("Total added to summary.");
             } else {
-                runningArray[challengeID].channel.send("This challenge has not ended yet!");
+                msg.channel.send("This challenge does not exist!");
             }
         }
     },
@@ -385,11 +387,13 @@ var cmd_list = {
                             totalWords += parseInt(runningArray[challengeID].joinedUsers[user].countData);
                         }
                     }
+                    msg.channel.send("Statistics for " + runningArray[challengeID].displayName + ":\n" + userTotal + "\n\nTotal: **" + totalWords + "** words");                    
                 } else {
-                    runningArray[challengeID].channel.send("This challenge has not ended yet!");
+                    msg.channel.send("This challenge has not ended yet!");
                 }
+            } else {
+                msg.channel.send("This challenge does not exist!");
             }
-            runningArray[challengeID].channel.send("Statistics for " + runningArray[challengeID].displayName + ":\n" + userTotal + "\n\nTotal: **" + totalWords + "** words");
         }
     },
     "list": {
