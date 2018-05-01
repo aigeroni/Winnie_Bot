@@ -53,7 +53,8 @@ const promptList = ["One of your characters receives an anonymous gift.",
     "Someone unexpected arrives.",
     "A character notices someone watching them.",
     "A crowd has gathered.",
-    "Something has a dual function."];
+    "Something has a dual function.",
+    "The only useful thing is in the corner."];
 
 client.on('ready', () => {
     logger.info('Winnie_Bot is online');
@@ -397,8 +398,9 @@ var cmd_list = {
         description: "Updates your daily goal with the number of <words> you have completed since your last update",
         usage: "<words>",
 		process: function(client,msg,suffix) {
-	    	var words = suffix.split(" ");
-            if(!Number.isInteger(Number(words))){
+            var words = suffix.split(" ");
+            logger.info(words);
+            if(!Number.isInteger(parseInt(words))){
                 msg.channel.send("Invalid input. Your goal must be a whole number.")
             } else if(typeof(goalList[msg.author.id]) == "undefined") {
                 msg.channel.send(msg.author + ", you have not yet set a goal for today. Use !set to do so.");
@@ -414,7 +416,7 @@ var cmd_list = {
         usage: "<words>",
 		process: function(client,msg,suffix) {
 	    	var words = suffix.split(" ");
-            if(!Number.isInteger(Number(words))){
+            if(!Number.isInteger(parseInt(words))){
                 msg.channel.send("Invalid input. Your goal must be a whole number.")
             } else if(typeof(goalList[msg.author.id]) == "undefined") {
                 msg.channel.send(msg.author + ", you have not yet set a goal for today. Use !set to do so.");
@@ -471,16 +473,22 @@ var cmd_list = {
                         var diceType = faces[0].split("d");
                         if (diceType.length == 2) {
                             if(Number.isInteger(Number(diceType[0])) && Number.isInteger(Number(diceType[1]))) {
-                                if(diceType[0] > 100) {
+                                if(diceType[0] > 20) {
                                     msg.channel.send("ERROR. TOO BIG.");
                                 } else {
                                     var diceSum = 0;
+                                    var diceString = "";
                                     for (i = 0; i < Number(diceType[0]); i++){
                                         var roll = (Math.floor(Math.random() * diceType[1]) + 1)
-                                        msg.channel.send(roll);
+                                        diceString += roll;
+                                        if (i != Number(diceType[0])-1)
+                                        {
+                                            diceString += ", ";
+                                        }
                                         diceSum += roll;
-                                        msg.channel.send("Total = " + diceSum);
                                     }
+                                    msg.channel.send(diceString);
+                                    msg.channel.send("Total = " + diceSum);
                                 }
                             } else {
                                 msg.channel.send("Invalid input. Face count must be a whole number.");
