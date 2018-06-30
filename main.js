@@ -1,11 +1,14 @@
 const Discord = require('discord.js');
 const client = new Discord.Client();
-var config = require('./config.json');
-var logger = require('./logger.js');
+const config = require('./config.json');
+const logger = require('./logger.js');
 const gameloop = require('node-gameloop');
+const timezoneJS = require('timezone-js');
 var timerID = 1;
 var challengeList = {};
 var goalList = {};
+var count = 0;
+const durationAfterChallenge = 600;
 const promptList = ["One of your characters receives an anonymous gift.",
     "Your character invites someone they don’t like over for dinner.",
     "A character is scared that someone will find out about something they did.",
@@ -53,7 +56,7 @@ const promptList = ["One of your characters receives an anonymous gift.",
     "A crowd has gathered.",
     "Something has a dual function.",
     "The only useful thing is in the corner."];
-var count = 0;
+
 const tickTimer = gameloop.setGameLoop(function(delta) {
     logger.info('(Count=%s, Delta=%s)', count++, delta);
     for (item in challengeList){
@@ -62,9 +65,9 @@ const tickTimer = gameloop.setGameLoop(function(delta) {
     for (item in goalList){
     	goalList[item].update();
     }
- }
+ });
 
-client.on('ready', () => {
+ client.on('ready', () => {
     logger.info('Winnie_Bot is online');
 });
 
@@ -80,7 +83,7 @@ class Sprint {
 
         this.cStart = this.countdown * 60;
         this.cDur = this.duration * 60;
-        this.cPost = 600;
+        this.cPost = durationAfterChallenge;
 
         if(this.countdown == 1) {
             channel.send("Your sprint, " + this.displayName + " (ID " + this.objectID + "), starts in " + this.countdown + " minute.");
@@ -160,7 +163,7 @@ class War{
 
         this.cStart = this.countdown * 60;
         this.cDur = this.duration * 60;
-        this.cPost = 600;
+        this.cPost = durationAfterChallenge;
 
         if(this.countdown == 1) {
             this.channel.send("Your war, " + this.displayName + " (ID " + this.objectID + "), starts in " + this.countdown + " minute.");
@@ -229,40 +232,28 @@ class War{
 }
 
 class Goal {
-    constructor(creator, goal, terminationTime) {
+    constructor(creator, goal, startTime, terminationTime) {
         this.creator = creator;
         this.goal = goal;
         this.written = 0;
+        this.startTime = startTime;
         this.terminationTime = terminationTime;
-
-        this.cStart = this.countdown * 60;
-        this.cDur = this.duration * 60;
-        this.cPost = 600;
     }
 
     update() {
-        switch(this.state){
-            case 0:
-                this.start();
-                break;
-            case 1:
-                this.end();
-                break;
-            case 2:
-                this.terminate();
-                break;
-            default:
-                channel.send("Error: Invalid state reached.");
-                break;
+        if(timezoneJS.Date.now() == this.terminationTime) {
+            delete goalList[creator];
         }
     }
 
-    addWords() {
-        //placeholder
-    }
-    terminate() {
-        if(this.cPost == 0) {
-            delete challengeList[objectID];
+    addWords(wordNumber, type) {
+        switch(type){
+            case 0:
+                this.written += parseInt(wordNumber);
+                break;
+            case 1:
+                this.written = parseInt(wordNumber);
+                break;
         }
     }
 }
@@ -510,10 +501,33 @@ var cmd_list = {
             }
 	    }
     },
+    "timezone": {
+        name: "!timezone",
+        description: "Sets your <IANA timezone identifier>",
+        usage: "<IANA timezone identifier>",
+		process: function(client,msg,suffix) {
+            var timezone = suffix.split(" ");
+            if(!Number.isInteger(Number(timezone))){
+                msg.channel.send("Winnie_Bot accepts IANA canonical timezones only.")
+            } else if(typeof(goalList[msg.author.id]) != "undefined") {
+                msg.channel.send(msg.author + ", you have already set a goal today. Use !update to record your progress.");
+            } else {
+                //get current time
+                startTime = Date.now();
+                //get timezone
+                timezone = 10;
+                offset = timezone * 60000;
+                //calculate next midnight based on timezone
+
+                goalList[msg.author.id] = new Goal(msg.author.id, words, startTime, terminationTime);
+                msg.channel.send(msg.author + ", your goal for today is **" + words + "** words.");
+            }
+	    }
+    },
     "set": {
         name: "!set",
-        description: "Sets a daily goal of <words> with optional [timezone]",
-        usage: "<words> [timezone]",
+        description: "Sets a daily goal of <words>",
+        usage: "<words>",
 		process: function(client,msg,suffix) {
             var words = suffix.split(" ");
             if(!Number.isInteger(Number(words))){
@@ -521,13 +535,21 @@ var cmd_list = {
             } else if(typeof(goalList[msg.author.id]) != "undefined") {
                 msg.channel.send(msg.author + ", you have already set a goal today. Use !update to record your progress.");
             } else {
-                goalList[msg.author.id] = {"words": parseInt(words), "written": 0};
                 //get current time
-                startTime = Date.now();
+                startTime = timezoneJS.Date.now();
+                logger.info(startTime);
                 //get timezone
                 timezone = 10;
-                offset = timezone * 60000;
+                offset = timezone * 3600000;
+                logger.info(offset);
                 //calculate next midnight based on timezone
+                endTime = (Math.ceil(startTime / 86400000) * 86400000) - offset;
+                if (endTime <= startTime) {
+                    endTime += 86400000;
+                }
+                logger.info(Math.ceil(startTime / 86400000));
+                logger.info(endTime);
+                goalList[msg.author.id] = new Goal(msg.author.id, words, startTime, endTime);
                 msg.channel.send(msg.author + ", your goal for today is **" + words + "** words.");
             }
 	    }
@@ -544,7 +566,7 @@ var cmd_list = {
             } else if(typeof(goalList[msg.author.id]) == "undefined") {
                 msg.channel.send(msg.author + ", you have not yet set a goal for today. Use !set to do so.");
             } else {
-                goalList[msg.author.id].written += parseInt(words);
+                goalList[msg.author.id].addWords(words, 0);
                 msg.channel.send(msg.author + ", you have written **" + goalList[msg.author.id].written + "** words of your **" + goalList[msg.author.id].words + "**-word goal.");
             }
 	    }
@@ -560,7 +582,7 @@ var cmd_list = {
             } else if(typeof(goalList[msg.author.id]) == "undefined") {
                 msg.channel.send(msg.author + ", you have not yet set a goal for today. Use !set to do so.");
             } else {
-                goalList[msg.author.id].written = parseInt(words);
+                goalList[msg.author.id].addWords(words, 1);
                 msg.channel.send(msg.author + ", you have written **" + goalList[msg.author.id].written + "** words of your **" + goalList[msg.author.id].words + "**-word goal.");
             }
 	    }
