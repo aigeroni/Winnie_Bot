@@ -4,6 +4,8 @@ const config = require('./config.json');
 const logger = require('./logger.js');
 const gameloop = require('node-gameloop');
 const timezoneJS = require('timezone-js');
+timezoneJS.timezone.zoneFileBasePath = 'node_modules/timezone-js/tz';
+timezoneJS.timezone.init();
 var timerID = 1;
 var challengeList = {};
 var goalList = {};
@@ -58,7 +60,7 @@ const promptList = ["One of your characters receives an anonymous gift.",
     "The only useful thing is in the corner."];
 
 const tickTimer = gameloop.setGameLoop(function(delta) {
-    logger.info('(Count=%s, Delta=%s)', count++, delta);
+    //logger.info('(Count=%s, Delta=%s)', count++, delta);
     for (item in challengeList){
         challengeList[item].update();
     }
@@ -241,7 +243,7 @@ class Goal {
     }
 
     update() {
-        if(timezoneJS.Date.now() == this.terminationTime) {
+        if(new timezoneJS.Date() == this.terminationTime) {
             delete goalList[creator];
         }
     }
@@ -373,12 +375,16 @@ var cmd_list = {
     },
     "total": {
         name: "!total",
-        description: "Adds your total for completed challenge <id>",
-        usage: "<id> <words>",
+        description: "Adds your <total> for completed challenge <id>, optional [pages/lines] for scriptwriters",
+        usage: "<id> <total> [pages/lines]",
         process: function(client,msg,suffix) {
             var args = suffix.split(" ");
             var challengeID = args.shift();
             var wordsWritten = args.shift();
+            var projectTypeID = args.shift();
+            // if(projectTypeID != '') {
+            //     if(projectTypeID
+            // }
             if (challengeID in challengeList) {
                 if (challengeList[challengeID].state == 2) {
                     if(Number.isInteger(parseInt(wordsWritten))){
@@ -505,22 +511,35 @@ var cmd_list = {
         name: "!timezone",
         description: "Sets your <IANA timezone identifier>",
         usage: "<IANA timezone identifier>",
-		process: function(client,msg,suffix) {
-            var timezone = suffix.split(" ");
-            if(!Number.isInteger(Number(timezone))){
-                msg.channel.send("Winnie_Bot accepts IANA canonical timezones only.")
-            } else if(typeof(goalList[msg.author.id]) != "undefined") {
-                msg.channel.send(msg.author + ", you have already set a goal today. Use !update to record your progress.");
-            } else {
-                //get current time
-                startTime = Date.now();
+		process: async function(client,msg,suffix) {
+            var timezone = suffix;
+            var dt = new timezoneJS.Date();
+            try{
+                //check to see if timezone is in IANA library
+                dt.setTimezone(timezone)
+                //create new role if needed, find role ID
+                if (msg.guild.roles.find("name", timezone) === null){
+                    await msg.guild.createRole({name: timezone});
+                    tzRole = msg.guild.roles.find("name", timezone);
+                } else {
+                    tzRole = msg.guild.roles.find("name", timezone);
+                }
                 //get timezone
-                timezone = 10;
-                offset = timezone * 60000;
-                //calculate next midnight based on timezone
-
-                goalList[msg.author.id] = new Goal(msg.author.id, words, startTime, terminationTime);
-                msg.channel.send(msg.author + ", your goal for today is **" + words + "** words.");
+                // regionRegex = /^(Africa|America|Antarctica|Asia|Atlantic|Australia|Europe|Indian|Pacific|Etc)/;
+                // currentRoleList = msg.member.roles.filter(function (a) {
+                //     return regionRegex.test(a.name);
+                // });
+                // logger.info(currentRoleList);
+                // currentRoleArray = currentRoleList.array();
+                // for(role in currentRoleArray) {
+                //     logger.info(role.toString());
+                //     msg.member.removeRole(role);
+                // }
+                //add user to role, confirm
+                msg.member.addRole(tzRole);
+                msg.channel.send(msg.author + ", you have set your timezone to **" + timezone + "**.");
+            } catch(e) {
+                msg.channel.send("Winnie_Bot accepts IANA canonical timezones only.")
             }
 	    }
     },
@@ -535,20 +554,20 @@ var cmd_list = {
             } else if(typeof(goalList[msg.author.id]) != "undefined") {
                 msg.channel.send(msg.author + ", you have already set a goal today. Use !update to record your progress.");
             } else {
-                //get current time
-                startTime = timezoneJS.Date.now();
-                logger.info(startTime);
                 //get timezone
-                timezone = 10;
-                offset = timezone * 3600000;
-                logger.info(offset);
+                regionRegex = /^(Africa|America|Antarctica|Asia|Atlantic|Australia|Europe|Indian|Pacific|Etc)/;
+                tzRole = msg.member.roles.filter(function (a) {
+                    return regionRegex.test(a.name);
+                });
+                userTZ = tzRole.name;
+                //get current time
+                startTime = new timezoneJS.Date();
+                startTime.setTimezone(userTZ);
+                //logger.info(startTime);
                 //calculate next midnight based on timezone
-                endTime = (Math.ceil(startTime / 86400000) * 86400000) - offset;
-                if (endTime <= startTime) {
-                    endTime += 86400000;
-                }
-                logger.info(Math.ceil(startTime / 86400000));
-                logger.info(endTime);
+                endTime = startTime;
+                endTime.setHours(24,0,0,0);
+                //logger.info(endTime);
                 goalList[msg.author.id] = new Goal(msg.author.id, words, startTime, endTime);
                 msg.channel.send(msg.author + ", your goal for today is **" + words + "** words.");
             }
