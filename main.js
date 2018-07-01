@@ -552,7 +552,7 @@ var cmd_list = {
             var goalType = args.shift();
             if(!Number.isInteger(Number(goal))){
                 msg.channel.send("Invalid input. Your goal must be a whole number.")
-            } else if(!(msg.author.id in goalList)) {
+            } else if((msg.author.id in goalList)) {
                 msg.channel.send(msg.author + ", you have already set a goal today. Use !update to record your progress.");
             } else {
                 if (!(goalType == 'lines' || goalType == 'pages' || goalType == 'minutes' || goalType == 'words' || goalType === undefined)) {
