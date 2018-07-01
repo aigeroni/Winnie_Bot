@@ -60,14 +60,14 @@ const promptList = ["One of your characters receives an anonymous gift.",
     "The only useful thing is in the corner."];
 
 const tickTimer = gameloop.setGameLoop(function(delta) {
-    //logger.info('(Count=%s, Delta=%s)', count++, delta);
+    logger.info('(Count=%s, Delta=%s)', count++, delta);
     for (item in challengeList){
         challengeList[item].update();
     }
     for (item in goalList){
     	goalList[item].update();
     }
- });
+ }, 1000);
 
  client.on('ready', () => {
     logger.info('Winnie_Bot is online');
@@ -234,9 +234,10 @@ class War{
 }
 
 class Goal {
-    constructor(creator, goal, startTime, terminationTime) {
+    constructor(creator, goal, goalType, startTime, terminationTime) {
         this.creator = creator;
         this.goal = goal;
+        this.goalType = goalType;
         this.written = 0;
         this.startTime = startTime;
         this.terminationTime = terminationTime;
@@ -319,13 +320,12 @@ var cmd_list = {
         description: "Joins war/sprint with ID <id>",
         usage: "<id>",
 	    process: function(client,msg,suffix) {
-            var args = suffix.split(" ");
-            var challengeID = args.shift();
+            var challengeID = suffix;
             if (challengeID in challengeList) {
                 if(msg.author.id in challengeList[challengeID].joinedUsers) {
                     msg.channel.send(msg.author + ", you already have notifications enabled for this challenge.");
                 } else {
-                    challengeList[challengeID].joinedUsers[msg.author.id] = {"userData": msg.author, "countData": undefined};
+                    challengeList[challengeID].joinedUsers[msg.author.id] = {"userData": msg.author, "countData": undefined, "countType": undefined};
                     msg.channel.send(msg.author + ", you have joined " + challengeList[challengeID].displayName);
                 }
             } else {
@@ -338,8 +338,7 @@ var cmd_list = {
         description: "Leaves war/sprint with ID <id>",
         usage: "<id>",
 	    process: function(client,msg,suffix) {
-            var args = suffix.split(" ");
-            var challengeID = args.shift();
+            var challengeID = suffix;
             if (challengeID in challengeList) {
                 if(msg.author.id in challengeList[challengeID].joinedUsers) {
                     delete challengeList[challengeID].joinedUsers[msg.author.id];
@@ -357,8 +356,7 @@ var cmd_list = {
         description: "Ends war/sprint with ID <id>. Can only be performed by creator.",
         usage: "<id>",
 	    process: function(client,msg,suffix) {
-            var args = suffix.split(" ");
-            var challengeID = args.shift();
+            var challengeID = suffix;
             if (challengeID in challengeList) {
                 if(challengeList[challengeID].creator == msg.author.id) {
                     exName = challengeList[challengeID].displayName;
@@ -381,21 +379,26 @@ var cmd_list = {
             var args = suffix.split(" ");
             var challengeID = args.shift();
             var wordsWritten = args.shift();
-            var projectTypeID = args.shift();
-            // if(projectTypeID != '') {
-            //     if(projectTypeID
-            // }
+            var writtenType = args.shift();
+            if (!(writtenType == 'lines' || writtenType == 'pages' || writtenType == 'minutes' || writtenType == 'words' || writtenType === undefined)) {
+                msg.channel.send("Invalid input.  You must work in words, lines, pages, or minutes.");
+            } else {
+                if (writtenType === undefined) {
+                    writtenType = 'words';
+                }
+            }
             if (challengeID in challengeList) {
                 if (challengeList[challengeID].state == 2) {
                     if(Number.isInteger(parseInt(wordsWritten))){
                         for(user in challengeList[challengeID].joinedUsers) {
                             if(challengeList[challengeID].joinedUsers[user].userData.id == msg.author.id) {
-                                challengeList[item].joinedUsers[user].countData = wordsWritten;
+                                challengeList[challengeID].joinedUsers[user].countData = wordsWritten;
+                                challengeList[challengeID].joinedUsers[user].countType = writtenType;
                             }
                         }
                         msg.channel.send("Total added to summary.");
                     } else {
-                        msg.channel.send(msg.author + ", I need a whole number of words to include in the summary!");
+                        msg.channel.send(msg.author + ", I need a whole number to include in the summary!");
                     }
                 } else {
                     msg.channel.send("This challenge has not ended yet!");
@@ -410,16 +413,14 @@ var cmd_list = {
         description: "Shows the summary for completed challenge <id>",
         usage: "<id>",
         process: function(client,msg,suffix) {
-            var args = suffix.split(" ");
-            var challengeID = args.shift();
+            var challengeID = suffix;
             if (challengeID in challengeList) {
                 if (challengeList[challengeID].state == 2) {
                     var userTotal = "";
                     var totalWords = 0;
                     for(var user in challengeList[challengeID].joinedUsers) {
-                        logger.info(challengeList[challengeID].joinedUsers[user].countData);
-                        if(Number.isInteger(Number(challengeList[challengeID].joinedUsers[user].countData))){
-                            userTotal += "\n" + challengeList[challengeID].joinedUsers[user].userData + ": **" + challengeList[challengeID].joinedUsers[user].countData + "** words";
+                        if(Number.isInteger(Number(challengeList[challengeID].joinedUsers[user].countData)) && challengeList[challengeID].joinedUsers[user].countType != undefined){
+                            userTotal += "\n" + challengeList[challengeID].joinedUsers[user].userData + ": **" + challengeList[challengeID].joinedUsers[user].countData + "** " + challengeList[challengeID].joinedUsers[user].countType;
                             totalWords += parseInt(challengeList[challengeID].joinedUsers[user].countData);
                         }
                     }
@@ -520,19 +521,17 @@ var cmd_list = {
                 //create new role if needed, find role ID
                 if (msg.guild.roles.find("name", timezone) === null){
                     await msg.guild.createRole({name: timezone});
-                    tzRole = msg.guild.roles.find("name", timezone);
-                } else {
-                    tzRole = msg.guild.roles.find("name", timezone);
                 }
+                tzRole = msg.guild.roles.find("name", timezone);
                 //get timezone
-                // regionRegex = /^(Africa|America|Antarctica|Asia|Atlantic|Australia|Europe|Indian|Pacific|Etc)/;
-                // currentRoleList = msg.member.roles.filter(function (a) {
-                //     return regionRegex.test(a.name);
-                // });
+                regionRegex = /^(Africa|America|Antarctica|Asia|Atlantic|Australia|Europe|Indian|Pacific|Etc)/;
+                currentRoleList = msg.member.roles.filter(function (a) {
+                    return regionRegex.test(a.name);
+                });
                 // logger.info(currentRoleList);
-                // currentRoleArray = currentRoleList.array();
-                // for(role in currentRoleArray) {
-                //     logger.info(role.toString());
+                // for(var role in currentRoleList) {
+                //     logger.info(role);
+                //     logger.info(currentRoleList[role]);
                 //     msg.member.removeRole(role);
                 // }
                 //add user to role, confirm
@@ -545,31 +544,39 @@ var cmd_list = {
     },
     "set": {
         name: "!set",
-        description: "Sets a daily goal of <words>",
-        usage: "<words>",
+        description: "Sets a daily goal <goal>, with optional [type]",
+        usage: "<goal> [lines|pages|minutes]",
 		process: function(client,msg,suffix) {
-            var words = suffix.split(" ");
-            if(!Number.isInteger(Number(words))){
+            var args = suffix.split(" ");
+            var goal = args.shift();
+            var goalType = args.shift();
+            if(!Number.isInteger(Number(goal))){
                 msg.channel.send("Invalid input. Your goal must be a whole number.")
-            } else if(typeof(goalList[msg.author.id]) != "undefined") {
+            } else if(typeof(goalList[msg.author.id]) != undefined) {
                 msg.channel.send(msg.author + ", you have already set a goal today. Use !update to record your progress.");
             } else {
-                //get timezone
-                regionRegex = /^(Africa|America|Antarctica|Asia|Atlantic|Australia|Europe|Indian|Pacific|Etc)/;
-                tzRole = msg.member.roles.filter(function (a) {
-                    return regionRegex.test(a.name);
-                });
-                userTZ = tzRole.name;
-                //get current time
-                startTime = new timezoneJS.Date();
-                startTime.setTimezone(userTZ);
-                //logger.info(startTime);
-                //calculate next midnight based on timezone
-                endTime = startTime;
-                endTime.setHours(24,0,0,0);
-                //logger.info(endTime);
-                goalList[msg.author.id] = new Goal(msg.author.id, words, startTime, endTime);
-                msg.channel.send(msg.author + ", your goal for today is **" + words + "** words.");
+                if (!(goalType == 'lines' || goalType == 'pages' || goalType == 'minutes' || goalType == 'words' || goalType === undefined)) {
+                    msg.channel.send("Invalid input.  Goal type must be lines, pages, or minutes.");
+                } else {
+                    if (goalType === undefined) {
+                        goalType = 'words';
+                    }
+                    //get timezone
+                    regionRegex = /^(Africa|America|Antarctica|Asia|Atlantic|Australia|Europe|Indian|Pacific|Etc)/;
+                    tzRole = msg.member.roles.filter(function (a) {
+                        return regionRegex.test(a.name);
+                    });
+                    userTZ = tzRole.name;
+                    //get current time
+                    startTime = new timezoneJS.Date();
+                    startTime.setTimezone(userTZ);
+                    //calculate next midnight based on timezone
+                    endTime = startTime;
+                    endTime.setHours(24,0,0,0);
+                    logger.info(goal);
+                    goalList[msg.author.id] = new Goal(msg.author.id, goal, goalType, startTime, endTime);
+                    msg.channel.send(msg.author + ", your goal for today is **" + goal + "** " + goalType + ".");
+                }
             }
 	    }
     },
@@ -578,15 +585,14 @@ var cmd_list = {
         description: "Updates your daily goal with the number of <words> you have completed since your last update",
         usage: "<words>",
 		process: function(client,msg,suffix) {
-            var words = suffix.split(" ");
-            logger.info(words);
-            if(!Number.isInteger(parseInt(words))){
+            var goal = suffix;
+            if(!Number.isInteger(parseInt(goal))){
                 msg.channel.send("Invalid input. Your goal must be a whole number.")
-            } else if(typeof(goalList[msg.author.id]) == "undefined") {
+            } else if(!(msg.author.id in goalList)) {
                 msg.channel.send(msg.author + ", you have not yet set a goal for today. Use !set to do so.");
             } else {
-                goalList[msg.author.id].addWords(words, 0);
-                msg.channel.send(msg.author + ", you have written **" + goalList[msg.author.id].written + "** words of your **" + goalList[msg.author.id].words + "**-word goal.");
+                goalList[msg.author.id].addWords(goal, 0);
+                msg.channel.send(msg.author + ", you have written **" + goalList[msg.author.id].written + "** " + goalList[msg.author.id].goalType + " of your **" + goalList[msg.author.id].goal + "**-" + goalList[msg.author.id].goalType.slice(0, -1) + " goal.");
             }
 	    }
     },
@@ -595,14 +601,14 @@ var cmd_list = {
         description: "Updates your daily goal with the total number of <words> you have completed today",
         usage: "<words>",
 		process: function(client,msg,suffix) {
-	    	var words = suffix.split(" ");
-            if(!Number.isInteger(parseInt(words))){
+	    	var goal = suffix;
+            if(!Number.isInteger(parseInt(goal))){
                 msg.channel.send("Invalid input. Your goal must be a whole number.")
-            } else if(typeof(goalList[msg.author.id]) == "undefined") {
+            } else if(!(msg.author.id in goalList)) {
                 msg.channel.send(msg.author + ", you have not yet set a goal for today. Use !set to do so.");
             } else {
-                goalList[msg.author.id].addWords(words, 1);
-                msg.channel.send(msg.author + ", you have written **" + goalList[msg.author.id].written + "** words of your **" + goalList[msg.author.id].words + "**-word goal.");
+                goalList[msg.author.id].addWords(goal, 1);
+                msg.channel.send(msg.author + ", you have written **" + goalList[msg.author.id].written + "** " + goalList[msg.author.id].goalType + " of your **" + goalList[msg.author.id].goal + "**-" + goalList[msg.author.id].goalType.slice(0, -1) + " goal.");
             }
 	    }
     },
@@ -610,10 +616,10 @@ var cmd_list = {
         name: "!reset",
         description: "Resets your daily goal",
 		process: function(client,msg,suffix) {
-            if(typeof(goalList[msg.author.id]) == "undefined") {
+            if(!(msg.author.id in goalList)) {
                 msg.channel.send(msg.author + ", you have not yet set a goal for today. Use !set to do so.");
             } else {
-                goalList[msg.author.id] = undefined;
+                delete goalList[msg.author.id];
                 msg.channel.send(msg.author + ", you have successfully reset your daily goal.");
             }
 	    }
@@ -632,10 +638,10 @@ var cmd_list = {
         name: "!goalinfo",
         description: "Displays progress towards your daily goal",
 		process: function(client,msg,suffix) {
-            if(typeof(goalList[msg.author.id]) == "undefined") {
+            if(typeof(!(msg.author.id in goalList))) {
                 msg.channel.send(msg.author + ", you have not yet set a goal for today. Use !set to do so.");
             } else {
-                msg.channel.send(msg.author + ", you have written **" + goalList[msg.author.id].written + "** words of your **" + goalList[msg.author.id].words + "**-word goal.");
+                msg.channel.send(msg.author + ", you have written **" + goalList[msg.author.id].written + "** " + goalList[msg.author.id].goalType + " of your **" + goalList[msg.author.id].goal + "**-" + goalList[msg.author.id].goalType.slice(0, -1) + " goal.");
             }
 		}
     },
