@@ -9,7 +9,6 @@ timezoneJS.timezone.init();
 var timerID = 1;
 var challengeList = {};
 var goalList = {};
-var count = 0;
 const durationAfterChallenge = 600;
 const promptList = ["One of your characters receives an anonymous gift.",
     "Your character invites someone they don’t like over for dinner.",
@@ -60,11 +59,10 @@ const promptList = ["One of your characters receives an anonymous gift.",
     "The only useful thing is in the corner."];
 
 const tickTimer = gameloop.setGameLoop(function(delta) {
-    // logger.info('(Count=%s, Delta=%s)', count++, delta);
-    for (item in challengeList){
+    for (var item in challengeList){
         challengeList[item].update();
     }
-    for (item in goalList){
+    for (var item in goalList){
     	goalList[item].update();
     }
  }, 1000);
@@ -88,9 +86,13 @@ class Sprint {
         this.cPost = durationAfterChallenge;
 
         if(this.countdown == 1) {
-            channel.send("Your sprint, " + this.displayName + " (ID " + this.objectID + "), starts in " + this.countdown + " minute.");
+            channel.send("Your sprint, " + this.displayName
+                + " (ID " + this.objectID + "), starts in " + this.countdown
+                + " minute.");
         } else {
-            channel.send("Your sprint, " + this.displayName + " (ID " + this.objectID + "), starts in " + this.countdown + " minutes.");
+            channel.send("Your sprint, " + this.displayName
+                + " (ID " + this.objectID + "), starts in " + this.countdown
+                + " minutes.");
         }
     }
 
@@ -118,14 +120,17 @@ class Sprint {
             for(var user in this.joinedUsers) {
                 userList += " " + this.joinedUsers[user].userData;
             }
-            channel.send(this.displayName + " starts now! Race to " + this.goal + " words!" + userList);
+            channel.send(this.displayName + " starts now! Race to "
+                + this.goal + " words!" + userList);
             this.state = 1
         } else if(this.cStart == 60) {
             channel.send(this.displayName + " starts in 1 minute.");
         } else if(this.cStart % 60 == 0) {
-            channel.send(this.displayName + " starts in " + this.cStart / 60 + " minutes.");
+            channel.send(this.displayName + " starts in "
+                + this.cStart / 60 + " minutes.");
         } else if(this.cStart < 60 && this.cStart % 15 == 0) {
-            channel.send(this.displayName + " starts in " + this.cStart + " seconds.");
+            channel.send(this.displayName + " starts in "
+                + this.cStart + " seconds.");
         }
     }
     end() {
@@ -135,14 +140,19 @@ class Sprint {
             for(var user in this.joinedUsers) {
                 userList += " " + this.joinedUsers[user].userData;
             }
-            channel.send(this.displayName + " has timed out. Post your total to be included in the summary." + userList);
+            channel.send(this.displayName
+                + " has timed out. Post your total to be "
+                + "included in the summary." + userList);
             this.state = 2;
         } else if(this.cDur == 60) {
-            channel.send("There is 1 minute remaining in " + this.displayName + ".");
+            channel.send("There is 1 minute remaining in "
+                + this.displayName + ".");
         } else if(this.cDur % 300 == 0) {
-            channel.send("There are " + this.cDur/60 + " minutes remaining in " + this.displayName + ".");
+            channel.send("There are " + this.cDur/60 + " minutes remaining in "
+                + this.displayName + ".");
         } else if(this.cDur < 60 && this.cDur % 15 == 0) {
-            channel.send("There are " + this.cDur + " seconds remaining in " + this.displayName + ".");
+            channel.send("There are " + this.cDur + " seconds remaining in "
+                + this.displayName + ".");
         }
     }
     terminate() {
@@ -244,7 +254,7 @@ class Goal {
     }
 
     update() {
-        if(new timezoneJS.Date() == this.terminationTime) {
+        if(new timezoneJS.Date() >= this.terminationTime) {
             delete goalList[creator];
         }
     }
@@ -273,18 +283,20 @@ var cmd_list = {
             var timeout = args.shift();
             var sprint_name = args.join(' ');
             if(!Number.isInteger(Number(words)) || isNaN(start) || isNaN(timeout)){
-                msg.channel.send("Invalid input. Start interval must be a number, word goal must be a whole number.")
+                msg.channel.send("Invalid input. Start interval must be a number, word goal must be a whole number.");
+            } else if (timeout > 60) {
+                msg.channel.send("Invalid input. Sprints cannot last for more than an hour.")
             } else {
                 try{
-                    creatorID = msg.author.id;
+                    var creatorID = msg.author.id;
                     if(sprint_name == '') {
                         sprint_name = msg.author.username + "'s sprint";
                     }
                     challengeList[timerID] = new Sprint(timerID, creatorID, sprint_name, start, words, timeout, msg.channel);
                     timerID = timerID + 1;
                 } catch(e) {
-                    msg.channel.send("If you are seeing this message, Winnie_Bot has gone on holiday.");
-                    logger.info(e);
+                    msg.channel.send("Error: Sprint creation failed.");
+                    logger.info('Error %s: %s.', e, e.stack);
                 }
             }
         }
@@ -300,17 +312,49 @@ var cmd_list = {
             var war_name = args.join(' ');
             if(isNaN(length) || isNaN(start)){
                 msg.channel.send("Invalid input. Start interval and length must be numbers.")
+            } else if (length > 60) {
+                msg.channel.send("Invalid input. Wars cannot last for more than an hour.")
             } else {
                 try{
-                    creatorID = msg.author.id;
+                    var creatorID = msg.author.id;
                     if(war_name == '') {
                         war_name = msg.author.username + "'s war";
                     }
                     challengeList[timerID] = new War(timerID, creatorID, war_name, start, length, msg.channel);
                     timerID = timerID + 1;
                 } catch(e) {
-                    msg.channel.send("If you are seeing this message, Winnie_Bot has gone on holiday.");
-                    logger.info(e);
+                    msg.channel.send("Error: War creation failed.");
+                    logger.info('Error %s: %s.', e, e.stack);
+                }
+            }
+	    }
+    },
+    "chainwar": {
+        name: "!chainwar",
+        description: "Starts a chain of <number of wars>, each of <length> minutes, in [delay] minutes, with [break] minutes between wars, and optional [name]",
+        usage: "<number of wars> <length> [delay] [break] [name]",
+	    process: function(client,msg,suffix) {
+            var args = suffix.split(" ");
+            var chainWarCount = args.shift();
+            var length = args.shift();
+            var start = args.shift();
+            //add checking to split optional arguments
+            // var advancedArgs = args;
+            if(isNaN(chainWarCount) || isNaN(length) || isNaN(start)){
+                msg.channel.send("Invalid input. Number of wars, start interval, and length must be numbers.")
+            } else if (length * chainWarCount > 60) {
+                msg.channel.send("Invalid input. Chain wars cannot last for more than an hour in total.")
+            } else {
+                try{
+                    var creatorID = msg.author.id;
+                    if(war_name == '') {
+                        war_name = msg.author.username + "'s war";
+                    }
+                    challengeList[timerID] = new War(timerID, creatorID, war_name, start, length, msg.channel);
+                    timerID = timerID + 1;
+                } catch(e) {
+                    msg.channel.send("Error: Chain war creation failed.");
+                    logger.info('Error %s: %s.', e, e.stack);
                 }
             }
 	    }
@@ -358,8 +402,8 @@ var cmd_list = {
 	    process: function(client,msg,suffix) {
             var challengeID = suffix;
             if (challengeID in challengeList) {
+                var exName = challengeList[challengeID].displayName;
                 if(challengeList[challengeID].creator == msg.author.id) {
-                    exName = challengeList[challengeID].displayName;
                     delete challengeList[challengeID];
                     msg.channel.send(exName + " has been successfully exterminated.");
                     
@@ -442,9 +486,9 @@ var cmd_list = {
                 msg.channel.send("There are no challenges running. Why don't you start one?");
             } else {
                 if(Object.keys(challengeList).length == 1) {
-                    timerInfo = "There is " + Object.keys(challengeList).length + " challenge running:\n";
+                    var timerInfo = "There is " + Object.keys(challengeList).length + " challenge running:\n";
                 } else {
-                    timerInfo = "There are " + Object.keys(challengeList).length + " challenges running:\n";
+                    var timerInfo = "There are " + Object.keys(challengeList).length + " challenges running:\n";
                 }
                 for(var i in challengeList) {
                     switch(challengeList[i].state){
@@ -455,7 +499,6 @@ var cmd_list = {
                             } else {
                                 timeout = challengeList[i].cStart % 60;
                             }
-                            logger.info(timeout);
                             timerInfo += i + ": " + challengeList[i].displayName
                             timerInfo += " (starts in " + Math.floor(challengeList[i].cStart / 60) + ":" + timeout + ")\n";
                             break;
@@ -466,7 +509,6 @@ var cmd_list = {
                             } else {
                                 timeout = challengeList[i].cDur % 60;
                             }
-                            logger.info(timeout);
                             timerInfo += i + ": " + challengeList[i].displayName 
                             timerInfo += " (" + Math.floor(challengeList[i].cDur / 60) + ":" + timeout + " remaining)\n";
                             break;
@@ -500,11 +542,18 @@ var cmd_list = {
                         break;
                     case "hard":
                         base = 36;
+                        break;
+                    default:
+                        base = null;
                         break;    
                 }
-                goalPerMinute = ((Math.ceil(Math.random() * 12) + base));
-                goalTotal = (goalPerMinute * time);
-                msg.channel.send(msg.author + ", your goal is **" + goalTotal + "**.");
+                if (base === null) {
+                    msg.channel.send("Invalid input. You need to select an easy, average, or hard goal.");
+                } else {
+                    var goalPerMinute = ((Math.ceil(Math.random() * 12) + base));
+                    var goalTotal = (goalPerMinute * time);
+                    msg.channel.send(msg.author + ", your goal is **" + goalTotal + "**.");
+                }
             }
 	    }
     },
@@ -514,15 +563,15 @@ var cmd_list = {
         usage: "<IANA timezone identifier>",
 		process: async function(client,msg,suffix) {
             var timezone = suffix;
-            var dt = new timezoneJS.Date();
+            var dateCheck = new timezoneJS.Date();
             try{
                 //check to see if timezone is in IANA library
-                dt.setTimezone(timezone)
+                dateCheck.setTimezone(timezone)
                 //create new role if needed, find role ID
                 if (msg.guild.roles.find("name", timezone) === null){
                     await msg.guild.createRole({name: timezone});
                 }
-                tzRole = msg.guild.roles.find("name", timezone);
+                var tzRole = msg.guild.roles.find("name", timezone);
                 //get timezone
                 regionRegex = /^(Africa|America|Antarctica|Asia|Atlantic|Australia|Europe|Indian|Pacific|Etc)/;
                 currentRoleList = msg.member.roles.filter(function (a) {
@@ -562,18 +611,17 @@ var cmd_list = {
                         goalType = 'words';
                     }
                     //get timezone
-                    regionRegex = /^(Africa|America|Antarctica|Asia|Atlantic|Australia|Europe|Indian|Pacific|Etc)/;
-                    tzRole = msg.member.roles.filter(function (a) {
+                    var regionRegex = /^(Africa|America|Antarctica|Asia|Atlantic|Australia|Europe|Indian|Pacific|Etc)/;
+                    var tzRole = msg.member.roles.filter(function (a) {
                         return regionRegex.test(a.name);
                     });
-                    userTZ = tzRole.name;
+                    var userTZ = tzRole.name;
                     //get current time
-                    startTime = new timezoneJS.Date();
+                    var startTime = new timezoneJS.Date();
                     startTime.setTimezone(userTZ);
                     //calculate next midnight based on timezone
-                    endTime = startTime;
+                    var endTime = startTime;
                     endTime.setHours(24,0,0,0);
-                    logger.info(goal);
                     goalList[msg.author.id] = new Goal(msg.author.id, goal, goalType, startTime, endTime);
                     msg.channel.send(msg.author + ", your goal for today is **" + goal + "** " + goalType + ".");
                 }
@@ -628,9 +676,7 @@ var cmd_list = {
         name: "!prompt",
         description: "Provides a writing prompt",
 		process: function(client,msg,suffix) {
-            logger.info(promptList.length);
             var choiceID = (Math.floor(Math.random() * promptList.length))
-            logger.info(choiceID);
             msg.channel.send(msg.author + ", your prompt is: **" + promptList[choiceID].trim() + "**");
 		}
     },
@@ -638,7 +684,7 @@ var cmd_list = {
         name: "!goalinfo",
         description: "Displays progress towards your daily goal",
 		process: function(client,msg,suffix) {
-            if(typeof(!(msg.author.id in goalList))) {
+            if(!(msg.author.id in goalList)) {
                 msg.channel.send(msg.author + ", you have not yet set a goal for today. Use !set to do so.");
             } else {
                 msg.channel.send(msg.author + ", you have written **" + goalList[msg.author.id].written + "** " + goalList[msg.author.id].goalType + " of your **" + goalList[msg.author.id].goal + "**-" + goalList[msg.author.id].goalType.slice(0, -1) + " goal.");
@@ -771,8 +817,8 @@ client.on('message', (msg) => {
 		    try{
 				cmd.process(client,msg,suffix);
 			} catch(e){
-                msg.channel.send("If you are reading this message, Winnie_Bot has gone on holiday.");
-                logger.info(e);
+                msg.channel.send("Unknown error.  See log file for details.");
+                logger.info('Error %s: %s.', e, e.stack);
 			}
 		} else {
 			msg.channel.send(cmd_data + " is not a valid command. Type !help for a list of commands.").then((message => message.delete(2500)))
