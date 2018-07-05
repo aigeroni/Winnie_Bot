@@ -78,19 +78,21 @@ class Sprint {
         this.displayName = displayName;
         this.countdown = countdown;
         this.goal = goal;
-        this.timeout = timeout;
+        this.duration = timeout;
+        this.channel = channel;
         this.joinedUsers = {};
+        this.state = 0;
 
         this.cStart = this.countdown * 60;
         this.cDur = this.duration * 60;
         this.cPost = durationAfterChallenge;
 
         if(this.countdown == 1) {
-            channel.send("Your sprint, " + this.displayName
+            this.channel.send("Your sprint, " + this.displayName
                 + " (ID " + this.objectID + "), starts in " + this.countdown
                 + " minute.");
         } else {
-            channel.send("Your sprint, " + this.displayName
+            this.channel.send("Your sprint, " + this.displayName
                 + " (ID " + this.objectID + "), starts in " + this.countdown
                 + " minutes.");
         }
@@ -108,56 +110,60 @@ class Sprint {
                 this.terminate();
                 break;
             default:
-                channel.send("Error: Invalid state reached.");
+                this.channel.send("Error: Invalid state reached.");
+                delete challengeList[this.objectID];
                 break;
         }
     }
 
     start() {
-        this.cStart--;
+        if (this.cStart > 0) {
+            this.cStart--;
+        }
         if(this.cStart == 0) {
             var userList = "";
             for(var user in this.joinedUsers) {
                 userList += " " + this.joinedUsers[user].userData;
             }
-            channel.send(this.displayName + " starts now! Race to "
+            this.channel.send(this.displayName + " starts now! Race to "
                 + this.goal + " words!" + userList);
             this.state = 1
         } else if(this.cStart == 60) {
-            channel.send(this.displayName + " starts in 1 minute.");
+            this.channel.send(this.displayName + " starts in 1 minute.");
         } else if(this.cStart % 60 == 0) {
-            channel.send(this.displayName + " starts in "
+            this.channel.send(this.displayName + " starts in "
                 + this.cStart / 60 + " minutes.");
         } else if(this.cStart < 60 && this.cStart % 15 == 0) {
-            channel.send(this.displayName + " starts in "
+            this.channel.send(this.displayName + " starts in "
                 + this.cStart + " seconds.");
         }
     }
     end() {
         this.cDur--;
-        if(this.cDur == 0) {
+        if(this.cDur <= 0) {
             var userList = "";
             for(var user in this.joinedUsers) {
                 userList += " " + this.joinedUsers[user].userData;
             }
-            channel.send(this.displayName
+            this.channel.send(this.displayName
                 + " has timed out. Post your total to be "
                 + "included in the summary." + userList);
             this.state = 2;
         } else if(this.cDur == 60) {
-            channel.send("There is 1 minute remaining in "
+            this.channel.send("There is 1 minute remaining in "
                 + this.displayName + ".");
         } else if(this.cDur % 300 == 0) {
-            channel.send("There are " + this.cDur/60 + " minutes remaining in "
-                + this.displayName + ".");
+            this.channel.send("There are " + this.cDur/60
+                + " minutes remaining in " + this.displayName + ".");
         } else if(this.cDur < 60 && this.cDur % 15 == 0) {
-            channel.send("There are " + this.cDur + " seconds remaining in "
-                + this.displayName + ".");
+            this.channel.send("There are " + this.cDur
+                + " seconds remaining in " + this.displayName + ".");
         }
     }
     terminate() {
+        this.cPost--;
         if(this.cPost == 0) {
-            delete challengeList[objectID];
+            delete challengeList[this.objectID];
         }
     }
 }
@@ -178,9 +184,13 @@ class War{
         this.cPost = durationAfterChallenge;
 
         if(this.countdown == 1) {
-            this.channel.send("Your war, " + this.displayName + " (ID " + this.objectID + "), starts in " + this.countdown + " minute.");
+            this.channel.send("Your war, " + this.displayName
+                + " (ID " + this.objectID + "), starts in "
+                + this.countdown + " minute.");
         } else {
-            this.channel.send("Your war, " + this.displayName + " (ID " + this.objectID + "), starts in " + this.countdown + " minutes.");
+            this.channel.send("Your war, " + this.displayName
+                + " (ID " + this.objectID + "), starts in "
+                + this.countdown + " minutes.");
         }
     }
 
@@ -196,14 +206,17 @@ class War{
                 this.terminate();
                 break;
             default:
-                channel.send("Error: Invalid state reached.");
+            this.channel.send("Error: Invalid state reached.");
+            delete challengeList[objectID];
                 break;
         }
     }
 
     start() {
-        this.cStart--;
-        if(this.cStart == 0) {
+        if (this.cStart > 0) {
+            this.cStart--;
+        }
+        if(this.cStart <= 0) {
             var userList = "";
             for(var user in this.joinedUsers) {
                 userList += " " + this.joinedUsers[user].userData;
@@ -213,9 +226,11 @@ class War{
         } else if(this.cStart == 60) {
             this.channel.send(this.displayName + " starts in 1 minute.");
         } else if(this.cStart % 60 == 0) {
-            this.channel.send(this.displayName + " starts in " + this.cStart / 60 + " minutes.");
+            this.channel.send(this.displayName + " starts in "
+                + this.cStart / 60 + " minutes.");
         } else if(this.cStart < 60 && this.cStart % 15 == 0) {
-            this.channel.send(this.displayName + " starts in " + this.cStart + " seconds.");
+            this.channel.send(this.displayName + " starts in "
+                + this.cStart + " seconds.");
         }
     }
     end() {
@@ -225,19 +240,153 @@ class War{
             for(var user in this.joinedUsers) {
                 userList += " " + this.joinedUsers[user].userData;
             }
-            this.channel.send(this.displayName + " has ended! Post your total to be included in the summary." + userList);
+            this.channel.send(this.displayName + " has ended!"
+                + " Post your total to be included in the summary."
+                + userList);
             this.state = 2;
         } else if(this.cDur == 60) {
-            this.channel.send("There is 1 minute remaining in " + this.displayName + ".");
+            this.channel.send("There is 1 minute remaining in "
+                + this.displayName + ".");
         } else if(this.cDur % 300 == 0) {
-            this.channel.send("There are " + this.cDur/60 + " minutes remaining in " + this.displayName + ".");
+            this.channel.send("There are " + this.cDur/60
+                + " minutes remaining in " + this.displayName + ".");
         } else if(this.cDur < 60 && this.cDur % 15 == 0) {
-            this.channel.send("There are " + this.cDur + " seconds remaining in " + this.displayName + ".");
+            this.channel.send("There are " + this.cDur
+                + " seconds remaining in " + this.displayName + ".");
         }
     }
     terminate() {
+        this.cPost--;
         if(this.cPost == 0) {
+            delete challengeList[this.objectID];
+        }
+    }
+}
+
+class ChainWar{
+    constructor(objectID, creator, displayName, chainWarCount, duration,
+        timeBetweenWars, channel) {
+        this.objectID = objectID;
+        this.creator = creator;
+        this.displayName = displayName;
+        this.chainWarCount = chainWarCount;
+        this.duration = duration;
+        this.timeBetweenWars = timeBetweenWars;
+        this.channel = channel;
+        this.joinedUsers = {};
+        this.state = 0;
+
+        this.completedWarCount = 0;
+        this.cStart = this.timeBetweenWars * 60;
+        this.cDur = this.duration * 60;
+        this.cPost = durationAfterChallenge;
+
+        if(this.countdown == 1) {
+            this.channel.send("Your war, " + this.displayName
+                + " (ID " + this.objectID + "), starts in "
+                + this.countdown + " minute.");
+        } else {
+            this.channel.send("Your war, " + this.displayName
+                + " (ID " + this.objectID + "), starts in "
+                + this.countdown + " minutes.");
+        }
+    }
+
+    update() {
+        switch(this.state){
+            case 0:
+                this.start();
+                break;
+            case 1:
+                this.end();
+                break;
+            case 2:
+                this.terminate();
+                break;
+            case 3:
+                this.interval();
+                break
+            default:
+            this.channel.send("Error: Invalid state reached.");
             delete challengeList[objectID];
+                break;
+        }
+    }
+
+    start() {
+        if (this.cStart > 0) {
+            this.cStart--;
+        }
+        if(this.cStart <= 0) {
+            var userList = "";
+            for(var user in this.joinedUsers) {
+                userList += " " + this.joinedUsers[user].userData;
+            }
+            this.channel.send(this.displayName + " starts now!" + userList);
+            this.state = 1;
+        } else if(this.cStart == 60) {
+            this.channel.send(this.displayName + " starts in 1 minute.");
+        } else if(this.cStart % 60 == 0) {
+            this.channel.send(this.displayName + " starts in "
+                + this.cStart / 60 + " minutes.");
+        } else if(this.cStart < 60 && this.cStart % 15 == 0) {
+            this.channel.send(this.displayName + " starts in "
+                + this.cStart + " seconds.");
+        }
+    }
+    end() {
+        this.cDur--;
+        if(this.cDur == 0) {
+            var userList = "";
+            for(var user in this.joinedUsers) {
+                userList += " " + this.joinedUsers[user].userData;
+            }
+            this.channel.send(this.displayName + " has ended!"
+                + " Post your total to be included in the summary."
+                + userList);
+            this.completedWarCount++;
+            if(this.completedWarCount < this.chainWarCount) {
+                this.cStart = this.timeBetweenWars * 60;
+                this.state = 3;
+            } else {
+                this.state = 2;
+            }
+        } else if(this.cDur == 60) {
+            this.channel.send("There is 1 minute remaining in "
+                + this.displayName + ".");
+        } else if(this.cDur % 300 == 0) {
+            this.channel.send("There are " + this.cDur/60
+                + " minutes remaining in " + this.displayName + ".");
+        } else if(this.cDur < 60 && this.cDur % 15 == 0) {
+            this.channel.send("There are " + this.cDur
+                + " seconds remaining in " + this.displayName + ".");
+        }
+    }
+    interval() {
+        if (this.cStart > 0) {
+            this.cStart--;
+        }
+        if(this.cStart <= 0) {
+            var userList = "";
+            for(var user in this.joinedUsers) {
+                userList += " " + this.joinedUsers[user].userData;
+            }
+            this.channel.send(this.displayName + " starts now!" + userList);
+            this.state = 1;
+        } else if(this.cStart == 60) {
+            this.channel.send(this.displayName + " starts in 1 minute.");
+        } else if(this.cStart % 60 == 0) {
+            this.channel.send(this.displayName + " starts in "
+                + this.cStart / 60 + " minutes.");
+        } else if(this.cStart < 60 && this.cStart % 15 == 0) {
+            this.channel.send(this.displayName + " starts in "
+                + this.cStart + " seconds.");
+        }
+    }
+    terminate() {
+        this.cPost--;
+        if(this.cPost == 0) {
+            delete challengeList[this.objectID];
         }
     }
 
@@ -256,6 +405,7 @@ class Goal {
     update() {
         if(new timezoneJS.Date() >= this.terminationTime) {
             delete goalList[creator];
+            logger.info("Deleting goal of " + creator);
         }
     }
 
@@ -274,25 +424,42 @@ class Goal {
 var cmd_list = {
     "sprint": {
         name: "!sprint",
-        description: "Starts a sprint of <words> words in <delay> minutes which times out in <timeout> minutes with optional [name]",
-        usage: "<words> <delay> <timeout> [name]",
+        description: "Starts a sprint of <words> words in [time to start]"
+        + " minutes which times out in <duration> minutes, with optional [name]"
+        + " (if no time to start is specified, starts in 1 minute - name can"
+        + " only be set if time to start is also set)",
+        usage: "<words> <duration> [<time to start> [<name>]]",
         process: function(client,msg,suffix) {
             var args = suffix.split(" ");
             var words = args.shift();
-            var start = args.shift();
             var timeout = args.shift();
+            var start = args.shift();
             var sprint_name = args.join(' ');
-            if(!Number.isInteger(Number(words)) || isNaN(start) || isNaN(timeout)){
-                msg.channel.send("Invalid input. Start interval must be a number, word goal must be a whole number.");
+            if (start === undefined){
+                start = 1;
+            }
+            if (!Number.isInteger(Number(words))){
+                msg.channel.send("Word goal must be a whole number.");
+            } else if(isNaN(timeout)){
+                msg.channel.send("Sprint duration must be a number.");
+            } else if(isNaN(start)){
+                msg.channel.send("Time to start must be a number.");
             } else if (timeout > 60) {
-                msg.channel.send("Invalid input. Sprints cannot last for more than an hour.")
+                msg.channel.send("Sprints cannot last for more than an hour.");
+            } else if (words < 1) {
+                msg.channel.send("Word goal cannot be negative.");
+            } else if (start < 0) {
+                msg.channel.send("Sprints cannot start in the past.");
+            } else if (timeout < 1) {
+                msg.channel.send("Sprints must run for at least a minute.");
             } else {
                 try{
                     var creatorID = msg.author.id;
                     if(sprint_name == '') {
                         sprint_name = msg.author.username + "'s sprint";
                     }
-                    challengeList[timerID] = new Sprint(timerID, creatorID, sprint_name, start, words, timeout, msg.channel);
+                    challengeList[timerID] = new Sprint(timerID, creatorID,
+                        sprint_name, start, words, timeout, msg.channel);
                     timerID = timerID + 1;
                 } catch(e) {
                     msg.channel.send("Error: Sprint creation failed.");
@@ -303,24 +470,37 @@ var cmd_list = {
     },
 	"war": {
         name: "!war",
-        description: "Starts a word war of <length> minutes in <delay> minutes with optional [name]",
-        usage: "<length> <delay> [name]",
+        description: "Starts a word war of <duration> minutes in"
+        + " [time to start] minutes, with optional [name]"
+        + " (if no time to start is specified, starts in 1 minute - name can"
+        + " only be set if time to start is also set)",
+        usage: "<duration> [<time to start> [<name>]]",
 	    process: function(client,msg,suffix) {
-	    	var args = suffix.split(" ");
-            var length = args.shift();
+            var args = suffix.split(" ");
+            var duration = args.shift();
             var start = args.shift();
             var war_name = args.join(' ');
-            if(isNaN(length) || isNaN(start)){
-                msg.channel.send("Invalid input. Start interval and length must be numbers.")
-            } else if (length > 60) {
-                msg.channel.send("Invalid input. Wars cannot last for more than an hour.")
+            if (start === undefined) {
+                start = 1;
+            }
+            if(isNaN(start)) {
+                msg.channel.send("Time to start must be a number.");
+            } else if(isNaN(duration)) {
+                msg.channel.send("War duration must be a number.");
+            } else if (duration > 60) {
+                msg.channel.send("Wars cannot last for more than an hour.");
+            } else if (start < 0) {
+                msg.channel.send("Wars cannot start in the past.");
+            } else if (duration < 1) {
+                msg.channel.send("Wars must run for at least a minute.");
             } else {
                 try{
                     var creatorID = msg.author.id;
                     if(war_name == '') {
                         war_name = msg.author.username + "'s war";
                     }
-                    challengeList[timerID] = new War(timerID, creatorID, war_name, start, length, msg.channel);
+                    challengeList[timerID] = new War(timerID, creatorID,
+                        war_name, start, duration, msg.channel);
                     timerID = timerID + 1;
                 } catch(e) {
                     msg.channel.send("Error: War creation failed.");
@@ -331,26 +511,45 @@ var cmd_list = {
     },
     "chainwar": {
         name: "!chainwar",
-        description: "Starts a chain of <number of wars>, each of <length> minutes, in [delay] minutes, with [break] minutes between wars, and optional [name]",
-        usage: "<number of wars> <length> [delay] [break] [name]",
+        description: "Starts a chain of <number of wars>, each of <duration>"
+            + " minutes, with [time between wars] minutes between wars,"
+            + " and optional [name] (if no break is specified, 1 minute between"
+            + " wars - name can only be set if break is also set)",
+        usage: "<number of wars> <duration> [<time between wars> [<name>]]",
 	    process: function(client,msg,suffix) {
             var args = suffix.split(" ");
             var chainWarCount = args.shift();
-            var length = args.shift();
-            var start = args.shift();
-            //add checking to split optional arguments
-            // var advancedArgs = args;
-            if(isNaN(chainWarCount) || isNaN(length) || isNaN(start)){
-                msg.channel.send("Invalid input. Number of wars, start interval, and length must be numbers.")
-            } else if (length * chainWarCount > 60) {
-                msg.channel.send("Invalid input. Chain wars cannot last for more than an hour in total.")
+            var duration = args.shift();
+            var timeBetween = args.shift();
+            var war_name = args.join(' ');
+            if (timeBetween === undefined) {
+                start = 1;
+            }
+            if(isNaN(chainWarCount)) {
+                msg.channel.send("War count must be a number.");
+            } else if(isNaN(timeBetween)) {
+                msg.channel.send("Time between wars must be a number.");
+            } else if(isNaN(duration)) {
+                msg.channel.send("War duration must be a number.");
+            } else if (!(2 < chainWarCount < 10)) {
+                msg.channel.send("Chain wars must be between two and ten wars"
+                    + " long.");
+            } else if (duration * chainWarCount > 120) {
+                msg.channel.send("Chain wars cannot last for more than two"
+                + " hours of writing time.");
+            } else if (start < 0) {
+                msg.channel.send("Wars cannot start in the past.");
+            } else if (duration < 1) {
+                msg.channel.send("Wars must run for at least a minute.");
             } else {
                 try{
                     var creatorID = msg.author.id;
                     if(war_name == '') {
                         war_name = msg.author.username + "'s war";
                     }
-                    challengeList[timerID] = new War(timerID, creatorID, war_name, start, length, msg.channel);
+                    challengeList[timerID] = new ChainWar(timerID, creatorID,
+                        war_name, chainWarCount, duration, timeBetween,
+                        msg.channel);
                     timerID = timerID + 1;
                 } catch(e) {
                     msg.channel.send("Error: Chain war creation failed.");
@@ -365,15 +564,24 @@ var cmd_list = {
         usage: "<id>",
 	    process: function(client,msg,suffix) {
             var challengeID = suffix;
-            if (challengeID in challengeList) {
+            if (isNaN(challengeID)) {
+                msg.channel.send("Challenge ID must be an integer.");
+            } else if (challengeID < 1) {
+                msg.channel.send("Challenge ID must be an integer.");
+            } else if (challengeID in challengeList) {
                 if(msg.author.id in challengeList[challengeID].joinedUsers) {
-                    msg.channel.send(msg.author + ", you already have notifications enabled for this challenge.");
+                    msg.channel.send(msg.author + ", you already have "
+                    + "notifications enabled for this challenge.");
                 } else {
-                    challengeList[challengeID].joinedUsers[msg.author.id] = {"userData": msg.author, "countData": undefined, "countType": undefined};
-                    msg.channel.send(msg.author + ", you have joined " + challengeList[challengeID].displayName);
+                    challengeList[challengeID].joinedUsers[msg.author.id]
+                        = {"userData": msg.author, "countData": undefined,
+                        "countType": undefined};
+                    msg.channel.send(msg.author + ", you have joined "
+                        + challengeList[challengeID].displayName);
                 }
             } else {
-                msg.channel.send("Challenge " + challengeID + " does not exist!");
+                msg.channel.send("Challenge " + challengeID
+                    + " does not exist!");
             }
 	    }
     },
@@ -383,49 +591,69 @@ var cmd_list = {
         usage: "<id>",
 	    process: function(client,msg,suffix) {
             var challengeID = suffix;
-            if (challengeID in challengeList) {
+            if (isNaN(challengeID)) {
+                msg.channel.send("Challenge ID must be an integer.");
+            } else if (challengeID < 1) {
+                msg.channel.send("Challenge ID must be an integer.");
+            } else if (challengeID in challengeList) {
                 if(msg.author.id in challengeList[challengeID].joinedUsers) {
-                    delete challengeList[challengeID].joinedUsers[msg.author.id];
-                    msg.channel.send(msg.author + ", you have left " + challengeList[challengeID].displayName);
+                    delete challengeList[challengeID]
+                        .joinedUsers[msg.author.id];
+                    msg.channel.send(msg.author + ", you have left "
+                        + challengeList[challengeID].displayName);
                 } else {
-                    msg.channel.send(msg.author + ", you have not yet joined this challenge.");
+                    msg.channel.send(msg.author
+                        + ", you have not yet joined this challenge.");
                 }
             } else {
-                msg.channel.send("Challenge " + challengeID + " does not exist!");
+                msg.channel.send("Challenge " + challengeID
+                    + " does not exist!");
             }
 	    }
     },
     "exterminate": {
         name: "!exterminate",
-        description: "Ends war/sprint with ID <id>. Can only be performed by creator.",
+        description: "Ends war/sprint with ID <id>."
+            + " Can only be performed by creator.",
         usage: "<id>",
 	    process: function(client,msg,suffix) {
             var challengeID = suffix;
-            if (challengeID in challengeList) {
+            if (isNaN(challengeID)) {
+                msg.channel.send("Challenge ID must be an integer.");
+            } else if (challengeID < 1) {
+                msg.channel.send("Challenge ID must be an integer.");
+            } if (challengeID in challengeList) {
                 var exName = challengeList[challengeID].displayName;
                 if(challengeList[challengeID].creator == msg.author.id) {
                     delete challengeList[challengeID];
-                    msg.channel.send(exName + " has been successfully exterminated.");
+                    msg.channel.send(exName + " has been successfully"
+                        + " exterminated.");
                     
                 } else {
-                    msg.channel.send("Only the creator of " + exName + " can end this challenge.");
+                    msg.channel.send("Only the creator of " + exName
+                        + " can end this challenge.");
                 }
             } else {
-                msg.channel.send("Challenge " + challengeID + " does not exist!");
+                msg.channel.send("Challenge " + challengeID
+                    + " does not exist!");
             }
 	    }
     },
     "total": {
         name: "!total",
-        description: "Adds your <total> for completed challenge <id>, optional [pages/lines] for scriptwriters",
+        description: "Adds your <total> for completed challenge <id>,"
+            + " optional [pages/lines] for scriptwriters",
         usage: "<id> <total> [pages/lines]",
         process: function(client,msg,suffix) {
             var args = suffix.split(" ");
             var challengeID = args.shift();
             var wordsWritten = args.shift();
             var writtenType = args.shift();
-            if (!(writtenType == 'lines' || writtenType == 'pages' || writtenType == 'minutes' || writtenType == 'words' || writtenType === undefined)) {
-                msg.channel.send("Invalid input.  You must work in words, lines, pages, or minutes.");
+            if (!(writtenType == 'lines' || writtenType == 'pages'
+                || writtenType == 'minutes' || writtenType == 'words'
+                || writtenType === undefined)) {
+                msg.channel.send("Invalid input.  You must work in words,"
+                    + "lines, pages, or minutes.");
             } else {
                 if (writtenType === undefined) {
                     writtenType = 'words';
@@ -434,15 +662,27 @@ var cmd_list = {
             if (challengeID in challengeList) {
                 if (challengeList[challengeID].state == 2) {
                     if(Number.isInteger(parseInt(wordsWritten))){
+                        var joinCheck = false;
                         for(user in challengeList[challengeID].joinedUsers) {
-                            if(challengeList[challengeID].joinedUsers[user].userData.id == msg.author.id) {
-                                challengeList[challengeID].joinedUsers[user].countData = wordsWritten;
-                                challengeList[challengeID].joinedUsers[user].countType = writtenType;
+                            if(challengeList[challengeID].joinedUsers[user]
+                                .userData.id == msg.author.id) {
+                                challengeList[challengeID].joinedUsers[user]
+                                    .countData = wordsWritten;
+                                challengeList[challengeID].joinedUsers[user]
+                                    .countType = writtenType;
+                                joinCheck = true;
                             }
+                        }
+                        if (!joinCheck) {
+                            challengeList[challengeID].joinedUsers
+                                [msg.author.id] = {"userData": msg.author,
+                                "countData": wordsWritten,
+                                "countType": writtenType};
                         }
                         msg.channel.send("Total added to summary.");
                     } else {
-                        msg.channel.send(msg.author + ", I need a whole number to include in the summary!");
+                        msg.channel.send(msg.author + ", I need a whole number"
+                            + " to include in the summary!");
                     }
                 } else {
                     msg.channel.send("This challenge has not ended yet!");
@@ -462,13 +702,54 @@ var cmd_list = {
                 if (challengeList[challengeID].state == 2) {
                     var userTotal = "";
                     var totalWords = 0;
+                    var totalLines = 0;
+                    var totalPages = 0;
                     for(var user in challengeList[challengeID].joinedUsers) {
-                        if(Number.isInteger(Number(challengeList[challengeID].joinedUsers[user].countData)) && challengeList[challengeID].joinedUsers[user].countType != undefined){
-                            userTotal += "\n" + challengeList[challengeID].joinedUsers[user].userData + ": **" + challengeList[challengeID].joinedUsers[user].countData + "** " + challengeList[challengeID].joinedUsers[user].countType;
-                            totalWords += parseInt(challengeList[challengeID].joinedUsers[user].countData);
+                        if(Number.isInteger(Number(challengeList[challengeID]
+                            .joinedUsers[user].countData)) && challengeList
+                            [challengeID].joinedUsers[user].countType 
+                            != undefined){
+                            userTotal += "\n" + challengeList[challengeID].
+                                joinedUsers[user].userData + ": **"
+                                + challengeList[challengeID].joinedUsers[user]
+                                .countData + "** " + challengeList[challengeID]
+                                .joinedUsers[user].countType;
+                            switch (challengeList[challengeID].
+                                joinedUsers[user].countType) {
+                                    case 'words':
+                                        totalWords += parseInt(challengeList
+                                            [challengeID].joinedUsers[user]
+                                            .countData);
+                                        break;
+                                    case 'lines':
+                                        totalLines += parseInt(challengeList
+                                            [challengeID].joinedUsers[user]
+                                            .countData);
+                                        break; 
+                                    case 'pages':
+                                        totalPages += parseInt(challengeList
+                                            [challengeID].joinedUsers[user]
+                                            .countData);
+                                        break;
+                                    default:
+                                        break;
+                                }
                         }
                     }
-                    msg.channel.send("Statistics for " + challengeList[challengeID].displayName + ":\n" + userTotal + "\n\nTotal: **" + totalWords + "** words");                    
+                    totalWords += totalLines * 15;
+                    totalWords += totalPages * 400;
+                    var summaryData = "Statistics for " + challengeList
+                        [challengeID].displayName + ":\n" + userTotal
+                        + "\n\nTotal: **" + totalWords + "** words"
+                    if (totalLines > 0 && totalPages > 0) {
+                        summaryData += " (" + totalLines + " lines, "
+                            + totalPages + " pages)";
+                    } else if (totalLines > 0) {
+                        summaryData += " (" + totalLines + " lines)";
+                    } else if (totalPages > 0) {
+                        summaryData += " (" + totalPages + " pages)";
+                    }
+                    msg.channel.send(summaryData);                    
                 } else {
                     msg.channel.send("This challenge has not ended yet!");
                 }
@@ -483,36 +764,51 @@ var cmd_list = {
         usage: "",
         process: function(client,msg,suffix) {
             if(Object.keys(challengeList).length == 0) {
-                msg.channel.send("There are no challenges running. Why don't you start one?");
+                msg.channel.send("There are no challenges running."
+                    + " Why don't you start one?");
             } else {
                 if(Object.keys(challengeList).length == 1) {
-                    var timerInfo = "There is " + Object.keys(challengeList).length + " challenge running:\n";
+                    var timerInfo = "There is " + Object.keys(challengeList)
+                        .length + " challenge running:\n";
                 } else {
-                    var timerInfo = "There are " + Object.keys(challengeList).length + " challenges running:\n";
+                    var timerInfo = "There are " + Object.keys(challengeList)
+                        .length + " challenges running:\n";
                 }
                 for(var i in challengeList) {
                     switch(challengeList[i].state){
                         case 0:
                             var timeout = "";
                             if ((challengeList[i].cStart % 60) < 10) {
-                                timeout = "0" + (challengeList[i].cStart % 60).toString();
+                                timeout = "0"
+                                    + (challengeList[i].cStart % 60).toString();
                             } else {
                                 timeout = challengeList[i].cStart % 60;
                             }
                             timerInfo += i + ": " + challengeList[i].displayName
-                            timerInfo += " (starts in " + Math.floor(challengeList[i].cStart / 60) + ":" + timeout + ")\n";
+                            timerInfo += " (" + challengeList[i].duration
+                                + " minutes, starts in "
+                                + Math.floor(challengeList[i].cStart / 60)
+                                + ":" + timeout + ")\n";
                             break;
                         case 1:
                             var timeout = "";
                             if ((challengeList[i].cDur % 60) < 10) {
-                                timeout = "0" + (challengeList[i].cDur % 60).toString();
+                                timeout = "0"
+                                    + (challengeList[i].cDur % 60).toString();
                             } else {
                                 timeout = challengeList[i].cDur % 60;
                             }
                             timerInfo += i + ": " + challengeList[i].displayName 
-                            timerInfo += " (" + Math.floor(challengeList[i].cDur / 60) + ":" + timeout + " remaining)\n";
+                            timerInfo += " (" + challengeList[i].duration
+                                + " minutes, "
+                                + Math.floor(challengeList[i].cDur / 60)
+                                + ":" + timeout + " remaining)\n";
                             break;
                         case 2:
+                            timerInfo += i + ": " + challengeList[i].displayName
+                            timerInfo += " (" + challengeList[i].duration
+                            + " minutes, ended)\n";
+                            break;
                         default:
                             break;
                     }
@@ -523,7 +819,8 @@ var cmd_list = {
     },
     "target": {
         name: "!target",
-        description: "Generates an <easy/average/hard> target for <time> minutes",
+        description: "Generates an <easy/average/hard> target for"
+            + " <time> minutes",
         usage: "<easy/average/hard> <time>",
 		process: function(client,msg,suffix) {
             var args = suffix.split(" ");
@@ -531,7 +828,8 @@ var cmd_list = {
             var time = args.shift();
             var base = null;
             if(!Number.isInteger(Number(time))){
-                msg.channel.send("Invalid input. Duration must be a whole number.")
+                msg.channel.send("Invalid input. Duration must be a"
+                    + " whole number.")
             } else {
                 switch(difficulty) {
                     case "easy":
@@ -548,11 +846,14 @@ var cmd_list = {
                         break;    
                 }
                 if (base === null) {
-                    msg.channel.send("Invalid input. You need to select an easy, average, or hard goal.");
+                    msg.channel.send("Invalid input. You need to select an"
+                        + " easy, average, or hard goal.");
                 } else {
-                    var goalPerMinute = ((Math.ceil(Math.random() * 12) + base));
+                    var goalPerMinute = ((Math.ceil(Math.random() * 12)
+                        + base));
                     var goalTotal = (goalPerMinute * time);
-                    msg.channel.send(msg.author + ", your goal is **" + goalTotal + "**.");
+                    msg.channel.send(msg.author + ", your goal is **"
+                        + goalTotal + "**.");
                 }
             }
 	    }
@@ -577,17 +878,16 @@ var cmd_list = {
                 currentRoleList = msg.member.roles.filter(function (a) {
                     return regionRegex.test(a.name);
                 });
-                // logger.info(currentRoleList);
-                // for(var role in currentRoleList) {
-                //     logger.info(role);
-                //     logger.info(currentRoleList[role]);
-                //     msg.member.removeRole(role);
-                // }
+                logger.info(currentRoleList);
+                msg.member.removeRoles(currentRoleList);
+                logger.info(msg.member.roles);
                 //add user to role, confirm
                 msg.member.addRole(tzRole);
-                msg.channel.send(msg.author + ", you have set your timezone to **" + timezone + "**.");
+                msg.channel.send(msg.author + ", you have set your timezone to"
+                    + " **" + timezone + "**.");
             } catch(e) {
-                msg.channel.send("Winnie_Bot accepts IANA canonical timezones only.")
+                msg.channel.send("Winnie_Bot accepts IANA timezone identifiers"
+                    + " only.")
             }
 	    }
     },
@@ -599,13 +899,20 @@ var cmd_list = {
             var args = suffix.split(" ");
             var goal = args.shift();
             var goalType = args.shift();
-            if(!Number.isInteger(Number(goal))){
-                msg.channel.send("Invalid input. Your goal must be a whole number.")
+            if (goalType === undefined) {
+                msg.channel.send("I need a goal to set!")
+            } else if(!Number.isInteger(Number(goal))){
+                msg.channel.send("Your goal must be a whole"
+                    + " number.")
             } else if((msg.author.id in goalList)) {
-                msg.channel.send(msg.author + ", you have already set a goal today. Use !update to record your progress.");
+                msg.channel.send(msg.author + ", you have already set a goal"
+                    + " today. Use !update to record your progress.");
             } else {
-                if (!(goalType == 'lines' || goalType == 'pages' || goalType == 'minutes' || goalType == 'words' || goalType === undefined)) {
-                    msg.channel.send("Invalid input.  Goal type must be lines, pages, or minutes.");
+                if (!(goalType == 'lines' || goalType == 'pages' ||
+                    goalType == 'minutes' || goalType == 'words' ||
+                    goalType === undefined)) {
+                    msg.channel.send("Goal type must be lines, pages, or"
+                        + " minutes.");
                 } else {
                     if (goalType === undefined) {
                         goalType = 'words';
@@ -622,8 +929,10 @@ var cmd_list = {
                     //calculate next midnight based on timezone
                     var endTime = startTime;
                     endTime.setHours(24,0,0,0);
-                    goalList[msg.author.id] = new Goal(msg.author.id, goal, goalType, startTime, endTime);
-                    msg.channel.send(msg.author + ", your goal for today is **" + goal + "** " + goalType + ".");
+                    goalList[msg.author.id] = new Goal(msg.author.id, goal,
+                        goalType, startTime, endTime);
+                    msg.channel.send(msg.author + ", your goal for today is **"
+                        + goal + "** " + goalType + ".");
                 }
             }
 	    }
@@ -677,7 +986,8 @@ var cmd_list = {
         description: "Provides a writing prompt",
 		process: function(client,msg,suffix) {
             var choiceID = (Math.floor(Math.random() * promptList.length))
-            msg.channel.send(msg.author + ", your prompt is: **" + promptList[choiceID].trim() + "**");
+            msg.channel.send(msg.author + ", your prompt is: **" + promptList
+                [choiceID].trim() + "**");
 		}
     },
     "goalinfo": {
@@ -685,9 +995,14 @@ var cmd_list = {
         description: "Displays progress towards your daily goal",
 		process: function(client,msg,suffix) {
             if(!(msg.author.id in goalList)) {
-                msg.channel.send(msg.author + ", you have not yet set a goal for today. Use !set to do so.");
+                msg.channel.send(msg.author + ", you have not yet set a goal"
+                    + " for today. Use !set to do so.");
             } else {
-                msg.channel.send(msg.author + ", you have written **" + goalList[msg.author.id].written + "** " + goalList[msg.author.id].goalType + " of your **" + goalList[msg.author.id].goal + "**-" + goalList[msg.author.id].goalType.slice(0, -1) + " goal.");
+                msg.channel.send(msg.author + ", you have written **"
+                    + goalList[msg.author.id].written + "** "
+                    + goalList[msg.author.id].goalType + " of your **"
+                    + goalList[msg.author.id].goal + "**-"
+                    + goalList[msg.author.id].goalType.slice(0, -1) + " goal.");
             }
 		}
     },
@@ -792,20 +1107,20 @@ client.on('message', (msg) => {
                     msg.channel.send("That command does not exist.");
                 }
 			} else {
-                msg.author.send("Winnie_Bot Commands:").then(function(){
+                msg.author.send("**Winnie_Bot Commands:**").then(function(){
                 var helpMsg = "";
                 for(var i in cmd_list) {
                     var cmdName = cmd_list[i].name;
                     if(cmdName){
-						helpMsg += cmdName + " ";
+						helpMsg += "**" + cmdName;
                     }
                     var cmdUse = cmd_list[i].usage;
                     if(cmdUse){
-						helpMsg += cmdUse;
+						helpMsg += " " + cmdUse;
 					}
                     var cmdDesc = cmd_list[i].description;
                     if(cmdDesc){
-						helpMsg += ": " + cmdDesc;
+						helpMsg += ":** " + cmdDesc;
 					}
                     helpMsg += "\n";
                 }

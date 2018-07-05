@@ -1,69 +1,162 @@
 const Discord = require('discord.js');
+const config = require('./config.json');
 const client = new Discord.Client();
 
-// !sprint <words> <delay> <timeout> [name]: Starts a sprint of <words> words in <delay> minutes which times out in <timeout> minutes with optional [name]
-// Run with name - pass
-msg.channel.send("!sprint");
-// Run without name - pass
-// Run with timeout of more than an hour - fail
-// Run with floats for length, delay, and timeout - pass
-// Run with string for length - fail
-// Run with string for delay - fail
-// Run with string for timeout - fail
-// Run with negative length - fail
-// Run with negative delay - fail
-// Run with negative timeout - fail
-// Run with executable code as the length - fail
-// Run with executable code as the delay - fail
-// Run with executable code as the timeout - fail
-// Run with executable code as the name - fail
-//Run with length and delay, but no timeout - fail
-//Run with length, but no delay - fail
-//Run with no suffix - fail
+function runTest(x) { 
+  return new Promise(resolve => {
+    setTimeout(() => {
+      resolve(x);
+    }, 10000);
+  });
+}
+
+// !sprint <words> <time to start> <timeout> [name]:
+// Starts a sprint of <words> words in <time to start> minutes
+// which times out in <timeout> minutes with optional [name]
+async function sprintTest() {
+  try{
+    var guildObj = client.guilds.first();
+    // Run with name - pass
+    await runTest(guildObj.defaultChannel.send("!sprint 200 10 1 Named Sprint"));
+    // Run without name - pass
+    await runTest(guildObj.defaultChannel.send("!sprint 200 10 1"));
+    // Run with no delay - pass, 1 minute delay
+    await runTest(guildObj.defaultChannel.send("!sprint 200 10"));
+    // Run starting immediately - pass
+    await runTest(guildObj.defaultChannel.send("!sprint 200 10 0"));
+    // Run with timeout of more than an hour - error 'Sprints cannot run for more than an hour'
+    await runTest(guildObj.defaultChannel.send("!sprint 200 70 1"));
+    // Run with float for goal - error 'Word goal must be a whole number'
+    await runTest(guildObj.defaultChannel.send("!sprint 200.6 10 1"));
+    // Run with floats for delay and timeout - pass
+    await runTest(guildObj.defaultChannel.send("!sprint 200 10.1 1.5"));
+    // Run with string for goal - error 'Word goal must be a whole number'
+    await runTest(guildObj.defaultChannel.send("!sprint hundred 10 1"));
+    // Run with string for delay - error 'Time to start must be a number'
+    await runTest(guildObj.defaultChannel.send("!sprint 200 10 one"));
+    // Run with string for timeout - error 'Sprint duration must be a number'
+    await runTest(guildObj.defaultChannel.send("!sprint 200 ten 1"));
+    // Run with negative goal - error 'Word goal cannot be negative'
+    await runTest(guildObj.defaultChannel.send("!sprint -200 10 1"));
+    // Run with negative delay - error 'Sprints cannot start in the past'
+    await runTest(guildObj.defaultChannel.send("!sprint 200 10 -1"));
+    // Run with negative timeout - error 'Sprints cannot run for a negative amount of time'
+    await runTest(guildObj.defaultChannel.send("!sprint 200 -10 1"));
+    // Run with executable code as the goal - error 'Word goal must be a whole number'
+    await runTest(guildObj.defaultChannel.send("!sprint guildObj.defaultChannel.send(" + "\"Fuck!\"" + "); 10 1"));
+    // Run with executable code as the timeout - error 'Sprint duration must be a number'
+    await runTest(guildObj.defaultChannel.send("!sprint 200 guildObj.defaultChannel.send(" + "\"Fuck!\"" + "); 1"));
+    // Run with executable code as the delay - error 'Time to start must be a number'
+    await runTest(guildObj.defaultChannel.send("!sprint 200 10 guildObj.defaultChannel.send(" + "\"Fuck!\"" + ");"));
+    // Run with executable code as the name - fail to execute code
+    await runTest(guildObj.defaultChannel.send("!sprint 200 10 1 guildObj.defaultChannel.send(" + "\"Fuck!\"" + ");"));
+    // Run with no suffix - gives help message ***not working***
+    await runTest(guildObj.defaultChannel.send("!sprint"));
+  } catch (e) {
+    console.log("Error: %s, %s", e, e.stack);
+  }
+}
 
 // !war <length> <delay> [name]: Starts a word war of <length> minutes in <delay> minutes with optional [name]
-// Run with name - pass
-// Run without name - pass
-// Run with length of more than an hour - fail
-// Run with floats for length and delay - pass
-// Run with string for length - fail
-// Run with string for delay - fail
-// Run with negative length - fail
-// Run with negative delay - fail
-// Run with executable code as the length - fail
-// Run with executable code as the delay - fail
-// Run with executable code as the name - fail
-// Run with length, but no delay - fail
-// Run with no suffix - fail
+async function warTest() {
+  try{
+    var guildObj = client.guilds.first();
+    // Run with name - pass
+    await runTest(guildObj.defaultChannel.send("!war 10 1 Named War"));
+    // Run without name - pass
+    await runTest(guildObj.defaultChannel.send("!war 10 1"));
+    // Run starting immediately - pass
+    await runTest(guildObj.defaultChannel.send("!war 10 0"));
+    // Run with no delay - pass, 1 minute delay
+    await runTest(guildObj.defaultChannel.send("!war 10"));
+    // Run with timeout of more than an hour - error 'Wars cannot run for more than an hour'
+    await runTest(guildObj.defaultChannel.send("!war 70 1"));
+    // Run with floats for delay and timeout - pass
+    await runTest(guildObj.defaultChannel.send("!war 10.1 1.5"));
+    // Run with string for delay - error 'Time to start must be a number'
+    await runTest(guildObj.defaultChannel.send("!war 10 one"));
+    // Run with string for duration - error 'War duration must be a number'
+    await runTest(guildObj.defaultChannel.send("!war ten 1"));
+    // Run with negative delay - error 'Wars cannot start in the past'
+    await runTest(guildObj.defaultChannel.send("!war 200 10 -1"));
+    // Run with negative duration - error 'Wars cannot run for a negative amount of time'
+    await runTest(guildObj.defaultChannel.send("!war 200 -10 1"));
+    // Run with executable code as the timeout - error 'War duration must be a number'
+    await runTest(guildObj.defaultChannel.send("!war guildObj.defaultChannel.send(" + "\"Fuck!\"" + "); 1"));
+    // Run with executable code as the delay - error 'Time to start must be a number'
+    await runTest(guildObj.defaultChannel.send("!war 10 guildObj.defaultChannel.send(" + "\"Fuck!\"" + ");"));
+    // Run with executable code as the name - fail to execute code
+    await runTest(guildObj.defaultChannel.send("!war 10 1 guildObj.defaultChannel.send(" + "\"Fuck!\"" + ");"));
+    // Run with no suffix - gives help message ***not working***
+    await runTest(guildObj.defaultChannel.send("!war"));
+  } catch (e) {
+    console.log("Error: %s, %s", e, e.stack);
+  }
+}
 
 // !join <id>: Joins war/sprint with ID <id>
-// Run with ID of war not joined - pass
-// Run with ID of war already joined - fail
-// Run with negative integer ID - fail
-// Run with float ID - fail
-// Run with string ID - fail
-// Run with executable code - fail
-// Run with no suffix - fail
-
 // !leave <id>: Leaves war/sprint with ID <id>
-// Run with ID of war not joined - fail
-// Run with ID of war already joined - pass
-// Run with negative integer ID - fail
-// Run with float ID - fail
-// Run with string ID - fail
-// Run with executable code - fail
-// Run with no suffix - fail
-
 // !exterminate <id>: Ends war/sprint with ID <id>. Can only be performed by creator.
-// Run with ID of war not created - fail
-// Run with ID of war created by someone else - fail
-// Run from a different server - fail
-// Run with ID of war created by user - pass
-// Run with negative integer ID - fail
-// Run with float ID - fail
-// Run with string ID - fail
-// Run with executable code - fail
-// Run with no suffix - fail
+async function joinLeaveTest() {
+  try{
+    var guildObj = client.guilds.first();
+    // Start war to test
+    await runTest(guildObj.defaultChannel.send("!war 3 0 Join Test"));
+    // Run with ID of war not joined - pass
+    await runTest(guildObj.defaultChannel.send("!join 1"));
+    // Run with ID of war already joined - error 'You already have notifications enabled for this challenge'
+    await runTest(guildObj.defaultChannel.send("!join 1"));
+    // Run with ID of nonexistent war - error 'Challenge does not exist!'
+    await runTest(guildObj.defaultChannel.send("!join 2"));
+    // Run with negative integer ID - error 'Challenge ID must be an integer'
+    await runTest(guildObj.defaultChannel.send("!join -1"));
+    // Run with float ID - error 'Challenge ID must be an integer'
+    await runTest(guildObj.defaultChannel.send("!join 0.1"));
+    // Run with string ID - error 'Challenge ID must be an integer'
+    await runTest(guildObj.defaultChannel.send("!join one"));
+    // Run with executable code - fail to execute code
+    await runTest(guildObj.defaultChannel.send("!join guildObj.defaultChannel.send(" + "\"Fuck!\"" + ");"));
+    // Run with no suffix - gives help message ***not working***
+    await runTest(guildObj.defaultChannel.send("!join"));
+    // Run with ID of war not left - pass
+    await runTest(guildObj.defaultChannel.send("!leave 1"));
+    // Run with ID of war already left - fail
+    await runTest(guildObj.defaultChannel.send("!leave 1"));
+    // Run with ID of nonexistent war - error 'Challenge does not exist!'
+    await runTest(guildObj.defaultChannel.send("!leave 2"));
+    // Run with negative integer ID - error 'Challenge ID must be an integer'
+    await runTest(guildObj.defaultChannel.send("!leave -1"));
+    // Run with float ID - error 'Challenge ID must be an integer'
+    await runTest(guildObj.defaultChannel.send("!leave 0.1"));
+    // Run with string ID - error 'Challenge ID must be an integer'
+    await runTest(guildObj.defaultChannel.send("!leave one"));
+    // Run with executable code - fail to execute code
+    await runTest(guildObj.defaultChannel.send("!join guildObj.defaultChannel.send(" + "\"Fuck!\"" + ");"));
+    // Run with no suffix - gives help message ***not working***
+    await runTest(guildObj.defaultChannel.send("!join"));
+    // Run with ID of created war - pass
+    await runTest(guildObj.defaultChannel.send("!exterminate 1"));
+    // Run with ID of war already deleted - fail
+    await runTest(guildObj.defaultChannel.send("!exterminate 1"));
+    // Run with ID of war created by someone else - fail
+    await runTest(guildObj.defaultChannel.send("!exterminate 2"));
+    // Run with ID of nonexistent war - error 'Challenge does not exist!'
+    await runTest(guildObj.defaultChannel.send("!exterminate 3"));
+    // Run with negative integer ID - error 'Challenge ID must be an integer'
+    await runTest(guildObj.defaultChannel.send("!exterminate -1"));
+    // Run with float ID - error 'Challenge ID must be an integer'
+    await runTest(guildObj.defaultChannel.send("!exterminate 0.1"));
+    // Run with string ID - error 'Challenge ID must be an integer'
+    await runTest(guildObj.defaultChannel.send("!exterminate one"));
+    // Run with executable code - fail to execute code
+    await runTest(guildObj.defaultChannel.send("!exterminate guildObj.defaultChannel.send(" + "\"Fuck!\"" + ");"));
+    // Run with no suffix - gives help message ***not working***
+    await runTest(guildObj.defaultChannel.send("!exterminate"));
+    // Run from a different server - fail
+  } catch (e) {
+    console.log("Error: %s, %s", e, e.stack);
+  }
+}
 
 // !total <id> <total> [pages/lines]: Adds your <total> for completed challenge <id>, optional [pages/lines] for scriptwriters
 // Run without joining war - fail
@@ -206,9 +299,11 @@ msg.channel.send("!sprint");
 // Use commands to send rude messages
 // Use commands to send DMs with malicious links
 
-process.on('uncaughtException', function(e) {
-    logger.info('Error %s: %s.\nWinnie_Bot will now restart.', e, e.stack);
-    process.exit(1);
-  })
+async function startTest() {
+  await client.login(config.test_token);
+  // sprintTest();
+  // warTest();
+  // joinLeaveTest();
+}
 
-client.login(config.test_token);
+startTest();
