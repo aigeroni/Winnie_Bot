@@ -886,6 +886,7 @@ var cmd_list = {
                 msg.channel.send(msg.author + ", you have set your timezone to"
                     + " **" + timezone + "**.");
             } catch(e) {
+                logger.error(e);
                 msg.channel.send("Winnie_Bot accepts IANA timezone identifiers"
                     + " only.")
             }
