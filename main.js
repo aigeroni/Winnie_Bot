@@ -424,10 +424,9 @@ class Goal {
 var cmd_list = {
     "sprint": {
         name: "!sprint",
-        description: "Starts a sprint of <words> words in [time to start]"
-        + " minutes which times out in <duration> minutes, with optional [name]"
-        + " (if no time to start is specified, starts in 1 minute - name can"
-        + " only be set if time to start is also set)",
+        description: "Starts a sprint of <words> words which times out in"
+            + " <duration> minutes in [time to start] minutes,"
+            + " with optional [name]",
         usage: "<words> <duration> [<time to start> [<name>]]",
         process: function(client,msg,suffix) {
             var args = suffix.split(" ");
@@ -471,9 +470,7 @@ var cmd_list = {
 	"war": {
         name: "!war",
         description: "Starts a word war of <duration> minutes in"
-        + " [time to start] minutes, with optional [name]"
-        + " (if no time to start is specified, starts in 1 minute - name can"
-        + " only be set if time to start is also set)",
+            + " [time to start] minutes, with optional [name]",
         usage: "<duration> [<time to start> [<name>]]",
 	    process: function(client,msg,suffix) {
             var args = suffix.split(" ");
@@ -513,8 +510,7 @@ var cmd_list = {
         name: "!chainwar",
         description: "Starts a chain of <number of wars>, each of <duration>"
             + " minutes, with [time between wars] minutes between wars,"
-            + " and optional [name] (if no break is specified, 1 minute between"
-            + " wars - name can only be set if break is also set)",
+            + " and optional [name]",
         usage: "<number of wars> <duration> [<time between wars> [<name>]]",
 	    process: function(client,msg,suffix) {
             var args = suffix.split(" ");
@@ -642,8 +638,8 @@ var cmd_list = {
     "total": {
         name: "!total",
         description: "Adds your <total> for completed challenge <id>,"
-            + " optional [pages/lines] for scriptwriters",
-        usage: "<id> <total> [pages/lines]",
+            + " optional [pages|lines]",
+        usage: "<id> <total> [pages|lines]",
         process: function(client,msg,suffix) {
             var args = suffix.split(" ");
             var challengeID = args.shift();
@@ -893,13 +889,14 @@ var cmd_list = {
     },
     "set": {
         name: "!set",
-        description: "Sets a daily goal <goal>, with optional [type]",
+        description: "Sets a daily goal <goal>, with optional"
+            + " [lines|pages|minutes]",
         usage: "<goal> [lines|pages|minutes]",
 		process: function(client,msg,suffix) {
             var args = suffix.split(" ");
             var goal = args.shift();
             var goalType = args.shift();
-            if (goalType === undefined) {
+            if (goal === undefined) {
                 msg.channel.send("I need a goal to set!")
             } else if(!Number.isInteger(Number(goal))){
                 msg.channel.send("Your goal must be a whole"
@@ -939,8 +936,9 @@ var cmd_list = {
     },
     "update": {
         name: "!update",
-        description: "Updates your daily goal with the number of <words> you have completed since your last update",
-        usage: "<words>",
+        description: "Updates your daily goal with the number of <things>"
+            + " you have completed since your last update",
+        usage: "<things>",
 		process: function(client,msg,suffix) {
             var goal = suffix;
             if(!Number.isInteger(parseInt(goal))){
@@ -955,8 +953,9 @@ var cmd_list = {
     },
     "progress": {
         name: "!progress",
-        description: "Updates your daily goal with the total number of <words> you have completed today",
-        usage: "<words>",
+        description: "Updates your daily goal with the total number of <things>"
+            + " you have completed today",
+        usage: "<things>",
 		process: function(client,msg,suffix) {
 	    	var goal = suffix;
             if(!Number.isInteger(parseInt(goal))){
@@ -1066,14 +1065,16 @@ var cmd_list = {
     },
     "choose": {
         name: "!choose",
-        description: "Selects an item from a list <list> of items, separated by commas",
+        description: "Selects an item from a list <list> of items,"
+            + " separated by commas",
         usage: "<list>",
 		process: function(client,msg,suffix) {
             var items = suffix.split(",");
             logger.info(items.length);
             var choiceID = (Math.floor(Math.random() * items.length))
             logger.info(choiceID);
-            msg.channel.send(msg.author + ", from " + suffix + ", I selected **" + items[choiceID].trim() + "**");
+            msg.channel.send(msg.author + ", from " + suffix + ", I selected **"
+                + items[choiceID].trim() + "**");
 		}
     }
 }
@@ -1084,8 +1085,10 @@ client.on('message', (msg) => {
     }
     if(msg.author.id != client.user.id && (msg.content.startsWith(config.cmd_prefix))){
         logger.info("treating " + msg.content + " from " + msg.author + " as command");
-		var cmd_data = msg.content.split(" ")[0].substring(config.cmd_prefix.length);
-        var suffix = msg.content.substring(cmd_data.length+config.cmd_prefix.length+1);//add one for the ! and one for the space
+        var cmd_data = msg.content.split(" ")[0]
+            .substring(config.cmd_prefix.length);
+        var suffix = msg.content.substring(cmd_data.length + config
+            .cmd_prefix.length + 1)
 		var cmd = cmd_list[cmd_data];
         if(cmd_data === "help"){
             if(suffix){
@@ -1133,10 +1136,12 @@ client.on('message', (msg) => {
 				cmd.process(client,msg,suffix);
 			} catch(e){
                 msg.channel.send("Unknown error.  See log file for details.");
-                logger.info('Error %s: %s.', e, e.stack);
+                logger.error('Error %s: %s.', e, e.stack);
 			}
 		} else {
-			msg.channel.send(cmd_data + " is not a valid command. Type !help for a list of commands.").then((message => message.delete(2500)))
+            msg.channel.send(cmd_data + " is not a valid command."
+             + " Type !help for a list of commands.")
+             .then((message => message.delete(2500)))
 		}
 	} else {
 		return
@@ -1144,8 +1149,12 @@ client.on('message', (msg) => {
 });
 
 process.on('uncaughtException', function(e) {
-    logger.info('Error %s: %s.\nWinnie_Bot will now restart.', e, e.stack);
-    process.exit(1);
+    logger.error('Error %s: %s.\nWinnie_Bot will now attempt to reconnect.', e, e.stack);
+    try {
+        client.login(config.token);
+    } catch (e) {
+        process.exit(1);
+    }
   })
 
 client.login(config.token);
