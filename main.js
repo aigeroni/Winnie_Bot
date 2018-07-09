@@ -4,12 +4,9 @@ const config = require('./config.json');
 const logger = require('./logger.js');
 const gameloop = require('node-gameloop');
 const timezoneJS = require('timezone-js');
-timezoneJS.timezone.zoneFileBasePath = 'node_modules/timezone-js/tz';
-timezoneJS.timezone.init();
-var timerID = 1;
-var challengeList = {};
-var goalList = {};
-var raptorCount = {};
+const storage = require('node-persist');
+const util = require('util');
+const CMD_PREFIX = '!';
 const durationAfterChallenge = 600;
 const promptList = ["One of your characters receives an anonymous gift.",
     "Your character invites someone they don’t like over for dinner.",
@@ -59,22 +56,64 @@ const promptList = ["One of your characters receives an anonymous gift.",
     "Something has a dual function.",
     "The only useful thing is in the corner."];
 
-const tickTimer = gameloop.setGameLoop(function(delta) {
+timezoneJS.timezone.zoneFileBasePath = 'node_modules/timezone-js/tz';
+timezoneJS.timezone.init();
+
+var timerID = 1;
+var challengeList = {};
+var goalList = {}
+var raptorCount = {};
+
+async function fileSystemCheck() {
+    await storage.init();
+    try {
+        timerID = await storage.getItem('timer');
+    } catch (e) {
+        logger.notice("No stored data for timer");
+    }
+    try {
+        challengeList = await storage.getItem('challenges');
+    } catch (e) {
+        logger.notice("No stored data for challenges");
+    }
+    try {
+        goalList = await storage.getItem('goals');
+    } catch (e) {
+        logger.notice("No stored data for goals");
+    }
+    try {
+        raptorCount = await storage.getItem('raptors');
+    } catch (e) {
+        logger.notice("No stored data for raptors");
+    }
+}
+
+const tickTimer = gameloop.setGameLoop(async function(delta) {
     for (var item in challengeList){
         challengeList[item].update();
+        logger.info(util.inspect(challengeList));
+        // await storage.setItem('challenges',challengeList);
     }
     for (var item in goalList){
-    	goalList[item].update();
+        goalList[item].update();
+        // await storage.setItem('goals',goalList);
     }
  }, 1000);
 
  client.on('ready', () => {
+    fileSystemCheck();
     logger.info('Winnie_Bot is online');
 });
 
-function raptor (server, channel, author) {
-	var raptorChance = Math.ceil(Math.random() * 10);
-	if raptorChance == 10 {
+function raptor (server, channel, author, raptorChance) {
+    logger.info('entered raptor block');
+    if (!(server in raptorCount)) {
+        raptorCount[server] = 0;
+    }
+    var raptorRoll = (Math.random() * 100);
+    logger.info(raptorRoll);
+	if (raptorRoll < raptorChance) {
+        logger.info('generated raptor with roll ' + raptorRoll);
 		raptorCount[server] += 1;
 		channel.send(author + ", you have hatched a raptor! Your server currently"
 		+ " houses " + raptorCount[server] + " raptors.");
@@ -250,7 +289,8 @@ class War{
             for(var user in this.joinedUsers) {
                 userList += " " + this.joinedUsers[user].userData;
             }
-            this.channel.send(this.displayName + " has ended!"
+            this.channel.send(this.displayName + " (ID "
+                + this.objectID + ") has ended!"
                 + " Post your total to be included in the summary."
                 + userList);
             this.state = 2;
@@ -351,7 +391,8 @@ class ChainWar{
             for(var user in this.joinedUsers) {
                 userList += " " + this.joinedUsers[user].userData;
             }
-            this.channel.send(this.displayName + " has ended!"
+            this.channel.send(this.displayName + " (ID "
+                + this.objectID + ") has ended!"
                 + " Post your total to be included in the summary."
                 + userList);
             this.completedWarCount++;
@@ -403,8 +444,8 @@ class ChainWar{
 }
 
 class Goal {
-    constructor(creator, goal, goalType, startTime, terminationTime) {
-        this.creator = creator;
+    constructor(msg, goal, goalType, startTime, terminationTime) {
+        this.msg =  msg;
         this.goal = goal;
         this.goalType = goalType;
         this.written = 0;
@@ -414,8 +455,10 @@ class Goal {
 
     update() {
         if(new timezoneJS.Date() >= this.terminationTime) {
-            delete goalList[creator];
-            logger.info("Deleting goal of " + creator);
+            raptorPct = ((this.written / this.goal) * 100);
+            raptor(msg.guild, msg.channel, msg.author, raptorPct);
+            delete goalList[msg.author.id];
+            logger.info("Deleting goal of " + msg.author);
         }
     }
 
@@ -470,6 +513,7 @@ var cmd_list = {
                     challengeList[timerID] = new Sprint(timerID, creatorID,
                         sprint_name, start, words, timeout, msg.channel);
                     timerID = timerID + 1;
+                    storage.setItem('timer',timerID);
                 } catch(e) {
                     msg.channel.send("Error: Sprint creation failed.");
                     logger.info('Error %s: %s.', e, e.stack);
@@ -506,9 +550,11 @@ var cmd_list = {
                     if(war_name == '') {
                         war_name = msg.author.username + "'s war";
                     }
+                    logger.info(timerID);
                     challengeList[timerID] = new War(timerID, creatorID,
                         war_name, start, duration, msg.channel);
                     timerID = timerID + 1;
+                    storage.setItem('timer',timerID);
                 } catch(e) {
                     msg.channel.send("Error: War creation failed.");
                     logger.info('Error %s: %s.', e, e.stack);
@@ -557,6 +603,7 @@ var cmd_list = {
                         war_name, chainWarCount, duration, timeBetween,
                         msg.channel);
                     timerID = timerID + 1;
+                    storage.setItem('timer', timerID);
                 } catch(e) {
                     msg.channel.send("Error: Chain war creation failed.");
                     logger.info('Error %s: %s.', e, e.stack);
@@ -680,12 +727,14 @@ var cmd_list = {
                             }
                         }
                         if (!joinCheck) {
+                            raptor(msg.guild, msg.channel, msg.author, 10);
                             challengeList[challengeID].joinedUsers
                                 [msg.author.id] = {"userData": msg.author,
                                 "countData": wordsWritten,
                                 "countType": writtenType};
                         }
                         msg.channel.send("Total added to summary.");
+                        
                     } else {
                         msg.channel.send(msg.author + ", I need a whole number"
                             + " to include in the summary!");
@@ -884,17 +933,22 @@ var cmd_list = {
                 currentRoleList = msg.member.roles.filter(function (a) {
                     return regionRegex.test(a.name);
                 });
-                logger.info(currentRoleList);
                 msg.member.removeRoles(currentRoleList);
-                logger.info(msg.member.roles);
                 //add user to role, confirm
                 msg.member.addRole(tzRole);
                 msg.channel.send(msg.author + ", you have set your timezone to"
                     + " **" + timezone + "**.");
             } catch(e) {
-                logger.error(e);
-                msg.channel.send("Winnie_Bot accepts IANA timezone identifiers"
+                if (e.code == 'ENOENT') {
+                    await msg.channel.send('Fatal error. Please contact your server'
+                        + ' admin.');
+                    await logger.error('Fatal error %s: %s.  Winnie_Bot cannot locate'
+                        + ' required files.\nWinnie_Bot will now terminate.')
+                    process.exit(1);
+                } else {
+                    msg.channel.send("Winnie_Bot accepts IANA timezone identifiers"
                     + " only.")
+                }
             }
 	    }
     },
@@ -937,7 +991,7 @@ var cmd_list = {
                     //calculate next midnight based on timezone
                     var endTime = startTime;
                     endTime.setHours(24,0,0,0);
-                    goalList[msg.author.id] = new Goal(msg.author.id, goal,
+                    goalList[msg.author.id] = new Goal(msg, goal,
                         goalType, startTime, endTime);
                     msg.channel.send(msg.author + ", your goal for today is **"
                         + goal + "** " + goalType + ".");
@@ -1087,14 +1141,14 @@ var cmd_list = {
             msg.channel.send(msg.author + ", from " + suffix + ", I selected **"
                 + items[choiceID].trim() + "**");
 		}
-    }
+    },
     "raptors": {
         name: "!raptors",
         description: "Displays raptor statistics.",
 		process: function(client,msg,suffix) {
-				var raptorMsg = "**Raptor Statistics:**\n";
+				var raptorMsg = "__**Raptor Statistics:**__\n";
 				for (server in raptorCount) {
-					raptorMsg += "\n" + server.name + ": "
+					raptorMsg += "\n__*" + server + ":*__ "
 						+ raptorCount[server];
 				}
             msg.channel.send(raptorMsg);
@@ -1106,12 +1160,12 @@ client.on('message', (msg) => {
     if(msg.isMentioned(client.user)){
 		msg.channel.send("I don't know what you want. Try !help for command information.");
     }
-    if(msg.author.id != client.user.id && (msg.content.startsWith(config.cmd_prefix))){
+    if(msg.author.id != client.user.id && (msg.content.startsWith(CMD_PREFIX))){
         logger.info("treating " + msg.content + " from " + msg.author + " as command");
         var cmd_data = msg.content.split(" ")[0]
-            .substring(config.cmd_prefix.length);
-        var suffix = msg.content.substring(cmd_data.length + config
-            .cmd_prefix.length + 1)
+            .substring(CMD_PREFIX.length).toLowerCase();
+        var suffix = msg.content.substring(cmd_data.length
+            + CMD_PREFIX.length + 1)
 		var cmd = cmd_list[cmd_data];
         if(cmd_data === "help"){
             if(suffix){
@@ -1150,6 +1204,7 @@ client.on('message', (msg) => {
 					}
                     helpMsg += "\n";
                 }
+                msg.channel.send(msg.author + ", I sent you a PM with help.");
                 msg.author.send(helpMsg);	
 			});
 		    }
@@ -1172,10 +1227,13 @@ client.on('message', (msg) => {
 });
 
 process.on('uncaughtException', function(e) {
-    logger.error('Error %s: %s.\nWinnie_Bot will now attempt to reconnect.', e, e.stack);
+    logger.error('Error %s: %s.\nWinnie_Bot will now attempt'
+        + ' to reconnect.', e, e.stack);
     try {
         client.login(config.token);
+        fileSystemCheck();
     } catch (e) {
+        logger.error('Reconnection failed.\nWinnie_Bot will now terminate.');
         process.exit(1);
     }
   })

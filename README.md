@@ -18,20 +18,32 @@ If you want to invite the public Winnie_Bot account to your server, go [here](ht
 Node.js
 npm (Node Package Manager)
 
+#### Setting up a Discord bot instance
+
+* Sign in to Discord
+* Go to https://discordapp.com/developers/, and click on 'My Apps'
+* Click on 'New App' to create a Discord
+* Reveal the token under Bot/Token - you will need this in the next step
+
 #### Installation Instructions
 
 * Clone the Winnie_Bot repository onto your server.
 * Run `npm install` to get package dependencies.
+* Create the file `config.json` in Winnie's root directory, and add the following text: {"token": "your bot's token"}
 * Run tz-script.sh to download the IANA timezone data.
 * Run `node main.js` to initialise Winnie.
 
+#### Inviting your instance of Winnie to your server
+
+Click the 'Generate OAuth2 URL' button in the Discord Developer pane to generate your invite URL.  Using the invite URL, you can invite your instance of Winnie to any Discord server on which you have administrator permissions.
+
 ## Dependencies and frameworks
 
-* [Discord.js](link) - Discord API for Node.js
-* [ESLint](link) - Linting
-* [node-gameloop](link) - Accurate timer
-* [timezone-js](link) - Timezone management
-* [winston](link) - Improved logging
+* [Discord.js](https://discord.js.org) - Discord API for Node.js
+* [ESLint](https://eslint.org/) - Linting
+* [node-gameloop](https://www.npmjs.com/package/node-gameloop) - Timer
+* [timezone-js](https://www.npmjs.com/package/timezone-js) - Timezone management
+* [winston](https://www.npmjs.com/package/winston) - Log management
 
 ## Bug reports
 
@@ -44,7 +56,7 @@ We welcome all contributors to Winnie.  Your pull requests will be reviewed by t
 ## Authors
 
 * **Dawn E. Collett** - *Primary Developer* - [GitHub](https://github.com/lisushka)
-* **Robert W. McLeod** - *Logging and server assistance* - [GitHub](https://github.com/RobFaie)
+* **Robert W. McLeod** - *Server management assistance* - [GitHub](https://github.com/RobFaie)
 
 ## License
 
@@ -56,3 +68,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 * Prompts were brainstormed by NaNoWriMo's Australia::Melbourne region.
 
 Winnie's repository is located at https://github.com/RobFaie/Winnie_Bot.
+Winnie's avatar, 'Tiny Cities', was created by Rachael Wheeler (Etlu-Yume on NaNoWriMo).  Prints of 'Tiny Cities' can be purchased [here]().
