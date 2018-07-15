@@ -6,6 +6,7 @@
   "dependencies": {
     "discord.js": "^11.3.2",
     "eslint": "^4.19.1",
+    "mongodb": "^3.1.1",
     "node-gameloop": "^0.1.4",
     "node-persist": "^3.0.1",
     "timezone-js": "^0.4.13",
