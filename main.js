@@ -4,9 +4,10 @@ const config = require('./config.json');
 const logger = require('./logger.js');
 const gameloop = require('node-gameloop');
 const timezoneJS = require('timezone-js');
-const storage = require('mongodb');
-const util = require('util');
+const mongoose = require('mongoose')
+const storageUrl = "mongodb://localhost:27017/Winnie_DB";
 const CMD_PREFIX = '!';
+const WAR_RAPTOR_CHANCE = 10;
 const durationAfterChallenge = 600;
 const promptList = ["One of your characters receives an anonymous gift.",
     "Your character invites someone they don’t like over for dinner.",
@@ -59,76 +60,132 @@ const promptList = ["One of your characters receives an anonymous gift.",
 timezoneJS.timezone.zoneFileBasePath = 'node_modules/timezone-js/tz';
 timezoneJS.timezone.init();
 
+var conn = mongoose.connection;
 var timerID = 1;
 var challengeList = {};
-var goalList = {}
+var goalList = {};
 var raptorCount = {};
-
-// async function fileSystemCheck() {
-//     await storage.init();
-//     try {
-//         timerID = await storage.getItem('timer');
-//     } catch (e) {
-//         logger.notice("No stored data for timer");
-//     }
-//     try {
-//         challengeList = await storage.getItem('challenges');
-//     } catch (e) {
-//         logger.notice("No stored data for challenges");
-//     }
-//     try {
-//         goalList = await storage.getItem('goals');
-//     } catch (e) {
-//         logger.notice("No stored data for goals");
-//     }
-//     try {
-//         raptorCount = await storage.getItem('raptors');
-//     } catch (e) {
-//         logger.notice("No stored data for raptors");
-//     }
-// }
 
 const tickTimer = gameloop.setGameLoop(async function(delta) {
     for (var item in challengeList){
         challengeList[item].update();
-        // logger.info(util.inspect(challengeList));
-        // await storage.setItem('challenges',challengeList);
     }
     for (var item in goalList){
         goalList[item].update();
-        // await storage.setItem('goals',goalList);
     }
- }, 1000);
+}, 1000);
 
- client.on('ready', () => {
-    // fileSystemCheck();
+client.on('ready', () => {
     logger.info('Winnie_Bot is online');
+    // Connect to the database
+    mongoose.connect(storageUrl, { useNewUrlParser: true }, function (e, db) {
+        if(e) throw e;
+        logger.info("Database created!");
+        conn.collection('timer').find(
+            {}, function(e, t) {
+                t.forEach(function(tx) {
+                    timerID = tx.data;
+                });
+            }
+        )
+        // conn.collection('challengeTest8').find(
+        //     {}, function(e, challenges) {
+        //         challenges.forEach(function(challenge) {
+        //             if(challenge.type == "chainwar") {
+        //                 var start = challenge.startTime + challenge
+        //                 challengeList[challenge._id] = new ChainWar(challenge._id,
+        //                 challenge.creator, challenge.name, challenge.startTime,
+        //                 challenge.chainWarCount, challenge.duration,
+        //                 challenge.timeBetweenWars, challenge.channel);
+        //             } else {
+        //                 var now = Math.floor(new timezoneJS.Date()/1000);
+        //                 var create = Math.floor(challenge.startTime/1000);
+        //                 var start = create + Number(challenge.countdown);
+        //                 var end = start + Number(challenge.duration);
+        //                 var currentCountdown = challenge.countdown;
+        //                 var currentDuration = challenge.duration;
+        //                 var currentState = 0;
+        //                 if (start > now) {
+        //                     currentCountdown = start - now;
+        //                 } else if (end > now) {
+        //                     currentCountdown = 0;
+        //                     currentDuration = end - now;
+        //                     currentState = 1;
+        //                 } else {
+        //                     currentCountdown = 0;
+        //                     currentDuration = 0;
+        //                     currentState = 2;
+        //                 }
+        //                 logger.info(now);
+        //                 logger.info(create);
+        //                 logger.info(start);
+        //                 logger.info(end);
+        //                 logger.info(currentCountdown);
+        //                 logger.info(currentDuration);
+        //                 logger.info(currentState);
+        //             }
+        //             if(challenge.type == "sprint") {
+        //                 challengeList[challenge._id] = new Sprint(challenge._id,
+        //                 challenge.creator, challenge.name, challenge.startTime,
+        //                 currentCountdown, challenge.goal, currentDuration,
+        //                 challenge.channel, currentState);
+        //             } else if(challenge.type == "war") {
+        //                 challengeList[challenge._id] = new War(challenge._id,
+        //                 challenge.creator, challenge.name, challenge.startTime,
+        //                 currentCountdown, currentDuration, challenge.channel,
+        //                 currentState);
+        //             }
+        //         });
+        //     }
+        // );
+        conn.collection('goalDB').find(
+            {}, function(e, goals) {
+                goals.forEach(function(goal) {
+                    goalList[goal.authorID] = new Goal(goal.authorID,
+                        goal.goal, goal.goalType, goal.written,
+                        goal.startTime, goal.terminationTime,
+                        goal.channelID);
+                });
+            }
+        );
+        conn.collection('raptorDB').find(
+            {}, function(e, guilds) {
+                guilds.forEach(function(guild) {
+                    raptorCount[guild.server] = guild.count;
+                });
+            }
+        );
+    });
 });
 
 function raptor (server, channel, author, raptorChance) {
-    logger.info('entered raptor block');
-    if (!(server in raptorCount)) {
-        raptorCount[server] = 0;
+    if (!(server.id in raptorCount)) {
+        raptorCount[server.id] = 0;
     }
     var raptorRoll = (Math.random() * 100);
-    logger.info(raptorRoll);
 	if (raptorRoll < raptorChance) {
-        logger.info('generated raptor with roll ' + raptorRoll);
-		raptorCount[server] += 1;
+        raptorCount[server.id] += 1;
+        conn.collection('raptorDB').update(
+            {},
+            {"server": server.id, "count": raptorCount[server.id]},
+            {upsert: true}
+        )
 		channel.send(author + ", you have hatched a raptor! Your server currently"
-		+ " houses " + raptorCount[server] + " raptors.");
+		+ " houses " + raptorCount[server.id] + " raptors.");
 	}
 }
 
 class Sprint {
-    constructor(objectID, creator, displayName, countdown, goal, timeout, channel) {
+    constructor(objectID, creator, displayName, startTime, countdown, goal, timeout, channel) {
         this.objectID = objectID;
         this.creator = creator;
         this.displayName = displayName;
+        this.startTime = startTime;
         this.countdown = countdown;
         this.goal = goal;
         this.duration = timeout;
-        this.channel = channel;
+        this.channelID = channel;
+        this.channel = client.channels.get(this.channelID);
         this.joinedUsers = {};
         this.state = 0;
 
@@ -145,6 +202,26 @@ class Sprint {
                 + " (ID " + this.objectID + "), starts in " + this.countdown
                 + " minutes.");
         }
+
+        var challengeData = {
+            "_id": this.objectID,
+            "creator": this.creator,
+            "name": this.displayName,
+            "startTime": this.startTime,
+            "countdown": this.countdown,
+            "goal": this.goal,
+            "duration": this.duration,
+            "channel": this.channelID,
+            "joinedUsers": this.joinedUsers,
+            "state": this.state,
+            "type": "sprint"
+        };
+        var array = [challengeData];
+
+        conn.collection('challengeTest8').insert(
+            array, {}, function(e, docs) {}
+        );
+
     }
 
     update() {
@@ -212,19 +289,24 @@ class Sprint {
     terminate() {
         this.cPost--;
         if(this.cPost == 0) {
+            conn.collection('challengeTest8').remove(
+                {_id: this.objectID}
+            );
             delete challengeList[this.objectID];
         }
     }
 }
 
 class War{
-    constructor(objectID, creator, displayName, countdown, duration, channel) {
+    constructor(objectID, creator, displayName, startTime, countdown, duration, channel) {
         this.objectID = objectID;
         this.creator = creator;
         this.displayName = displayName;
+        this.startTime = startTime;
         this.countdown = countdown;
         this.duration = duration;
-        this.channel = channel;
+        this.channelID = channel
+        this.channel = client.channels.get(this.channelID);
         this.joinedUsers = {};
         this.state = 0;
 
@@ -241,6 +323,24 @@ class War{
                 + " (ID " + this.objectID + "), starts in "
                 + this.countdown + " minutes.");
         }
+
+        var challengeData = {
+            "_id": this.objectID,
+            "creator": this.creator,
+            "name": this.displayName,
+            "startTime": this.startTime,
+            "countdown": this.countdown,
+            "duration": this.duration,
+            "channel": this.channelID,
+            "joinedUsers": this.joinedUsers,
+            "state": this.state,
+            "type": "war"
+        };
+        var array = [challengeData];
+
+        conn.collection('challengeTest8').insert(
+            array, {}, function(e, docs) {}
+        );
     }
 
     update() {
@@ -255,23 +355,30 @@ class War{
                 this.terminate();
                 break;
             default:
-            this.channel.send("Error: Invalid state reached.");
-            delete challengeList[objectID];
+                this.channel.send("Error: Invalid state reached.");
+                conn.collection('challengeTest8').remove(
+                    {_id: this.objectID}
+                );
+                delete challengeList[objectID];
                 break;
         }
     }
 
     start() {
+        logger.info('entered start');
         if (this.cStart > 0) {
+            logger.info('entered if');
             this.cStart--;
         }
         if(this.cStart <= 0) {
+            logger.info('entered handler');
             var userList = "";
             for(var user in this.joinedUsers) {
                 userList += " " + this.joinedUsers[user].userData;
             }
             this.channel.send(this.displayName + " starts now!" + userList);
             this.state = 1
+            logger.info(this.state);
         } else if(this.cStart == 60) {
             this.channel.send(this.displayName + " starts in 1 minute.");
         } else if(this.cStart % 60 == 0) {
@@ -307,22 +414,28 @@ class War{
     }
     terminate() {
         this.cPost--;
-        if(this.cPost == 0) {
+        if(this.cPost <= 0) {
+            conn.collection('challengeTest8').remove(
+                {_id: this.objectID}
+            );
             delete challengeList[this.objectID];
         }
     }
 }
 
 class ChainWar{
-    constructor(objectID, creator, displayName, chainWarCount, duration,
+    constructor(objectID, creator, displayName, startTime, chainWarCount, duration,
         timeBetweenWars, channel) {
         this.objectID = objectID;
         this.creator = creator;
         this.displayName = displayName;
+        this.startTime = startTime;
         this.chainWarCount = chainWarCount;
         this.duration = duration;
         this.timeBetweenWars = timeBetweenWars;
-        this.channel = channel;
+        this.channelID = channel;
+        this.channel = client.channels.get(this.channelID);
+        logger.info(this.channel);
         this.joinedUsers = {};
         this.state = 0;
 
@@ -340,6 +453,25 @@ class ChainWar{
                 + " (ID " + this.objectID + "), starts in "
                 + this.countdown + " minutes.");
         }
+
+        var challengeData = {
+            "_id": this.objectID,
+            "creator": this.creator,
+            "name": this.displayName,
+            "startTime": this.startTime,
+            "chainWarCount": this.chainWarCount,
+            "timeBetweenWars": this.timeBetweenWars,
+            "duration": this.duration,
+            "channel": this.channel,
+            "joinedUsers": this.joinedUsers,
+            "state": this.state,
+            "type": "chainwar"
+        };
+        var array = [challengeData];
+
+        conn.collection('challengeTest8').insert(
+            array, {}, function(e, docs) {}
+        );
     }
 
     update() {
@@ -357,8 +489,11 @@ class ChainWar{
                 this.interval();
                 break
             default:
-            this.channel.send("Error: Invalid state reached.");
-            delete challengeList[objectID];
+                this.channel.send("Error: Invalid state reached.");
+                conn.collection('challengeTest8').remove(
+                    {_id: this.objectID}
+                );
+                delete challengeList[objectID];
                 break;
         }
     }
@@ -437,6 +572,9 @@ class ChainWar{
     terminate() {
         this.cPost--;
         if(this.cPost == 0) {
+            conn.collection('challengeTest8').remove(
+                {_id: this.objectID}
+            );
             delete challengeList[this.objectID];
         }
     }
@@ -444,21 +582,42 @@ class ChainWar{
 }
 
 class Goal {
-    constructor(msg, goal, goalType, startTime, terminationTime) {
-        this.msg =  msg;
+    constructor(authorID, goal, goalType, written, startTime, terminationTime, channelID) {
+        this.authorID =  authorID;
         this.goal = goal;
         this.goalType = goalType;
-        this.written = 0;
+        this.written = written;
         this.startTime = startTime;
         this.terminationTime = terminationTime;
+        this.channelID = channelID;
+        this.channel = client.channels.get(this.channelID);
+
+        var goalData = {
+            "authorID": this.authorID,
+            "goal": this.goal,
+            "goalType": this.goalType,
+            "written": this.written,
+            "startTime": this.startTime,
+            "terminationTime": this.terminationTime,
+            "channelID": this.channelID
+        };
+
+        conn.collection('goalDB').update(
+            {authorID: this.authorID},
+            goalData,
+            {upsert: true}
+        )
     }
 
     update() {
         if(new timezoneJS.Date() >= this.terminationTime) {
-            raptorPct = ((this.written / this.goal) * 100);
-            raptor(msg.guild, msg.channel, msg.author, raptorPct);
-            delete goalList[msg.author.id];
-            logger.info("Deleting goal of " + msg.author);
+            var raptorPct = ((this.written / this.goal) * 100);
+            raptor(this.channel.guild, this.channel, this.authorID, raptorPct);
+            conn.collection('goalDB').remove(
+                {authorID: this.authorID}
+            );
+            delete goalList[this.authorID];
+            logger.info("Deleting goal of " +  client.users.get(this.authorID));
         }
     }
 
@@ -471,6 +630,12 @@ class Goal {
                 this.written = parseInt(wordNumber);
                 break;
         }
+        conn.collection('goalDB').update(
+            {"authorID": this.authorID},
+            {$set: {"written": this.written}},
+            {upsert: false},
+            function(err){}
+        )
     }
 }
 
@@ -511,9 +676,13 @@ var cmd_list = {
                         sprint_name = msg.author.username + "'s sprint";
                     }
                     challengeList[timerID] = new Sprint(timerID, creatorID,
-                        sprint_name, start, words, timeout, msg.channel);
+                        sprint_name, start, words, timeout, msg.channel.id, 0);
+                    conn.collection('timer').update(
+                        {data: timerID},
+                        {data: (timerID+1)},
+                        {upsert: true}
+                    )
                     timerID = timerID + 1;
-                    // storage.setItem('timer',timerID);
                 } catch(e) {
                     msg.channel.send("Error: Sprint creation failed.");
                     logger.info('Error %s: %s.', e, e.stack);
@@ -550,11 +719,15 @@ var cmd_list = {
                     if(war_name == '') {
                         war_name = msg.author.username + "'s war";
                     }
-                    logger.info(timerID);
+                    var startTime = new Date().getTime();
                     challengeList[timerID] = new War(timerID, creatorID,
-                        war_name, start, duration, msg.channel);
+                        war_name, startTime, start, duration, msg.channel.id, 0);
+                    conn.collection('timer').update(
+                        {data: timerID},
+                        {data: (timerID+1)},
+                        {upsert: true}
+                    )
                     timerID = timerID + 1;
-                    // storage.setItem('timer',timerID);
                 } catch(e) {
                     msg.channel.send("Error: War creation failed.");
                     logger.info('Error %s: %s.', e, e.stack);
@@ -589,8 +762,8 @@ var cmd_list = {
             } else if (duration * chainWarCount > 120) {
                 msg.channel.send("Chain wars cannot last for more than two"
                 + " hours of writing time.");
-            } else if (start < 0) {
-                msg.channel.send("Wars cannot start in the past.");
+            } else if (timeBetween < 0) {
+                msg.channel.send("Chain wars cannot overlap.");
             } else if (duration < 1) {
                 msg.channel.send("Wars must run for at least a minute.");
             } else {
@@ -601,9 +774,13 @@ var cmd_list = {
                     }
                     challengeList[timerID] = new ChainWar(timerID, creatorID,
                         war_name, chainWarCount, duration, timeBetween,
-                        msg.channel);
+                        msg.channel.id, 0);
+                    conn.collection('timer').update(
+                        {data: timerID},
+                        {data: (timerID+1)},
+                        {upsert: true}
+                    )
                     timerID = timerID + 1;
-                    // storage.setItem('timer', timerID);
                 } catch(e) {
                     msg.channel.send("Error: Chain war creation failed.");
                     logger.info('Error %s: %s.', e, e.stack);
@@ -671,13 +848,16 @@ var cmd_list = {
         usage: "<id>",
 	    process: function(client,msg,suffix) {
             var challengeID = suffix;
-            if (isNaN(challengeID)) {
+            logger.info(challengeID);
+            if (isNaN(challengeID) || challengeID < 1) {
                 msg.channel.send("Challenge ID must be an integer.");
-            } else if (challengeID < 1) {
-                msg.channel.send("Challenge ID must be an integer.");
-            } if (challengeID in challengeList) {
+            } else if (challengeID in challengeList) {
                 var exName = challengeList[challengeID].displayName;
                 if(challengeList[challengeID].creator == msg.author.id) {
+                    logger.info(challengeID);
+                    conn.collection('challengeTest8').remove(
+                        {_id: Number(challengeID)}
+                    );
                     delete challengeList[challengeID];
                     msg.channel.send(exName + " has been successfully"
                         + " exterminated.");
@@ -713,27 +893,29 @@ var cmd_list = {
                 }
                 if (challengeID in challengeList) {
                     if (challengeList[challengeID].state == 2) {
-                        if(Number.isInteger(parseInt(wordsWritten))){
+                        if(Number.isInteger(Number(wordsWritten))){
                             var joinCheck = false;
                             for(user in challengeList[challengeID].joinedUsers) {
                                 if(challengeList[challengeID].joinedUsers[user]
                                     .userData.id == msg.author.id) {
+                                    if(!(challengeList[challengeID].joinedUsers[user]
+                                        .countData === undefined)) {
+                                        joinCheck = true;
+                                    }
                                     challengeList[challengeID].joinedUsers[user]
                                         .countData = wordsWritten;
                                     challengeList[challengeID].joinedUsers[user]
                                         .countType = writtenType;
-                                    joinCheck = true;
                                 }
                             }
                             if (!joinCheck) {
-                                raptor(msg.guild, msg.channel, msg.author, 10);
+                                raptor(msg.guild, msg.channel, msg.author, WAR_RAPTOR_CHANCE);
                                 challengeList[challengeID].joinedUsers
                                     [msg.author.id] = {"userData": msg.author,
                                     "countData": wordsWritten,
                                     "countType": writtenType};
                             }
                             msg.channel.send("Total added to summary.");
-                            
                         } else {
                             msg.channel.send(msg.author + ", I need a whole number"
                                 + " to include in the summary!");
@@ -939,6 +1121,7 @@ var cmd_list = {
                 } else {
                     if (goalType === undefined) {
                         goalType = 'words';
+
                     }
                     //get timezone
                     var regionRegex = /^(Africa|America|Antarctica|Asia|Atlantic|Australia|Europe|Indian|Pacific|Etc)/;
@@ -952,8 +1135,8 @@ var cmd_list = {
                     //calculate next midnight based on timezone
                     var endTime = startTime;
                     endTime.setHours(24,0,0,0);
-                    goalList[msg.author.id] = new Goal(msg, goal,
-                        goalType, startTime, endTime);
+                    goalList[msg.author.id] = new Goal(msg.author.id, goal,
+                        goalType, 0, startTime.getTime(), endTime.getTime(), msg.channel.id);
                     msg.channel.send(msg.author + ", your goal for today is **"
                         + goal + "** " + goalType + ".");
                 }
@@ -968,7 +1151,7 @@ var cmd_list = {
         type: "goals",
 		process: function(client,msg,suffix) {
             var goal = suffix;
-            if(!Number.isInteger(parseInt(goal))){
+            if(!Number.isInteger(Number(goal))){
                 msg.channel.send("Invalid input. Your goal must be a whole number.")
             } else if(!(msg.author.id in goalList)) {
                 msg.channel.send(msg.author + ", you have not yet set a goal for today. Use !set to do so.");
@@ -986,7 +1169,7 @@ var cmd_list = {
         type: "goals",
 		process: function(client,msg,suffix) {
 	    	var goal = suffix;
-            if(!Number.isInteger(parseInt(goal))){
+            if(!Number.isInteger(Number(goal))){
                 msg.channel.send("Invalid input. Your goal must be a whole number.")
             } else if(!(msg.author.id in goalList)) {
                 msg.channel.send(msg.author + ", you have not yet set a goal for today. Use !set to do so.");
@@ -1004,7 +1187,11 @@ var cmd_list = {
             if(!(msg.author.id in goalList)) {
                 msg.channel.send(msg.author + ", you have not yet set a goal for today. Use !set to do so.");
             } else {
+                conn.collection('goalDB').remove(
+                    {authorID: msg.author.id}
+                );
                 delete goalList[msg.author.id];
+
                 msg.channel.send(msg.author + ", you have successfully reset your daily goal.");
             }
 	    }
@@ -1145,9 +1332,7 @@ var cmd_list = {
         type: "other",
 		process: function(client,msg,suffix) {
             var items = suffix.split(",");
-            logger.info(items.length);
             var choiceID = (Math.floor(Math.random() * items.length))
-            logger.info(choiceID);
             msg.channel.send(msg.author + ", from " + suffix + ", I selected **"
                 + items[choiceID].trim() + "**");
 		}
@@ -1159,7 +1344,7 @@ var cmd_list = {
 		process: function(client,msg,suffix) {
 				var raptorMsg = "__**Raptor Statistics:**__\n";
 				for (server in raptorCount) {
-					raptorMsg += "\n__*" + server + ":*__ "
+					raptorMsg += "\n__*" + client.guilds.get(server) + ":*__ "
 						+ raptorCount[server];
 				}
             msg.channel.send(raptorMsg);
@@ -1172,7 +1357,7 @@ client.on('message', (msg) => {
 		msg.channel.send("I don't know what you want. Try !help for command information.");
     }
     if(msg.author.id != client.user.id && (msg.content.startsWith(CMD_PREFIX))){
-        logger.info(msg.author.name + " entered command " + msg.content);
+        logger.info(msg.author + " entered command " + msg.content);
         var cmd_data = msg.content.split(" ")[0]
             .substring(CMD_PREFIX.length).toLowerCase();
         var suffix = msg.content.substring(cmd_data.length

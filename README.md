@@ -17,6 +17,7 @@ If you want to invite the public Winnie_Bot account to your server, go [here](ht
 
 Node.js
 npm (Node Package Manager)
+MongoDB
 
 #### Setting up a Discord bot instance
 
@@ -30,6 +31,7 @@ npm (Node Package Manager)
 * Clone the Winnie_Bot repository onto your server.
 * Run `npm install` to get package dependencies.
 * Create the file `config.json` in Winnie's root directory, and add the following text: {"token": "your bot's token"}
+* Install and run MongoDB.
 * Run tz-script.sh to download the IANA timezone data.
 * Run `node main.js` to initialise Winnie.
 
