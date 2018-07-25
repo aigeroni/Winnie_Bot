@@ -9,7 +9,7 @@ If you want to run Winnie on your server, you can either invite the public Winni
 
 ### Inviting the public Winnie_Bot account
 
-If you want to invite the public Winnie_Bot account to your server, go [here](https://discordapp.com/api/oauth2/authorize?client_id=386676183791829002&permissions=0&scope=bot).  If you want to turn off cross-server wars, your admin will need to use the !config command (1.1.3 and later).
+If you want to invite the public Winnie_Bot account to your server, go [here](https://discordapp.com/api/oauth2/authorize?client_id=386676183791829002&permissions=0&scope=bot).
 
 ### Setting up your own instance of Winnie
 
@@ -17,7 +17,6 @@ If you want to invite the public Winnie_Bot account to your server, go [here](ht
 
 Node.js
 npm (Node Package Manager)
-MongoDB
 
 #### Setting up a Discord bot instance
 
@@ -31,8 +30,8 @@ MongoDB
 * Clone the Winnie_Bot repository onto your server.
 * Run `npm install` to get package dependencies.
 * Create the file `config.json` in Winnie's root directory, and add the following text: {"token": "your bot's token"}
-* Install and run MongoDB.
-* Run tz-script.sh to download the IANA timezone data.
+* Initialise MongoDB.
+* Run `bash tz-script.sh` to download the IANA timezone data.
 * Run `node main.js` to initialise Winnie.
 
 #### Inviting your instance of Winnie to your server
@@ -43,6 +42,8 @@ Click the 'Generate OAuth2 URL' button in the Discord Developer pane to generate
 
 * [Discord.js](https://discord.js.org) - Discord API for Node.js
 * [ESLint](https://eslint.org/) - Linting
+* [MongoDB](https://www.mongodb.com/) - Persistent storage
+* [mongoose](http://mongoosejs.com/) - MongoDB framework
 * [node-gameloop](https://www.npmjs.com/package/node-gameloop) - Timer
 * [timezone-js](https://www.npmjs.com/package/timezone-js) - Timezone management
 * [winston](https://www.npmjs.com/package/winston) - Log management
@@ -70,4 +71,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 * Prompts were brainstormed by NaNoWriMo's Australia::Melbourne region.
 
 Winnie's repository is located at https://github.com/RobFaie/Winnie_Bot.
-Winnie's avatar, 'Tiny Cities', was created by Rachael Wheeler (Etlu-Yume on NaNoWriMo).  Prints of 'Tiny Cities' can be purchased [here]().
+Winnie's avatar, 'Tiny Cities', was created by Rachael Wheeler (Etlu-Yume on NaNoWriMo).  Prints of 'Tiny Cities' can be purchased [here](https://www.redbubble.com/people/scorpiraw?asc=u).

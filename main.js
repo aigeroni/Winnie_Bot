@@ -97,34 +97,7 @@ client.on('ready', () => {
         //                 challenge.creator, challenge.name, challenge.startTime,
         //                 challenge.chainWarCount, challenge.duration,
         //                 challenge.timeBetweenWars, challenge.channel);
-        //             } else {
-        //                 var now = Math.floor(new timezoneJS.Date()/1000);
-        //                 var create = Math.floor(challenge.startTime/1000);
-        //                 var start = create + Number(challenge.countdown);
-        //                 var end = start + Number(challenge.duration);
-        //                 var currentCountdown = challenge.countdown;
-        //                 var currentDuration = challenge.duration;
-        //                 var currentState = 0;
-        //                 if (start > now) {
-        //                     currentCountdown = start - now;
-        //                 } else if (end > now) {
-        //                     currentCountdown = 0;
-        //                     currentDuration = end - now;
-        //                     currentState = 1;
-        //                 } else {
-        //                     currentCountdown = 0;
-        //                     currentDuration = 0;
-        //                     currentState = 2;
-        //                 }
-        //                 logger.info(now);
-        //                 logger.info(create);
-        //                 logger.info(start);
-        //                 logger.info(end);
-        //                 logger.info(currentCountdown);
-        //                 logger.info(currentDuration);
-        //                 logger.info(currentState);
-        //             }
-        //             if(challenge.type == "sprint") {
+        //             } else if(challenge.type == "sprint") {
         //                 challengeList[challenge._id] = new Sprint(challenge._id,
         //                 challenge.creator, challenge.name, challenge.startTime,
         //                 currentCountdown, challenge.goal, currentDuration,
