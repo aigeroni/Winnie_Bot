@@ -5,7 +5,6 @@ const logger = require('./logger.js');
 const gameloop = require('node-gameloop');
 const timezoneJS = require('timezone-js');
 const mongoose = require('mongoose')
-const storageUrl = "mongodb://localhost:27017/Winnie_DB";
 const CMD_PREFIX = '!';
 const WAR_RAPTOR_CHANCE = 10;
 const durationAfterChallenge = 600;
@@ -78,7 +77,7 @@ const tickTimer = gameloop.setGameLoop(async function(delta) {
 client.on('ready', () => {
     logger.info('Winnie_Bot is online');
     // Connect to the database
-    mongoose.connect(storageUrl, { useNewUrlParser: true }, function (e, db) {
+    mongoose.connect(config.storageUrl, { useNewUrlParser: true }, function (e, db) {
         if(e) throw e;
         logger.info("Database created!");
         conn.collection('timer').find(
