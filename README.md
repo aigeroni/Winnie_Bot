@@ -48,6 +48,14 @@ Click the 'Generate OAuth2 URL' button in the Discord Developer pane to generate
 * [timezone-js](https://www.npmjs.com/package/timezone-js) - Timezone management
 * [winston](https://www.npmjs.com/package/winston) - Log management
 
+### Discord.js Peer Dependencies
+* bufferutil
+* libsodium-wrappers
+* node-opus
+* opusscript
+* sodium
+* uws
+
 ## Bug reports
 
 Please report bugs by opening an [issue](https://github.com/RobFaie/Winnie_Bot/issues) on GitHub.
