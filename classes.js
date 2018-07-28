@@ -121,7 +121,7 @@ class Challenge {
     terminate() {
         this.cPost--;
         if(this.cPost == 0) {
-            conn.collection('challengeTest25').remove(
+            conn.collection('challengeDB').remove(
                 {_id: this.objectID}
             );
             delete challengeList[this.objectID];
@@ -151,7 +151,7 @@ class Sprint extends Challenge {
         };
         var array = [challengeData];
 
-        conn.collection('challengeTest25').insert(
+        conn.collection('challengeDB').insert(
             array, {}, function(e, docs) {}
         );
 
@@ -203,7 +203,7 @@ class War extends Challenge {
         };
         var array = [challengeData];
 
-        conn.collection('challengeTest25').insert(
+        conn.collection('challengeDB').insert(
             array, {}, function(e, docs) {}
         );
     }
@@ -250,7 +250,7 @@ class ChainWar extends Challenge {
         };
         var array = [challengeData];
 
-        conn.collection('challengeTest25').insert(
+        conn.collection('challengeDB').insert(
             array, {}, function(e, docs) {}
         );
     }

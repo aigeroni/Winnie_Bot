@@ -77,7 +77,7 @@ client.on('ready', () => {
                 });
             }
         )
-        conn.collection('challengeTest25').find(
+        conn.collection('challengeDB').find(
             {}, function(e, challenges) {
                 challenges.forEach(function(challenge) {
                     if(challenge.type == "sprint") {
@@ -292,7 +292,7 @@ var cmd_list = {
                         "countType": undefined};
                     msg.channel.send(msg.author + ", you have joined "
                         + challengeList[challengeID].displayName);
-                        conn.collection('challengeTest25').update(
+                        conn.collection('challengeDB').update(
                             {_id: challengeID},
                             {joinedUsers: challengeList[challengeID]
                                 .joinedUsers},
@@ -321,7 +321,7 @@ var cmd_list = {
                         .joinedUsers[msg.author.id];
                     msg.channel.send(msg.author + ", you have left "
                         + challengeList[challengeID].displayName);
-                    conn.collection('challengeTest25').update(
+                    conn.collection('challengeDB').update(
                         {_id: challengeID},
                         {joinedUsers: challengeList[challengeID]
                             .joinedUsers},
@@ -349,7 +349,7 @@ var cmd_list = {
             } else if (challengeID in challengeList) {
                 var exName = challengeList[challengeID].displayName;
                 if(challengeList[challengeID].creator == msg.author.id) {
-                    conn.collection('challengeTest25').remove(
+                    conn.collection('challengeDB').remove(
                         {_id: Number(challengeID)}
                     );
                     delete challengeList[challengeID];
