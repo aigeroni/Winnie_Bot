@@ -14,9 +14,9 @@ timezoneJS.timezone.zoneFileBasePath = 'node_modules/timezone-js/tz';
 timezoneJS.timezone.init();
 
 var timerID = 1;
-var challengeList = {};
-var goalList = {};
-var raptorCount = {};
+global.challengeList = {};
+global.goalList = {};
+global.raptorCount = {};
 var regionRegex = /^(Africa|America|Antarctica|Asia|Atlantic|Australia|Europe|Indian|Pacific|Etc)/;
 
 const tickTimer = gameloop.setGameLoop(async function(delta) {

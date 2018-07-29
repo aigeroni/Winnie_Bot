@@ -29,7 +29,7 @@ npm (Node Package Manager)
 
 * Clone the Winnie_Bot repository onto your server.
 * Run `npm install` to get package dependencies.
-* Create the file `config.json` in Winnie's root directory, and add the following text: {"token": "your bot's token"}
+* Create the file `config.json` in Winnie's root directory, and add the following text: {"token": "your bot's token", "storageUrl": "location of your MongoDB"}
 * Initialise MongoDB.
 * Run `bash tz-script.sh` to download the IANA timezone data.
 * Run `node main.js` to initialise Winnie.
