@@ -1,3 +1,4 @@
+const functions = require('./functions.js');
 const DUR_AFTER = 600;
 
 class Challenge {
@@ -121,10 +122,11 @@ class Challenge {
     terminate() {
         this.cPost--;
         if(this.cPost == 0) {
+            functions.generateSummary(this.channel, this.objectID);
             conn.collection('challengeDB').remove(
                 {_id: this.objectID}
             );
-            delete challengeList[this.objectID];
+            delete functions.challengeList[this.objectID];
         }
     }
 }
@@ -319,11 +321,11 @@ class Goal {
     update() {
         if(new Date().getTime() >= this.terminationTime) {
             var raptorPct = ((this.written / this.goal) * 100);
-            raptor(this.channel.guild.id, this.channel, this.authorID, raptorPct);
+            functions.raptor(this.channel.guild.id, this.channel, this.authorID, raptorPct);
             conn.collection('goalDB').remove(
                 {authorID: this.authorID}
             );
-            delete goalList[this.authorID];
+            delete functions.goalList[this.authorID];
             logger.info("Deleting goal of " +  client.users.get(this.authorID));
         }
     }

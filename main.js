@@ -1,5 +1,6 @@
 const classes = require('./classes.js');
 const constants = require ('./constants.js');
+const functions = require('./functions.js');
 
 const Discord = require('discord.js');
 const config = require('./config.json');
@@ -12,56 +13,36 @@ global.client = new Discord.Client;
 global.conn = mongoose.connection;
 timezoneJS.timezone.zoneFileBasePath = 'node_modules/timezone-js/tz';
 timezoneJS.timezone.init();
-
-var timerID = 1;
-global.challengeList = {};
-global.goalList = {};
-global.raptorCount = {};
 var regionRegex = /^(Africa|America|Antarctica|Asia|Atlantic|Australia|Europe|Indian|Pacific|Etc)/;
 
 const tickTimer = gameloop.setGameLoop(async function(delta) {
-    for (var item in challengeList){
-        challengeList[item].update();
-        if (challengeList[item].type == 'chain war') {
-            if (challengeList[item].state == 2
-                && challengeList[item].current < challengeList[item].total) {
-                challengeList[item].state = 3;
+    for (var item in functions.challengeList){
+        if (functions.challengeList[item].type == 'chain war') {
+            if (functions.challengeList[item].state == 2
+                && functions.challengeList[item].current < functions.challengeList[item].total) {
+                functions.challengeList[item].state = 3;
                 var startTime = new Date().getTime();
-                challengeList[timerID] = new classes.ChainWar(timerID,
-                    challengeList[item].creator, challengeList[item].warName,
-                    startTime, challengeList[item].current+1,
-                    challengeList[item].total, challengeList[item].countdown,
-                    challengeList[item].duration, challengeList[item].channelID);
+                functions.challengeList[functions.timerID] = new classes.ChainWar(functions.timerID,
+                    functions.challengeList[item].creator, functions.challengeList[item].warName,
+                    startTime, functions.challengeList[item].current+1,
+                    functions.challengeList[item].total, functions.challengeList[item].countdown,
+                    functions.challengeList[item].duration, functions.challengeList[item].channelID);
                 conn.collection('timer').update(
-                    {data: timerID},
-                    {data: (timerID+1)},
+                    {data: functions.timerID},
+                    {data: (functions.timerID+1)},
                     {upsert: true}
                 )
-                timerID = timerID + 1;
+                functions.timerID = functions.timerID + 1;
             }
         }
+        functions.challengeList[item].update();
     }
-    for (var item in goalList){
-        goalList[item].update();
+    for (var item in functions.goalList){
+        functions.goalList[item].update();
     }
 }, 1000);
 
-function raptor (server, channel, author, raptorChance) {
-    if (!(server in raptorCount)) {
-        raptorCount[server] = 0;
-    }
-    var raptorRoll = (Math.random() * 100);
-	if (raptorRoll < raptorChance) {
-        raptorCount[server] += 1;
-        conn.collection('raptorDB').update(
-            {},
-            {"server": server, "count": raptorCount[server]},
-            {upsert: true}
-        )
-		channel.send(author + ", you have hatched a raptor! Your server "
-		+ " currently houses " + raptorCount[server] + " raptors.");
-	}
-}
+
 
 client.on('ready', () => {
     logger.info('Winnie_Bot is online');
@@ -73,7 +54,7 @@ client.on('ready', () => {
         conn.collection('timer').find(
             {}, function(e, t) {
                 t.forEach(function(tx) {
-                    timerID = tx.data;
+                    functions.timerID = tx.data;
                 });
             }
         )
@@ -81,17 +62,17 @@ client.on('ready', () => {
             {}, function(e, challenges) {
                 challenges.forEach(function(challenge) {
                     if(challenge.type == "sprint") {
-                        challengeList[challenge._id] = new classes.Sprint(
+                        functions.challengeList[challenge._id] = new classes.Sprint(
                         challenge._id, challenge.creator, challenge.name,
                         challenge.startTime, challenge.countdown, challenge.goal,
                         challenge.duration, challenge.channel, "sprint");
                     } else if(challenge.type == "war") {
-                        challengeList[challenge._id] = new classes.War(
+                        functions.challengeList[challenge._id] = new classes.War(
                         challenge._id, challenge.creator, challenge.name,
                         challenge.startTime, challenge.countdown,
                         challenge.duration, challenge.channel, "war");
                     } else if(challenge.type == "chain war") {
-                        challengeList[challenge._id] = new classes.ChainWar(
+                        functions.challengeList[challenge._id] = new classes.ChainWar(
                         challenge._id, challenge.creator, challenge.name,
                         challenge.startTime, challenge.current, challenge.total,
                         challenge.countdown, challenge.duration,
@@ -103,7 +84,7 @@ client.on('ready', () => {
         conn.collection('goalDB').find(
             {}, function(e, goals) {
                 goals.forEach(function(goal) {
-                    goalList[goal.authorID] = new classes.Goal(goal.authorID,
+                    functions.goalList[goal.authorID] = new classes.Goal(goal.authorID,
                         goal.goal, goal.goalType, goal.written,
                         goal.startTime, goal.terminationTime,
                         goal.channelID);
@@ -113,7 +94,7 @@ client.on('ready', () => {
         conn.collection('raptorDB').find(
             {}, function(e, guilds) {
                 guilds.forEach(function(guild) {
-                    raptorCount[guild.server] = guild.count;
+                    functions.raptorCount[guild.server] = guild.count;
                 });
             }
         );
@@ -157,15 +138,15 @@ var cmd_list = {
                         sprintName = msg.author.username + "'s sprint";
                     }
                     var startTime = new Date().getTime();
-                    challengeList[timerID] = new classes.Sprint(timerID,
+                    functions.challengeList[functions.timerID] = new classes.Sprint(functions.timerID,
                         creatorID, sprintName, startTime, start, words,
                         timeout, msg.channel.id);
                     conn.collection('timer').update(
-                        {data: timerID},
-                        {data: (timerID+1)},
+                        {data: functions.timerID},
+                        {data: (functions.timerID+1)},
                         {upsert: true}
                     )
-                    timerID = timerID + 1;
+                    functions.timerID = functions.timerID + 1;
                 } catch(e) {
                     msg.channel.send("Error: Sprint creation failed.");
                     logger.error('Error %s: %s.', e, e.stack);
@@ -203,14 +184,14 @@ var cmd_list = {
                         warName = msg.author.username + "'s war";
                     }
                     var startTime = new Date().getTime();
-                    challengeList[timerID] = new classes.War(timerID, creatorID,
+                    functions.challengeList[functions.timerID] = new classes.War(functions.timerID, creatorID,
                         warName, startTime, start, duration, msg.channel.id);
                     conn.collection('timer').update(
-                        {data: timerID},
-                        {data: (timerID+1)},
+                        {data: functions.timerID},
+                        {data: (functions.timerID+1)},
                         {upsert: true}
                     )
-                    timerID = timerID + 1;
+                    functions.timerID = functions.timerID + 1;
                 } catch(e) {
                     msg.channel.send("Error: War creation failed.");
                     logger.error('Error %s: %s.', e, e.stack);
@@ -256,15 +237,15 @@ var cmd_list = {
                         warName = msg.author.username + "'s war";
                     }
                     var startTime = new Date().getTime();
-                    challengeList[timerID] = new classes.ChainWar(timerID,
+                    functions.challengeList[functions.timerID] = new classes.ChainWar(functions.timerID,
                         creatorID, warName, startTime, 1, chainWarCount,
                         timeBetween, duration, msg.channel.id);
                     conn.collection('timer').update(
-                        {data: timerID},
-                        {data: (timerID+1)},
+                        {data: functions.timerID},
+                        {data: (functions.timerID+1)},
                         {upsert: true}
                     )
-                    timerID = timerID + 1;
+                    functions.timerID = functions.timerID + 1;
                 } catch(e) {
                     msg.channel.send("Error: Chain war creation failed.");
                     logger.error('Error %s: %s.', e, e.stack);
@@ -282,19 +263,19 @@ var cmd_list = {
                 msg.channel.send("Challenge ID must be an integer.");
             } else if (challengeID < 1) {
                 msg.channel.send("Challenge ID must be an integer.");
-            } else if (challengeID in challengeList) {
-                if(msg.author.id in challengeList[challengeID].joinedUsers) {
+            } else if (challengeID in functions.challengeList) {
+                if(msg.author.id in functions.challengeList[challengeID].joinedUsers) {
                     msg.channel.send(msg.author + ", you already have "
                     + "notifications enabled for this challenge.");
                 } else {
-                    challengeList[challengeID].joinedUsers[msg.author.id]
+                    functions.challengeList[challengeID].joinedUsers[msg.author.id]
                         = {"userData": msg.author, "countData": undefined,
                         "countType": undefined};
                     msg.channel.send(msg.author + ", you have joined "
-                        + challengeList[challengeID].displayName);
+                        + functions.challengeList[challengeID].displayName);
                         conn.collection('challengeDB').update(
                             {_id: challengeID},
-                            {joinedUsers: challengeList[challengeID]
+                            {joinedUsers: functions.challengeList[challengeID]
                                 .joinedUsers},
                             {upsert: false}
                         )
@@ -315,15 +296,15 @@ var cmd_list = {
                 msg.channel.send("Challenge ID must be an integer.");
             } else if (challengeID < 1) {
                 msg.channel.send("Challenge ID must be an integer.");
-            } else if (challengeID in challengeList) {
-                if(msg.author.id in challengeList[challengeID].joinedUsers) {
-                    delete challengeList[challengeID]
+            } else if (challengeID in functions.challengeList) {
+                if(msg.author.id in functions.challengeList[challengeID].joinedUsers) {
+                    delete functions.challengeList[challengeID]
                         .joinedUsers[msg.author.id];
                     msg.channel.send(msg.author + ", you have left "
-                        + challengeList[challengeID].displayName);
+                        + functions.challengeList[challengeID].displayName);
                     conn.collection('challengeDB').update(
                         {_id: challengeID},
-                        {joinedUsers: challengeList[challengeID]
+                        {joinedUsers: functions.challengeList[challengeID]
                             .joinedUsers},
                         {upsert: false}
                     )
@@ -346,13 +327,13 @@ var cmd_list = {
             var challengeID = suffix;
             if (isNaN(challengeID) || challengeID < 1) {
                 msg.channel.send("Challenge ID must be an integer.");
-            } else if (challengeID in challengeList) {
-                var exName = challengeList[challengeID].displayName;
-                if(challengeList[challengeID].creator == msg.author.id) {
+            } else if (challengeID in functions.challengeList) {
+                var exName = functions.challengeList[challengeID].displayName;
+                if(functions.challengeList[challengeID].creator == msg.author.id) {
                     conn.collection('challengeDB').remove(
                         {_id: Number(challengeID)}
                     );
-                    delete challengeList[challengeID];
+                    delete functions.challengeList[challengeID];
                     msg.channel.send(exName + " has been successfully"
                         + " exterminated.");
                     
@@ -384,29 +365,29 @@ var cmd_list = {
                 if (writtenType === undefined) {
                     writtenType = 'words';
                 }
-                if (challengeID in challengeList) {
-                    if (challengeList[challengeID].state >= 2) {
+                if (challengeID in functions.challengeList) {
+                    if (functions.challengeList[challengeID].state >= 2) {
                         if(Number.isInteger(Number(wordsWritten))){
                             var joinCheck = false;
-                            for(user in challengeList[challengeID]
+                            for(user in functions.challengeList[challengeID]
                                 .joinedUsers) {
-                                if(challengeList[challengeID].joinedUsers[user]
+                                if(functions.challengeList[challengeID].joinedUsers[user]
                                     .userData.id == msg.author.id) {
-                                    if(!(challengeList[challengeID]
+                                    if(!(functions.challengeList[challengeID]
                                         .joinedUsers[user]
                                         .countData === undefined)) {
                                         joinCheck = true;
                                     }
-                                    challengeList[challengeID].joinedUsers[user]
+                                    functions.challengeList[challengeID].joinedUsers[user]
                                         .countData = wordsWritten;
-                                    challengeList[challengeID].joinedUsers[user]
+                                    functions.challengeList[challengeID].joinedUsers[user]
                                         .countType = writtenType;
                                 }
                             }
                             if (!joinCheck) {
-                                raptor(msg.guild.id, msg.channel, msg.author,
+                                functions.raptor(msg.guild.id, msg.channel, msg.author,
                                     constants.WAR_RAPTOR_CHANCE);
-                                challengeList[challengeID].joinedUsers
+                                functions.challengeList[challengeID].joinedUsers
                                     [msg.author.id] = {"userData": msg.author,
                                     "countData": wordsWritten,
                                     "countType": writtenType};
@@ -430,66 +411,7 @@ var cmd_list = {
         description: "Shows the summary for completed challenge <id>",
         usage: "<id>",
         process: function(client,msg,suffix) {
-            var challengeID = suffix;
-            if (challengeID in challengeList) {
-                if (challengeList[challengeID].state >= 2) {
-                    var userTotal = "";
-                    var totalWords = 0;
-                    var totalLines = 0;
-                    var totalPages = 0;
-                    var totalMins = 0;
-                    for(var user in challengeList[challengeID].joinedUsers) {
-                        if(Number.isInteger(Number(challengeList[challengeID]
-                            .joinedUsers[user].countData)) && challengeList
-                            [challengeID].joinedUsers[user].countType 
-                            != undefined){
-                            userTotal += "\n" + challengeList[challengeID].
-                                joinedUsers[user].userData + ": **"
-                                + challengeList[challengeID].joinedUsers[user]
-                                .countData + "** " + challengeList[challengeID]
-                                .joinedUsers[user].countType;
-                            switch (challengeList[challengeID].
-                                joinedUsers[user].countType) {
-                                    case 'words':
-                                        totalWords += parseInt(challengeList
-                                            [challengeID].joinedUsers[user]
-                                            .countData);
-                                        break;
-                                    case 'lines':
-                                        totalLines += parseInt(challengeList
-                                            [challengeID].joinedUsers[user]
-                                            .countData);
-                                        break; 
-                                    case 'pages':
-                                        totalPages += parseInt(challengeList
-                                            [challengeID].joinedUsers[user]
-                                            .countData);
-                                        break;
-                                    default:
-                                        break;
-                                }
-                        }
-                    }
-                    totalWords += totalLines * 15;
-                    totalWords += totalPages * 400;
-                    var summaryData = "Statistics for " + challengeList
-                        [challengeID].displayName + ":\n" + userTotal
-                        + "\n\nTotal: **" + totalWords + "** words"
-                    if (totalLines > 0 && totalPages > 0) {
-                        summaryData += " (" + totalLines + " lines, "
-                            + totalPages + " pages)";
-                    } else if (totalLines > 0) {
-                        summaryData += " (" + totalLines + " lines)";
-                    } else if (totalPages > 0) {
-                        summaryData += " (" + totalPages + " pages)";
-                    }
-                    msg.channel.send(summaryData);                    
-                } else {
-                    msg.channel.send("This challenge has not ended yet!");
-                }
-            } else {
-                msg.channel.send("This challenge does not exist!");
-            }
+            functions.generateSummary(msg.channel, suffix);
         }
     },
     "list": {
@@ -497,63 +419,63 @@ var cmd_list = {
         description: "Lists all running sprints/wars",
         usage: "",
         process: function(client,msg,suffix) {
-            if(Object.keys(challengeList).length == 0) {
+            if(Object.keys(functions.challengeList).length == 0) {
                 msg.channel.send("There are no challenges running."
                     + " Why don't you start one?");
             } else {
-                if(Object.keys(challengeList).length == 1) {
-                    var timerInfo = "There is " + Object.keys(challengeList)
+                if(Object.keys(functions.challengeList).length == 1) {
+                    var timerInfo = "There is " + Object.keys(functions.challengeList)
                         .length + " challenge running:\n";
                 } else {
-                    var timerInfo = "There are " + Object.keys(challengeList)
+                    var timerInfo = "There are " + Object.keys(functions.challengeList)
                         .length + " challenges running:\n";
                 }
-                for(var i in challengeList) {
-                    switch(challengeList[i].state){
+                for(var i in functions.challengeList) {
+                    switch(functions.challengeList[i].state){
                         case 0:
                             var timeout = "";
-                            if ((challengeList[i].cStart % 60) < 10) {
+                            if ((functions.challengeList[i].cStart % 60) < 10) {
                                 timeout = "0"
-                                    + (challengeList[i].cStart % 60).toString();
+                                    + (functions.challengeList[i].cStart % 60).toString();
                             } else {
-                                timeout = challengeList[i].cStart % 60;
+                                timeout = functions.challengeList[i].cStart % 60;
                             }
-                            timerInfo += i + ": " + challengeList[i].displayName
+                            timerInfo += i + ": " + functions.challengeList[i].displayName
                                 + " (";
-                            if (challengeList[i].type == "sprint") {
-                                timerInfo += challengeList[i].goal + " words, ";
+                            if (functions.challengeList[i].type == "sprint") {
+                                timerInfo += functions.challengeList[i].goal + " words, ";
                             }
-                            timerInfo += challengeList[i].duration
+                            timerInfo += functions.challengeList[i].duration
                                 + " minutes, starts in "
-                                + Math.floor(challengeList[i].cStart / 60)
+                                + Math.floor(functions.challengeList[i].cStart / 60)
                                 + ":" + timeout + ")\n";
                             break;
                         case 1:
                             var timeout = "";
-                            if ((challengeList[i].cDur % 60) < 10) {
+                            if ((functions.challengeList[i].cDur % 60) < 10) {
                                 timeout = "0"
-                                    + (challengeList[i].cDur % 60).toString();
+                                    + (functions.challengeList[i].cDur % 60).toString();
                             } else {
-                                timeout = challengeList[i].cDur % 60;
+                                timeout = functions.challengeList[i].cDur % 60;
                             }
-                            timerInfo += i + ": " + challengeList[i].displayName
+                            timerInfo += i + ": " + functions.challengeList[i].displayName
                                 +  " (";
-                            if (challengeList[i].type == "sprint") {
-                                timerInfo += challengeList[i].goal + " words, ";
+                            if (functions.challengeList[i].type == "sprint") {
+                                timerInfo += functions.challengeList[i].goal + " words, ";
                             }
-                            timerInfo += challengeList[i].duration
+                            timerInfo += functions.challengeList[i].duration
                                 + " minutes, "
-                                + Math.floor(challengeList[i].cDur / 60)
+                                + Math.floor(functions.challengeList[i].cDur / 60)
                                 + ":" + timeout + " remaining)\n";
                             break;
                         case 2:
                         case 3:
-                            timerInfo += i + ": " + challengeList[i].displayName
+                            timerInfo += i + ": " + functions.challengeList[i].displayName
                                 +  " (";
-                            if (challengeList[i].type == "sprint") {
-                                timerInfo += challengeList[i].goal + " words, ";
+                            if (functions.challengeList[i].type == "sprint") {
+                                timerInfo += functions.challengeList[i].goal + " words, ";
                             }
-                            timerInfo += challengeList[i].duration
+                            timerInfo += functions.challengeList[i].duration
                             + " minutes, ended)\n";
                             break;
                         default:
@@ -619,7 +541,7 @@ var cmd_list = {
             } else if(!Number.isInteger(Number(goal))){
                 msg.channel.send("Your goal must be a whole"
                     + " number.")
-            } else if((msg.author.id in goalList)) {
+            } else if((msg.author.id in functions.goalList)) {
                 msg.channel.send(msg.author + ", you have already set a goal"
                     + " today. Use !update to record your progress.");
             } else {
@@ -644,7 +566,7 @@ var cmd_list = {
                     //calculate next midnight based on timezone
                     var endTime = startTime;
                     endTime.setHours(24,0,0,0);
-                    goalList[msg.author.id] = new classes.Goal(msg.author.id,
+                    functions.goalList[msg.author.id] = new classes.Goal(msg.author.id,
                         goal, goalType, 0, startTime.getTime(),
                         endTime.getTime(), msg.channel.id);
                     msg.channel.send(msg.author + ", your goal for today is **"
@@ -664,16 +586,16 @@ var cmd_list = {
             if(!Number.isInteger(Number(goal))){
                 msg.channel.send("Invalid input. Your goal must be a whole"
                     + " number.")
-            } else if(!(msg.author.id in goalList)) {
+            } else if(!(msg.author.id in functions.goalList)) {
                 msg.channel.send(msg.author + ", you have not yet set a goal"
                     + " for today. Use !set to do so.");
             } else {
-                goalList[msg.author.id].addWords(goal, 0);
+                functions.goalList[msg.author.id].addWords(goal, 0);
                 msg.channel.send(msg.author + ", you have written **"
-                    + goalList[msg.author.id].written + "** "
-                    + goalList[msg.author.id].goalType + " of your **"
-                    + goalList[msg.author.id].goal + "**-"
-                    + goalList[msg.author.id].goalType.slice(0, -1) + " goal.");
+                    + functions.goalList[msg.author.id].written + "** "
+                    + functions.goalList[msg.author.id].goalType + " of your **"
+                    + functions.goalList[msg.author.id].goal + "**-"
+                    + functions.goalList[msg.author.id].goalType.slice(0, -1) + " goal.");
             }
 	    }
     },
@@ -688,16 +610,16 @@ var cmd_list = {
             if(!Number.isInteger(Number(goal))){
                 msg.channel.send("Invalid input. Your goal must be a whole"
                     + " number.")
-            } else if(!(msg.author.id in goalList)) {
+            } else if(!(msg.author.id in functions.goalList)) {
                 msg.channel.send(msg.author + ", you have not yet set a goal"
                     + " for today. Use !set to do so.");
             } else {
-                goalList[msg.author.id].addWords(goal, 1);
+                functions.goalList[msg.author.id].addWords(goal, 1);
                 msg.channel.send(msg.author + ", you have written **"
-                    + goalList[msg.author.id].written + "** "
-                    + goalList[msg.author.id].goalType + " of your **"
-                    + goalList[msg.author.id].goal + "**-"
-                    + goalList[msg.author.id].goalType.slice(0, -1) + " goal.");
+                    + functions.goalList[msg.author.id].written + "** "
+                    + functions.goalList[msg.author.id].goalType + " of your **"
+                    + functions.goalList[msg.author.id].goal + "**-"
+                    + functions.goalList[msg.author.id].goalType.slice(0, -1) + " goal.");
             }
 	    }
     },
@@ -706,14 +628,14 @@ var cmd_list = {
         description: "Resets your daily goal",
         type: "goals",
 		process: function(client,msg,suffix) {
-            if(!(msg.author.id in goalList)) {
+            if(!(msg.author.id in functions.goalList)) {
                 msg.channel.send(msg.author + ", you have not yet set a goal"
                     + " for today. Use !set to do so.");
             } else {
                 conn.collection('goalDB').remove(
                     {authorID: msg.author.id}
                 );
-                delete goalList[msg.author.id];
+                delete functions.goalList[msg.author.id];
 
                 msg.channel.send(msg.author + ", you have successfully reset"
                     + " your daily goal.");
@@ -725,15 +647,15 @@ var cmd_list = {
         description: "Displays progress towards your daily goal",
         type: "goals",
 		process: function(client,msg,suffix) {
-            if(!(msg.author.id in goalList)) {
+            if(!(msg.author.id in functions.goalList)) {
                 msg.channel.send(msg.author + ", you have not yet set a goal"
                     + " for today. Use !set to do so.");
             } else {
                 msg.channel.send(msg.author + ", you have written **"
-                    + goalList[msg.author.id].written + "** "
-                    + goalList[msg.author.id].goalType + " of your **"
-                    + goalList[msg.author.id].goal + "**-"
-                    + goalList[msg.author.id].goalType.slice(0, -1) + " goal.");
+                    + functions.goalList[msg.author.id].written + "** "
+                    + functions.goalList[msg.author.id].goalType + " of your **"
+                    + functions.goalList[msg.author.id].goal + "**-"
+                    + functions.goalList[msg.author.id].goalType.slice(0, -1) + " goal.");
             }
 		}
     },
@@ -880,9 +802,9 @@ var cmd_list = {
         type: "other",
 		process: function(client,msg,suffix) {
 				var raptorMsg = "__**Raptor Statistics:**__\n";
-				for (server in raptorCount) {
+				for (server in functions.raptorCount) {
 					raptorMsg += "\n__*" + client.guilds.get(server) + ":*__ "
-						+ raptorCount[server];
+						+ functions.raptorCount[server];
 				}
             msg.channel.send(raptorMsg);
 		}
