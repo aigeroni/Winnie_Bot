@@ -20,7 +20,7 @@ exports.raptor = function(server, channel, author, raptorChance) {
             {"server": server, "count": raptorCount[server]},
             {upsert: true}
         )
-		channel.send(author + ", you have hatched a raptor! Your server "
+		channel.send(author + ", you have hatched a raptor! Your server"
 		+ " currently houses " + raptorCount[server] + " raptors.");
 	}
 }

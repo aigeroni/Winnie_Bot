@@ -559,12 +559,14 @@ var cmd_list = {
                     var tzRole = msg.member.roles.filter(function (a) {
                         return regionRegex.test(a.name);
                     });
-                    var userTZ = tzRole.name;
+                    var userTZ = tzRole.first().name;
+                    logger.info(userTZ);
                     //get current time
                     var startTime = new timezoneJS.Date();
                     startTime.setTimezone(userTZ);
                     //calculate next midnight based on timezone
-                    var endTime = startTime;
+                    var endTime = new timezoneJS.Date();
+                    endTime.setTimezone(userTZ);
                     endTime.setHours(24,0,0,0);
                     functions.goalList[msg.author.id] = new classes.Goal(msg.author.id,
                         goal, goalType, 0, startTime.getTime(),

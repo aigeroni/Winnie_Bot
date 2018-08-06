@@ -1,5 +1,5 @@
 const functions = require('./functions.js');
-const DUR_AFTER = 600;
+const DUR_AFTER = 300;
 
 class Challenge {
     constructor(objectID, creator, displayName, initStamp, countdown, duration,
@@ -321,7 +321,8 @@ class Goal {
     update() {
         if(new Date().getTime() >= this.terminationTime) {
             var raptorPct = ((this.written / this.goal) * 100);
-            functions.raptor(this.channel.guild.id, this.channel, this.authorID, raptorPct);
+            functions.raptor(this.channel.guild.id, this.channel,
+                client.users.get(this.authorID), raptorPct);
             conn.collection('goalDB').remove(
                 {authorID: this.authorID}
             );
