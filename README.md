@@ -15,8 +15,8 @@ If you want to invite the public Winnie_Bot account to your server, go [here](ht
 
 #### Requirements
 
-Node.js
-npm (Node Package Manager)
+* Node.js
+* npm (Node Package Manager)
 
 #### Setting up a Discord bot instance
 
@@ -29,7 +29,7 @@ npm (Node Package Manager)
 
 * Clone the Winnie_Bot repository onto your server.
 * Run `npm install` to get package dependencies.
-* Create the file `config.json` in Winnie's root directory, and add the following text: {"token": "your bot's token", "storageUrl": "location of your MongoDB"}
+* Edit the `config.json` file in Winnie's root directory as follows: {"token": "your bot's token", "storageUrl": "location of your MongoDB"}
 * Initialise MongoDB.
 * Run `bash tz-script.sh` to download the IANA timezone data.
 * Run `node main.js` to initialise Winnie.
@@ -50,7 +50,7 @@ Click the 'Generate OAuth2 URL' button in the Discord Developer pane to generate
 
 ## Bug reports
 
-Please report bugs by opening an [issue](https://github.com/RobFaie/Winnie_Bot/issues) on GitHub.
+Please report bugs by opening an [issue](https://github.com/lisushka/Winnie_Bot/issues) on GitHub.
 
 ## Contributing to Winnie
 
@@ -70,5 +70,5 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 * Winnie is inspired by Timmy, National Novel Writing Month's IRC bot.  Timmy can be found at https://github.com/utoxin/TimTheWordWarBot.
 * Prompts were brainstormed by NaNoWriMo's Australia::Melbourne region.
 
-Winnie's repository is located at https://github.com/RobFaie/Winnie_Bot.
-Winnie's avatar, 'Tiny Cities', was created by Rachael Wheeler (Etlu-Yume on NaNoWriMo).  Prints of 'Tiny Cities' can be purchased [here](https://www.redbubble.com/people/scorpiraw?asc=u).
+Winnie's repository is located at https://github.com/lisushka/Winnie_Bot.
+Winnie's avatar, 'Tiny Cities', was created by Rachael Wheeler (Etlu-Yume on NaNoWriMo).  Prints, notebooks, and other items featuring 'Tiny Cities' are available for purchase [here](https://www.redbubble.com/people/scorpiraw/works/33012468-tiny-cities).
