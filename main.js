@@ -142,9 +142,10 @@ var cmdList = {
                         sprintName = msg.author.username + "'s sprint";
                     }
                     var startTime = new Date().getTime();
-                    functions.challengeList[functions.timerID] = new classes
-                        .Sprint(functions.timerID, creatorID, sprintName,
-                        startTime, start, words, timeout, msg.channel.id);
+                    functions.challengeList[functions.timerID] =
+                        new classes.Sprint(functions.timerID, creatorID,
+                        sprintName, startTime, start, words, timeout,
+                        msg.channel.id);
                     conn.collection('timer').update(
                         {data: functions.timerID},
                         {data: (functions.timerID+1)},
@@ -188,9 +189,9 @@ var cmdList = {
                         warName = msg.author.username + "'s war";
                     }
                     var startTime = new Date().getTime();
-                    functions.challengeList[functions.timerID] = new classes
-                        .War(functions.timerID, creatorID, warName, startTime,
-                        start, duration, msg.channel.id);
+                    functions.challengeList[functions.timerID] =
+                        new classes.War(functions.timerID, creatorID, warName,
+                        startTime, start, duration, msg.channel.id);
                     conn.collection('timer').update(
                         {data: functions.timerID},
                         {data: (functions.timerID+1)},
@@ -242,10 +243,10 @@ var cmdList = {
                         warName = msg.author.username + "'s war";
                     }
                     var startTime = new Date().getTime();
-                    functions.challengeList[functions.timerID] = new classes
-                        .ChainWar(functions.timerID, creatorID, warName,
-                        startTime, 1, chainWarCount, timeBetween, duration,
-                        msg.channel.id);
+                    functions.challengeList[functions.timerID] =
+                        new classes.ChainWar(functions.timerID, creatorID,
+                        warName, startTime, 1, chainWarCount, timeBetween,
+                        duration, msg.channel.id);
                     conn.collection('timer').update(
                         {data: functions.timerID},
                         {data: (functions.timerID+1)},
