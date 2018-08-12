@@ -78,9 +78,10 @@ class Challenge {
             this.cStart--;
         }
         if(this.cStart == 0) {
-            this.startMsg();
+            this.startMsg(); 
         } else if(this.cStart == 60) {
             for(channel in hookedChannels) {
+                this.channel.send(channel);
                 channelObject = client.channels.get(channel);
                 channelObject.send(this.displayName + " starts in 1 minute.");
             }

@@ -451,7 +451,7 @@ var cmdList = {
                 for(var i in functions.challengeList) {
                     //find originating server name
                     var parentChannel = client.channels.get(functions
-                        .challengeList[i].channel);
+                        .challengeList[i].channelID);
                     var parentGuild = parentChannel.guild;
                     var parentGuildName = parentGuild.name;
                     switch(functions.challengeList[i].state){
