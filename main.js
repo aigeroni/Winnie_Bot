@@ -278,12 +278,15 @@ var cmdList = {
                 } else {
                     functions.challengeList[challengeID].joinedUsers
                         [msg.author.id] = {"userData": msg.author,
-                        "countData": undefined, "countType": undefined};
+                        "countData": undefined, "countType": undefined,
+                        "channelID": msg.channel.id};
                     try {
-                        if (!(msg.channel.id in functions.challengeList[challengeID]
-                            .hookedChannels)) {
+                        var pushID = msg.channel.id;
+                        var searchIndex = functions.challengeList[challengeID]
+                            .hookedChannels.indexOf(pushID);
+                        if (searchIndex == -1) {
                             functions.challengeList[challengeID].hookedChannels
-                                .push(msg.channel.id);
+                                .push(pushID);
                         }
                     } catch(e) {
                         msg.channel.send("Error: " + e);

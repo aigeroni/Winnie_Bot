@@ -1,4 +1,5 @@
 const functions = require('./functions.js');
+const logger = require('./logger.js');     
 const DUR_AFTER = 300;
 
 class Challenge {
@@ -80,54 +81,85 @@ class Challenge {
         if(this.cStart == 0) {
             this.startMsg(); 
         } else if(this.cStart == 60) {
-            for(channel in this.hookedChannels) {
-                this.channel.send(channel);
-                channelObject = client.channels.get(channel);
+            for (var i = 0; i < this.hookedChannels.length; i++) {
+                var channelObject = client.channels.get(this.hookedChannels
+                    [i]);
                 channelObject.send(this.displayName + " starts in 1 minute.");
             }
         } else if(this.cStart % 300 == 0) {
-            for (channel in this.hookedChannels) {
-                channelObject = client.channels.get(channel);
+            for (var i = 0; i < this.hookedChannels.length; i++) {
+                var channelObject = client.channels.get(this.hookedChannels
+                    [i]);
                 channelObject.send(this.displayName + " starts in "
                     + this.cStart / 60 + " minutes.");
             }
         } else if([30,10,5].includes(this.cStart)) {
-            for (channel in this.hookedChannels) {
-                channelObject = client.channels.get(channel);
+            for (var i = 0; i < this.hookedChannels.length; i++) {
+                var channelObject = client.channels.get(this.hookedChannels
+                    [i]);
                 channelObject.send(this.displayName + " starts in "
                     + this.cStart + " seconds.");
             }
         }
     }
     startMsg() {
-        var userList = "";
+        for (var i = 0; i < this.hookedChannels.length; i++) {
+            var userList = "";
             for(var user in this.joinedUsers) {
-                userList += " " + this.joinedUsers[user].userData;
+                logger.info(this.joinedUsers[user].channelID);
+                logger.info(this.hookedChannels[i]);
+                if (this.joinedUsers[user].channelID == this.hookedChannels
+                    [i]) {
+                    userList += " " + this.joinedUsers[user].userData;
+                }
             }
-            this.channel.send(this.displayName + " (ID " + this.objectID 
+            var channelObject = client.channels.get(this.hookedChannels
+                [i]);
+            channelObject.send(this.displayName + " (ID " + this.objectID 
                 + ") starts now!" + userList);
-            this.state = 1;
+        }
+        this.state = 1;
     }
     end() {
         this.cDur--;
         if(this.cDur <= 0) {
-            var userList = "";
-            for(var user in this.joinedUsers) {
-                userList += " " + this.joinedUsers[user].userData;
+            for (var i = 0; i < this.hookedChannels.length; i++) {
+                var userList = "";
+                for(var user in this.joinedUsers) {
+                    if (this.joinedUsers[user].channelID == this.hookedChannels
+                        [i]) {
+                        userList += " " + this.joinedUsers[user].userData;
+                    }
+                }
+                var channelObject = client.channels.get(this.hookedChannels
+                    [i]);
+                channelObject.send(this.displayName + " (ID " + this.objectID
+                    + ") has ended! Post your total to be "
+                    + "included in the summary." + userList);
             }
-            this.channel.send(this.displayName + " (ID " + this.objectID
-                + ") has ended! Post your total to be "
-                + "included in the summary." + userList);
             this.state = 2;
         } else if(this.cDur == 60) {
-            this.channel.send("There is 1 minute remaining in "
-                + this.displayName + ".");
+            for (var i = 0; i < this.hookedChannels.length; i++) {
+                var channelObject = client.channels.get(this.hookedChannels
+                    [i]);
+                channelObject.send("There is 1 minute remaining in "
+                    + this.displayName + ".");
+            }
         } else if(this.cDur % 300 == 0) {
-            this.channel.send("There are " + this.cDur/60
-                + " minutes remaining in " + this.displayName + ".");
+            for (var i = 0; i < this.hookedChannels.length; i++) {
+                var channelObject = client.channels.get(this.hookedChannels
+                    [i]);
+                channelObject.send("There are " + this.cDur/60
+                    + " minutes remaining in " + this.displayName + ".");
+            }
         } else if([30,10,5].includes(this.cDur)) {
-            this.channel.send("There are " + this.cDur
-                + " seconds remaining in " + this.displayName + ".");
+            for (var i = 0; i < this.hookedChannels.length; i++) {
+                var channelObject = client.channels.get(this.hookedChannels
+                    [i]);
+                channelObject.send("There are " + this.cDur
+                    + " seconds remaining in " + this.displayName + ".");
+            }
+            
         }
     }
     terminate() {
@@ -177,13 +209,20 @@ class Sprint extends Challenge {
         super.start();
     }
     startMsg () {
-        var userList = "";
+        for (var i = 0; i < this.hookedChannels.length; i++) {
+            var userList = "";
             for(var user in this.joinedUsers) {
-                userList += " " + this.joinedUsers[user].userData;
+                if (this.joinedUsers[user].channelID == this.hookedChannels
+                    [i]) {
+                    userList += " " + this.joinedUsers[user].userData;
+                }
             }
-            this.channel.send(this.displayName + " (ID " + this.objectID
+            var channelObject = client.channels.get(this.hookedChannels
+                [i]);
+            channelObject.send(this.displayName + " (ID " + this.objectID
                 + ") starts now! Race to " + this.goal + " words!" + userList);
-            this.state = 1;
+        }
+        this.state = 1;
     }
     end() {
         super.end();
