@@ -76,7 +76,11 @@ exports.generateSummary = function(channel, challengeID) {
             } else if (totalPages > 0) {
                 summaryData += " (" + totalPages + " pages)";
             }
-            channel.send(summaryData);                    
+            //this server's summary
+            channel.send(summaryData);
+            //other servers' summaries
+            var crossServerSummary = "";
+            channel.send(crossServerSummary);
         } else {
             channel.send("This challenge has not ended yet!");
         }

@@ -14,6 +14,7 @@ class Challenge {
         this.channel = client.channels.get(this.channelID);
         this.type = type;
         this.joinedUsers = {};
+        this.hookedChannels = [channelID];
         this.state = 0;
 
         this.cStart = this.countdown * 60;
@@ -43,7 +44,7 @@ class Challenge {
             this.cStart = Math.ceil((this.startStamp - dateCheck) / 1000);
         }
         if (this.state == 0 && this.cStart == this.countdown * 60) {
-            if(this.countdown == 1) {
+            if(this.countdown == 1) { 
                 this.channel.send("Your " + type + ", " + this.displayName
                     + " (ID " + this.objectID + "), starts in " + this.countdown
                     + " minute.");
@@ -79,13 +80,22 @@ class Challenge {
         if(this.cStart == 0) {
             this.startMsg();
         } else if(this.cStart == 60) {
-            this.channel.send(this.displayName + " starts in 1 minute.");
+            for(channel in hookedChannels) {
+                channelObject = client.channels.get(channel);
+                channelObject.send(this.displayName + " starts in 1 minute.");
+            }
         } else if(this.cStart % 300 == 0) {
-            this.channel.send(this.displayName + " starts in "
-                + this.cStart / 60 + " minutes.");
+            for (channel in hookedChannels) {
+                channelObject = client.channels.get(channel);
+                channelObject.send(this.displayName + " starts in "
+                    + this.cStart / 60 + " minutes.");
+            }
         } else if([30,10,5].includes(this.cStart)) {
-            this.channel.send(this.displayName + " starts in "
-                + this.cStart + " seconds.");
+            for (channel in hookedChannels) {
+                channelObject = client.channels.get(channel);
+                channelObject.send(this.displayName + " starts in "
+                    + this.cStart + " seconds.");
+            }
         }
     }
     startMsg() {
@@ -176,9 +186,6 @@ class Sprint extends Challenge {
     }
     end() {
         super.end();
-        if (this.repeat) {
-            new War(this);
-        }
     }
     terminate() {
         super.terminate();
@@ -291,7 +298,8 @@ class ChainWar extends Challenge {
 }
 
 class Goal {
-    constructor(authorID, goal, goalType, written, startTime, terminationTime, channelID) {
+    constructor(authorID, goal, goalType, written, startTime, terminationTime,
+        channelID) {
         this.authorID =  authorID;
         this.goal = goal;
         this.goalType = goalType;

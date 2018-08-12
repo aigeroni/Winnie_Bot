@@ -19,14 +19,17 @@ const tickTimer = gameloop.setGameLoop(async function(delta) {
     for (var item in functions.challengeList){
         if (functions.challengeList[item].type == 'chain war') {
             if (functions.challengeList[item].state == 2
-                && functions.challengeList[item].current < functions.challengeList[item].total) {
+                && functions.challengeList[item].current < functions
+                .challengeList[item].total) {
                 functions.challengeList[item].state = 3;
                 var startTime = new Date().getTime();
-                functions.challengeList[functions.timerID] = new classes.ChainWar(functions.timerID,
-                    functions.challengeList[item].creator, functions.challengeList[item].warName,
-                    startTime, functions.challengeList[item].current+1,
-                    functions.challengeList[item].total, functions.challengeList[item].countdown,
-                    functions.challengeList[item].duration, functions.challengeList[item].channelID);
+                functions.challengeList[functions.timerID] = new classes
+                    .ChainWar(functions.timerID, functions.challengeList[item]
+                    .creator, functions.challengeList[item].warName, startTime,
+                    functions.challengeList[item].current+1, functions
+                    .challengeList[item].total, functions.challengeList[item]
+                    .countdown, functions.challengeList[item].duration,
+                    functions.challengeList[item].channelID);
                 conn.collection('timer').update(
                     {data: functions.timerID},
                     {data: (functions.timerID+1)},
@@ -62,21 +65,22 @@ client.on('ready', () => {
             {}, function(e, challenges) {
                 challenges.forEach(function(challenge) {
                     if(challenge.type == "sprint") {
-                        functions.challengeList[challenge._id] = new classes.Sprint(
-                        challenge._id, challenge.creator, challenge.name,
-                        challenge.startTime, challenge.countdown, challenge.goal,
+                        functions.challengeList[challenge._id] = new classes
+                        .Sprint(challenge._id, challenge.creator,
+                        challenge.name, challenge.startTime,
+                        challenge.countdown, challenge.goal,
                         challenge.duration, challenge.channel, "sprint");
                     } else if(challenge.type == "war") {
-                        functions.challengeList[challenge._id] = new classes.War(
-                        challenge._id, challenge.creator, challenge.name,
+                        functions.challengeList[challenge._id] = new classes
+                        .War(challenge._id, challenge.creator, challenge.name,
                         challenge.startTime, challenge.countdown,
                         challenge.duration, challenge.channel, "war");
                     } else if(challenge.type == "chain war") {
-                        functions.challengeList[challenge._id] = new classes.ChainWar(
-                        challenge._id, challenge.creator, challenge.name,
-                        challenge.startTime, challenge.current, challenge.total,
-                        challenge.countdown, challenge.duration,
-                        challenge.channel, "chain war");
+                        functions.challengeList[challenge._id] = new classes
+                        .ChainWar(challenge._id, challenge.creator,
+                        challenge.name, challenge.startTime, challenge.current,
+                        challenge.total, challenge.countdown,
+                        challenge.duration, challenge.channel, "chain war");
                 }
                 });
             }
@@ -84,8 +88,8 @@ client.on('ready', () => {
         conn.collection('goalDB').find(
             {}, function(e, goals) {
                 goals.forEach(function(goal) {
-                    functions.goalList[goal.authorID] = new classes.Goal(goal.authorID,
-                        goal.goal, goal.goalType, goal.written,
+                    functions.goalList[goal.authorID] = new classes.Goal
+                        (goal.authorID, goal.goal, goal.goalType, goal.written,
                         goal.startTime, goal.terminationTime,
                         goal.channelID);
                 });
@@ -101,7 +105,7 @@ client.on('ready', () => {
     });
 });
 
-var cmd_list = {
+var cmdList = {
     "sprint": {
         name: "sprint",
         description: "Starts a sprint of <words> words which times out in"
@@ -113,7 +117,7 @@ var cmd_list = {
             var words = args.shift();
             var timeout = args.shift();
             var start = args.shift();
-            var sprint_name = args.join(' ');
+            var sprintName = args.join(' ');
             if (start === undefined){
                 start = 1;
             }
@@ -138,9 +142,9 @@ var cmd_list = {
                         sprintName = msg.author.username + "'s sprint";
                     }
                     var startTime = new Date().getTime();
-                    functions.challengeList[functions.timerID] = new classes.Sprint(functions.timerID,
-                        creatorID, sprintName, startTime, start, words,
-                        timeout, msg.channel.id);
+                    functions.challengeList[functions.timerID] = new classes
+                        .Sprint(functions.timerID, creatorID, sprintName,
+                        startTime, start, words, timeout, msg.channel.id);
                     conn.collection('timer').update(
                         {data: functions.timerID},
                         {data: (functions.timerID+1)},
@@ -184,8 +188,9 @@ var cmd_list = {
                         warName = msg.author.username + "'s war";
                     }
                     var startTime = new Date().getTime();
-                    functions.challengeList[functions.timerID] = new classes.War(functions.timerID, creatorID,
-                        warName, startTime, start, duration, msg.channel.id);
+                    functions.challengeList[functions.timerID] = new classes
+                        .War(functions.timerID, creatorID, warName, startTime,
+                        start, duration, msg.channel.id);
                     conn.collection('timer').update(
                         {data: functions.timerID},
                         {data: (functions.timerID+1)},
@@ -237,9 +242,10 @@ var cmd_list = {
                         warName = msg.author.username + "'s war";
                     }
                     var startTime = new Date().getTime();
-                    functions.challengeList[functions.timerID] = new classes.ChainWar(functions.timerID,
-                        creatorID, warName, startTime, 1, chainWarCount,
-                        timeBetween, duration, msg.channel.id);
+                    functions.challengeList[functions.timerID] = new classes
+                        .ChainWar(functions.timerID, creatorID, warName,
+                        startTime, 1, chainWarCount, timeBetween, duration,
+                        msg.channel.id);
                     conn.collection('timer').update(
                         {data: functions.timerID},
                         {data: (functions.timerID+1)},
@@ -264,13 +270,19 @@ var cmd_list = {
             } else if (challengeID < 1) {
                 msg.channel.send("Challenge ID must be an integer.");
             } else if (challengeID in functions.challengeList) {
-                if(msg.author.id in functions.challengeList[challengeID].joinedUsers) {
-                    msg.channel.send(msg.author + ", you already have "
-                    + "notifications enabled for this challenge.");
+                if(msg.author.id in functions.challengeList[challengeID]
+                    .joinedUsers) {
+                    msg.channel.send(msg.author + ", you already have"
+                    + " notifications enabled for this challenge.");
                 } else {
-                    functions.challengeList[challengeID].joinedUsers[msg.author.id]
-                        = {"userData": msg.author, "countData": undefined,
-                        "countType": undefined};
+                    functions.challengeList[challengeID].joinedUsers
+                        [msg.author.id] = {"userData": msg.author,
+                        "countData": undefined, "countType": undefined};
+                    if (!(msg.channel.id in functions.challengeList[challengeID]
+                        .hookedChannels)) {
+                        functions.challengeList[challengeID].hookedChannels
+                            .push(msg.channel.id);
+                    }
                     msg.channel.send(msg.author + ", you have joined "
                         + functions.challengeList[challengeID].displayName);
                         conn.collection('challengeDB').update(
@@ -297,7 +309,8 @@ var cmd_list = {
             } else if (challengeID < 1) {
                 msg.channel.send("Challenge ID must be an integer.");
             } else if (challengeID in functions.challengeList) {
-                if(msg.author.id in functions.challengeList[challengeID].joinedUsers) {
+                if(msg.author.id in functions.challengeList[challengeID]
+                    .joinedUsers) {
                     delete functions.challengeList[challengeID]
                         .joinedUsers[msg.author.id];
                     msg.channel.send(msg.author + ", you have left "
@@ -424,59 +437,70 @@ var cmd_list = {
                     + " Why don't you start one?");
             } else {
                 if(Object.keys(functions.challengeList).length == 1) {
-                    var timerInfo = "There is " + Object.keys(functions.challengeList)
-                        .length + " challenge running:\n";
+                    var timerInfo = "There is " + Object.keys(functions
+                        .challengeList).length + " challenge running:\n";
                 } else {
-                    var timerInfo = "There are " + Object.keys(functions.challengeList)
-                        .length + " challenges running:\n";
+                    var timerInfo = "There are " + Object.keys(functions
+                        .challengeList).length + " challenges running:\n";
                 }
                 for(var i in functions.challengeList) {
+                    //find originating server name
+                    var parentChannel = client.channels.get(functions
+                        .challengeList[i].channel);
+                    var parentGuild = parentChannel.guild;
+                    var parentGuildName = parentGuild.name;
                     switch(functions.challengeList[i].state){
                         case 0:
                             var timeout = "";
                             if ((functions.challengeList[i].cStart % 60) < 10) {
-                                timeout = "0"
-                                    + (functions.challengeList[i].cStart % 60).toString();
+                                timeout = "0" + (functions.challengeList[i]
+                                    .cStart % 60).toString();
                             } else {
-                                timeout = functions.challengeList[i].cStart % 60;
+                                timeout = functions.challengeList[i].cStart
+                                    % 60;
                             }
-                            timerInfo += i + ": " + functions.challengeList[i].displayName
-                                + " (";
+                            timerInfo += i + ": " + functions.challengeList[i]
+                                .displayName + " (";
                             if (functions.challengeList[i].type == "sprint") {
-                                timerInfo += functions.challengeList[i].goal + " words, ";
+                                timerInfo += functions.challengeList[i].goal
+                                + " words, ";
                             }
                             timerInfo += functions.challengeList[i].duration
                                 + " minutes, starts in "
-                                + Math.floor(functions.challengeList[i].cStart / 60)
-                                + ":" + timeout + ")\n";
+                                + Math.floor(functions.challengeList[i].cStart
+                                / 60) + ":" + timeout + "), " + parentGuildName
+                                + "\n";
                             break;
                         case 1:
                             var timeout = "";
                             if ((functions.challengeList[i].cDur % 60) < 10) {
-                                timeout = "0"
-                                    + (functions.challengeList[i].cDur % 60).toString();
+                                timeout = "0" + (functions.challengeList[i]
+                                    .cDur % 60).toString();
                             } else {
                                 timeout = functions.challengeList[i].cDur % 60;
                             }
-                            timerInfo += i + ": " + functions.challengeList[i].displayName
-                                +  " (";
+                            timerInfo += i + ": " + functions.challengeList[i]
+                                .displayName +  " (";
                             if (functions.challengeList[i].type == "sprint") {
-                                timerInfo += functions.challengeList[i].goal + " words, ";
+                                timerInfo += functions.challengeList[i].goal
+                                + " words, ";
                             }
                             timerInfo += functions.challengeList[i].duration
                                 + " minutes, "
-                                + Math.floor(functions.challengeList[i].cDur / 60)
-                                + ":" + timeout + " remaining)\n";
+                                + Math.floor(functions.challengeList[i].cDur
+                                / 60) + ":" + timeout + " remaining), "
+                                + parentGuildName + "\n";
                             break;
                         case 2:
                         case 3:
-                            timerInfo += i + ": " + functions.challengeList[i].displayName
-                                +  " (";
+                            timerInfo += i + ": " + functions.challengeList[i]
+                                .displayName +  " (";
                             if (functions.challengeList[i].type == "sprint") {
-                                timerInfo += functions.challengeList[i].goal + " words, ";
+                                timerInfo += functions.challengeList[i].goal
+                                + " words, ";
                             }
                             timerInfo += functions.challengeList[i].duration
-                            + " minutes, ended)\n";
+                            + " minutes, ended), " + parentGuildName + "\n";
                             break;
                         default:
                             break;
@@ -555,24 +579,30 @@ var cmd_list = {
                         goalType = 'words';
 
                     }
-                    //get timezone
-                    var tzRole = msg.member.roles.filter(function (a) {
-                        return regionRegex.test(a.name);
-                    });
-                    var userTZ = tzRole.first().name;
-                    logger.info(userTZ);
-                    //get current time
-                    var startTime = new timezoneJS.Date();
-                    startTime.setTimezone(userTZ);
-                    //calculate next midnight based on timezone
-                    var endTime = new timezoneJS.Date();
-                    endTime.setTimezone(userTZ);
-                    endTime.setHours(24,0,0,0);
-                    functions.goalList[msg.author.id] = new classes.Goal(msg.author.id,
-                        goal, goalType, 0, startTime.getTime(),
-                        endTime.getTime(), msg.channel.id);
-                    msg.channel.send(msg.author + ", your goal for today is **"
-                        + goal + "** " + goalType + ".");
+                    try {
+                        //get timezone
+                        var tzRole = msg.member.roles.filter(function (a) {
+                            return regionRegex.test(a.name);
+                        });
+                        var userTZ = tzRole.first().name;
+                        logger.info(userTZ);
+                        //get current time
+                        var startTime = new timezoneJS.Date();
+                        startTime.setTimezone(userTZ);
+                        //calculate next midnight based on timezone
+                        var endTime = new timezoneJS.Date();
+                        endTime.setTimezone(userTZ);
+                        endTime.setHours(24,0,0,0);
+                        functions.goalList[msg.author.id] = new classes.Goal(msg.author.id,
+                            goal, goalType, 0, startTime.getTime(),
+                            endTime.getTime(), msg.channel.id);
+                        msg.channel.send(msg.author + ", your goal for today is **"
+                            + goal + "** " + goalType + ".");
+                    } catch(e) {
+                        msg.channel.send(msg.author + ", you need to set your"
+                            + " timezone before setting a daily goal."
+                            + " Use the !timezone command to do so.");
+                    }
                 }
             }
 	    }
@@ -821,14 +851,14 @@ client.on('message', (msg) => {
     if(msg.author.id != client.user.id && (msg.content.startsWith(constants
         .CMD_PREFIX))){
         logger.info(msg.author + " entered command " + msg.content);
-        var cmd_data = msg.content.split(" ")[0]
+        var cmdData = msg.content.split(" ")[0]
             .substring(constants.CMD_PREFIX.length).toLowerCase();
-        var suffix = msg.content.substring(cmd_data.length
+        var suffix = msg.content.substring(cmdData.length
             + constants.CMD_PREFIX.length + 1)
-		var cmd = cmd_list[cmd_data];
-        if(cmd_data === "help"){
+		var cmd = cmdList[cmdData];
+        if(cmdData === "help"){
             if(suffix){
-                var cmd = cmd_list[suffix];
+                var cmd = cmdList[suffix];
                 var helpMsg = "";
                 try {
                     helpMsg += "Data for " + cmd.name;
@@ -856,17 +886,17 @@ client.on('message', (msg) => {
 			} else {
                 msg.author.send("**Winnie_Bot Commands:**").then(function(){
                 var helpMsg = "";
-                for(var i in cmd_list) {
+                for(var i in cmdList) {
                     helpMsg += "**" + constants.CMD_PREFIX;
-                    var cmdName = cmd_list[i].name;
+                    var cmdName = cmdList[i].name;
                     if(cmdName){
 						helpMsg += cmdName;
                     }
-                    var cmdUse = cmd_list[i].usage;
+                    var cmdUse = cmdList[i].usage;
                     if(cmdUse){
 						helpMsg += " " + cmdUse;
 					}
-                    var cmdDesc = cmd_list[i].description;
+                    var cmdDesc = cmdList[i].description;
                     if(cmdDesc){
 						helpMsg += ":** " + cmdDesc;
 					}
@@ -885,7 +915,7 @@ client.on('message', (msg) => {
                 logger.error('Error %s: %s.', e, e.stack);
 			}
 		} else {
-            msg.channel.send(cmd_data + " is not a valid command."
+            msg.channel.send(cmdData + " is not a valid command."
              + " Type !help for a list of commands.");
 		}
 	} else {
