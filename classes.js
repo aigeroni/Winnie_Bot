@@ -14,7 +14,7 @@ class Challenge {
         this.channel = client.channels.get(this.channelID);
         this.type = type;
         this.joinedUsers = {};
-        this.hookedChannels = [channelID];
+        // this.hookedChannels = [channelID];
         this.state = 0;
 
         this.cStart = this.countdown * 60;
