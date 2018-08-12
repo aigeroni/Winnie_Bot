@@ -279,10 +279,14 @@ var cmdList = {
                     functions.challengeList[challengeID].joinedUsers
                         [msg.author.id] = {"userData": msg.author,
                         "countData": undefined, "countType": undefined};
-                    if (!(msg.channel.id in functions.challengeList[challengeID]
-                        .hookedChannels)) {
-                        functions.challengeList[challengeID].hookedChannels
-                            .push(msg.channel.id);
+                    try {
+                        if (!(msg.channel.id in functions.challengeList[challengeID]
+                            .hookedChannels)) {
+                            functions.challengeList[challengeID].hookedChannels
+                                .push(msg.channel.id);
+                        }
+                    } catch(e) {
+                        msg.channel.send("Error: " + e);
                     }
                     msg.channel.send(msg.author + ", you have joined "
                         + functions.challengeList[challengeID].displayName);
