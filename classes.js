@@ -80,19 +80,19 @@ class Challenge {
         if(this.cStart == 0) {
             this.startMsg(); 
         } else if(this.cStart == 60) {
-            for(channel in hookedChannels) {
+            for(channel in this.hookedChannels) {
                 this.channel.send(channel);
                 channelObject = client.channels.get(channel);
                 channelObject.send(this.displayName + " starts in 1 minute.");
             }
         } else if(this.cStart % 300 == 0) {
-            for (channel in hookedChannels) {
+            for (channel in this.hookedChannels) {
                 channelObject = client.channels.get(channel);
                 channelObject.send(this.displayName + " starts in "
                     + this.cStart / 60 + " minutes.");
             }
         } else if([30,10,5].includes(this.cStart)) {
-            for (channel in hookedChannels) {
+            for (channel in this.hookedChannels) {
                 channelObject = client.channels.get(channel);
                 channelObject.send(this.displayName + " starts in "
                     + this.cStart + " seconds.");
