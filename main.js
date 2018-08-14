@@ -354,10 +354,13 @@ var cmdList = {
                     conn.collection('challengeDB').remove(
                         {_id: Number(challengeID)}
                     );
+                    for(var i = 0; i < functions.challengeList[challengeID]
+                        .hookedChannels.length; i++) {
+                        client.channels.get(functions.challengeList[challengeID]
+                            .hookedChannels[i]).send(exName + " has been"
+                            + " exterminated by the creator.");
+                    }
                     delete functions.challengeList[challengeID];
-                    msg.channel.send(exName + " has been successfully"
-                        + " exterminated.");
-                    
                 } else {
                     msg.channel.send("Only the creator of " + exName
                         + " can end this challenge.");
@@ -411,7 +414,8 @@ var cmdList = {
                                 functions.challengeList[challengeID].joinedUsers
                                     [msg.author.id] = {"userData": msg.author,
                                     "countData": wordsWritten,
-                                    "countType": writtenType};
+                                    "countType": writtenType,
+                                    "channelID": msg.channel.id};
                             }
                             msg.channel.send("Total added to summary.");
                         } else {
@@ -774,7 +778,7 @@ var cmdList = {
                                 } else {
                                     var diceSum = 0;
                                     var diceString = "";
-                                    for (i = 0; i < Number(diceType[0]); i++){
+                                    for (var i = 0; i < Number(diceType[0]); i++){
                                         var roll = (Math.floor(Math.random()
                                             * diceType[1]) + 1)
                                         diceString += roll;

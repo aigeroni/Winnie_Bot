@@ -123,7 +123,7 @@ class Challenge {
     end() {
         this.cDur--;
         if(this.cDur <= 0) {
-            for (var i = 0; i < this.hookedChannels.length; i++) {
+            for(var i = 0; i < this.hookedChannels.length; i++) {
                 var userList = "";
                 for(var user in this.joinedUsers) {
                     if (this.joinedUsers[user].channelID == this.hookedChannels
@@ -165,7 +165,10 @@ class Challenge {
     terminate() {
         this.cPost--;
         if(this.cPost == 0) {
-            functions.generateSummary(this.channel, this.objectID);
+            for(var i = 0; i < this.hookedChannels.length; i++) {
+                functions.generateSummary(client.channels.get(
+                    this.hookedChannels[i]), this.objectID);
+            }
             conn.collection('challengeDB').remove(
                 {_id: this.objectID}
             );

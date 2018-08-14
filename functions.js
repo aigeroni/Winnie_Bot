@@ -36,13 +36,15 @@ exports.generateSummary = function(channel, challengeID) {
                 if(Number.isInteger(Number(challengeList[challengeID]
                     .joinedUsers[user].countData)) && challengeList[challengeID]
                     .joinedUsers[user].countType != undefined){
-                    userTotal += "\n" + challengeList[challengeID].
-                        joinedUsers[user].userData + ": **"
-                        + challengeList[challengeID].joinedUsers[user]
-                        .countData + "** " + challengeList[challengeID]
-                        .joinedUsers[user].countType;
-                    switch (challengeList[challengeID].
-                        joinedUsers[user].countType) {
+                    if (challengeList[challengeID].joinedUsers[user].channelID
+                        == channel.id) {
+                        userTotal += challengeList[challengeID].joinedUsers
+                            [user].userData + ": **" + challengeList
+                            [challengeID].joinedUsers[user].countData + "** "
+                            + challengeList[challengeID].joinedUsers[user]
+                            .countType + "\n";
+                        switch (challengeList[challengeID].
+                            joinedUsers[user].countType) {
                             case 'words':
                                 totalWords += parseInt(challengeList
                                     [challengeID].joinedUsers[user]
@@ -61,13 +63,17 @@ exports.generateSummary = function(channel, challengeID) {
                             default:
                                 break;
                         }
+                    } else {
+
+                    }
+                    
                 }
             }
             totalWords += totalLines * 15;
             totalWords += totalPages * 400;
-            var summaryData = "Statistics for " + challengeList
-                [challengeID].displayName + ":\n" + userTotal
-                + "\n\nTotal: **" + totalWords + "** words"
+            var summaryData = "***Statistics for " + challengeList
+                [challengeID].displayName + ":***\n\n" + userTotal
+                + "Total: **" + totalWords + "** words"
             if (totalLines > 0 && totalPages > 0) {
                 summaryData += " (" + totalLines + " lines, "
                     + totalPages + " pages)";
