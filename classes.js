@@ -106,8 +106,6 @@ class Challenge {
         for (var i = 0; i < this.hookedChannels.length; i++) {
             var userList = "";
             for(var user in this.joinedUsers) {
-                logger.info(this.joinedUsers[user].channelID);
-                logger.info(this.hookedChannels[i]);
                 if (this.joinedUsers[user].channelID == this.hookedChannels
                     [i]) {
                     userList += " " + this.joinedUsers[user].userData;
