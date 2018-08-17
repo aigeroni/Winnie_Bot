@@ -32,6 +32,7 @@ exports.generateSummary = function(channel, challengeID) {
             var totalWords = 0;
             var totalLines = 0;
             var totalPages = 0;
+            var totalMinutes = 0;
             for(var user in challengeList[challengeID].joinedUsers) {
                 if(Number.isInteger(Number(challengeList[challengeID]
                     .joinedUsers[user].countData)) && challengeList[challengeID]
@@ -60,6 +61,11 @@ exports.generateSummary = function(channel, challengeID) {
                                     [challengeID].joinedUsers[user]
                                     .countData);
                                 break;
+                            case 'minutes':
+                                totalMinutes += parseInt(challengeList
+                                    [challengeID].joinedUsers[user]
+                                    .countData);
+                                break;
                             default:
                                 break;
                         }
@@ -69,24 +75,71 @@ exports.generateSummary = function(channel, challengeID) {
                     
                 }
             }
-            totalWords += totalLines * 15;
-            totalWords += totalPages * 400;
+            var firstType = true;
             var summaryData = "***Statistics for " + challengeList
                 [challengeID].displayName + ":***\n\n" + userTotal
-                + "Total: **" + totalWords + "** words"
-            if (totalLines > 0 && totalPages > 0) {
-                summaryData += " (" + totalLines + " lines, "
-                    + totalPages + " pages)";
-            } else if (totalLines > 0) {
-                summaryData += " (" + totalLines + " lines)";
-            } else if (totalPages > 0) {
-                summaryData += " (" + totalPages + " pages)";
+                + "Total:";
+            if (totalWords > 0) {
+                summaryData += " **" + totalWords + "** words";
+                firstType = false;
+            }
+            if (totalLines > 0 ) {
+                if (firstType) {
+                    summaryData += ",";
+                }
+                summaryData += " **" + totalLines + "** lines";
+                firstType = false;
+            }
+            if (totalPages > 0) {
+                if (firstType) {
+                    summaryData += ",";
+                }
+                summaryData += " **" + totalPages + "** pages";
+                firstType = false;
+            }
+            if (totalMinutes > 0) {
+                if (firstType) {
+                    summaryData += ",";
+                }
+                summaryData += " **" + totalMinutes + "** minutes";
+                firstType = false;
             }
             //this server's summary
-            channel.send(summaryData);
+            if (!firstType) {
+                channel.send(summaryData);
+            }
             //other servers' summaries
-            var crossServerSummary = "";
-            channel.send(crossServerSummary);
+            // var crossServerSummary = "";
+            // for (item in hookedChannels) {
+            //     if(item != channel to send) {
+            //         if (totalWords > 0) {
+            //             summaryData += " **" + totalWords + "** words";
+            //             firstType = false;
+            //         }
+            //         if (totalLines > 0 ) {
+            //             if (firstType) {
+            //                 summaryData += ",";
+            //             }
+            //             summaryData += " **" + totalLines + "** lines";
+            //             firstType = false;
+            //         }
+            //         if (totalPages > 0) {
+            //             if (firstType) {
+            //                 summaryData += ",";
+            //             }
+            //             summaryData += " **" + totalPages + "** pages";
+            //             firstType = false;
+            //         }
+            //         if (totalMinutes > 0) {
+            //             if (firstType) {
+            //                 summaryData += ",";
+            //             }
+            //             summaryData += " **" + totalMinutes + "** minutes";
+            //             firstType = false;
+            //         }
+            //     }
+            // }
+            // channel.send(crossServerSummary);
         } else {
             channel.send("This challenge has not ended yet!");
         }

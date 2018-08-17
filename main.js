@@ -382,7 +382,8 @@ var cmdList = {
             var wordsWritten = args.shift();
             var writtenType = args.shift();
             if (!(writtenType == 'lines' || writtenType == 'pages'
-                || writtenType == 'words' || writtenType === undefined)) {
+                || writtenType == 'words' || writtenType == 'minutes'
+                || writtenType === undefined)) {
                 msg.channel.send("Invalid input.  You must work in words,"
                     + " lines, or pages.");
             } else {
