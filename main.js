@@ -50,8 +50,8 @@ const tickTimer = gameloop.setGameLoop(async function(delta) {
 client.on('ready', () => {
     logger.info('Winnie_Bot is online');
     // Connect to the database
-    mongoose.connect(config.storageUrl, { useNewUrlParser: true }, 
-        function (e, db) {
+    mongoose.connect(config.storageUrl, { useNewUrlParser: true, autoIndex:
+        false }, function (e, db) {
         if(e) throw e;
         logger.info("Database created!");
         conn.collection('timer').find(
@@ -280,25 +280,25 @@ var cmdList = {
                         [msg.author.id] = {"userData": msg.author,
                         "countData": undefined, "countType": undefined,
                         "channelID": msg.channel.id};
-                    try {
-                        var pushID = msg.channel.id;
-                        var searchIndex = functions.challengeList[challengeID]
-                            .hookedChannels.indexOf(pushID);
-                        if (searchIndex == -1) {
-                            functions.challengeList[challengeID].hookedChannels
-                                .push(pushID);
-                        }
-                    } catch(e) {
-                        msg.channel.send("Error: " + e);
+                    var pushID = msg.channel.id;
+                    var searchIndex = functions.challengeList[challengeID]
+                        .hookedChannels.indexOf(pushID);
+                    if (searchIndex == -1) {
+                        functions.challengeList[challengeID].hookedChannels
+                            .push(pushID);
                     }
                     msg.channel.send(msg.author + ", you have joined "
                         + functions.challengeList[challengeID].displayName);
+                    try {
                         conn.collection('challengeDB').update(
                             {_id: challengeID},
                             {joinedUsers: functions.challengeList[challengeID]
                                 .joinedUsers},
                             {upsert: false}
                         )
+                    } catch(e) {
+                        logger.info("Error: " + e);
+                    }
                 }
             } else {
                 msg.channel.send("Challenge " + challengeID
@@ -585,7 +585,7 @@ var cmdList = {
                 if (!(goalType == 'lines' || goalType == 'pages' ||
                     goalType == 'minutes' || goalType == 'words' ||
                     goalType === undefined)) {
-                    msg.channel.send("Goal type must be lines, pages, or"
+                    msg.channel.send("Goal type must be words, lines, pages, or"
                         + " minutes.");
                 } else {
                     if (goalType === undefined) {
@@ -836,7 +836,7 @@ var cmdList = {
         type: "other",
 		process: function(client,msg,suffix) {
             var items = suffix.split(",");
-            var choiceID = (Math.floor(Math.random() * items.length))
+            var choiceID = (Math.floor(Math.random() * items.length));
             msg.channel.send(msg.author + ", from " + suffix + ", I selected **"
                 + items[choiceID].trim() + "**");
 		}
@@ -846,14 +846,26 @@ var cmdList = {
         description: "Displays raptor statistics.",
         type: "other",
 		process: function(client,msg,suffix) {
-				var raptorMsg = "__**Raptor Statistics:**__\n";
-				for (server in functions.raptorCount) {
-					raptorMsg += "\n__*" + client.guilds.get(server) + ":*__ "
-						+ functions.raptorCount[server];
-				}
+            var raptorMsg = "__**Raptor Statistics:**__\n";
+            for (server in functions.raptorCount) {
+                raptorMsg += "\n__*" + client.guilds.get(server) + ":*__ "
+                    + functions.raptorCount[server];
+            }
             msg.channel.send(raptorMsg);
 		}
     }
+    // "config": {
+    //     name: "config",
+    //     description: "Allows server admins and users to toggle cross-server"
+    //         + " challenges.",
+    //     type: "other",
+	// 	process: function(client,msg,suffix) {
+    //         // boolean denotes off or on
+    //         // running config command toggles boolean
+    //         msg.channel.send(msg.author + ", you have turned cross-server"
+    //             + " challenges ");
+	// 	}
+    // }
 }
 
 client.on('message', (msg) => {
