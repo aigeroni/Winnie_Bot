@@ -18,24 +18,25 @@ var regionRegex = /^(Africa|America|Antarctica|Asia|Atlantic|Australia|Europe|In
 const tickTimer = gameloop.setGameLoop(async function(delta) {
     for (var item in functions.challengeList){
         if (functions.challengeList[item].type == 'chain war') {
-            if (functions.challengeList[item].state == 2
-                && functions.challengeList[item].current < functions
-                .challengeList[item].total) {
+            if (functions.challengeList[item].state == 2) {
                 functions.challengeList[item].state = 3;
-                var startTime = new Date().getTime();
-                functions.challengeList[functions.timerID] = new classes
-                    .ChainWar(functions.timerID, functions.challengeList[item]
-                    .creator, functions.challengeList[item].warName, startTime,
-                    functions.challengeList[item].current+1, functions
-                    .challengeList[item].total, functions.challengeList[item]
-                    .countdown, functions.challengeList[item].duration,
-                    functions.challengeList[item].channelID);
-                conn.collection('timer').update(
-                    {data: functions.timerID},
-                    {data: (functions.timerID+1)},
-                    {upsert: true}
-                )
-                functions.timerID = functions.timerID + 1;
+                if (functions.challengeList[item].current < functions
+                .challengeList[item].total) {
+                    var startTime = new Date().getTime();
+                    functions.challengeList[functions.timerID] = new classes
+                        .ChainWar(functions.timerID, functions.challengeList[item]
+                        .creator, functions.challengeList[item].warName, startTime,
+                        functions.challengeList[item].current+1, functions
+                        .challengeList[item].total, functions.challengeList[item]
+                        .countdown, functions.challengeList[item].duration,
+                        functions.challengeList[item].channelID);
+                    conn.collection('timer').update(
+                        {data: functions.timerID},
+                        {data: (functions.timerID+1)},
+                        {upsert: true}
+                    )
+                    functions.timerID = functions.timerID + 1
+                }
             }
         }
         functions.challengeList[item].update();
