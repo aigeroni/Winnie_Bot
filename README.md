@@ -71,8 +71,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Acknowledgments
 
-* Winnie is inspired by Timmy, National Novel Writing Month's IRC bot.  Timmy can be found at https://github.com/utoxin/TimTheWordWarBot.
-* Prompts were brainstormed by NaNoWriMo's Australia::Melbourne region.
+* Winnie is inspired by Timmy, ChatNaNo's IRC bot.  Timmy can be found at https://github.com/utoxin/TimTheWordWarBot.
+* Prompts were brainstormed by NaNo's Australia::Melbourne region.
 
 Winnie's repository is located at https://github.com/lisushka/Winnie_Bot.
-Winnie's avatar, 'Tiny Cities', was created by Rachael Wheeler (Etlu-Yume on NaNoWriMo).  Prints, notebooks, and other items featuring 'Tiny Cities' are available for purchase [here](https://www.redbubble.com/people/scorpiraw/works/33012468-tiny-cities).
+Winnie's avatar, 'Tiny Cities', was created by Rachael Wheeler (Etlu-Yume on NaNo).  Prints, notebooks, and other items featuring 'Tiny Cities' are available for purchase [here](https://www.redbubble.com/people/scorpiraw/works/33012468-tiny-cities).

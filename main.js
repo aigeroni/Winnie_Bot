@@ -102,6 +102,13 @@ client.on('ready', () => {
                 });
             }
         );
+        conn.collection('configDB').find(
+            {}, function(e, guilds) {
+                guilds.forEach(function(guild) {
+                    functions.crossServerStatus[guild.server] = guild.xStatus;
+                });
+            }
+        );
     });
 });
 
@@ -350,7 +357,8 @@ var cmdList = {
                 msg.channel.send("Challenge ID must be an integer.");
             } else if (challengeID in functions.challengeList) {
                 var exName = functions.challengeList[challengeID].displayName;
-                if(functions.challengeList[challengeID].creator == msg.author.id) {
+                if(functions.challengeList[challengeID].creator
+                    == msg.author.id) {
                     conn.collection('challengeDB').remove(
                         {_id: Number(challengeID)}
                     );
@@ -374,8 +382,8 @@ var cmdList = {
     "total": {
         name: "total",
         description: "Adds your <total> for completed challenge <id>,"
-            + " optional [pages|lines]",
-        usage: "<id> <total> [pages|lines]",
+            + " optional [lines|pages|minutes]",
+        usage: "<id> <total> [lines|pages|minutes]",
         process: function(client,msg,suffix) {
             var args = suffix.split(" ");
             var challengeID = args.shift();
@@ -393,32 +401,41 @@ var cmdList = {
                 if (challengeID in functions.challengeList) {
                     if (functions.challengeList[challengeID].state >= 2) {
                         if(Number.isInteger(Number(wordsWritten))){
-                            var joinCheck = false;
-                            for(user in functions.challengeList[challengeID]
-                                .joinedUsers) {
-                                if(functions.challengeList[challengeID].joinedUsers[user]
-                                    .userData.id == msg.author.id) {
-                                    if(!(functions.challengeList[challengeID]
-                                        .joinedUsers[user]
-                                        .countData === undefined)) {
-                                        joinCheck = true;
+                            if(Number(wordsWritten) > 0) {
+                                var joinCheck = false;
+                                for(user in functions.challengeList[challengeID]
+                                    .joinedUsers) {
+                                    if(functions.challengeList[challengeID]
+                                        .joinedUsers[user].userData.id
+                                        == msg.author.id) {
+                                        if(!(functions.challengeList
+                                            [challengeID].joinedUsers[user]
+                                            .countData === undefined)) {
+                                            joinCheck = true;
+                                        }
+                                        functions.challengeList[challengeID]
+                                            .joinedUsers[user].countData
+                                            = wordsWritten;
+                                        functions.challengeList[challengeID]
+                                            .joinedUsers[user].countType
+                                            = writtenType;
                                     }
-                                    functions.challengeList[challengeID].joinedUsers[user]
-                                        .countData = wordsWritten;
-                                    functions.challengeList[challengeID].joinedUsers[user]
-                                        .countType = writtenType;
                                 }
-                            }
-                            if (!joinCheck) {
-                                functions.raptor(msg.guild.id, msg.channel, msg.author,
-                                    constants.WAR_RAPTOR_CHANCE);
-                                functions.challengeList[challengeID].joinedUsers
-                                    [msg.author.id] = {"userData": msg.author,
-                                    "countData": wordsWritten,
-                                    "countType": writtenType,
-                                    "channelID": msg.channel.id};
-                            }
-                            msg.channel.send("Total added to summary.");
+                                if (!joinCheck) {
+                                    functions.raptor(msg.guild.id, msg.channel,
+                                        msg.author, constants.WAR_RAPTOR_CHANCE);
+                                    functions.challengeList[challengeID]
+                                        .joinedUsers[msg.author.id] = {
+                                        "userData": msg.author,
+                                        "countData": wordsWritten,
+                                        "countType": writtenType,
+                                        "channelID": msg.channel.id};
+                                }
+                                msg.channel.send("Total added to summary.");
+                            } else {
+                                msg.channel.send(msg.author + ", your total"
+                                + " must be greater than 0.");
+                            }    
                         } else {
                             msg.channel.send(msg.author + ", I need a whole"
                                 + " number to include in the summary!");
@@ -606,11 +623,12 @@ var cmdList = {
                         var endTime = new timezoneJS.Date();
                         endTime.setTimezone(userTZ);
                         endTime.setHours(24,0,0,0);
-                        functions.goalList[msg.author.id] = new classes.Goal(msg.author.id,
-                            goal, goalType, 0, startTime.getTime(),
-                            endTime.getTime(), msg.channel.id);
-                        msg.channel.send(msg.author + ", your goal for today is **"
-                            + goal + "** " + goalType + ".");
+                        functions.goalList[msg.author.id] = new classes.Goal
+                            (msg.author.id, goal, goalType, 0,
+                            startTime.getTime(), endTime.getTime(),
+                            msg.channel.id);
+                        msg.channel.send(msg.author + ", your goal for today"
+                            + " is **" + goal + "** " + goalType + ".");
                     } catch(e) {
                         msg.channel.send(msg.author + ", you need to set your"
                             + " timezone before setting a daily goal."
@@ -640,7 +658,8 @@ var cmdList = {
                     + functions.goalList[msg.author.id].written + "** "
                     + functions.goalList[msg.author.id].goalType + " of your **"
                     + functions.goalList[msg.author.id].goal + "**-"
-                    + functions.goalList[msg.author.id].goalType.slice(0, -1) + " goal.");
+                    + functions.goalList[msg.author.id].goalType.slice(0, -1)
+                    + " goal.");
             }
 	    }
     },
@@ -664,7 +683,8 @@ var cmdList = {
                     + functions.goalList[msg.author.id].written + "** "
                     + functions.goalList[msg.author.id].goalType + " of your **"
                     + functions.goalList[msg.author.id].goal + "**-"
-                    + functions.goalList[msg.author.id].goalType.slice(0, -1) + " goal.");
+                    + functions.goalList[msg.author.id].goalType.slice(0, -1)
+                    + " goal.");
             }
 	    }
     },
@@ -700,7 +720,8 @@ var cmdList = {
                     + functions.goalList[msg.author.id].written + "** "
                     + functions.goalList[msg.author.id].goalType + " of your **"
                     + functions.goalList[msg.author.id].goal + "**-"
-                    + functions.goalList[msg.author.id].goalType.slice(0, -1) + " goal.");
+                    + functions.goalList[msg.author.id].goalType.slice(0, -1)
+                    + " goal.");
             }
 		}
     },
@@ -759,74 +780,89 @@ var cmdList = {
     },
     "roll": {
         name: "roll",
-        description: "Rolls a die",
-        usage: "<x> [y], <x>d<y>",
+        description: "Rolls any combination of the given options,"
+            + " separated by the + operator",
+        usage: "<x>, <x> <y>, <x>d<y>",
         type: "other",
-		process: function(client,msg,suffix) {
-            var faces = suffix.split(" ");
-            if (faces.length == 1) {
-                if(Number.isInteger(Number(faces[0]))) {
-                    msg.channel.send("You rolled " + (Math.floor
-                        (Math.random() * faces[0]) + 1));
-                } else {
-                    if(true) {
-                        var diceType = faces[0].split("d");
-                        if (diceType.length == 2) {
-                            if(Number.isInteger(Number(diceType[0]))
-                                && Number.isInteger(Number(diceType[1]))) {
-                                if(diceType[0] > 20) {
-                                    msg.channel.send("ERROR. TOO BIG.");
-                                } else {
-                                    var diceSum = 0;
-                                    var diceString = "";
-                                    for (var i = 0; i < Number(diceType[0]); i++){
-                                        var roll = (Math.floor(Math.random()
-                                            * diceType[1]) + 1)
-                                        diceString += roll;
-                                        if (i != Number(diceType[0])-1)
-                                        {
-                                            diceString += ", ";
-                                        }
-                                        diceSum += roll;
-                                    }
-                                    msg.channel.send(diceString);
-                                    msg.channel.send("Total = " + diceSum);
-                                }
-                            } else {
-                                msg.channel.send("Invalid input. Face count"
-                                    + " must be a whole number.");
-                            }
-                        } else {
-                            msg.channel.send("Invalid input. Face count must"
-                                + " be a whole number.");
-                        }
+        process: function(client,msg,suffix) {
+            var diceString = "";
+            var diceSum = 0;
+            var faces = suffix.split("+");
+            for (var i = 0; i < faces.length; i++) {
+                if(Number.isInteger(Number(faces[i]))) { // Single number
+                    if (faces.length == 1) { // Treat as a 1dx roll
+                        var roll = (Math.floor(Math.random() * Number(faces[i]))
+                            + 1)
+                        diceString += roll;
+                        diceSum += roll;
+                    } else { // Add to the other rolls
+                        diceString += "(" + Number(faces[i]) + ")";
+                        diceSum += Number(faces[i]);
+                    }
+                } else if (faces[i].split("d").length == 2) { // RPG-style roll
+                    rpgRoll = faces[i].split("d");
+                    if (rpgRoll[0] == "") {
+                        rpgRoll[0] = 1;
+                    }
+                    if (!Number.isInteger(Number(rpgRoll[0])) ||
+                        !Number.isInteger(Number(rpgRoll[1]))) {
+                        diceString = "Error: Both values in an RPG-style roll"
+                            + " must be integers.";
+                        diceSum = 0;
+                        break;
                     } else {
-                        msg.channel.send("Invalid input. Face count must be a"
-                            + " whole number.");
-                    }  
-                }
-            } else if (faces.length == 2) {
-                if(Number.isInteger(Number(faces[0])) && Number.isInteger(
-                    Number(faces[1]))){
-                    if(Number(faces[0]) < Number(faces[1])){
-                        msg.channel.send("You rolled " + (Math.floor(
-                            Math.random() * (1 + Number(faces[1])
-                            - Number(faces[0])) + Number(faces[0]))));
+                        if(rpgRoll[0] > 20) {
+                            diceString = "ERROR: TOO BIG.";
+                            diceSum = 0;
+                            break;
+                        } else {
+                            for (var j = 0; j < Number(rpgRoll[0]); j++){
+                                var roll = (Math.floor(Math.random() *
+                                    Number(rpgRoll[1])) + 1)
+                                diceString += roll;
+                                if (j < (Number(rpgRoll[0]) - 1)) {
+                                    diceString += ", "
+                                }
+                                diceSum += roll;
+                            }
+                        }
                     }
-                    else {
-                        msg.channel.send("Invalid input. First number must be"
-                            + " less than second number.");
+                } else if(faces[i].split(" ").length == 2){ // Range roll
+                    rangeRoll = faces[i].split(" ");
+                    if (!Number.isInteger(Number(rangeRoll[0])) ||
+                        !Number.isInteger(Number(rangeRoll[1]))) {
+                        diceString = "Error: Both values in a range roll"
+                            + " must be integers.";
+                        diceSum = 0;
+                        break;
+                    } else {
+                        if(Number(rangeRoll[0]) < Number(rangeRoll[1])){
+                            var roll = (Math.floor(Math.random() * (1 + Number
+                                (rangeRoll[1]) - Number(rangeRoll[0]))
+                                + Number(rangeRoll[0])));
+                            diceString += roll;
+                            diceSum += roll;
+                        } else {// First number is larger than second
+                            diceString = "Error: The first number in a range"
+                                + " roll must be smaller than the second.";
+                            diceSum = 0;
+                            break;
+                        }
                     }
-                    
                 } else {
-                    msg.channel.send("Invalid input. Face count must be a whole"
-                        + " number.");
+                    diceString = "Error: " + faces[i] + " is not a valid roll.";
+                    diceSum = 0;
+                    break;
                 }
-            } else {
-                msg.channel.send("Invalid input. Face count must be a whole"
-                    + " number.");
+                if (i < (faces.length - 1)) {
+                    diceString += ", "
+                }
             }
-		}
+            msg.channel.send(diceString);
+            if (diceSum > 0) {
+                msg.channel.send("Total = " + diceSum);
+            }
+        }
     },
     "choose": {
         name: "choose",
@@ -853,19 +889,51 @@ var cmdList = {
             }
             msg.channel.send(raptorMsg);
 		}
+    },
+    "config": {
+        name: "config",
+        description: "Allows server admins to toggle cross-server display for "
+            + "challenges.",
+        usage: "<on|off>",
+        type: "other",
+		process: function(client,msg,suffix) {
+            if(suffix == "") {
+                var xsType = "on";
+                if (functions.crossServerStatus[msg.guild.id] == false) {
+                    xsType = "off";
+                }
+                msg.channel.send(msg.guild.name + " currently has cross-server"
+                    + " challenges turned **" + xsType + "**.")
+            } else {
+                if(msg.member.permissions.has("ADMINISTRATOR")) {
+                    if(suffix == "on" || suffix == "off") {
+                        var xsType = "on";
+                        if (suffix == "off") {
+                            var xsType = "off";
+                            functions.crossServerStatus[msg.guild.id] = false;
+                        } else {
+                            var xsType = "on";
+                            functions.crossServerStatus[msg.guild.id] = true;
+                        }
+                        conn.collection('configDB').update(
+                            {},
+                            {"server": msg.guild.id, "xStatus":
+                                functions.crossServerStatus[msg.guild.id]},
+                            {upsert: true}
+                        )
+                        msg.channel.send(msg.author + ", you have turned"
+                            + " cross-server challenges **" + xsType + "**.");
+                    } else {
+                        msg.channel.send(msg.author + ", use **on/off** to"
+                            + " toggle cross-server challenges.");
+                    }
+                } else {
+                    msg.channel.send("Only server administrators are permitted"
+                        + " to configure challenges.");
+                }
+            }
+		}
     }
-    // "config": {
-    //     name: "config",
-    //     description: "Allows server admins and users to toggle cross-server"
-    //         + " challenges.",
-    //     type: "other",
-	// 	process: function(client,msg,suffix) {
-    //         // boolean denotes off or on
-    //         // running config command toggles boolean
-    //         msg.channel.send(msg.author + ", you have turned cross-server"
-    //             + " challenges ");
-	// 	}
-    // }
 }
 
 client.on('message', (msg) => {
@@ -898,15 +966,7 @@ client.on('message', (msg) => {
                     helpMsg += "\n"
                     msg.channel.send(helpMsg);
                 } catch(e) {
-                    if(suffix == "challenges"){
-
-                    } else if(suffix == "goals"){
-
-                    } else if(suffix == "other"){
-
-                    } else {
-                        msg.channel.send("That command does not exist.");
-                    }
+                    msg.channel.send("That command does not exist.");
                 }
 			} else {
                 msg.author.send("**Winnie_Bot Commands:**").then(function(){
@@ -949,13 +1009,13 @@ client.on('message', (msg) => {
 });
 
 process.on('uncaughtException', function(e) {
-    logger.error('Error %s: %s.\nWinnie_Bot will now attempt'
-        + ' to reconnect.', e, e.stack);
+    logger.error("Error %s: %s.\nWinnie_Bot will now attempt to reconnect.",
+        e, e.stack);
     try {
         client.login(config.token);
         fileSystemCheck();
     } catch (e) {
-        logger.error('Reconnection failed.\nWinnie_Bot will now terminate.');
+        logger.error("Reconnection failed.\nWinnie_Bot will now terminate.");
         process.exit(1);
     }
   })

@@ -2,12 +2,13 @@ var timerID = 1;
 var challengeList = {};
 var goalList = {};
 var raptorCount = {};
-// var crossServerStatus = {};
+var crossServerStatus = {};
 
 exports.timerID = timerID;
 exports.challengeList = challengeList;
 exports.goalList = goalList;
 exports.raptorCount = raptorCount;
+exports.crossServerStatus = crossServerStatus;
 
 exports.raptor = function(server, channel, author, raptorChance) {
     if (!(server in raptorCount)) {
@@ -129,33 +130,37 @@ exports.generateSummary = function(channel, challengeID) {
                     .hookedChannels[i];
                 if(currentChannel != channel.id) {
                     console.log(currentChannel);
-                    var currentServer = client.channels.get(currentChannel).guild
-                        .name;
+                    var currentServer = client.channels.get(currentChannel)
+                        .guild.name;
                     var serverSummary = "__*" + currentServer + "*__:";
                     var firstType = true;
                     if (totalWords[currentChannel] > 0) {
-                        serverSummary += " **" + totalWords[currentChannel] + "** words";
+                        serverSummary += " **" + totalWords[currentChannel]
+                            + "** words";
                         firstType = false;
                     }
                     if (totalLines[currentChannel] > 0 ) {
                         if (!firstType) {
                             serverSummary += ",";
                         }
-                        serverSummary += " **" + totalLines[currentChannel] + "** lines";
+                        serverSummary += " **" + totalLines[currentChannel]
+                            + "** lines";
                         firstType = false;
                     }
                     if (totalPages[currentChannel] > 0) {
                         if (!firstType) {
                             serverSummary += ",";
                         }
-                        serverSummary += " **" + totalPages[currentChannel] + "** pages";
+                        serverSummary += " **" + totalPages[currentChannel]
+                            + "** pages";
                         firstType = false;
                     }
                     if (totalMinutes[currentChannel] > 0) {
                         if (!firstType) {
                             serverSummary += ",";
                         }
-                        serverSummary += " **" + totalMinutes[currentChannel] + "** minutes";
+                        serverSummary += " **" + totalMinutes[currentChannel]
+                            + "** minutes";
                         firstType = false;
                     }
                     if (!firstType) {
