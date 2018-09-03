@@ -14,6 +14,10 @@ services:
     container_name: mongo
     image: mongo
     volumes:
-      - ./data:/data
+      - mongodb:/data/db
+      - mongodb-config:/data/configdb
     ports:
       - "27017:27017"
+volumes:
+  mongodb:
+  mongodb-config:
