@@ -4,7 +4,7 @@ const DUR_AFTER = 300;
 
 class Challenge {
     constructor(objectID, creator, displayName, initStamp, countdown, duration,
-        channel, type) {
+        channel, type, hidden) {
         this.objectID = objectID;
         this.creator = creator;
         this.displayName = displayName;
@@ -17,6 +17,7 @@ class Challenge {
         this.joinedUsers = {};
         this.hookedChannels = [channel];
         this.state = 0;
+        this.hidden = hidden;
 
         this.cStart = this.countdown * 60;
         this.cDur = this.duration * 60;
@@ -177,9 +178,9 @@ class Challenge {
 
 class Sprint extends Challenge {
     constructor(objectID, creator, displayName, initStamp, countdown, goal,
-        duration, channel) {
+        duration, channel, hidden) {
         super(objectID, creator, displayName, initStamp, countdown,
-            duration, channel, 'sprint');
+            duration, channel, 'sprint', hidden);
         this.goal = goal;
 
         var challengeData = {
@@ -235,9 +236,9 @@ class Sprint extends Challenge {
 
 class War extends Challenge {
     constructor(objectID, creator, displayName, initStamp, countdown, duration,
-        channel) {
+        channel, hidden) {
         super(objectID, creator, displayName, initStamp, countdown, duration,
-            channel, 'war');
+            channel, 'war', hidden);
 
         var challengeData = {
             "_id": this.objectID,
@@ -277,9 +278,9 @@ class War extends Challenge {
 
 class ChainWar extends Challenge {
     constructor(objectID, creator, warName, initStamp, current, total,
-        countdown, duration, channel) {
+        countdown, duration, channel, hidden) {
         super(objectID, creator,  warName + " (" + current + "/" + total + ")",
-            initStamp, countdown, duration, channel, 'chain war');
+            initStamp, countdown, duration, channel, 'chain war', hidden);
         this.warName = warName;
         this.current = current;
         this.total = total;

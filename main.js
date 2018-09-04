@@ -153,7 +153,8 @@ var cmdList = {
                     functions.challengeList[functions.timerID] =
                         new classes.Sprint(functions.timerID, creatorID,
                         sprintName, startTime, start, words, timeout,
-                        msg.channel.id);
+                        msg.channel.id, functions.crossServerStatus
+                        [msg.guild.id]);
                     conn.collection('timer').update(
                         {data: functions.timerID},
                         {data: (functions.timerID+1)},
@@ -199,7 +200,8 @@ var cmdList = {
                     var startTime = new Date().getTime();
                     functions.challengeList[functions.timerID] =
                         new classes.War(functions.timerID, creatorID, warName,
-                        startTime, start, duration, msg.channel.id);
+                        startTime, start, duration, msg.channel.id, functions
+                        .crossServerStatus[msg.guild.id]);
                     conn.collection('timer').update(
                         {data: functions.timerID},
                         {data: (functions.timerID+1)},
@@ -254,7 +256,8 @@ var cmdList = {
                     functions.challengeList[functions.timerID] =
                         new classes.ChainWar(functions.timerID, creatorID,
                         warName, startTime, 1, chainWarCount, timeBetween,
-                        duration, msg.channel.id);
+                        duration, msg.channel.id, functions.crossServerStatus
+                        [msg.guild.id]);
                     conn.collection('timer').update(
                         {data: functions.timerID},
                         {data: (functions.timerID+1)},
@@ -279,33 +282,42 @@ var cmdList = {
             } else if (challengeID < 1) {
                 msg.channel.send("Challenge ID must be an integer.");
             } else if (challengeID in functions.challengeList) {
-                if(msg.author.id in functions.challengeList[challengeID]
-                    .joinedUsers) {
-                    msg.channel.send(msg.author + ", you already have"
-                    + " notifications enabled for this challenge.");
+                logger.info(msg.channel.id);
+                logger.info(functions
+                    .challengeList[challengeID].channelID);
+                if (functions.challengeList[challengeID].hidden && functions
+                    .challengeList[challengeID].channelID != msg.channel.id) {
+                    msg.channel.send(msg.author + ", you do not have permission"
+                        + " to join this challenge.");
                 } else {
-                    functions.challengeList[challengeID].joinedUsers
-                        [msg.author.id] = {"userData": msg.author,
-                        "countData": undefined, "countType": undefined,
-                        "channelID": msg.channel.id};
-                    var pushID = msg.channel.id;
-                    var searchIndex = functions.challengeList[challengeID]
-                        .hookedChannels.indexOf(pushID);
-                    if (searchIndex == -1) {
-                        functions.challengeList[challengeID].hookedChannels
-                            .push(pushID);
-                    }
-                    msg.channel.send(msg.author + ", you have joined "
-                        + functions.challengeList[challengeID].displayName);
-                    try {
-                        conn.collection('challengeDB').update(
-                            {_id: challengeID},
-                            {joinedUsers: functions.challengeList[challengeID]
-                                .joinedUsers},
-                            {upsert: false}
-                        )
-                    } catch(e) {
-                        logger.info("Error: " + e);
+                    if(msg.author.id in functions.challengeList[challengeID]
+                        .joinedUsers) {
+                        msg.channel.send(msg.author + ", you already have"
+                        + " notifications enabled for this challenge.");
+                    } else {
+                        functions.challengeList[challengeID].joinedUsers
+                            [msg.author.id] = {"userData": msg.author,
+                            "countData": undefined, "countType": undefined,
+                            "channelID": msg.channel.id};
+                        var pushID = msg.channel.id;
+                        var searchIndex = functions.challengeList[challengeID]
+                            .hookedChannels.indexOf(pushID);
+                        if (searchIndex == -1) {
+                            functions.challengeList[challengeID].hookedChannels
+                                .push(pushID);
+                        }
+                        msg.channel.send(msg.author + ", you have joined "
+                            + functions.challengeList[challengeID].displayName);
+                        try {
+                            conn.collection('challengeDB').update(
+                                {_id: challengeID},
+                                {joinedUsers: functions.challengeList[challengeID]
+                                    .joinedUsers},
+                                {upsert: false}
+                            )
+                        } catch(e) {
+                            logger.info("Error: " + e);
+                        }
                     }
                 }
             } else {
@@ -358,21 +370,27 @@ var cmdList = {
                 msg.channel.send("Challenge ID must be an integer.");
             } else if (challengeID in functions.challengeList) {
                 var exName = functions.challengeList[challengeID].displayName;
-                if(functions.challengeList[challengeID].creator
-                    == msg.author.id) {
-                    conn.collection('challengeDB').remove(
-                        {_id: Number(challengeID)}
-                    );
-                    for(var i = 0; i < functions.challengeList[challengeID]
-                        .hookedChannels.length; i++) {
-                        client.channels.get(functions.challengeList[challengeID]
-                            .hookedChannels[i]).send(exName + " has been"
-                            + " exterminated by the creator.");
+                if (!(functions.challengeList[challengeID].hidden && functions
+                    .challengeList[challengeID].channelID != msg.channel.id)) {
+                    if(functions.challengeList[challengeID].creator
+                        == msg.author.id) {
+                        conn.collection('challengeDB').remove(
+                            {_id: Number(challengeID)}
+                        );
+                        for(var i = 0; i < functions.challengeList[challengeID]
+                            .hookedChannels.length; i++) {
+                            client.channels.get(functions.challengeList[challengeID]
+                                .hookedChannels[i]).send(exName + " has been"
+                                + " exterminated by the creator.");
+                        }
+                        delete functions.challengeList[challengeID];
+                    } else {
+                        msg.channel.send("Only the creator of " + exName
+                            + " can end this challenge.");
                     }
-                    delete functions.challengeList[challengeID];
                 } else {
-                    msg.channel.send("Only the creator of " + exName
-                        + " can end this challenge.");
+                    msg.channel.send(msg.author + ", you do not have permission"
+                        + " to end this challenge.")
                 }
             } else {
                 msg.channel.send("Challenge " + challengeID
@@ -401,8 +419,10 @@ var cmdList = {
                 }
                 if (challengeID in functions.challengeList) {
                     if (functions.challengeList[challengeID].state >= 2) {
-                        if(Number.isInteger(Number(wordsWritten))){
-                            if(Number(wordsWritten) > 0) {
+                        if (!(functions.challengeList[challengeID].hidden &&
+                            functions.challengeList[challengeID].channelID
+                            != msg.channel.id)) {
+                            if(Number.isInteger(Number(wordsWritten))){
                                 var joinCheck = false;
                                 for(user in functions.challengeList[challengeID]
                                     .joinedUsers) {
@@ -423,8 +443,11 @@ var cmdList = {
                                     }
                                 }
                                 if (!joinCheck) {
-                                    functions.raptor(msg.guild.id, msg.channel,
-                                        msg.author, constants.WAR_RAPTOR_CHANCE);
+                                    if(Number(wordsWritten) > 0) {
+                                        functions.raptor(msg.guild.id, msg.channel,
+                                            msg.author, constants
+                                            .WAR_RAPTOR_CHANCE);
+                                    }
                                     functions.challengeList[challengeID]
                                         .joinedUsers[msg.author.id] = {
                                         "userData": msg.author,
@@ -432,14 +455,14 @@ var cmdList = {
                                         "countType": writtenType,
                                         "channelID": msg.channel.id};
                                 }
-                                msg.channel.send("Total added to summary.");
+                                msg.channel.send("Total added to summary.");  
                             } else {
-                                msg.channel.send(msg.author + ", your total"
-                                + " must be greater than 0.");
-                            }    
+                                msg.channel.send(msg.author + ", I need a whole"
+                                    + " number to include in the summary!");
+                            }
                         } else {
-                            msg.channel.send(msg.author + ", I need a whole"
-                                + " number to include in the summary!");
+                            msg.channel.send(msg.author + ", you do not have"
+                                + " permission to join this challenge.")
                         }
                     } else {
                         msg.channel.send("This challenge has not ended yet!");
@@ -475,66 +498,71 @@ var cmdList = {
                         .challengeList).length + " challenges running:\n";
                 }
                 for(var i in functions.challengeList) {
-                    //find originating server name
-                    var parentChannel = client.channels.get(functions
-                        .challengeList[i].channelID);
-                    var parentGuild = parentChannel.guild;
-                    var parentGuildName = parentGuild.name;
-                    switch(functions.challengeList[i].state){
-                        case 0:
-                            var timeout = "";
-                            if ((functions.challengeList[i].cStart % 60) < 10) {
-                                timeout = "0" + (functions.challengeList[i]
-                                    .cStart % 60).toString();
-                            } else {
-                                timeout = functions.challengeList[i].cStart
-                                    % 60;
-                            }
-                            timerInfo += i + ": " + functions.challengeList[i]
-                                .displayName + " (";
-                            if (functions.challengeList[i].type == "sprint") {
-                                timerInfo += functions.challengeList[i].goal
-                                + " words, ";
-                            }
-                            timerInfo += functions.challengeList[i].duration
-                                + " minutes, starts in "
-                                + Math.floor(functions.challengeList[i].cStart
-                                / 60) + ":" + timeout + "), " + parentGuildName
-                                + "\n";
-                            break;
-                        case 1:
-                            var timeout = "";
-                            if ((functions.challengeList[i].cDur % 60) < 10) {
-                                timeout = "0" + (functions.challengeList[i]
-                                    .cDur % 60).toString();
-                            } else {
-                                timeout = functions.challengeList[i].cDur % 60;
-                            }
-                            timerInfo += i + ": " + functions.challengeList[i]
-                                .displayName +  " (";
-                            if (functions.challengeList[i].type == "sprint") {
-                                timerInfo += functions.challengeList[i].goal
-                                + " words, ";
-                            }
-                            timerInfo += functions.challengeList[i].duration
-                                + " minutes, "
-                                + Math.floor(functions.challengeList[i].cDur
-                                / 60) + ":" + timeout + " remaining), "
-                                + parentGuildName + "\n";
-                            break;
-                        case 2:
-                        case 3:
-                            timerInfo += i + ": " + functions.challengeList[i]
-                                .displayName +  " (";
-                            if (functions.challengeList[i].type == "sprint") {
-                                timerInfo += functions.challengeList[i].goal
-                                + " words, ";
-                            }
-                            timerInfo += functions.challengeList[i].duration
-                            + " minutes, ended), " + parentGuildName + "\n";
-                            break;
-                        default:
-                            break;
+                    // check whether a challenge is hidden
+                    if (!(functions.challengeList[i].hidden &&
+                        functions.challengeList[i].channelID
+                        != msg.channel.id)) {
+                        // find originating server name
+                        var parentChannel = client.channels.get(functions
+                            .challengeList[i].channelID);
+                        var parentGuild = parentChannel.guild;
+                        var parentGuildName = parentGuild.name;
+                        switch(functions.challengeList[i].state){
+                            case 0:
+                                var timeout = "";
+                                if ((functions.challengeList[i].cStart % 60) < 10) {
+                                    timeout = "0" + (functions.challengeList[i]
+                                        .cStart % 60).toString();
+                                } else {
+                                    timeout = functions.challengeList[i].cStart
+                                        % 60;
+                                }
+                                timerInfo += i + ": " + functions.challengeList[i]
+                                    .displayName + " (";
+                                if (functions.challengeList[i].type == "sprint") {
+                                    timerInfo += functions.challengeList[i].goal
+                                    + " words, ";
+                                }
+                                timerInfo += functions.challengeList[i].duration
+                                    + " minutes, starts in "
+                                    + Math.floor(functions.challengeList[i].cStart
+                                    / 60) + ":" + timeout + "), " + parentGuildName
+                                    + "\n";
+                                break;
+                            case 1:
+                                var timeout = "";
+                                if ((functions.challengeList[i].cDur % 60) < 10) {
+                                    timeout = "0" + (functions.challengeList[i]
+                                        .cDur % 60).toString();
+                                } else {
+                                    timeout = functions.challengeList[i].cDur % 60;
+                                }
+                                timerInfo += i + ": " + functions.challengeList[i]
+                                    .displayName +  " (";
+                                if (functions.challengeList[i].type == "sprint") {
+                                    timerInfo += functions.challengeList[i].goal
+                                    + " words, ";
+                                }
+                                timerInfo += functions.challengeList[i].duration
+                                    + " minutes, "
+                                    + Math.floor(functions.challengeList[i].cDur
+                                    / 60) + ":" + timeout + " remaining), "
+                                    + parentGuildName + "\n";
+                                break;
+                            case 2:
+                            case 3:
+                                timerInfo += i + ": " + functions.challengeList[i]
+                                    .displayName +  " (";
+                                if (functions.challengeList[i].type == "sprint") {
+                                    timerInfo += functions.challengeList[i].goal
+                                    + " words, ";
+                                }
+                                timerInfo += functions.challengeList[i].duration
+                                + " minutes, ended), " + parentGuildName + "\n";
+                                break;
+                            default:
+                                break;
+                        }
                     }
                 }
                 msg.channel.send(timerInfo);
@@ -900,7 +928,7 @@ var cmdList = {
 		process: function(client,msg,suffix) {
             if(suffix == "") {
                 var xsType = "on";
-                if (functions.crossServerStatus[msg.guild.id] == false) {
+                if (functions.crossServerStatus[msg.guild.id] == true) {
                     xsType = "off";
                 }
                 msg.channel.send(msg.guild.name + " currently has cross-server"
@@ -911,10 +939,10 @@ var cmdList = {
                         var xsType = "on";
                         if (suffix == "off") {
                             var xsType = "off";
-                            functions.crossServerStatus[msg.guild.id] = false;
+                            functions.crossServerStatus[msg.guild.id] = true;
                         } else {
                             var xsType = "on";
-                            functions.crossServerStatus[msg.guild.id] = true;
+                            functions.crossServerStatus[msg.guild.id] = false;
                         }
                         conn.collection('configDB').update(
                             {},
