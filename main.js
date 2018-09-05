@@ -118,8 +118,9 @@ var cmdList = {
         name: "sprint",
         description: "Starts a sprint of <words> words which times out in"
             + " <duration> minutes in [time to start] minutes,"
-            + " with optional [name]",
-        usage: "<words> <duration> [<time to start> [<name>]]",
+            + " with optional [name] (can only be set"
+            + " if time to start is also set)",
+        usage: "words duration [time to start [name]]",
         process: function(client,msg,suffix) {
             var args = suffix.split(" ");
             var words = args.shift();
@@ -171,8 +172,9 @@ var cmdList = {
 	"war": {
         name: "war",
         description: "Starts a word war of <duration> minutes in"
-            + " [time to start] minutes, with optional [name]",
-        usage: "<duration> [<time to start> [<name>]]",
+            + " [time to start] minutes, with optional [name] (can only be set"
+            + " if time to start is also set)",
+        usage: "duration [time to start [name]]",
 	    process: function(client,msg,suffix) {
             var args = suffix.split(" ");
             var duration = args.shift();
@@ -219,8 +221,9 @@ var cmdList = {
         name: "chainwar",
         description: "Starts a chain of <number of wars>, each of <duration>"
             + " minutes, with [time between wars] minutes between wars,"
-            + " and optional [name]",
-        usage: "<number of wars> <duration> [<time between wars> [<name>]]",
+            + " and optional [name] (can only be set"
+            + " if time to start is also set)",
+        usage: "number of wars duration [time between wars [<name>]]",
 	    process: function(client,msg,suffix) {
             var args = suffix.split(" ");
             var chainWarCount = args.shift();
@@ -274,7 +277,7 @@ var cmdList = {
     "join": {
         name: "join",
         description: "Joins war/sprint with ID <id>",
-        usage: "<id>",
+        usage: "id",
 	    process: function(client,msg,suffix) {
             var challengeID = suffix;
             if (isNaN(challengeID)) {
@@ -329,7 +332,7 @@ var cmdList = {
     "leave": {
         name: "leave",
         description: "Leaves war/sprint with ID <id>",
-        usage: "<id>",
+        usage: "id",
 	    process: function(client,msg,suffix) {
             var challengeID = suffix;
             if (isNaN(challengeID)) {
@@ -363,7 +366,7 @@ var cmdList = {
         name: "exterminate",
         description: "Ends war/sprint with ID <id>."
             + " Can only be performed by creator.",
-        usage: "<id>",
+        usage: "id",
 	    process: function(client,msg,suffix) {
             var challengeID = suffix;
             if (isNaN(challengeID) || challengeID < 1) {
@@ -400,9 +403,9 @@ var cmdList = {
     },
     "total": {
         name: "total",
-        description: "Adds your <total> for completed challenge <id>,"
+        description: "Adds your <total> for completed war/sprint <id>,"
             + " optional [lines|pages|minutes]",
-        usage: "<id> <total> [lines|pages|minutes]",
+        usage: "id total [lines|pages|minutes]",
         process: function(client,msg,suffix) {
             var args = suffix.split(" ");
             var challengeID = args.shift();
@@ -475,7 +478,7 @@ var cmdList = {
     },
     "summary": {
         name: "summary",
-        description: "Shows the summary for completed challenge <id>",
+        description: "Shows the summary for completed war/sprint <id>",
         usage: "<id>",
         process: function(client,msg,suffix) {
             functions.generateSummary(msg.channel, suffix);
@@ -483,7 +486,7 @@ var cmdList = {
     },
     "list": {
         name: "list",
-        description: "Lists all running sprints/wars",
+        description: "Lists all running wars/sprints",
         usage: "",
         process: function(client,msg,suffix) {
             if(Object.keys(functions.challengeList).length == 0) {
@@ -572,7 +575,7 @@ var cmdList = {
     "timezone": {
         name: "timezone",
         description: "Sets your <IANA timezone identifier>",
-        usage: "<IANA timezone identifier>",
+        usage: "IANA timezone identifier",
         type: "goals",
 		process: async function(client,msg,suffix) {
             var timezone = suffix;
@@ -613,7 +616,7 @@ var cmdList = {
         name: "set",
         description: "Sets a daily goal <goal>, with optional"
             + " [lines|pages|minutes]",
-        usage: "<goal> [lines|pages|minutes]",
+        usage: "goal [lines|pages|minutes]",
         type: "goals",
 		process: function(client,msg,suffix) {
             var args = suffix.split(" ");
@@ -669,9 +672,9 @@ var cmdList = {
     },
     "update": {
         name: "update",
-        description: "Updates your daily goal with the number of <things>"
-            + " you have completed since your last update",
-        usage: "<things>",
+        description: "Updates your daily goal with your <progress> since your"
+            + "last update",
+        usage: "progress",
         type: "goals",
 		process: function(client,msg,suffix) {
             var goal = suffix;
@@ -694,9 +697,8 @@ var cmdList = {
     },
     "progress": {
         name: "progress",
-        description: "Updates your daily goal with the total number of <things>"
-            + " you have completed today",
-        usage: "<things>",
+        description: "Updates your daily goal with your <progress> today",
+        usage: "progress",
         type: "goals",
 		process: function(client,msg,suffix) {
 	    	var goal = suffix;
@@ -756,9 +758,9 @@ var cmdList = {
     },
     "target": {
         name: "target",
-        description: "Generates an <easy/average/hard> target for"
-            + " <time> minutes",
-        usage: "<easy/average/hard> <time>",
+        description: "Generates an <easy|average|hard> target for"
+            + " <minutes> minutes",
+        usage: "easy|average|hard minutes",
         type: "other",
 		process: function(client,msg,suffix) {
             var args = suffix.split(" ");
@@ -811,7 +813,7 @@ var cmdList = {
         name: "roll",
         description: "Rolls any combination of the given options,"
             + " separated by the + operator",
-        usage: "<x>, <x> <y>, <x>d<y>",
+        usage: "x, x y, xdy",
         type: "other",
         process: function(client,msg,suffix) {
             var diceString = "";
@@ -897,7 +899,7 @@ var cmdList = {
         name: "choose",
         description: "Selects an item from a list <list> of items,"
             + " separated by commas",
-        usage: "<list>",
+        usage: "list",
         type: "other",
 		process: function(client,msg,suffix) {
             var items = suffix.split(",");
@@ -923,7 +925,7 @@ var cmdList = {
         name: "config",
         description: "Allows server admins to toggle cross-server display for "
             + "challenges.",
-        usage: "<on|off>",
+        usage: "on|off",
         type: "other",
 		process: function(client,msg,suffix) {
             if(suffix == "") {
