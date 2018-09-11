@@ -1,5 +1,5 @@
-const functions = require('./functions.js');
-const logger = require('./logger.js');     
+const functions = require("./functions.js");
+const logger = require("./logger.js");
 const DUR_AFTER = 300;
 
 class Challenge {
@@ -46,7 +46,7 @@ class Challenge {
             this.cStart = Math.ceil((this.startStamp - dateCheck) / 1000);
         }
         if (this.state == 0 && this.cStart == this.countdown * 60) {
-            if(this.countdown == 1) { 
+            if(this.countdown == 1) {
                 this.channel.send("Your " + type + ", " + this.displayName
                     + " (ID " + this.objectID + "), starts in " + this.countdown
                     + " minute.");
@@ -80,7 +80,7 @@ class Challenge {
             this.cStart--;
         }
         if(this.cStart == 0) {
-            this.startMsg(); 
+            this.startMsg();
         } else if(this.cStart == 60) {
             for (var i = 0; i < this.hookedChannels.length; i++) {
                 var channelObject = client.channels.get(this.hookedChannels
@@ -114,7 +114,7 @@ class Challenge {
             }
             var channelObject = client.channels.get(this.hookedChannels
                 [i]);
-            channelObject.send(this.displayName + " (ID " + this.objectID 
+            channelObject.send(this.displayName + " (ID " + this.objectID
                 + ") starts now!" + userList);
         }
         this.state = 1;
@@ -158,7 +158,7 @@ class Challenge {
                 channelObject.send("There are " + this.cDur
                     + " seconds remaining in " + this.displayName + ".");
             }
-            
+
         }
     }
     terminate() {
@@ -168,7 +168,7 @@ class Challenge {
                 functions.generateSummary(client.channels.get(
                     this.hookedChannels[i]), this.objectID);
             }
-            conn.collection('challengeDB').remove(
+            conn.collection("challengeDB").remove(
                 {_id: this.objectID}
             );
             delete functions.challengeList[this.objectID];
@@ -180,7 +180,7 @@ class Sprint extends Challenge {
     constructor(objectID, creator, displayName, initStamp, countdown, goal,
         duration, channel, hidden) {
         super(objectID, creator, displayName, initStamp, countdown,
-            duration, channel, 'sprint', hidden);
+            duration, channel, "sprint", hidden);
         this.goal = goal;
 
         var challengeData = {
@@ -198,7 +198,7 @@ class Sprint extends Challenge {
         };
         var array = [challengeData];
 
-        conn.collection('challengeDB').insert(
+        conn.collection("challengeDB").insert(
             array, {}, function(e, docs) {}
         );
 
@@ -238,7 +238,7 @@ class War extends Challenge {
     constructor(objectID, creator, displayName, initStamp, countdown, duration,
         channel, hidden) {
         super(objectID, creator, displayName, initStamp, countdown, duration,
-            channel, 'war', hidden);
+            channel, "war", hidden);
 
         var challengeData = {
             "_id": this.objectID,
@@ -254,7 +254,7 @@ class War extends Challenge {
         };
         var array = [challengeData];
 
-        conn.collection('challengeDB').insert(
+        conn.collection("challengeDB").insert(
             array, {}, function(e, docs) {}
         );
     }
@@ -280,7 +280,7 @@ class ChainWar extends Challenge {
     constructor(objectID, creator, warName, initStamp, current, total,
         countdown, duration, channel, hidden) {
         super(objectID, creator,  warName + " (" + current + "/" + total + ")",
-            initStamp, countdown, duration, channel, 'chain war', hidden);
+            initStamp, countdown, duration, channel, "chain war", hidden);
         this.warName = warName;
         this.current = current;
         this.total = total;
@@ -301,7 +301,7 @@ class ChainWar extends Challenge {
         };
         var array = [challengeData];
 
-        conn.collection('challengeDB').insert(
+        conn.collection("challengeDB").insert(
             array, {}, function(e, docs) {}
         );
     }
@@ -361,7 +361,7 @@ class Goal {
             "channelID": this.channelID
         };
 
-        conn.collection('goalDB').update(
+        conn.collection("goalDB").update(
             {authorID: this.authorID},
             goalData,
             {upsert: true}
@@ -373,7 +373,7 @@ class Goal {
             var raptorPct = ((this.written / this.goal) * 100);
             functions.raptor(this.channel.guild.id, this.channel,
                 client.users.get(this.authorID), raptorPct);
-            conn.collection('goalDB').remove(
+            conn.collection("goalDB").remove(
                 {authorID: this.authorID}
             );
             delete functions.goalList[this.authorID];
@@ -390,7 +390,7 @@ class Goal {
                 this.written = parseInt(wordNumber);
                 break;
         }
-        conn.collection('goalDB').update(
+        conn.collection("goalDB").update(
             {"authorID": this.authorID},
             {$set: {"written": this.written}},
             {upsert: false},

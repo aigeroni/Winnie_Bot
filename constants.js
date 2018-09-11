@@ -1,8 +1,10 @@
-const CMD_PREFIX = '!';
+const CMD_PREFIX = "!";
 const WAR_RAPTOR_CHANCE = 10;
-const PROMPT_LIST = ["One of your characters receives an anonymous gift.",
+const PROMPT_LIST = [
+    "One of your characters receives an anonymous gift.",
     "Your character invites someone they don’t like over for dinner.",
-    "A character is scared that someone will find out about something they did.",
+    "A character is scared that someone will find out about something"
+            + " they did.",
     "Your character goes to the other side of town for a day.",
     "Two characters get into a heated argument about work.",
     "A character suddenly has to travel a long distance.",
@@ -16,7 +18,8 @@ const PROMPT_LIST = ["One of your characters receives an anonymous gift.",
     "Two things are unexpectedly related.",
     "The lights go out.",
     "Choose an object you can see; write it into your story.",
-    "Today’s headlines make an announcement that is important to your character.",
+    "Today’s headlines make an announcement that is important to your"
+            + " character.",
     "Your character tries something wild.",
     "A character tells a lie.",
     "The right thing is there for your character, but at the wrong time.",
@@ -46,7 +49,8 @@ const PROMPT_LIST = ["One of your characters receives an anonymous gift.",
     "A character notices someone watching them.",
     "A crowd has gathered.",
     "Something has a dual function.",
-    "The only useful thing is in the corner."];
+    "The only useful thing is in the corner."
+];
 
 exports.CMD_PREFIX = CMD_PREFIX;
 exports.WAR_RAPTOR_CHANCE = WAR_RAPTOR_CHANCE;

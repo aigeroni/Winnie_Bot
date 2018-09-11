@@ -15,17 +15,17 @@ exports.raptor = function(server, channel, author, raptorChance) {
         raptorCount[server] = 0;
     }
     var raptorRoll = (Math.random() * 100);
-	if (raptorRoll < raptorChance) {
+    if (raptorRoll < raptorChance) {
         raptorCount[server] += 1;
-        conn.collection('raptorDB').update(
+        conn.collection("raptorDB").update(
             {},
             {"server": server, "count": raptorCount[server]},
             {upsert: true}
-        )
-		channel.send(author + ", you have hatched a raptor! Your server"
-		+ " currently houses " + raptorCount[server] + " raptors.");
-	}
-}
+        );
+        channel.send(author + ", you have hatched a raptor! Your server"
+        + " currently houses " + raptorCount[server] + " raptors.");
+    }
+};
 
 exports.generateSummary = function(channel, challengeID) {
     if (challengeID in challengeList) {
@@ -63,22 +63,22 @@ exports.generateSummary = function(channel, challengeID) {
                     }
                     switch (challengeList[challengeID].
                         joinedUsers[user].countType) {
-                        case 'words':
+                        case "words":
                             totalWords[userChannel] += parseInt(challengeList
                                 [challengeID].joinedUsers[user]
                                 .countData);
                             break;
-                        case 'lines':
+                        case "lines":
                             totalLines[userChannel] += parseInt(challengeList
                                 [challengeID].joinedUsers[user]
                                 .countData);
-                            break; 
-                        case 'pages':
+                            break;
+                        case "pages":
                             totalPages[userChannel] += parseInt(challengeList
                                 [challengeID].joinedUsers[user]
                                 .countData);
                             break;
-                        case 'minutes':
+                        case "minutes":
                             totalMinutes[userChannel] += parseInt(challengeList
                                 [challengeID].joinedUsers[user]
                                 .countData);
@@ -179,4 +179,4 @@ exports.generateSummary = function(channel, challengeID) {
     } else {
         channel.send("This challenge does not exist!");
     }
-}
+};
