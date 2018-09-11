@@ -91,7 +91,7 @@ exports.generateSummary = function(channel, challengeID) {
             var firstType = true;
             var summaryData = "***Statistics for " + challengeList
                 [challengeID].displayName + ":***\n\n" + userTotal
-                + "Total:";
+                + channel.guild.name + "Total:";
             if (totalWords[channel.id] > 0) {
                 summaryData += " **" + totalWords[channel.id] + "** words";
                 firstType = false;
@@ -164,7 +164,6 @@ exports.generateSummary = function(channel, challengeID) {
                         firstType = false;
                     }
                     if (!firstType) {
-                        console.log("entered display");
                         crossData = true;
                         crossServerSummary += serverSummary + "\n";
                     }
