@@ -91,7 +91,7 @@ exports.generateSummary = function(channel, challengeID) {
             var firstType = true;
             var summaryData = "***Statistics for " + challengeList
                 [challengeID].displayName + ":***\n\n" + userTotal
-                + channel.guild.name + "Total:";
+                + channel.guild.name + " Total:";
             if (totalWords[channel.id] > 0) {
                 summaryData += " **" + totalWords[channel.id] + "** words";
                 firstType = false;

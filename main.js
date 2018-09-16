@@ -1,8 +1,8 @@
-const classes = require("./classes.js");
+const challenge = require("./challenge.js");
 const constants = require ("./constants.js");
 const functions = require("./functions.js");
-const Discord = require("discord.js");
 const config = require("./config.json");
+const Discord = require("discord.js");
 const logger = require("./logger.js");
 const gameloop = require("node-gameloop");
 const timezoneJS = require("timezone-js");
@@ -22,7 +22,7 @@ const tickTimer = gameloop.setGameLoop(async function(delta) {
                 if (functions.challengeList[item].current < functions
                 .challengeList[item].total) {
                     var startTime = new Date().getTime();
-                    functions.challengeList[functions.timerID] = new classes
+                    functions.challengeList[functions.timerID] = new challenge
                         .ChainWar(functions.timerID, functions.challengeList
                         [item].creator, functions.challengeList[item].warName,
                         startTime, functions.challengeList[item].current+1,
@@ -66,18 +66,18 @@ client.on("ready", () => {
             {}, function(e, challenges) {
                 challenges.forEach(function(challenge) {
                     if(challenge.type == "sprint") {
-                        functions.challengeList[challenge._id] = new classes
+                        functions.challengeList[challenge._id] = new challenge
                         .Sprint(challenge._id, challenge.creator,
                         challenge.name, challenge.startTime,
                         challenge.countdown, challenge.goal,
                         challenge.duration, challenge.channel, "sprint");
                     } else if(challenge.type == "war") {
-                        functions.challengeList[challenge._id] = new classes
+                        functions.challengeList[challenge._id] = new challenge
                         .War(challenge._id, challenge.creator, challenge.name,
                         challenge.startTime, challenge.countdown,
                         challenge.duration, challenge.channel, "war");
                     } else if(challenge.type == "chain war") {
-                        functions.challengeList[challenge._id] = new classes
+                        functions.challengeList[challenge._id] = new challenge
                         .ChainWar(challenge._id, challenge.creator,
                         challenge.name, challenge.startTime, challenge.current,
                         challenge.total, challenge.countdown,
@@ -89,7 +89,7 @@ client.on("ready", () => {
         conn.collection("goalDB").find(
             {}, function(e, goals) {
                 goals.forEach(function(goal) {
-                    functions.goalList[goal.authorID] = new classes.Goal
+                    functions.goalList[goal.authorID] = new goal.Goal
                         (goal.authorID, goal.goal, goal.goalType, goal.written,
                         goal.startTime, goal.terminationTime,
                         goal.channelID);
@@ -152,7 +152,7 @@ var cmdList = {
                     }
                     var startTime = new Date().getTime();
                     functions.challengeList[functions.timerID] =
-                        new classes.Sprint(functions.timerID, creatorID,
+                        new challenge.Sprint(functions.timerID, creatorID,
                         sprintName, startTime, start, words, timeout,
                         msg.channel.id, functions.crossServerStatus
                         [msg.guild.id]);
@@ -201,7 +201,7 @@ var cmdList = {
                     }
                     var startTime = new Date().getTime();
                     functions.challengeList[functions.timerID] =
-                        new classes.War(functions.timerID, creatorID, warName,
+                        new challenge.War(functions.timerID, creatorID, warName,
                         startTime, start, duration, msg.channel.id, functions
                         .crossServerStatus[msg.guild.id]);
                     conn.collection("timer").update(
@@ -257,7 +257,7 @@ var cmdList = {
                     }
                     var startTime = new Date().getTime();
                     functions.challengeList[functions.timerID] =
-                        new classes.ChainWar(functions.timerID, creatorID,
+                        new challenge.ChainWar(functions.timerID, creatorID,
                         warName, startTime, 1, chainWarCount, timeBetween,
                         duration, msg.channel.id, functions.crossServerStatus
                         [msg.guild.id]);
@@ -594,20 +594,6 @@ var cmdList = {
                 try{
                     //check to see if timezone is in IANA library
                     dateCheck.setTimezone(timezone)
-                    //create new role if needed, find role ID
-                    if (msg.guild.roles.find("name", timezone) === null){
-                        await msg.guild.createRole({name: timezone});
-                    }
-                    var tzRole = msg.guild.roles.find("name", timezone);
-                    //get timezone
-                    currentRoleList = msg.member.roles.filter(function (a) {
-                        return regionRegex.test(a.name);
-                    });
-                    msg.member.removeRoles(currentRoleList);
-                    //add user to role, confirm
-                    msg.member.addRole(tzRole);
-                    msg.channel.send(msg.author + ", you have set your timezone"
-                        + " to **" + timezone + "**.");
                 } catch(e) {
                     if (e.code == "ENOENT") {
                         await msg.channel.send("Fatal error. Please contact"
@@ -620,7 +606,36 @@ var cmdList = {
                         msg.channel.send("Winnie_Bot accepts IANA timezone"
                         + " identifiers only.");
                     }
+                    return false;
                 }
+                //create new role if needed, find role ID
+                try {
+                    if (msg.guild.roles.find("name", timezone) === null){
+                        await msg.guild.createRole({name: timezone});
+                    }
+                } catch(e) {
+                    logger.info(e.code);
+                    logger.info(e);
+                    if (e.code == 50013) {
+                        msg.channel.send("Winnie requires the Manage Roles"
+                            + " permission to set timezones.  Please contact"
+                            + " your server admin.");
+                    } else {
+                        msg.channel.send("Unknown error. Check log file for"
+                            + " details.");
+                    }
+                    return false;
+                }
+                var tzRole = msg.guild.roles.find("name", timezone);
+                //get timezone
+                currentRoleList = msg.member.roles.filter(function (a) {
+                    return regionRegex.test(a.name);
+                });
+                //add user to role, confirm
+                await msg.member.removeRoles(currentRoleList);
+                msg.channel.send(msg.author + ", you have set your timezone"
+                    + " to **" + timezone + "**.");
+                await msg.member.addRole(tzRole);
             }
         }
     },
@@ -667,7 +682,7 @@ var cmdList = {
                         var endTime = new timezoneJS.Date();
                         endTime.setTimezone(userTZ);
                         endTime.setHours(24,0,0,0);
-                        functions.goalList[msg.author.id] = new classes.Goal
+                        functions.goalList[msg.author.id] = new goal.Goal
                             (msg.author.id, goal, goalType, 0,
                             startTime.getTime(), endTime.getTime(),
                             msg.channel.id);

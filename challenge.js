@@ -1,6 +1,5 @@
 const functions = require("./functions.js");
-const logger = require("./logger.js");
-const DUR_AFTER = 300;
+const constants = require("./constants.js");
 
 class Challenge {
     constructor(objectID, creator, displayName, initStamp, countdown, duration,
@@ -21,7 +20,7 @@ class Challenge {
 
         this.cStart = this.countdown * 60;
         this.cDur = this.duration * 60;
-        this.cPost = DUR_AFTER;
+        this.cPost = constants.DUR_AFTER;
 
         this.startStamp = this.initStamp + (this.cStart * 1000);
         this.endStamp = this.startStamp + (this.cDur * 1000);
@@ -339,68 +338,7 @@ class ChainWar extends Challenge {
     }
 }
 
-class Goal {
-    constructor(authorID, goal, goalType, written, startTime, terminationTime,
-        channelID) {
-        this.authorID =  authorID;
-        this.goal = goal;
-        this.goalType = goalType;
-        this.written = written;
-        this.startTime = startTime;
-        this.terminationTime = terminationTime;
-        this.channelID = channelID;
-        this.channel = client.channels.get(this.channelID);
-
-        var goalData = {
-            "authorID": this.authorID,
-            "goal": this.goal,
-            "goalType": this.goalType,
-            "written": this.written,
-            "startTime": this.startTime,
-            "terminationTime": this.terminationTime,
-            "channelID": this.channelID
-        };
-
-        conn.collection("goalDB").update(
-            {authorID: this.authorID},
-            goalData,
-            {upsert: true}
-        )
-    }
-
-    update() {
-        if(new Date().getTime() >= this.terminationTime) {
-            var raptorPct = ((this.written / this.goal) * 100);
-            functions.raptor(this.channel.guild.id, this.channel,
-                client.users.get(this.authorID), raptorPct);
-            conn.collection("goalDB").remove(
-                {authorID: this.authorID}
-            );
-            delete functions.goalList[this.authorID];
-            logger.info("Deleting goal of " +  client.users.get(this.authorID));
-        }
-    }
-
-    addWords(wordNumber, type) {
-        switch(type){
-            case 0:
-                this.written += parseInt(wordNumber);
-                break;
-            case 1:
-                this.written = parseInt(wordNumber);
-                break;
-        }
-        conn.collection("goalDB").update(
-            {"authorID": this.authorID},
-            {$set: {"written": this.written}},
-            {upsert: false},
-            function(err){}
-        )
-    }
-}
-
 exports.Challenge = Challenge;
 exports.Sprint = Sprint;
 exports.War = War;
 exports.ChainWar = ChainWar;
-exports.Goal = Goal;
