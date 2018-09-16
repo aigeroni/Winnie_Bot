@@ -136,6 +136,9 @@ var cmdList = {
                 msg.channel.send("Sprint duration must be a number.");
             } else if(isNaN(start)){
                 msg.channel.send("Time to start must be a number.");
+            } else if (start > 30) {
+                msg.channel.send("Sprints cannot start more than 30 minutes"
+                    + " in the future.");
             } else if (timeout > 60) {
                 msg.channel.send("Sprints cannot last for more than an hour.");
             } else if (words < 1) {
@@ -187,6 +190,9 @@ var cmdList = {
                 msg.channel.send("Time to start must be a number.");
             } else if(isNaN(duration)) {
                 msg.channel.send("War duration must be a number.");
+            } else if (start > 30) {
+                msg.channel.send("Wars cannot start more than 30 minutes"
+                    + " in the future.");
             } else if (duration > 60) {
                 msg.channel.send("Wars cannot last for more than an hour.");
             } else if (start < 0) {
@@ -237,6 +243,9 @@ var cmdList = {
                 msg.channel.send("War count must be a number.");
             } else if(isNaN(timeBetween)) {
                 msg.channel.send("Time between wars must be a number.");
+            } else if (timeBetween > 30) {
+                msg.channel.send("There cannot be more than 30 minutes"
+                    + " between wars in a chain.");
             } else if(isNaN(duration)) {
                 msg.channel.send("War duration must be a number.");
             } else if (!(2 < chainWarCount < 10)) {
@@ -244,7 +253,7 @@ var cmdList = {
                     + " long.");
             } else if (duration * chainWarCount > 120) {
                 msg.channel.send("Chain wars cannot last for more than two"
-                + " hours of writing time.");
+                    + " hours of writing time.");
             } else if (timeBetween < 0) {
                 msg.channel.send("Chain wars cannot overlap.");
             } else if (duration < 1) {
