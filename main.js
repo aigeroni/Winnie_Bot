@@ -659,7 +659,7 @@ var cmdList = {
             var args = suffix.split(" ");
             var goal = args.shift();
             var goalType = args.shift();
-            if (goal === undefined) {
+            if (goal === undefined || goal == "") {
                 msg.channel.send("I need a goal to set!");
             } else if(!Number.isInteger(Number(goal))){
                 msg.channel.send("Your goal must be a whole"
@@ -1092,6 +1092,8 @@ process.on("uncaughtException", function(e) {
         logger.error("Reconnection failed.\nWinnie_Bot will now terminate.");
         process.exit(1);
     }
-  })
+});
+
+client.on("error", console.error);
 
 client.login(config.token);
