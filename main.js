@@ -144,7 +144,7 @@ var cmdList = {
                 msg.channel.send("Sprints cannot last for more than an hour.");
             } else if (words < 1) {
                 msg.channel.send("Word goal cannot be negative.");
-            } else if (start < 0) {
+            } else if (start <= 0) {
                 msg.channel.send("Sprints cannot start in the past.");
             } else if (timeout < 1) {
                 msg.channel.send("Sprints must run for at least a minute.");
@@ -196,7 +196,7 @@ var cmdList = {
                     + " in the future.");
             } else if (duration > 60) {
                 msg.channel.send("Wars cannot last for more than an hour.");
-            } else if (start < 0) {
+            } else if (start <= 0) {
                 msg.channel.send("Wars cannot start in the past.");
             } else if (duration < 1) {
                 msg.channel.send("Wars must run for at least a minute.");
@@ -255,7 +255,7 @@ var cmdList = {
             } else if (duration * chainWarCount > 120) {
                 msg.channel.send("Chain wars cannot last for more than two"
                     + " hours of writing time.");
-            } else if (timeBetween < 0) {
+            } else if (timeBetween <= 0) {
                 msg.channel.send("Chain wars cannot overlap.");
             } else if (duration < 1) {
                 msg.channel.send("Wars must run for at least a minute.");
