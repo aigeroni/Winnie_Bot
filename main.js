@@ -449,12 +449,6 @@ var cmdList = {
                                             .countData === undefined)) {
                                             joinCheck = true;
                                         }
-                                        functions.challengeList[challengeID]
-                                            .joinedUsers[user].countData
-                                            = wordsWritten;
-                                        functions.challengeList[challengeID]
-                                            .joinedUsers[user].countType
-                                            = writtenType;
                                     }
                                 }
                                 if (!joinCheck) {
@@ -464,13 +458,13 @@ var cmdList = {
                                             msg.author, constants
                                             .WAR_RAPTOR_CHANCE);
                                     }
-                                    functions.challengeList[challengeID]
-                                        .joinedUsers[msg.author.id] = {
-                                        "userData": msg.author,
-                                        "countData": wordsWritten,
-                                        "countType": writtenType,
-                                        "channelID": msg.channel.id};
                                 }
+                                functions.challengeList[challengeID]
+                                    .joinedUsers[msg.author.id] = {
+                                    "userData": msg.author,
+                                    "countData": wordsWritten,
+                                    "countType": writtenType,
+                                    "channelID": msg.channel.id};
                                 msg.channel.send("Total added to summary.");
                             } else {
                                 msg.channel.send(msg.author + ", I need a whole"
