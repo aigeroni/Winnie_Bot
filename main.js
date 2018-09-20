@@ -981,10 +981,10 @@ var cmdList = {
                     if(suffix == "on" || suffix == "off") {
                         var xsType = "on";
                         if (suffix == "off") {
-                            var xsType = "off";
+                            xsType = "off";
                             functions.crossServerStatus[msg.guild.id] = true;
                         } else {
-                            var xsType = "on";
+                            xsType = "on";
                             functions.crossServerStatus[msg.guild.id] = false;
                         }
                         conn.collection("configDB").update(
@@ -996,12 +996,56 @@ var cmdList = {
                         msg.channel.send(msg.author + ", you have turned"
                             + " cross-server challenges **" + xsType + "**.");
                     } else {
-                        msg.channel.send(msg.author + ", use **on/off** to"
+                        msg.channel.send(msg.author + ", use **on|off** to"
                             + " toggle cross-server challenges.");
                     }
                 } else {
                     msg.channel.send("Only server administrators are permitted"
                         + " to configure challenges.");
+                }
+            }
+        }
+    },
+    "autosum": {
+        name: "autosum",
+        description: "Allows server admins to toggle automatic display of"
+            + " challenge summaries.",
+        usage: "show|hide",
+        type: "other",
+        process: function(client,msg,suffix) {
+            if(suffix == "") {
+                var autoType = "visible";
+                if (functions.autoSumStatus[msg.guild.id] == true) {
+                    autoType = "hidden";
+                }
+                msg.channel.send(msg.guild.name + " currently has automatic"
+                    + " summaries **" + autoType + "**.")
+            } else {
+                if(msg.member.permissions.has("ADMINISTRATOR")) {
+                    if(suffix == "show" || suffix == "hide") {
+                        var autoType = "on";
+                        if (suffix == "hide") {
+                            autoType = "off";
+                            functions.autoSumStatus[msg.guild.id] = true;
+                        } else {
+                            autoType = "on";
+                            functions.autoSumStatus[msg.guild.id] = false;
+                        }
+                        conn.collection("configDB").update(
+                            {},
+                            {"server": msg.guild.id, "autoStatus":
+                                functions.autoSumStatus[msg.guild.id]},
+                            {upsert: true}
+                        )
+                        msg.channel.send(msg.author + ", you have turned"
+                            + " automatic summaries **" + xsType + "**.");
+                    } else {
+                        msg.channel.send(msg.author + ", use **show|hide** to"
+                            + " toggle automatic summaries.");
+                    }
+                } else {
+                    msg.channel.send("Only server administrators are permitted"
+                        + " to configure automatic summaries.");
                 }
             }
         }

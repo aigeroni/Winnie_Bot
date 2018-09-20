@@ -3,12 +3,14 @@ var challengeList = {};
 var goalList = {};
 var raptorCount = {};
 var crossServerStatus = {};
+var autoSumStatus = {};
 
 exports.timerID = timerID;
 exports.challengeList = challengeList;
 exports.goalList = goalList;
 exports.raptorCount = raptorCount;
 exports.crossServerStatus = crossServerStatus;
+exports.autoSumStatus = autoSumStatus;
 
 exports.raptor = function(server, channel, author, raptorChance) {
     if (!(server in raptorCount)) {
