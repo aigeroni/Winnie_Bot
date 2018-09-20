@@ -423,6 +423,8 @@ var cmdList = {
             var writtenType = args.shift();
             if (!(writtenType == "lines" || writtenType == "pages"
                 || writtenType == "words" || writtenType == "minutes"
+                || writtenType == "line" || writtenType == "page"
+                || writtenType == "word" || writtenType == "minute"
                 || writtenType === undefined)) {
                 msg.channel.send("Invalid input.  You must work in words,"
                     + " lines, or pages.");
@@ -670,6 +672,8 @@ var cmdList = {
             } else {
                 if (!(goalType == "lines" || goalType == "pages" ||
                     goalType == "minutes" || goalType == "words" ||
+                    goalType == "line" || goalType == "page" ||
+                    goalType == "word" || goalType == "minute" ||
                     goalType === undefined)) {
                     msg.channel.send("Goal type must be words, lines, pages, or"
                         + " minutes.");
