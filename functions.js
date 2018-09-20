@@ -170,6 +170,10 @@ exports.generateSummary = function(channel, challengeID) {
                 }
             }
             if (crossData) {
+                if(!firstType) {
+                    channel.send("***Statistics for " + challengeList
+                    [challengeID].displayName + ":***\n");
+                }
                 channel.send(crossServerSummary);
             }
         } else {
