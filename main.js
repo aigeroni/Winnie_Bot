@@ -47,8 +47,6 @@ const tickTimer = gameloop.setGameLoop(async function(delta) {
     }
 }, 1000);
 
-
-
 client.on("ready", () => {
     logger.info("Winnie_Bot is online");
     // Connect to the database
@@ -101,6 +99,13 @@ client.on("ready", () => {
             {}, function(e, guilds) {
                 guilds.forEach(function(guild) {
                     functions.raptorCount[guild.server] = guild.count;
+                });
+            }
+        );
+        conn.collection("raptorUserDB").find(
+            {}, function(e, authors) {
+                authors.forEach(function(author) {
+                    functions.userRaptors[author.user] = author.count;
                 });
             }
         );
@@ -960,6 +965,15 @@ var cmdList = {
                     + functions.raptorCount[server];
             }
             msg.channel.send(raptorMsg);
+        }
+    },
+    "myraptors": {
+        name: "myraptors",
+        description: "Displays personal raptor statistics.",
+        type: "other",
+        process: function(client,msg,suffix) {
+                raptorMsg += msg.author + ", you have hatched "
+                    + functions.userRaptors[msg.author.id] + " raptors.";
         }
     },
     "config": {

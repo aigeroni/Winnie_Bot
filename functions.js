@@ -2,6 +2,7 @@ var timerID = 1;
 var challengeList = {};
 var goalList = {};
 var raptorCount = {};
+var userRaptors = {};
 var crossServerStatus = {};
 var autoSumStatus = {};
 
@@ -9,6 +10,7 @@ exports.timerID = timerID;
 exports.challengeList = challengeList;
 exports.goalList = goalList;
 exports.raptorCount = raptorCount;
+exports.userRaptors = userRaptors;
 exports.crossServerStatus = crossServerStatus;
 exports.autoSumStatus = autoSumStatus;
 
@@ -16,12 +18,21 @@ exports.raptor = function(server, channel, author, raptorChance) {
     if (!(server in raptorCount)) {
         raptorCount[server] = 0;
     }
+    if (!(author.id in userRaptors)) {
+        userRaptors[author.id] = 0;
+    }
     var raptorRoll = (Math.random() * 100);
     if (raptorRoll < raptorChance) {
         raptorCount[server] += 1;
+        userRaptors[author.id] += 1;
         conn.collection("raptorDB").update(
             {},
             {"server": server, "count": raptorCount[server]},
+            {upsert: true}
+        );
+        conn.collection("raptorUserDB").update(
+            {},
+            {"user": author.id, "count": userRaptors[author.id]},
             {upsert: true}
         );
         channel.send(author + ", you have hatched a raptor! Your server"
