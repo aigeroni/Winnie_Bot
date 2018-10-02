@@ -4,6 +4,8 @@ services:
         container_name: app
         restart: always
         build: .
+        volumes:
+        - ./data:/usr/src/app/data
         ports:
         - "8080:8080"
         links:
