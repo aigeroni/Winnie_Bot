@@ -17,12 +17,14 @@ exports.autoSumStatus = autoSumStatus;
 exports.raptor = function(server, channel, author, raptorChance) {
     if (!(server in raptorCount)) {
         raptorCount[server] = 0;
-        userRaptors[server] = {};
         conn.collection("raptorDB").update(
             {},
             {"server": server, "count": raptorCount[server]},
             {upsert: true}
         );
+    }
+    if (!(server in userRaptors)) {
+        userRaptors[server] = {};
     }
     if (!(author.id in userRaptors[server])) {
         userRaptors[server][author.id] = 0;

@@ -969,11 +969,11 @@ var cmdList = {
                     + functions.raptorCount[server];
             }
             msg.channel.send(raptorMsg);
-            if (functions.raptorCount[server] > 0) {
+            if (functions.raptorCount[msg.guild.id] > 0) {
                 var userRaptorMsg = "__Raptors by Author:__";
-                for (user in functions.userRaptors[server]) {
+                for (user in functions.userRaptors[msg.guild.id]) {
                     userRaptorMsg += "\n" + client.users.get(user) + ": "
-                        + functions.userRaptors[server][user];
+                        + functions.userRaptors[msg.guild.id][user];
                 }
                 msg.channel.send(userRaptorMsg);
             }
