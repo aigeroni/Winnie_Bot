@@ -619,7 +619,9 @@ var cmdList = {
                         process.exit(1);
                     } else {
                         msg.channel.send("Winnie_Bot accepts IANA timezone"
-                        + " identifiers only.");
+                            + " identifiers only.  For detailed information"
+                            + " about IANA timezone identifiers, go here:"
+                            + " https://en.wikipedia.org/wiki/Tz_database");
                     }
                     return false;
                 }
