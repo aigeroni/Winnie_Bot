@@ -1134,9 +1134,6 @@ client.on("message", (msg) => {
                 msg.channel.send("Unknown error.  See log file for details.");
                 logger.error("Error %s: %s.", e, e.stack);
             }
-        } else {
-            msg.channel.send(cmdData + " is not a valid command."
-             + " Type !help for a list of commands.");
         }
     } else {
         return
