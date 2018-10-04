@@ -3,9 +3,7 @@ services:
     app:
         container_name: app
         restart: always
-        build: .
-        volumes:
-        - ./data:/usr/src/app/data
+        image: 217834298957.dkr.ecr.us-east-1.amazonaws.com/winniebot:latest
         ports:
         - "8080:8080"
         links:
@@ -17,5 +15,3 @@ services:
         - ./data:/data/db
         ports:
         - "27017:27017"
-volumes:
-    ./data:
