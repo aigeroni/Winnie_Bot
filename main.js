@@ -105,7 +105,11 @@ client.on("ready", () => {
         conn.collection("raptorUserDB").find(
             {}, function(e, authors) {
                 authors.forEach(function(author) {
-                    functions.userRaptors[author.user] = author.count;
+                    if (!(author.server in functions.userRaptors)) {
+                        functions.userRaptors[author.server] = {};
+                    }
+                    functions.userRaptors[author.server][author.user]
+                        = author.count;
                 });
             }
         );
@@ -961,19 +965,18 @@ var cmdList = {
         process: function(client,msg,suffix) {
             var raptorMsg = "__**Raptor Statistics:**__\n";
             for (server in functions.raptorCount) {
-                raptorMsg += "\n__*" + client.guilds.get(server) + ":*__ "
+                raptorMsg += "\n*" + client.guilds.get(server) + ":* "
                     + functions.raptorCount[server];
             }
             msg.channel.send(raptorMsg);
-        }
-    },
-    "myraptors": {
-        name: "myraptors",
-        description: "Displays personal raptor statistics.",
-        type: "other",
-        process: function(client,msg,suffix) {
-                raptorMsg += msg.author + ", you have hatched "
-                    + functions.userRaptors[msg.author.id] + " raptors.";
+            if (functions.raptorCount[server] > 0) {
+                var userRaptorMsg = "__Raptors by Author:__";
+                for (user in functions.userRaptors[server]) {
+                    userRaptorMsg += "\n" + client.users.get(user) + ": "
+                        + functions.userRaptors[server][user];
+                }
+                msg.channel.send(userRaptorMsg);
+            }
         }
     },
     "config": {

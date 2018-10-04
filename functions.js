@@ -17,14 +17,20 @@ exports.autoSumStatus = autoSumStatus;
 exports.raptor = function(server, channel, author, raptorChance) {
     if (!(server in raptorCount)) {
         raptorCount[server] = 0;
+        userRaptors[server] = {};
+        conn.collection("raptorDB").update(
+            {},
+            {"server": server, "count": raptorCount[server]},
+            {upsert: true}
+        );
     }
-    if (!(author.id in userRaptors)) {
-        userRaptors[author.id] = 0;
+    if (!(author.id in userRaptors[server])) {
+        userRaptors[server][author.id] = 0;
     }
     var raptorRoll = (Math.random() * 100);
     if (raptorRoll < raptorChance) {
         raptorCount[server] += 1;
-        userRaptors[author.id] += 1;
+        userRaptors[server][author.id] += 1;
         conn.collection("raptorDB").update(
             {},
             {"server": server, "count": raptorCount[server]},
@@ -32,7 +38,8 @@ exports.raptor = function(server, channel, author, raptorChance) {
         );
         conn.collection("raptorUserDB").update(
             {},
-            {"user": author.id, "count": userRaptors[author.id]},
+            {"server": server, "user": author.id,
+                "count": userRaptors[server][author.id]},
             {upsert: true}
         );
         channel.send(author + ", you have hatched a raptor! Your server"
@@ -77,21 +84,25 @@ exports.generateSummary = function(channel, challengeID) {
                     switch (challengeList[challengeID].
                         joinedUsers[user].countType) {
                         case "words":
+                        case "word":
                             totalWords[userChannel] += parseInt(challengeList
                                 [challengeID].joinedUsers[user]
                                 .countData);
                             break;
                         case "lines":
+                        case "line":
                             totalLines[userChannel] += parseInt(challengeList
                                 [challengeID].joinedUsers[user]
                                 .countData);
                             break;
                         case "pages":
+                        case "page":
                             totalPages[userChannel] += parseInt(challengeList
                                 [challengeID].joinedUsers[user]
                                 .countData);
                             break;
                         case "minutes":
+                        case "minute":
                             totalMinutes[userChannel] += parseInt(challengeList
                                 [challengeID].joinedUsers[user]
                                 .countData);
@@ -146,11 +157,11 @@ exports.generateSummary = function(channel, challengeID) {
                     var currentServer = client.channels.get(currentChannel)
                         .guild.name;
                     var serverSummary = "__*" + currentServer + "*__:";
-                    var firstType = true;
+                    var xfirstType = true;
                     if (totalWords[currentChannel] > 0) {
                         serverSummary += " **" + totalWords[currentChannel]
                             + "** words";
-                        firstType = false;
+                        xfirstType = false;
                     }
                     if (totalLines[currentChannel] > 0 ) {
                         if (!firstType) {
@@ -158,7 +169,7 @@ exports.generateSummary = function(channel, challengeID) {
                         }
                         serverSummary += " **" + totalLines[currentChannel]
                             + "** lines";
-                        firstType = false;
+                        xfirstType = false;
                     }
                     if (totalPages[currentChannel] > 0) {
                         if (!firstType) {
@@ -166,7 +177,7 @@ exports.generateSummary = function(channel, challengeID) {
                         }
                         serverSummary += " **" + totalPages[currentChannel]
                             + "** pages";
-                        firstType = false;
+                        xfirstType = false;
                     }
                     if (totalMinutes[currentChannel] > 0) {
                         if (!firstType) {
@@ -174,9 +185,9 @@ exports.generateSummary = function(channel, challengeID) {
                         }
                         serverSummary += " **" + totalMinutes[currentChannel]
                             + "** minutes";
-                        firstType = false;
+                        xfirstType = false;
                     }
-                    if (!firstType) {
+                    if (!xfirstType) {
                         crossData = true;
                         crossServerSummary += serverSummary + "\n";
                     }
