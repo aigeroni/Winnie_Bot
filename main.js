@@ -333,8 +333,8 @@ var cmdList = {
                         try {
                             conn.collection("challengeDB").update(
                                 {_id: challengeID},
-                                {joinedUsers: functions.challengeList
-                                    [challengeID].joinedUsers},
+                                {$set: {joinedUsers: functions.challengeList
+                                    [challengeID].joinedUsers}},
                                 {upsert: false}
                             )
                         } catch(e) {
@@ -367,8 +367,8 @@ var cmdList = {
                         + functions.challengeList[challengeID].displayName);
                     conn.collection("challengeDB").update(
                         {_id: challengeID},
-                        {joinedUsers: functions.challengeList[challengeID]
-                            .joinedUsers},
+                        {$set: {joinedUsers: functions.challengeList
+                            [challengeID].joinedUsers}},
                         {upsert: false}
                     )
                 } else {
@@ -1007,7 +1007,7 @@ var cmdList = {
                             functions.crossServerStatus[msg.guild.id] = false;
                         }
                         conn.collection("configDB").update(
-                            {},
+                            {"server": msg.guild.id},
                             {"server": msg.guild.id, "xStatus":
                                 functions.crossServerStatus[msg.guild.id]},
                             {upsert: true}
@@ -1051,7 +1051,7 @@ var cmdList = {
                             functions.autoSumStatus[msg.guild.id] = false;
                         }
                         conn.collection("configDB").update(
-                            {},
+                            {"server": msg.guild.id},
                             {"server": msg.guild.id, "autoStatus":
                                 functions.autoSumStatus[msg.guild.id]},
                             {upsert: true}

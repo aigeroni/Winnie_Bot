@@ -18,7 +18,7 @@ exports.raptor = function(server, channel, author, raptorChance) {
     if (!(server in raptorCount)) {
         raptorCount[server] = 0;
         conn.collection("raptorDB").update(
-            {},
+            {"server": server},
             {"server": server, "count": raptorCount[server]},
             {upsert: true}
         );
@@ -34,12 +34,12 @@ exports.raptor = function(server, channel, author, raptorChance) {
         raptorCount[server] += 1;
         userRaptors[server][author.id] += 1;
         conn.collection("raptorDB").update(
-            {},
+            {"server": server},
             {"server": server, "count": raptorCount[server]},
             {upsert: true}
         );
         conn.collection("raptorUserDB").update(
-            {},
+            {"server": server, "user": author.id},
             {"server": server, "user": author.id,
                 "count": userRaptors[server][author.id]},
             {upsert: true}
