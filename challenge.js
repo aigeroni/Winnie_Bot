@@ -193,7 +193,8 @@ class Sprint extends Challenge {
             "channel": this.channelID,
             "joinedUsers": this.joinedUsers,
             "state": this.state,
-            "type": "sprint"
+            "type": "sprint",
+            "hidden": this.hidden
         };
         var array = [challengeData];
 
@@ -249,7 +250,8 @@ class War extends Challenge {
             "channel": this.channelID,
             "joinedUsers": this.joinedUsers,
             "state": this.state,
-            "type": "war"
+            "type": "war",
+            "hidden": this.hidden
         };
         var array = [challengeData];
 
@@ -296,7 +298,8 @@ class ChainWar extends Challenge {
             "channel": this.channelID,
             "joinedUsers": this.joinedUsers,
             "state": this.state,
-            "type": "chain war"
+            "type": "chain war",
+            "hidden": this.hidden
         };
         var array = [challengeData];
 

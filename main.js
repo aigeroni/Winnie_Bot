@@ -69,19 +69,22 @@ client.on("ready", () => {
                         .Sprint(challenge._id, challenge.creator,
                         challenge.name, challenge.startTime,
                         challenge.countdown, challenge.goal,
-                        challenge.duration, challenge.channel, "sprint");
+                        challenge.duration, challenge.channel, "sprint",
+                        challenge.hidden);
                     } else if(challenge.type == "war") {
                         functions.challengeList[challenge._id] = new chalClass
                         .War(challenge._id, challenge.creator, challenge.name,
                         challenge.startTime, challenge.countdown,
-                        challenge.duration, challenge.channel, "war");
+                        challenge.duration, challenge.channel, "war",
+                        challenge.hidden);
                     } else if(challenge.type == "chain war") {
                         functions.challengeList[challenge._id] = new chalClass
                         .ChainWar(challenge._id, challenge.creator,
                         challenge.name, challenge.startTime, challenge.current,
                         challenge.total, challenge.countdown,
-                        challenge.duration, challenge.channel, "chain war");
-                }
+                        challenge.duration, challenge.channel, "chain war",
+                        challenge.hidden);
+                    }
                 });
             }
         );
@@ -333,7 +336,7 @@ var cmdList = {
                         try {
                             conn.collection("challengeDB").update(
                                 {_id: challengeID},
-                                {$set: {joinedUsers: functions.challengeList
+                                {$set: {"joinedUsers": functions.challengeList
                                     [challengeID].joinedUsers}},
                                 {upsert: false}
                             )
@@ -476,6 +479,17 @@ var cmdList = {
                                     "countData": wordsWritten,
                                     "countType": writtenType,
                                     "channelID": msg.channel.id};
+                                try {
+                                    conn.collection("challengeDB").update(
+                                        {_id: challengeID},
+                                        {$set: {"joinedUsers":
+                                            functions.challengeList
+                                            [challengeID].joinedUsers}},
+                                        {upsert: false}
+                                    )
+                                } catch(e) {
+                                    logger.info("Error: " + e);
+                                }
                                 msg.channel.send("Total added to summary.");
                             } else {
                                 msg.channel.send(msg.author + ", I need a whole"
