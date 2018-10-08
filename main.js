@@ -430,10 +430,12 @@ var cmdList = {
             var challengeID = args.shift();
             var wordsWritten = args.shift();
             var writtenType = args.shift();
+            if (writtenType == "line" || writtenType == "page"
+                || writtenType == "word" || writtenType == "minute") {
+                writtenType += "s";
+            }
             if (!(writtenType == "lines" || writtenType == "pages"
                 || writtenType == "words" || writtenType == "minutes"
-                || writtenType == "line" || writtenType == "page"
-                || writtenType == "word" || writtenType == "minute"
                 || writtenType === undefined)) {
                 msg.channel.send("Invalid input.  You must work in words,"
                     + " lines, or pages.");
@@ -966,16 +968,27 @@ var cmdList = {
         type: "other",
         process: function(client,msg,suffix) {
             var raptorMsg = "__**Raptor Statistics:**__\n";
-            for (server in functions.raptorCount) {
-                raptorMsg += "\n*" + client.guilds.get(server) + ":* "
-                    + functions.raptorCount[server];
+            var raptorOrd = functions.sortCollection(functions.raptorCount);
+            for (var i = 0; i < 10; i++) {
+                if (raptorOrd[i] === undefined) {
+                    break;
+                }
+                raptorMsg += "\n" + (i+1) + ". *"
+                    + client.guilds.get(raptorOrd[i]) + ":* "
+                    + functions.raptorCount[raptorOrd[i]];
             }
             msg.channel.send(raptorMsg);
+            var userOrd = functions.sortCollection(functions
+                .userRaptors[msg.guild.id]);
             if (functions.raptorCount[msg.guild.id] > 0) {
-                var userRaptorMsg = "__Raptors by Author:__";
-                for (user in functions.userRaptors[msg.guild.id]) {
-                    userRaptorMsg += "\n" + client.users.get(user) + ": "
-                        + functions.userRaptors[msg.guild.id][user];
+                var userRaptorMsg = "**Raptors by Author:**";
+                for (var i = 0; i < 10; i++) {
+                    if (userOrd[i] === undefined) {
+                        break;
+                    }
+                    userRaptorMsg += "\n" + (i+1) + ". *"
+                        + client.users.get(userOrd[i]).username + ":* "
+                        + functions.userRaptors[msg.guild.id][userOrd[i]];
                 }
                 msg.channel.send(userRaptorMsg);
             }

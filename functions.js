@@ -49,6 +49,14 @@ exports.raptor = function(server, channel, author, raptorChance) {
     }
 };
 
+exports.sortCollection = function(toSort) {
+    var keys = Object.keys(toSort);
+    keys.sort(function(x, y) {
+        return toSort[y] - toSort[x];
+    });
+    return(keys);
+}
+
 exports.generateSummary = function(channel, challengeID) {
     if (challengeID in challengeList) {
         if (challengeList[challengeID].state >= 2) {
@@ -166,7 +174,7 @@ exports.generateSummary = function(channel, challengeID) {
                         xfirstType = false;
                     }
                     if (totalLines[currentChannel] > 0 ) {
-                        if (!firstType) {
+                        if (!xfirstType) {
                             serverSummary += ",";
                         }
                         serverSummary += " **" + totalLines[currentChannel]
@@ -174,7 +182,7 @@ exports.generateSummary = function(channel, challengeID) {
                         xfirstType = false;
                     }
                     if (totalPages[currentChannel] > 0) {
-                        if (!firstType) {
+                        if (!xfirstType) {
                             serverSummary += ",";
                         }
                         serverSummary += " **" + totalPages[currentChannel]
@@ -182,7 +190,7 @@ exports.generateSummary = function(channel, challengeID) {
                         xfirstType = false;
                     }
                     if (totalMinutes[currentChannel] > 0) {
-                        if (!firstType) {
+                        if (!xfirstType) {
                             serverSummary += ",";
                         }
                         serverSummary += " **" + totalMinutes[currentChannel]
@@ -196,7 +204,7 @@ exports.generateSummary = function(channel, challengeID) {
                 }
             }
             if (crossData) {
-                if(!firstType) {
+                if(firstType) {
                     channel.send("***Statistics for " + challengeList
                     [challengeID].displayName + ":***\n");
                 }
