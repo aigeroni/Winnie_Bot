@@ -1,5 +1,8 @@
-const functions = require("./functions.js");
-const constants = require("./constants.js");
+const chalData = require("./data.js");
+const chalSum = require("./summary.js");
+const mongoose = require("mongoose");
+
+conn = mongoose.connection;
 
 class Challenge {
     constructor(objectID, creator, displayName, initStamp, countdown, duration,
@@ -20,7 +23,7 @@ class Challenge {
 
         this.cStart = this.countdown * 60;
         this.cDur = this.duration * 60;
-        this.cPost = constants.DUR_AFTER;
+        this.cPost = chalData.DUR_AFTER;
 
         this.startStamp = this.initStamp + (this.cStart * 1000);
         this.endStamp = this.startStamp + (this.cDur * 1000);
@@ -70,7 +73,7 @@ class Challenge {
                 break;
             default:
                 this.channel.send("Error: Invalid state reached.");
-                delete challengeList[this.objectID];
+                delete chalData.challengeList[this.objectID];
                 break;
         }
     }
@@ -108,7 +111,7 @@ class Challenge {
             for(var user in this.joinedUsers) {
                 if (this.joinedUsers[user].channelID == this.hookedChannels
                     [i]) {
-                    userList += " " + this.joinedUsers[user].userData;
+                        userList += " " + client.users.get(user);
                 }
             }
             var channelObject = client.channels.get(this.hookedChannels
@@ -126,7 +129,7 @@ class Challenge {
                 for(var user in this.joinedUsers) {
                     if (this.joinedUsers[user].channelID == this.hookedChannels
                         [i]) {
-                        userList += " " + this.joinedUsers[user].userData;
+                            userList += " " + client.users.get(user);
                     }
                 }
                 var channelObject = client.channels.get(this.hookedChannels
@@ -164,13 +167,13 @@ class Challenge {
         this.cPost--;
         if(this.cPost == 0) {
             for(var i = 0; i < this.hookedChannels.length; i++) {
-                functions.generateSummary(client.channels.get(
+                chalSum.generateSummary(client.channels.get(
                     this.hookedChannels[i]), this.objectID);
             }
             conn.collection("challengeDB").remove(
                 {_id: this.objectID}
             );
-            delete functions.challengeList[this.objectID];
+            delete chalData.challengeList[this.objectID];
         }
     }
 }
@@ -216,7 +219,7 @@ class Sprint extends Challenge {
             for(var user in this.joinedUsers) {
                 if (this.joinedUsers[user].channelID == this.hookedChannels
                     [i]) {
-                    userList += " " + this.joinedUsers[user].userData;
+                    userList += " " + client.users.get(user);
                 }
             }
             var channelObject = client.channels.get(this.hookedChannels
@@ -323,7 +326,7 @@ class ChainWar extends Challenge {
                 break;
             default:
                 this.channel.send("Error: Invalid state reached.");
-                delete challengeList[this.objectID];
+                delete chalData.challengeList[this.objectID];
                 break;
         }
     }

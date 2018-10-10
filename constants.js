@@ -1,6 +1,4 @@
 const CMD_PREFIX = "!";
-const WAR_RAPTOR_CHANCE = 10;
-const DUR_AFTER = 300;
 const PROMPT_LIST = [
     "One of your characters receives an anonymous gift.",
     "Your character invites someone they don’t like over for dinner.",
@@ -54,6 +52,4 @@ const PROMPT_LIST = [
 ];
 
 exports.CMD_PREFIX = CMD_PREFIX;
-exports.WAR_RAPTOR_CHANCE = WAR_RAPTOR_CHANCE;
 exports.PROMPT_LIST = PROMPT_LIST;
-exports.DUR_AFTER = DUR_AFTER;
