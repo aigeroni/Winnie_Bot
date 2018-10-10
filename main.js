@@ -3,8 +3,11 @@ const chalData = require("./challenges/data.js");
 const chalStart = require("./challenges/run.js");
 const chalPings = require("./challenges/pings.js");
 const chalSum = require("./challenges/summary.js");
+const goalClass = require("./goals/goal.js");
+const goalTZ = require("./goals/timezone.js");
+const goalData = require("./goals/data.js");
+const goalTrack = require("./goals/track.js");
 
-const goalClass = require("./goal.js");
 const constants = require ("./constants.js");
 const functions = require("./functions.js");
 const config = require("./config.json");
@@ -18,7 +21,6 @@ global.client = new Discord.Client;
 global.conn = mongoose.connection;
 timezoneJS.timezone.zoneFileBasePath = "node_modules/timezone-js/tz";
 timezoneJS.timezone.init();
-var regionRegex = /^(Africa|America|Antarctica|Asia|Atlantic|Australia|Europe|Indian|Pacific|Etc)/;
 
 const tickTimer = gameloop.setGameLoop(async function(delta) {
     for (var item in chalData.challengeList){
@@ -96,7 +98,7 @@ client.on("ready", () => {
         conn.collection("goalDB").find(
             {}, function(e, goals) {
                 goals.forEach(function(goal) {
-                    functions.goalList[goal.authorID] = new goalClass.Goal
+                    goalData.goalList[goal.authorID] = new goalClass.Goal
                         (goal.authorID, goal.goal, goal.goalType, goal.written,
                         goal.startTime, goal.terminationTime,
                         goal.channelID);
@@ -226,60 +228,8 @@ var cmdList = {
         description: "Sets your <IANA timezone identifier>",
         usage: "IANA timezone identifier",
         type: "goals",
-        process: async function(client,msg,suffix) {
-            var timezone = suffix;
-            var dateCheck = new timezoneJS.Date();
-            if (suffix == "") {
-                msg.channel.send(msg.author + ", I need a timezone to set!");
-            } else {
-                try{
-                    //check to see if timezone is in IANA library
-                    dateCheck.setTimezone(timezone)
-                } catch(e) {
-                    if (e.code == "ENOENT") {
-                        await msg.channel.send("Fatal error. Please contact"
-                            + " your server admin.");
-                        await logger.error("Fatal error %s: %s.  Winnie_Bot"
-                            + " cannot locate required files.\nWinnie_Bot will"
-                            + " now terminate.");
-                        process.exit(1);
-                    } else {
-                        msg.channel.send("Winnie_Bot accepts IANA timezone"
-                            + " identifiers only.  For detailed information"
-                            + " about IANA timezone identifiers, go here:"
-                            + " https://en.wikipedia.org/wiki/Tz_database");
-                    }
-                    return false;
-                }
-                //create new role if needed, find role ID
-                try {
-                    if (msg.guild.roles.find("name", timezone) === null){
-                        await msg.guild.createRole({name: timezone});
-                    }
-                } catch(e) {
-                    logger.info(e.code);
-                    logger.info(e);
-                    if (e.code == 50013) {
-                        msg.channel.send("Winnie requires the Manage Roles"
-                            + " permission to set timezones.  Please contact"
-                            + " your server admin.");
-                    } else {
-                        msg.channel.send("Unknown error. Check log file for"
-                            + " details.");
-                    }
-                    return false;
-                }
-                var tzRole = msg.guild.roles.find("name", timezone);
-                //get timezone
-                currentRoleList = msg.member.roles.filter(function (a) {
-                    return regionRegex.test(a.name);
-                });
-                //add user to role, confirm
-                await msg.member.removeRoles(currentRoleList);
-                msg.channel.send(msg.author + ", you have set your timezone"
-                    + " to **" + timezone + "**.");
-                await msg.member.addRole(tzRole);
-            }
+        process: function(client,msg,suffix) {
+            goalTZ.setTimezone(msg, suffix);
         }
     },
     "set": {
@@ -289,85 +239,36 @@ var cmdList = {
         usage: "goal [lines|pages|minutes]",
         type: "goals",
         process: function(client,msg,suffix) {
-            var args = suffix.split(" ");
-            var goal = args.shift();
-            var goalType = args.shift();
-            if (goal === undefined || goal == "") {
-                msg.channel.send("I need a goal to set!");
-            } else if(!Number.isInteger(Number(goal))){
-                msg.channel.send("Your goal must be a whole"
-                    + " number.");
-            } else if((msg.author.id in functions.goalList)) {
-                msg.channel.send(msg.author + ", you have already set a goal"
-                    + " today. Use !update/!progress to record your progress.");
-            } else {
-                if (!(goalType == "lines" || goalType == "pages" ||
-                    goalType == "minutes" || goalType == "words" ||
-                    goalType == "line" || goalType == "page" ||
-                    goalType == "word" || goalType == "minute" ||
-                    goalType === undefined)) {
-                    msg.channel.send("Goal type must be words, lines, pages, or"
-                        + " minutes.");
-                } else {
-                    if (goalType === undefined) {
-                        goalType = "words";
-
-                    }
-                    try {
-                        //get timezone
-                        var tzRole = msg.member.roles.filter(function (a) {
-                            return regionRegex.test(a.name);
-                        });
-                        var userTZ = tzRole.first().name;
-                        logger.info(userTZ);
-                        //get current time
-                        var startTime = new timezoneJS.Date();
-                        startTime.setTimezone(userTZ);
-                        //calculate next midnight based on timezone
-                        var endTime = new timezoneJS.Date();
-                        endTime.setTimezone(userTZ);
-                        endTime.setHours(24,0,0,0);
-                        functions.goalList[msg.author.id] = new goalClass.Goal
-                            (msg.author.id, goal, goalType, 0,
-                            startTime.getTime(), endTime.getTime(),
-                            msg.channel.id);
-                        msg.channel.send(msg.author + ", your goal for today"
-                            + " is **" + goal + "** " + goalType + ".");
-                    } catch(e) {
-                        msg.channel.send(msg.author + ", you need to set your"
-                            + " timezone before setting a daily goal."
-                            + " Use the !timezone command to do so.");
-                    }
-                }
-            }
+            goalTrack.setGoal(msg, suffix);
         }
     },
     "update": {
         name: "update",
         description: "Updates your daily goal with your <progress> since your"
             + " last update",
-        usage: "progress",
+        usage: "update",
         type: "goals",
         process: function(client,msg,suffix) {
-            var goal = suffix;
-            if (suffix == "") {
-                msg.channel.send(msg.author + ", I need an amount of progress"
-                    + " to update!");
-            } else if(!Number.isInteger(Number(goal))){
-                msg.channel.send("Invalid input. Your goal must be a whole"
-                    + " number.");
-            } else if(!(msg.author.id in functions.goalList)) {
-                msg.channel.send(msg.author + ", you have not yet set a goal"
-                    + " for today. Use !set to do so.");
-            } else {
-                functions.goalList[msg.author.id].addWords(goal, 0);
-                msg.channel.send(msg.author + ", you have written **"
-                    + functions.goalList[msg.author.id].written + "** "
-                    + functions.goalList[msg.author.id].goalType + " of your **"
-                    + functions.goalList[msg.author.id].goal + "**-"
-                    + functions.goalList[msg.author.id].goalType.slice(0, -1)
-                    + " goal.");
-            }
+            goalTrack.updateGoal(msg, suffix, false);
+        }
+    },
+    "add": {
+        name: "add",
+        description: "Updates your daily goal with your <progress> since your"
+            + " last update",
+        usage: "add",
+        type: "goals",
+        process: function(client,msg,suffix) {
+            goalTrack.updateGoal(msg, suffix, false);
+        }
+    },
+    "overwrite": {
+        name: "overwrite",
+        description: "Updates your daily goal with your <progress> today",
+        usage: "overwrite",
+        type: "goals",
+        process: function(client,msg,suffix) {
+            goalTrack.updateGoal(msg, suffix, true);
         }
     },
     "progress": {
@@ -376,25 +277,7 @@ var cmdList = {
         usage: "progress",
         type: "goals",
         process: function(client,msg,suffix) {
-            var goal = suffix;
-            if (suffix == "") {
-                msg.channel.send(msg.author + ", I need an amount of progress"
-                    + " to update!");
-            } else if(!Number.isInteger(Number(goal))){
-                msg.channel.send("Invalid input. Your goal must be a whole"
-                    + " number.");
-            } else if(!(msg.author.id in functions.goalList)) {
-                msg.channel.send(msg.author + ", you have not yet set a goal"
-                    + " for today. Use !set to do so.");
-            } else {
-                functions.goalList[msg.author.id].addWords(goal, 1);
-                msg.channel.send(msg.author + ", you have written **"
-                    + functions.goalList[msg.author.id].written + "** "
-                    + functions.goalList[msg.author.id].goalType + " of your **"
-                    + functions.goalList[msg.author.id].goal + "**-"
-                    + functions.goalList[msg.author.id].goalType.slice(0, -1)
-                    + " goal.");
-            }
+            goalTrack.updateGoal(msg, suffix, true);
         }
     },
     "reset": {
@@ -402,18 +285,7 @@ var cmdList = {
         description: "Resets your daily goal",
         type: "goals",
         process: function(client,msg,suffix) {
-            if(!(msg.author.id in functions.goalList)) {
-                msg.channel.send(msg.author + ", you have not yet set a goal"
-                    + " for today. Use !set to do so.");
-            } else {
-                conn.collection("goalDB").remove(
-                    {authorID: msg.author.id}
-                );
-                delete functions.goalList[msg.author.id];
-
-                msg.channel.send(msg.author + ", you have successfully reset"
-                    + " your daily goal.");
-            }
+            goalTrack.resetGoal(msg);
         }
     },
     "goalinfo": {
@@ -421,17 +293,7 @@ var cmdList = {
         description: "Displays progress towards your daily goal",
         type: "goals",
         process: function(client,msg,suffix) {
-            if(!(msg.author.id in functions.goalList)) {
-                msg.channel.send(msg.author + ", you have not yet set a goal"
-                    + " for today. Use !set to do so.");
-            } else {
-                msg.channel.send(msg.author + ", you have written **"
-                    + functions.goalList[msg.author.id].written + "** "
-                    + functions.goalList[msg.author.id].goalType + " of your **"
-                    + functions.goalList[msg.author.id].goal + "**-"
-                    + functions.goalList[msg.author.id].goalType.slice(0, -1)
-                    + " goal.");
-            }
+            goalTrack.viewGoal(msg);
         }
     },
     "target": {
@@ -439,7 +301,7 @@ var cmdList = {
         description: "Generates an <easy|average|hard> target for"
             + " <minutes> minutes",
         usage: "easy|average|hard minutes",
-        type: "other",
+        type: "tools",
         process: function(client,msg,suffix) {
             var args = suffix.split(" ");
             var difficulty = args.shift();
@@ -479,7 +341,7 @@ var cmdList = {
     "prompt": {
         name: "prompt",
         description: "Provides a writing prompt",
-        type: "other",
+        type: "tools",
         process: function(client,msg,suffix) {
             var choiceID = (Math.floor(Math.random() * constants
                 .PROMPT_LIST.length))
@@ -492,7 +354,7 @@ var cmdList = {
         description: "Rolls any combination of the given options,"
             + " separated by the + operator",
         usage: "x, x y, xdy",
-        type: "other",
+        type: "tools",
         process: function(client,msg,suffix) {
             var diceString = "";
             var diceSum = 0;
@@ -578,7 +440,7 @@ var cmdList = {
         description: "Selects an item from a list <list> of items,"
             + " separated by commas",
         usage: "list",
-        type: "other",
+        type: "tools",
         process: function(client,msg,suffix) {
             var items = suffix.split(",");
             var choiceID = (Math.floor(Math.random() * items.length));
@@ -589,7 +451,7 @@ var cmdList = {
     "raptors": {
         name: "raptors",
         description: "Displays raptor statistics.",
-        type: "other",
+        type: "config",
         process: function(client,msg,suffix) {
             var raptorMsg = "__**Raptor Statistics:**__\n";
             var raptorOrd = functions.sortCollection(functions.raptorCount);
@@ -618,12 +480,12 @@ var cmdList = {
             }
         }
     },
-    "config": {
-        name: "config",
+    "display": {
+        name: "display",
         description: "Allows server admins to toggle cross-server display for "
             + "challenges.",
         usage: "on|off",
-        type: "other",
+        type: "config",
         process: function(client,msg,suffix) {
             if(suffix == "") {
                 var xsType = "on";
@@ -667,7 +529,7 @@ var cmdList = {
         description: "Allows server admins to toggle automatic display of"
             + " challenge summaries.",
         usage: "show|hide",
-        type: "other",
+        type: "config",
         process: function(client,msg,suffix) {
             if(suffix == "") {
                 var autoType = "visible";

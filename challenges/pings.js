@@ -1,4 +1,5 @@
 const chalData = require("./data.js");
+const logger = require("../logger.js");
 const mongoose = require("mongoose");
 
 conn = mongoose.connection;

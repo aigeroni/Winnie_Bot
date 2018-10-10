@@ -1,8 +1,6 @@
-var goalList = {};
 var raptorCount = {};
 var userRaptors = {};
 
-exports.goalList = goalList;
 exports.raptorCount = raptorCount;
 exports.userRaptors = userRaptors;
 

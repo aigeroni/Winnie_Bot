@@ -1,4 +1,4 @@
-const functions = require("./functions.js");
+const goalData = require("./data.js");
 
 class Goal {
     constructor(authorID, goal, goalType, written, startTime, terminationTime,
@@ -32,12 +32,12 @@ class Goal {
     update() {
         if(new Date().getTime() >= this.terminationTime) {
             var raptorPct = ((this.written / this.goal) * 100);
-            functions.raptor(this.channel.guild.id, this.channel,
+            goalData.raptor(this.channel.guild.id, this.channel,
                 client.users.get(this.authorID), raptorPct);
             conn.collection("goalDB").remove(
                 {authorID: this.authorID}
             );
-            delete functions.goalList[this.authorID];
+            delete goalData.goalList[this.authorID];
         }
     }
 
