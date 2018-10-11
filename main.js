@@ -183,6 +183,15 @@ var cmdList = {
             chalPings.leaveChallenge(msg, suffix);
         }
     },
+    "cancel": {
+        name: "cancel",
+        description: "Ends war/sprint with ID number <id>."
+            + " Can only be performed by creator.",
+        usage: "id",
+        process: function(client,msg,suffix) {
+            chalStart.stopChallenge(msg, suffix);
+        }
+    },
     "exterminate": {
         name: "exterminate",
         description: "Ends war/sprint with ID number <id>."
@@ -242,11 +251,21 @@ var cmdList = {
             goalTrack.setGoal(msg, suffix);
         }
     },
+    "goal": {
+        name: "goal",
+        description: "Sets a daily goal <goal>, with optional"
+            + " [lines|pages|minutes]",
+        usage: "goal [lines|pages|minutes]",
+        type: "goals",
+        process: function(client,msg,suffix) {
+            goalTrack.setGoal(msg, suffix);
+        }
+    },
     "update": {
         name: "update",
         description: "Updates your daily goal with your <progress> since your"
             + " last update",
-        usage: "update",
+        usage: "progress",
         type: "goals",
         process: function(client,msg,suffix) {
             goalTrack.updateGoal(msg, suffix, false);
@@ -256,7 +275,7 @@ var cmdList = {
         name: "add",
         description: "Updates your daily goal with your <progress> since your"
             + " last update",
-        usage: "add",
+        usage: "progress",
         type: "goals",
         process: function(client,msg,suffix) {
             goalTrack.updateGoal(msg, suffix, false);
@@ -265,7 +284,7 @@ var cmdList = {
     "overwrite": {
         name: "overwrite",
         description: "Updates your daily goal with your <progress> today",
-        usage: "overwrite",
+        usage: "progress",
         type: "goals",
         process: function(client,msg,suffix) {
             goalTrack.updateGoal(msg, suffix, true);
@@ -634,8 +653,6 @@ client.on("message", (msg) => {
                 logger.error("Error %s: %s.", e, e.stack);
             }
         }
-    } else {
-        return
     }
 });
 
