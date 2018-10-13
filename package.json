@@ -2,7 +2,7 @@
   "name": "winnie_bot",
   "version": "1.4.2",
   "description": "Provides commands for Discord-based writing groups, including word wars, sprints and goals. Created for NaNoWriMo Melbourne Region",
-  "main": "main.js",
+  "main": "index.js",
   "dependencies": {
     "discord.js": "^11.3.2",
     "eslint": "^4.19.1",
@@ -15,7 +15,7 @@
   "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node main.js"
+    "start": "node index.js"
   },
   "repository": {
     "type": "git",

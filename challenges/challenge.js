@@ -1,8 +1,6 @@
-const chalData = require("./data.js");
+const challenges = require("./challenges.js");
 const chalSum = require("./summary.js");
-const mongoose = require("mongoose");
-
-conn = mongoose.connection;
+const conn = require("mongoose").connection;
 
 class Challenge {
     constructor(objectID, creator, displayName, initStamp, countdown, duration,
@@ -23,7 +21,7 @@ class Challenge {
 
         this.cStart = this.countdown * 60;
         this.cDur = this.duration * 60;
-        this.cPost = chalData.DUR_AFTER;
+        this.cPost = challenges.DUR_AFTER;
 
         this.startStamp = this.initStamp + (this.cStart * 1000);
         this.endStamp = this.startStamp + (this.cDur * 1000);
@@ -73,7 +71,7 @@ class Challenge {
                 break;
             default:
                 this.channel.send("Error: Invalid state reached.");
-                delete chalData.challengeList[this.objectID];
+                delete challenges.challengeList[this.objectID];
                 break;
         }
     }
@@ -173,7 +171,7 @@ class Challenge {
             conn.collection("challengeDB").remove(
                 {_id: this.objectID}
             );
-            delete chalData.challengeList[this.objectID];
+            delete challenges.challengeList[this.objectID];
         }
     }
 }
@@ -326,7 +324,7 @@ class ChainWar extends Challenge {
                 break;
             default:
                 this.channel.send("Error: Invalid state reached.");
-                delete chalData.challengeList[this.objectID];
+                delete challenges.challengeList[this.objectID];
                 break;
         }
     }

@@ -1,7 +1,6 @@
 const chalClass = require("./challenges/challenge.js");
-const chalData = require("./challenges/data.js");
+const challenges = require("./challenges/challenges.js");
 const chalStart = require("./challenges/run.js");
-const chalPings = require("./challenges/pings.js");
 const chalSum = require("./challenges/summary.js");
 const goalClass = require("./goals/goal.js");
 const goalTZ = require("./goals/timezone.js");
@@ -12,8 +11,8 @@ const toolRoll = require("./tools/roll.js");
 const toolWrite = require("./tools/write.js");
 const chalConfig = require("./challenges/config/config.js");
 
-const constants = require ("./constants.js");
-const functions = require("./functions.js");
+// const constants = require ("./constants.js");
+const functions = require("./tools/data.js");
 const config = require("./config.json");
 const Discord = require("discord.js");
 const logger = require("./logger.js");
@@ -27,31 +26,31 @@ timezoneJS.timezone.zoneFileBasePath = "node_modules/timezone-js/tz";
 timezoneJS.timezone.init();
 
 const tickTimer = gameloop.setGameLoop(async function(delta) {
-    for (var item in chalData.challengeList){
-        if (chalData.challengeList[item].type == "chain war") {
-            if (chalData.challengeList[item].state == 2) {
-                chalData.challengeList[item].state = 3;
-                if (chalData.challengeList[item].current < chalData
+    for (var item in challenges.challengeList){
+        if (challenges.challengeList[item].type == "chain war") {
+            if (challenges.challengeList[item].state == 2) {
+                challenges.challengeList[item].state = 3;
+                if (challenges.challengeList[item].current < challenges
                 .challengeList[item].total) {
                     var startTime = new Date().getTime();
-                    chalData.challengeList[chalData.timerID] = new chalClass
-                        .ChainWar(chalData.timerID, chalData.challengeList
-                        [item].creator, chalData.challengeList[item].warName,
-                        startTime, chalData.challengeList[item].current+1,
-                        chalData.challengeList[item].total, chalData
-                        .challengeList[item].countdown, chalData.challengeList
-                        [item].duration, chalData.challengeList[item]
+                    challenges.challengeList[challenges.timerID] = new chalClass
+                        .ChainWar(challenges.timerID, challenges.challengeList
+                        [item].creator, challenges.challengeList[item].warName,
+                        startTime, challenges.challengeList[item].current+1,
+                        challenges.challengeList[item].total, challenges
+                        .challengeList[item].countdown, challenges.challengeList
+                        [item].duration, challenges.challengeList[item]
                         .channelID);
                     conn.collection("timer").update(
-                        {data: chalData.timerID},
-                        {data: (chalData.timerID+1)},
+                        {data: challenges.timerID},
+                        {data: (challenges.timerID+1)},
                         {upsert: true}
                     )
-                    chalData.timerID = chalData.timerID + 1
+                    challenges.timerID = challenges.timerID + 1
                 }
             }
         }
-        chalData.challengeList[item].update();
+        challenges.challengeList[item].update();
     }
     for (var item in functions.goalList){
         functions.goalList[item].update();
@@ -68,7 +67,7 @@ client.on("ready", () => {
         conn.collection("timer").find(
             {}, function(e, t) {
                 t.forEach(function(tx) {
-                    chalData.timerID = tx.data;
+                    challenges.timerID = tx.data;
                 });
             }
         )
@@ -76,20 +75,20 @@ client.on("ready", () => {
             {}, function(e, challenges) {
                 challenges.forEach(function(challenge) {
                     if(challenge.type == "sprint") {
-                        chalData.challengeList[challenge._id] = new chalClass
+                        challenges.challengeList[challenge._id] = new chalClass
                         .Sprint(challenge._id, challenge.creator,
                         challenge.name, challenge.startTime,
                         challenge.countdown, challenge.goal,
                         challenge.duration, challenge.channel, "sprint",
                         challenge.hidden);
                     } else if(challenge.type == "war") {
-                        chalData.challengeList[challenge._id] = new chalClass
+                        challenges.challengeList[challenge._id] = new chalClass
                         .War(challenge._id, challenge.creator, challenge.name,
                         challenge.startTime, challenge.countdown,
                         challenge.duration, challenge.channel, "war",
                         challenge.hidden);
                     } else if(challenge.type == "chain war") {
-                        chalData.challengeList[challenge._id] = new chalClass
+                        challenges.challengeList[challenge._id] = new chalClass
                         .ChainWar(challenge._id, challenge.creator,
                         challenge.name, challenge.startTime, challenge.current,
                         challenge.total, challenge.countdown,
@@ -130,8 +129,8 @@ client.on("ready", () => {
         conn.collection("configDB").find(
             {}, function(e, guilds) {
                 guilds.forEach(function(guild) {
-                    chalData.crossServerStatus[guild.server] = guild.xStatus;
-                    chalData.autoSumStatus[guild.server] = guild.autoStatus;
+                    challenges.crossServerStatus[guild.server] = guild.xStatus;
+                    challenges.autoSumStatus[guild.server] = guild.autoStatus;
                 });
             }
         );
@@ -176,7 +175,7 @@ var cmdList = {
         description: "Joins war/sprint with ID number <id>",
         usage: "id",
         process: function(client,msg,suffix) {
-            chalPings.joinChallenge(msg, suffix);
+            challenges.joinChallenge(msg, suffix);
         }
     },
     "leave": {
@@ -184,7 +183,7 @@ var cmdList = {
         description: "Leaves war/sprint with ID number <id>",
         usage: "id",
         process: function(client,msg,suffix) {
-            chalPings.leaveChallenge(msg, suffix);
+            challenges.leaveChallenge(msg, suffix);
         }
     },
     "cancel": {
@@ -215,7 +214,7 @@ var cmdList = {
             logger.info(raptorRoll);
             if (raptorRoll) {
                 functions.raptor(msg.guild.id, msg.channel, msg.author,
-                    chalData.WAR_RAPTOR_CHANCE);
+                    challenges.WAR_RAPTOR_CHANCE);
             }
         }
     },
