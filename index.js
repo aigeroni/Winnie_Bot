@@ -12,8 +12,8 @@ const toolRoll = require("./tools/roll.js");
 const toolWrite = require("./tools/write.js");
 const chalConfig = require("./challenges/config/config.js");
 
-const constants = require ("./constants.js");
-const functions = require("./functions.js");
+// const constants = require ("./constants.js");
+const functions = require("./tools/data.js");
 const config = require("./config.json");
 const Discord = require("discord.js");
 const logger = require("./logger.js");
