@@ -1,4 +1,5 @@
-const CMD_PREFIX = "!";
+var raptorCount = {};
+var userRaptors = {};
 const PROMPT_LIST = [
     "One of your characters receives an anonymous gift.",
     "Your character invites someone they don’t like over for dinner.",
@@ -51,5 +52,6 @@ const PROMPT_LIST = [
     "The only useful thing is in the corner."
 ];
 
-exports.CMD_PREFIX = CMD_PREFIX;
+exports.raptorCount = raptorCount;
+exports.userRaptors = userRaptors;
 exports.PROMPT_LIST = PROMPT_LIST;

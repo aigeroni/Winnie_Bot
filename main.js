@@ -7,6 +7,10 @@ const goalClass = require("./goals/goal.js");
 const goalTZ = require("./goals/timezone.js");
 const goalData = require("./goals/data.js");
 const goalTrack = require("./goals/track.js");
+const toolRaptor = require("./tools/raptors.js");
+const toolRoll = require("./tools/roll.js");
+const toolWrite = require("./tools/write.js");
+const chalConfig = require("./challenges/config/config.js");
 
 const constants = require ("./constants.js");
 const functions = require("./functions.js");
@@ -57,7 +61,7 @@ const tickTimer = gameloop.setGameLoop(async function(delta) {
 client.on("ready", () => {
     logger.info("Winnie_Bot is online");
     // Connect to the database
-    mongoose.connect(config.storageUrl, { useNewUrlParser: true, autoIndex:
+    mongoose.connect(config.storage_url, { useNewUrlParser: true, autoIndex:
         false }, function (e, db) {
         if(e) throw e;
         logger.info("Database created!");
@@ -322,39 +326,7 @@ var cmdList = {
         usage: "easy|average|hard minutes",
         type: "tools",
         process: function(client,msg,suffix) {
-            var args = suffix.split(" ");
-            var difficulty = args.shift();
-            var time = args.shift();
-            var base = null;
-            if(!Number.isInteger(Number(time))){
-                msg.channel.send("Invalid input. Duration must be a"
-                    + " whole number.")
-            } else {
-                switch(difficulty) {
-                    case "easy":
-                        base = 12;
-                        break;
-                    case "average":
-                        base = 24;
-                        break;
-                    case "hard":
-                        base = 36;
-                        break;
-                    default:
-                        base = null;
-                        break;
-                }
-                if (base === null) {
-                    msg.channel.send("Invalid input. You need to select an"
-                        + " easy, average, or hard goal.");
-                } else {
-                    var goalPerMinute = ((Math.ceil(Math.random() * 12)
-                        + base));
-                    var goalTotal = (goalPerMinute * time);
-                    msg.channel.send(msg.author + ", your goal is **"
-                        + goalTotal + "**.");
-                }
-            }
+            toolWrite.calcTarget(msg,suffix);
         }
     },
     "prompt": {
@@ -362,10 +334,7 @@ var cmdList = {
         description: "Provides a writing prompt",
         type: "tools",
         process: function(client,msg,suffix) {
-            var choiceID = (Math.floor(Math.random() * constants
-                .PROMPT_LIST.length))
-            msg.channel.send(msg.author + ", your prompt is: **"
-                + constants.PROMPT_LIST[choiceID].trim() + "**");
+            toolWrite.getPrompt(msg);
         }
     },
     "roll": {
@@ -375,83 +344,7 @@ var cmdList = {
         usage: "x, x y, xdy",
         type: "tools",
         process: function(client,msg,suffix) {
-            var diceString = "";
-            var diceSum = 0;
-            var faces = suffix.split("+");
-            for (var i = 0; i < faces.length; i++) {
-                if(Number.isInteger(Number(faces[i]))) { // Single number
-                    if (faces.length == 1) { // Treat as a 1dx roll
-                        var roll = (Math.floor(Math.random() * Number(faces[i]))
-                            + 1)
-                        diceString += roll;
-                        diceSum += roll;
-                    } else { // Add to the other rolls
-                        diceString += "(" + Number(faces[i]) + ")";
-                        diceSum += Number(faces[i]);
-                    }
-                } else if (faces[i].split("d").length == 2) { // RPG-style roll
-                    rpgRoll = faces[i].split("d");
-                    if (rpgRoll[0] == "") {
-                        rpgRoll[0] = 1;
-                    }
-                    if (!Number.isInteger(Number(rpgRoll[0])) ||
-                        !Number.isInteger(Number(rpgRoll[1]))) {
-                        diceString = "Error: Both values in an RPG-style roll"
-                            + " must be integers.";
-                        diceSum = 0;
-                        break;
-                    } else {
-                        if(rpgRoll[0] > 20) {
-                            diceString = "ERROR: TOO BIG.";
-                            diceSum = 0;
-                            break;
-                        } else {
-                            for (var j = 0; j < Number(rpgRoll[0]); j++){
-                                var roll = (Math.floor(Math.random() *
-                                    Number(rpgRoll[1])) + 1)
-                                diceString += roll;
-                                if (j < (Number(rpgRoll[0]) - 1)) {
-                                    diceString += ", "
-                                }
-                                diceSum += roll;
-                            }
-                        }
-                    }
-                } else if(faces[i].split(" ").length == 2){ // Range roll
-                    rangeRoll = faces[i].split(" ");
-                    if (!Number.isInteger(Number(rangeRoll[0])) ||
-                        !Number.isInteger(Number(rangeRoll[1]))) {
-                        diceString = "Error: Both values in a range roll"
-                            + " must be integers.";
-                        diceSum = 0;
-                        break;
-                    } else {
-                        if(Number(rangeRoll[0]) < Number(rangeRoll[1])){
-                            var roll = (Math.floor(Math.random() * (1 + Number
-                                (rangeRoll[1]) - Number(rangeRoll[0]))
-                                + Number(rangeRoll[0])));
-                            diceString += roll;
-                            diceSum += roll;
-                        } else {// First number is larger than second
-                            diceString = "Error: The first number in a range"
-                                + " roll must be smaller than the second.";
-                            diceSum = 0;
-                            break;
-                        }
-                    }
-                } else {
-                    diceString = "Error: " + faces[i] + " is not a valid roll.";
-                    diceSum = 0;
-                    break;
-                }
-                if (i < (faces.length - 1)) {
-                    diceString += ", "
-                }
-            }
-            msg.channel.send(diceString);
-            if (diceSum > 0) {
-                msg.channel.send("Total = " + diceSum);
-            }
+            toolRoll.rollDice(msg,suffix);
         }
     },
     "choose": {
@@ -461,42 +354,15 @@ var cmdList = {
         usage: "list",
         type: "tools",
         process: function(client,msg,suffix) {
-            var items = suffix.split(",");
-            var choiceID = (Math.floor(Math.random() * items.length));
-            msg.channel.send(msg.author + ", from " + suffix + ", I selected **"
-                + items[choiceID].trim() + "**");
+            toolWrite.chooseItem(msg,suffix);
         }
     },
     "raptors": {
         name: "raptors",
         description: "Displays raptor statistics.",
-        type: "config",
+        type: "tools",
         process: function(client,msg,suffix) {
-            var raptorMsg = "__**Raptor Statistics:**__\n";
-            var raptorOrd = functions.sortCollection(functions.raptorCount);
-            for (var i = 0; i < 10; i++) {
-                if (raptorOrd[i] === undefined) {
-                    break;
-                }
-                raptorMsg += "\n" + (i+1) + ". *"
-                    + client.guilds.get(raptorOrd[i]) + ":* "
-                    + functions.raptorCount[raptorOrd[i]];
-            }
-            msg.channel.send(raptorMsg);
-            var userOrd = functions.sortCollection(functions
-                .userRaptors[msg.guild.id]);
-            if (functions.raptorCount[msg.guild.id] > 0) {
-                var userRaptorMsg = "**Raptors by Author:**";
-                for (var i = 0; i < 10; i++) {
-                    if (userOrd[i] === undefined) {
-                        break;
-                    }
-                    userRaptorMsg += "\n" + (i+1) + ". *"
-                        + client.users.get(userOrd[i]).username + ":* "
-                        + functions.userRaptors[msg.guild.id][userOrd[i]];
-                }
-                msg.channel.send(userRaptorMsg);
-            }
+            toolRaptor.raptorStats(client,msg);
         }
     },
     "display": {
@@ -506,41 +372,7 @@ var cmdList = {
         usage: "on|off",
         type: "config",
         process: function(client,msg,suffix) {
-            if(suffix == "") {
-                var xsType = "on";
-                if (chalData.crossServerStatus[msg.guild.id] == true) {
-                    xsType = "off";
-                }
-                msg.channel.send(msg.guild.name + " currently has cross-server"
-                    + " challenges turned **" + xsType + "**.")
-            } else {
-                if(msg.member.permissions.has("ADMINISTRATOR")) {
-                    if(suffix == "on" || suffix == "off") {
-                        var xsType = "on";
-                        if (suffix == "off") {
-                            xsType = "off";
-                            chalData.crossServerStatus[msg.guild.id] = true;
-                        } else {
-                            xsType = "on";
-                            chalData.crossServerStatus[msg.guild.id] = false;
-                        }
-                        conn.collection("configDB").update(
-                            {"server": msg.guild.id},
-                            {$set: {"xStatus":
-                                chalData.crossServerStatus[msg.guild.id]}},
-                            {upsert: true}
-                        )
-                        msg.channel.send(msg.author + ", you have turned"
-                            + " cross-server challenges **" + xsType + "**.");
-                    } else {
-                        msg.channel.send(msg.author + ", use **on|off** to"
-                            + " toggle cross-server challenges.");
-                    }
-                } else {
-                    msg.channel.send("Only server administrators are permitted"
-                        + " to configure challenges.");
-                }
-            }
+            chalConfig.xsDisplay(msg,suffix);
         }
     },
     "autosum": {
@@ -550,57 +382,25 @@ var cmdList = {
         usage: "show|hide",
         type: "config",
         process: function(client,msg,suffix) {
-            if(suffix == "") {
-                var autoType = "visible";
-                if (chalData.autoSumStatus[msg.guild.id] == true) {
-                    autoType = "hidden";
-                }
-                msg.channel.send(msg.guild.name + " currently has automatic"
-                    + " summaries **" + autoType + "**.")
-            } else {
-                if(msg.member.permissions.has("ADMINISTRATOR")) {
-                    if(suffix == "show" || suffix == "hide") {
-                        var autoType = "on";
-                        if (suffix == "hide") {
-                            autoType = "off";
-                            chalData.autoSumStatus[msg.guild.id] = true;
-                        } else {
-                            autoType = "on";
-                            chalData.autoSumStatus[msg.guild.id] = false;
-                        }
-                        conn.collection("configDB").update(
-                            {"server": msg.guild.id},
-                            {$set: {"autoStatus":
-                                chalData.autoSumStatus[msg.guild.id]}},
-                            {upsert: true}
-                        )
-                        msg.channel.send(msg.author + ", you have turned"
-                            + " automatic summaries **" + autoType + "**.");
-                    } else {
-                        msg.channel.send(msg.author + ", use **show|hide** to"
-                            + " toggle automatic summaries.");
-                    }
-                } else {
-                    msg.channel.send("Only server administrators are permitted"
-                        + " to configure automatic summaries.");
-                }
-            }
+            chalConfig.autoSum(msg,suffix);
         }
     }
 }
 
 client.on("message", (msg) => {
     if(msg.isMentioned(client.user)){
-        msg.channel.send("I don't know what you want. Try !help for command"
-            + " information.");
+        msg.channel.send("My name is Winnie, and I run challenges, track goals,"
+            + " and provide other useful commands for writing.  I use the "
+            + config.cmd_prefix + " prefix. Use " + config.cmd_prefix + "help"
+            + " for command information.");
     }
-    if(msg.author.id != client.user.id && (msg.content.startsWith(constants
-        .CMD_PREFIX))){
+    if(msg.author.id != client.user.id && (msg.content.startsWith(config
+        .cmd_prefix))){
         logger.info(msg.author + " entered command " + msg.content);
         var cmdData = msg.content.split(" ")[0]
-            .substring(constants.CMD_PREFIX.length).toLowerCase();
+            .substring(config.cmd_prefix.length).toLowerCase();
         var suffix = msg.content.substring(cmdData.length
-            + constants.CMD_PREFIX.length + 1)
+            + config.cmd_prefix.length + 1)
         var cmd = cmdList[cmdData];
         if(cmdData === "help"){
             if(suffix){
@@ -625,7 +425,7 @@ client.on("message", (msg) => {
                 msg.author.send("**Winnie_Bot Commands:**").then(function(){
                 var helpMsg = "";
                 for(var i in cmdList) {
-                    helpMsg += "**" + constants.CMD_PREFIX;
+                    helpMsg += "**" + config.cmd_prefix;
                     var cmdName = cmdList[i].name;
                     if(cmdName){
                         helpMsg += cmdName;
