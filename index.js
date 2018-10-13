@@ -1,7 +1,6 @@
 const chalClass = require("./challenges/challenge.js");
 const challenges = require("./challenges/challenges.js");
 const chalStart = require("./challenges/run.js");
-const chalPings = require("./challenges/pings.js");
 const chalSum = require("./challenges/summary.js");
 const goalClass = require("./goals/goal.js");
 const goalTZ = require("./goals/timezone.js");
@@ -176,7 +175,7 @@ var cmdList = {
         description: "Joins war/sprint with ID number <id>",
         usage: "id",
         process: function(client,msg,suffix) {
-            chalPings.joinChallenge(msg, suffix);
+            challenges.joinChallenge(msg, suffix);
         }
     },
     "leave": {
@@ -184,7 +183,7 @@ var cmdList = {
         description: "Leaves war/sprint with ID number <id>",
         usage: "id",
         process: function(client,msg,suffix) {
-            chalPings.leaveChallenge(msg, suffix);
+            challenges.leaveChallenge(msg, suffix);
         }
     },
     "cancel": {
