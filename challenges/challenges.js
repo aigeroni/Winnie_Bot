@@ -17,33 +17,33 @@ class Challenges {
             msg.channel.send("Challenge ID must be an integer.");
         } else if (challengeID < 1) {
             msg.channel.send("Challenge ID must be an integer.");
-        } else if (challengeID in challenges.challengeList) {
-            if (challenges.challengeList[challengeID].hidden && challenges
+        } else if (challengeID in this.challengeList) {
+            if (this.challengeList[challengeID].hidden && challenges
                 .challengeList[challengeID].channelID != msg.channel.id) {
                 msg.channel.send(msg.author + ", you do not have permission"
                     + " to join this challenge.");
             } else {
-                if(msg.author.id in challenges.challengeList[challengeID]
+                if(msg.author.id in this.challengeList[challengeID]
                     .joinedUsers) {
                     msg.channel.send(msg.author + ", you already have"
                     + " notifications enabled for this challenge.");
                 } else {
-                    challenges.challengeList[challengeID].joinedUsers
+                    this.challengeList[challengeID].joinedUsers
                         [msg.author.id] = {"countData": undefined,
                         "countType": undefined, "channelID": msg.channel.id};
                     var pushID = msg.channel.id;
-                    var searchIndex = challenges.challengeList[challengeID]
+                    var searchIndex = this.challengeList[challengeID]
                         .hookedChannels.indexOf(pushID);
                     if (searchIndex == -1) {
-                        challenges.challengeList[challengeID].hookedChannels
+                        this.challengeList[challengeID].hookedChannels
                             .push(pushID);
                     }
                     msg.channel.send(msg.author + ", you have joined "
-                        + challenges.challengeList[challengeID].displayName);
+                        + this.challengeList[challengeID].displayName);
                     try {
                         conn.collection("challengeDB").update(
                             {_id: parseInt(challengeID)},
-                            {$set: {"joinedUsers": challenges.challengeList
+                            {$set: {"joinedUsers": this.challengeList
                                 [challengeID].joinedUsers}},
                             {upsert: true}
                         )
@@ -64,16 +64,16 @@ class Challenges {
             msg.channel.send("Challenge ID must be an integer.");
         } else if (challengeID < 1) {
             msg.channel.send("Challenge ID must be an integer.");
-        } else if (challengeID in challenges.challengeList) {
-            if(msg.author.id in challenges.challengeList[challengeID]
+        } else if (challengeID in this.challengeList) {
+            if(msg.author.id in this.challengeList[challengeID]
                 .joinedUsers) {
-                delete challenges.challengeList[challengeID]
+                delete this.challengeList[challengeID]
                     .joinedUsers[msg.author.id];
                 msg.channel.send(msg.author + ", you have left "
-                    + challenges.challengeList[challengeID].displayName);
+                    + this.challengeList[challengeID].displayName);
                 conn.collection("challengeDB").update(
                     {_id: parseInt(challengeID)},
-                    {$set: {"joinedUsers": challenges.challengeList
+                    {$set: {"joinedUsers": this.challengeList
                         [challengeID].joinedUsers}},
                     {upsert: OES_texture_half_float}
                 )
