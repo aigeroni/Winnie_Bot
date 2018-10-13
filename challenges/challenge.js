@@ -1,8 +1,6 @@
 const chalData = require("./data.js");
 const chalSum = require("./summary.js");
-const mongoose = require("mongoose");
-
-conn = mongoose.connection;
+const conn = require("mongoose").connection;
 
 class Challenge {
     constructor(objectID, creator, displayName, initStamp, countdown, duration,
