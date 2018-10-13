@@ -1,5 +1,5 @@
 const chalClass = require("./challenge.js");
-const chalData = require("./data.js");
+const challenges = require("./challenges");
 const logger = require("../logger.js");
 const mongoose = require("mongoose");
 
@@ -38,17 +38,17 @@ exports.startSprint = function(msg,suffix) {
                 sprintName = msg.author.username + "'s sprint";
             }
             var startTime = new Date().getTime();
-            chalData.challengeList[chalData.timerID] =
-                new chalClass.Sprint(chalData.timerID, creatorID,
+            challenges.challengeList[challenges.timerID] =
+                new chalClass.Sprint(challenges.timerID, creatorID,
                 sprintName, startTime, start, words, timeout,
-                msg.channel.id, chalData.crossServerStatus
+                msg.channel.id, challenges.crossServerStatus
                 [msg.guild.id]);
             conn.collection("timer").update(
-                {data: chalData.timerID},
-                {data: (chalData.timerID+1)},
+                {data: challenges.timerID},
+                {data: (challenges.timerID+1)},
                 {upsert: true}
             )
-            chalData.timerID = chalData.timerID + 1;
+            challenges.timerID = challenges.timerID + 1;
         } catch(e) {
             msg.channel.send("Error: Sprint creation failed.");
             logger.error("Error %s: %s.", e, e.stack);
@@ -84,16 +84,16 @@ exports.startWar = function(msg,suffix) {
                 warName = msg.author.username + "'s war";
             }
             var startTime = new Date().getTime();
-            chalData.challengeList[chalData.timerID] =
-                new chalClass.War(chalData.timerID, creatorID, warName,
-                startTime, start, duration, msg.channel.id, chalData
+            challenges.challengeList[challenges.timerID] =
+                new chalClass.War(challenges.timerID, creatorID, warName,
+                startTime, start, duration, msg.channel.id, challenges
                 .crossServerStatus[msg.guild.id]);
             conn.collection("timer").update(
-                {data: chalData.timerID},
-                {data: (chalData.timerID+1)},
+                {data: challenges.timerID},
+                {data: (challenges.timerID+1)},
                 {upsert: true}
             )
-            chalData.timerID = chalData.timerID + 1;
+            challenges.timerID = challenges.timerID + 1;
         } catch(e) {
             msg.channel.send("Error: War creation failed.");
             logger.error("Error %s: %s.", e, e.stack);
@@ -136,17 +136,17 @@ exports.startChainWar = function(msg,suffix) {
                 warName = msg.author.username + "'s war";
             }
             var startTime = new Date().getTime();
-            chalData.challengeList[chalData.timerID] =
-                new chalClass.ChainWar(chalData.timerID, creatorID,
+            challenges.challengeList[challenges.timerID] =
+                new chalClass.ChainWar(challenges.timerID, creatorID,
                 warName, startTime, 1, chainWarCount, timeBetween,
-                duration, msg.channel.id, chalData.crossServerStatus
+                duration, msg.channel.id, challenges.crossServerStatus
                 [msg.guild.id]);
             conn.collection("timer").update(
-                {data: chalData.timerID},
-                {data: (chalData.timerID+1)},
+                {data: challenges.timerID},
+                {data: (challenges.timerID+1)},
                 {upsert: true}
             )
-            chalData.timerID = chalData.timerID + 1;
+            challenges.timerID = challenges.timerID + 1;
         } catch(e) {
             msg.channel.send("Error: Chain war creation failed.");
             logger.error("Error %s: %s.", e, e.stack);
@@ -158,22 +158,22 @@ exports.stopChallenge = function(client,msg,suffix) {
     var challengeID = suffix;
     if (isNaN(challengeID) || challengeID < 1) {
         msg.channel.send("Challenge ID must be an integer.");
-    } else if (challengeID in chalData.challengeList) {
-        var stopName = chalData.challengeList[challengeID].displayName;
-        if (!(chalData.challengeList[challengeID].hidden && chalData
+    } else if (challengeID in challenges.challengeList) {
+        var stopName = challenges.challengeList[challengeID].displayName;
+        if (!(challenges.challengeList[challengeID].hidden && challenges
             .challengeList[challengeID].channelID != msg.channel.id)) {
-            if(chalData.challengeList[challengeID].creator
+            if(challenges.challengeList[challengeID].creator
                 == msg.author.id) {
                 conn.collection("challengeDB").remove(
                     {_id: Number(challengeID)}
                 );
-                for(var i = 0; i < chalData.challengeList[challengeID]
+                for(var i = 0; i < challenges.challengeList[challengeID]
                     .hookedChannels.length; i++) {
-                    client.channels.get(chalData.challengeList
+                    client.channels.get(challenges.challengeList
                         [challengeID].hookedChannels[i]).send(stopName
                         + " has been exterminated by the creator.");
                 }
-                delete chalData.challengeList[challengeID];
+                delete challenges.challengeList[challengeID];
             } else {
                 msg.channel.send("Only the creator of " + stopName
                     + " can end this challenge.");
