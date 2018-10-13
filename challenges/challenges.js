@@ -58,7 +58,7 @@ class Challenges {
         }
     }
     
-    leaveChallenge(client,msg,suffix) {
+    leaveChallenge(msg,suffix) {
         var challengeID = suffix;
         if (isNaN(challengeID)) {
             msg.channel.send("Challenge ID must be an integer.");
