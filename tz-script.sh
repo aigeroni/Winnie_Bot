@@ -1,5 +1,7 @@
 ##!/bin/bash
 
+set -e
+
 # NOTE: Run from your webroot
 
 # Change directory
