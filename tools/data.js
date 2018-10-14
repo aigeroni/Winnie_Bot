@@ -1,5 +1,3 @@
-var raptorCount = {};
-var userRaptors = {};
 const PROMPT_LIST = [
     "One of your characters receives an anonymous gift.",
     "Your character invites someone they don’t like over for dinner.",
@@ -31,7 +29,8 @@ const PROMPT_LIST = [
     "Something doesn’t work as it’s supposed to.",
     "A character loses something, but then finds or gets it back.",
     "A character changes careers.",
-    "Start and end a paragraph with the same sentence, but different meanings.",
+    "Start and end a paragraph with the same sentence, but give it different"
+        + " meanings.",
     "A character goes for a walk and discovers something strange.",
     "A character gets into a fight.",
     "Something has gone horribly wrong.",
@@ -49,9 +48,8 @@ const PROMPT_LIST = [
     "A character notices someone watching them.",
     "A crowd has gathered.",
     "Something has a dual function.",
-    "The only useful thing is in the corner."
+    "The only useful thing is in the corner.",
+    "Your character cracks a bad joke."
 ];
 
-exports.raptorCount = raptorCount;
-exports.userRaptors = userRaptors;
 exports.PROMPT_LIST = PROMPT_LIST;

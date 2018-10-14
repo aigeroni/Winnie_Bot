@@ -1,6 +1,6 @@
-const goalData = require("./data.js");
+const goals = require("./goals.js");
 
-class Goal {
+export class Goal {
     constructor(authorID, goal, goalType, written, startTime, terminationTime,
         channelID) {
         this.authorID =  authorID;
@@ -32,12 +32,12 @@ class Goal {
     update() {
         if(new Date().getTime() >= this.terminationTime) {
             var raptorPct = ((this.written / this.goal) * 100);
-            goalData.raptor(this.channel.guild.id, this.channel,
+            goals.raptor(this.channel.guild.id, this.channel,
                 client.users.get(this.authorID), raptorPct);
             conn.collection("goalDB").remove(
                 {authorID: this.authorID}
             );
-            delete goalData.goalList[this.authorID];
+            delete goals.goalList[this.authorID];
         }
     }
 
@@ -58,5 +58,3 @@ class Goal {
         )
     }
 }
-
-exports.Goal = Goal;
