@@ -1,6 +1,6 @@
-const chainwar = require("./chainwar.js");
-const sprint = require("./sprint.js");
-const war = require("./war.js");
+// const chainwar = require("./chainwar.js");
+// const sprint = require("./sprint.js");
+// const war = require("./war.js");
 const logger = require("../logger.js");
 const conn = require("mongoose").connection;
 

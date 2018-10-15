@@ -1,8 +1,8 @@
-const challenge = require("./challenge.js");
+const Challenge = require("./challenge.js");
 const challenges = require("./challenges.js");
 const conn = require("mongoose").connection;
 
-class ChainWar extends challenge.Challenge {
+class ChainWar extends Challenge {
     constructor(objectID, creator, warName, initStamp, current, total,
         countdown, duration, channel, hidden) {
         super(objectID, creator,  warName + " (" + current + "/" + total + ")",
@@ -66,4 +66,4 @@ class ChainWar extends challenge.Challenge {
     }
 }
 
-exports.ChainWar = ChainWar;
+module.exports = ChainWar;

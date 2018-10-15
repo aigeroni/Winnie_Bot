@@ -1,6 +1,6 @@
 const goals = require("./goals.js");
 
-export class Goal {
+class Goal {
     constructor(authorID, goal, goalType, written, startTime, terminationTime,
         channelID) {
         this.authorID =  authorID;
@@ -58,3 +58,5 @@ export class Goal {
         )
     }
 }
+
+module.exports = Goal;
