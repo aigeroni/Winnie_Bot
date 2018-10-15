@@ -175,4 +175,4 @@ class Challenge {
     }
 }
 
-exports.Challenge = Challenge;
+module.exports = Challenge;

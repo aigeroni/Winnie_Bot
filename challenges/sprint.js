@@ -1,7 +1,7 @@
-const challenge = require("./challenge.js");
+const Challenge = require("./challenge");
 const conn = require("mongoose").connection;
 
-class Sprint extends challenge.Challenge {
+class Sprint extends Challenge {
     constructor(objectID, creator, displayName, initStamp, countdown, goal,
         duration, channel, hidden) {
         super(objectID, creator, displayName, initStamp, countdown,
@@ -60,4 +60,4 @@ class Sprint extends challenge.Challenge {
     }
 }
 
-exports.Sprint = Sprint;
+module.exports = Sprint;

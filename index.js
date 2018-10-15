@@ -1,5 +1,5 @@
 const chainwar = require("./challenges/chainwar.js");
-const goal = require("./goal/goal.js");
+const goal = require("./goals/goal.js");
 const sprint = require("./challenges/sprint.js");
 const war = require("./challenges/war.js");
 
@@ -46,8 +46,8 @@ const tickTimer = gameloop.setGameLoop(async function(delta) {
         }
         challenges.challengeList[item].update();
     }
-    for (var item in functions.goalList){
-        functions.goalList[item].update();
+    for (var item in goals.goalList){
+        goals.goalList[item].update();
     }
 }, 1000);
 
@@ -105,17 +105,17 @@ client.on("ready", () => {
         conn.collection("raptorDB").find(
             {}, function(e, guilds) {
                 guilds.forEach(function(guild) {
-                    functions.raptorCount[guild.server] = guild.count;
+                    goals.raptorCount[guild.server] = guild.count;
                 });
             }
         );
         conn.collection("raptorUserDB").find(
             {}, function(e, authors) {
                 authors.forEach(function(author) {
-                    if (!(author.server in functions.userRaptors)) {
-                        functions.userRaptors[author.server] = {};
+                    if (!(author.server in goals.userRaptors)) {
+                        goals.userRaptors[author.server] = {};
                     }
-                    functions.userRaptors[author.server][author.user]
+                    goals.userRaptors[author.server][author.user]
                         = author.count;
                 });
             }
