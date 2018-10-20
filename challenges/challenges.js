@@ -427,17 +427,21 @@ class Challenges {
                             }
                             msg.channel.send("Total added to summary.");
                         } else {
+                            raptorCheck = false;
                             msg.channel.send(msg.author + ", I need a whole"
                                 + " number to include in the summary!");
                         }
                     } else {
+                        raptorCheck = false;
                         msg.channel.send(msg.author + ", you do not have"
                             + " permission to join this challenge.")
                     }
                 } else {
+                    raptorCheck = false;
                     msg.channel.send("This challenge has not ended yet!");
                 }
             } else {
+                raptorCheck = false;
                 msg.channel.send("This challenge does not exist!");
             }
         }

@@ -19,7 +19,7 @@ class ChallengeList {
                         .joinedUsers[user].countData)) && this.challengeList
                         [challengeID].joinedUsers[user].countType != undefined){ 
                         var homeServer = client.channels.get(this
-                            .challengeList[challengeID].
+                            .challengeList[challengeID].joinedUsers[user].
                             channelID).guild.id;
                         if (homeServer == summaryServer.id) {
                             userTotal += client.users.get(user) + ": **"
