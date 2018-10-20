@@ -380,7 +380,7 @@ class Challenges {
     let nonHiddenTotal = 0;
     let timerInfo = '';
     for (const i in challengelist.challengeList) {
-      if (object.hasOwnProperty(variable)) {
+      if (challengelist.challengeList.hasOwnProperty(i)) {
         const parentChannel = client.channels.get(
             challengelist.challengeList[i].channelID
         );
