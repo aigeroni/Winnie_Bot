@@ -1,5 +1,5 @@
 {
-    "token": "$$token$$",
-    "storage_url": "$$dbloc$$",
+    "token": "Mzg3MDU4MzA4Nzk3OTU2MTE4.DqxrIg.c5ttHVN0D1UAIyDTdkA-WvxZqOI",
+    "storage_url": "mongodb://localhost:27017/Winnie_DB",
     "cmd_prefix": "!"
 }
