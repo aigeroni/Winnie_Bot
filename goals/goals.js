@@ -8,10 +8,7 @@ const conn = require('mongoose').connection;
 class Goals {
   /** Initialise variables for goal management. */
   constructor() {
-    this.regionCheck =
-      '/^(Africa|America|Antarctica|Asia|Atlantic|Australia' +
-      '|Europe|Indian|Pacific|Etc)/';
-    this.regionRegex = new RegExp(this.regionCheck);
+    this.regionRegex = /^(Africa|America|Antarctica|Asia|Atlantic|Australia|Europe|Indian|Pacific|Etc)/;
   }
   /**
    * Check a list of roles for timezone roles.
