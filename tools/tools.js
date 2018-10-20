@@ -102,14 +102,16 @@ class Tools {
                 + this.raptorCount[raptorOrd[i]];
             }
         }
-        var userOrd = this.sortCollection(this.userRaptors[msg.guild.id]);
-        if (this.raptorCount[msg.guild.id] > 0) {
-            raptorMsg += "\n\n**Raptors by Author:**";
-            for (var i = 0; i < userOrd.length; i++) {
-                if (i < 10 || userOrd[i] == msg.author.id) {
-                    raptorMsg += "\n" + (i+1) + ". *"
-                    + client.users.get(userOrd[i]).username + ":* "
-                    + this.userRaptors[msg.guild.id][userOrd[i]];
+        if (!(this.userRaptors[msg.guild.id] === undefined)) {
+            var userOrd = this.sortCollection(this.userRaptors[msg.guild.id]);
+            if (this.raptorCount[msg.guild.id] > 0) {
+                raptorMsg += "\n\n**Raptors by Author:**";
+                for (var i = 0; i < userOrd.length; i++) {
+                    if (i < 10 || userOrd[i] == msg.author.id) {
+                        raptorMsg += "\n" + (i+1) + ". *"
+                        + client.users.get(userOrd[i]).username + ":* "
+                        + this.userRaptors[msg.guild.id][userOrd[i]];
+                    }
                 }
             }
         }

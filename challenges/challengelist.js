@@ -164,7 +164,7 @@ class ChallengeList {
         } else {
             msgToSend = ("This challenge does not exist!");
         }
-        if (msgToSend != "") {
+        if (msgToSend == "") {
             msgToSend = "No totals have been posted for this challenge yet.";
         }
         channel.send(msgToSend);
