@@ -1,9 +1,10 @@
-const chainwar = require("./challenges/chainwar.js");
-const goal = require("./goals/goal.js");
-const sprint = require("./challenges/sprint.js");
-const war = require("./challenges/war.js");
-
+const ChainWar = require("./challenges/chainwar");
+const Goal = require("./goals/goal");
+const Sprint = require("./challenges/sprint");
+const War = require("./challenges/war");
+const challengelist = require("./challenges/challengelist.js");
 const challenges = require("./challenges/challenges.js");
+const goallist = require("./goals/goallist.js");
 const goals = require("./goals/goals.js");
 const tools = require("./tools/tools.js");
 const config = require("./config.json");
@@ -20,21 +21,21 @@ timezoneJS.timezone.zoneFileBasePath = "node_modules/timezone-js/tz";
 timezoneJS.timezone.init();
 
 const tickTimer = gameloop.setGameLoop(async function(delta) {
-    for (var item in challenges.challengeList){
-        if (challenges.challengeList[item].type == "chain war") {
-            if (challenges.challengeList[item].state == 2) {
-                challenges.challengeList[item].state = 3;
-                if (challenges.challengeList[item].current < challenges
+    for (var item in challengelist.challengeList){
+        if (challengelist.challengeList[item].type == "chain war") {
+            if (challengelist.challengeList[item].state == 2) {
+                challengelist.challengeList[item].state = 3;
+                if (challengelist.challengeList[item].current < challengelist
                 .challengeList[item].total) {
                     var startTime = new Date().getTime();
-                    challenges.challengeList[challenges.timerID] = new 
-                        ChainWar(challenges.timerID, challenges.challengeList
-                        [item].creator, challenges.challengeList[item].warName,
-                        startTime, challenges.challengeList[item].current+1,
-                        challenges.challengeList[item].total, challenges
-                        .challengeList[item].countdown, challenges.challengeList
-                        [item].duration, challenges.challengeList[item]
-                        .channelID);
+                    challengelist.challengeList[challenges.timerID] = new 
+                        ChainWar(challenges.timerID, challengelist.challengeList
+                        [item].creator, challengelist.challengeList[item]
+                        .warName, startTime, challengelist.challengeList[item]
+                        .current+1, challengelist.challengeList[item].total,
+                        challengelist.challengeList[item].countdown,
+                        challengelist.challengeList[item].duration,
+                        challengelist.challengeList[item].channelID);
                     conn.collection("timer").update(
                         {data: challenges.timerID},
                         {data: (challenges.timerID+1)},
@@ -44,10 +45,14 @@ const tickTimer = gameloop.setGameLoop(async function(delta) {
                 }
             }
         }
-        challenges.challengeList[item].update();
+        challengelist.challengeList[item].update();
     }
-    for (var item in goals.goalList){
-        goals.goalList[item].update();
+    for (var item in goallist.goalList){
+        var raptorRoll = goallist.goalList[item].update();
+        if (raptorRoll != false) {
+            tools.raptor(raptorRoll[0].guild.id, raptorRoll[0],
+                client.users.get(item), raptorRoll[1]);
+        }
     }
 }, 1000);
 
@@ -66,24 +71,24 @@ client.on("ready", () => {
             }
         )
         conn.collection("challengeDB").find(
-            {}, function(e, challenges) {
-                challenges.forEach(function(challenge) {
+            {}, function(e, challengeinput) {
+                challengeinput.forEach(function(challenge) {
                     if(challenge.type == "sprint") {
-                        challenges.challengeList[challenge._id] = new sprint.
-                        Sprint(challenge._id, challenge.creator,
+                        challengelist.challengeList[challenge._id] = new Sprint(
+                        challenge._id, challenge.creator,
                         challenge.name, challenge.startTime,
                         challenge.countdown, challenge.goal,
                         challenge.duration, challenge.channel, "sprint",
                         challenge.hidden);
                     } else if(challenge.type == "war") {
-                        challenges.challengeList[challenge._id] = new war.
-                        War(challenge._id, challenge.creator, challenge.name,
+                        challengelist.challengeList[challenge._id] = new War(
+                        challenge._id, challenge.creator, challenge.name,
                         challenge.startTime, challenge.countdown,
                         challenge.duration, challenge.channel, "war",
                         challenge.hidden);
                     } else if(challenge.type == "chain war") {
-                        challenges.challengeList[challenge._id] = new chainwar.
-                        ChainWar(challenge._id, challenge.creator,
+                        challengelist.challengeList[challenge._id] =
+                        new ChainWar(challenge._id, challenge.creator,
                         challenge.name, challenge.startTime, challenge.current,
                         challenge.total, challenge.countdown,
                         challenge.duration, challenge.channel, "chain war",
@@ -95,7 +100,7 @@ client.on("ready", () => {
         conn.collection("goalDB").find(
             {}, function(e, goals) {
                 goals.forEach(function(goal) {
-                    goalData.goalList[goal.authorID] = new goal.Goal
+                    goallist.goalList[goal.authorID] = new Goal
                         (goal.authorID, goal.goal, goal.goalType, goal.written,
                         goal.startTime, goal.terminationTime,
                         goal.channelID);
@@ -105,17 +110,17 @@ client.on("ready", () => {
         conn.collection("raptorDB").find(
             {}, function(e, guilds) {
                 guilds.forEach(function(guild) {
-                    goals.raptorCount[guild.server] = guild.count;
+                    tools.raptorCount[guild.server] = guild.count;
                 });
             }
         );
         conn.collection("raptorUserDB").find(
             {}, function(e, authors) {
                 authors.forEach(function(author) {
-                    if (!(author.server in goals.userRaptors)) {
-                        goals.userRaptors[author.server] = {};
+                    if (!(author.server in tools.userRaptors)) {
+                        tools.userRaptors[author.server] = {};
                     }
-                    goals.userRaptors[author.server][author.user]
+                    tools.userRaptors[author.server][author.user]
                         = author.count;
                 });
             }
@@ -205,7 +210,6 @@ var cmdList = {
         usage: "id total [lines|pages|minutes]",
         process: function(client,msg,suffix) {
             var raptorRoll = challenges.addTotal(msg, suffix);
-            logger.info(raptorRoll);
             if (raptorRoll) {
                 tools.raptor(msg.guild.id, msg.channel, msg.author,
                     challenges.WAR_RAPTOR_CHANCE);
@@ -218,7 +222,7 @@ var cmdList = {
             + " <id>",
         usage: "id",
         process: function(client,msg,suffix) {
-            challenges.generateSummary(msg.channel, suffix);
+            challengelist.generateSummary(msg.channel, suffix);
         }
     },
     "list": {

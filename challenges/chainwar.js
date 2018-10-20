@@ -1,5 +1,5 @@
 const Challenge = require("./challenge.js");
-const challenges = require("./challenges.js");
+const challengelist = require("./challengelist.js");
 const conn = require("mongoose").connection;
 
 class ChainWar extends Challenge {
@@ -48,7 +48,7 @@ class ChainWar extends Challenge {
                 break;
             default:
                 this.channel.send("Error: Invalid state reached.");
-                delete challenges.challengeList[this.objectID];
+                delete challengelist.challengeList[this.objectID];
                 break;
         }
     }

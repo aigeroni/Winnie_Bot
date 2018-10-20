@@ -44,4 +44,4 @@ class War extends Challenge {
     }
 }
 
-exports.War = War;
+module.exports = War;

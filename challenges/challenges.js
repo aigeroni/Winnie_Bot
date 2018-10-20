@@ -1,18 +1,17 @@
-// const chainwar = require("./chainwar.js");
-// const sprint = require("./sprint.js");
-// const war = require("./war.js");
+const ChainWar = require("./chainwar");
+const Sprint = require("./sprint");
+const War = require("./war");
+const challengelist = require("./challengelist.js");
 const logger = require("../logger.js");
 const conn = require("mongoose").connection;
 
 class Challenges {
     constructor() {
-        // TODO: Move these constants to a root-level config.js
+        // TODO: Move to a root-level config.js
         // file and import from there
         this.WAR_RAPTOR_CHANCE = 10;
-        this.DUR_AFTER = 300;
 
         this.timerID = 1;
-        this.challengeList = {};
         this.crossServerStatus = {};
         this.autoSumStatus = {};
     }
@@ -23,38 +22,39 @@ class Challenges {
             msg.channel.send("Challenge ID must be an integer.");
         } else if (challengeID < 1) {
             msg.channel.send("Challenge ID must be an integer.");
-        } else if (challengeID in this.challengeList) {
-            if (this.challengeList[challengeID].hidden && this
-                .challengeList[challengeID].channelID != msg.channel.id) {
+        } else if (challengeID in challengelist.challengeList) {
+            if (challengelist.challengeList[challengeID].hidden && client
+                .channels.get(challengelist.challengeList[challengeID]
+                .channelID).guild.id != msg.guild.id) {
                 msg.channel.send(msg.author + ", you do not have permission"
                     + " to join this challenge.");
             } else {
-                if(msg.author.id in this.challengeList[challengeID]
+                if(msg.author.id in challengelist.challengeList[challengeID]
                     .joinedUsers) {
                     msg.channel.send(msg.author + ", you already have"
                     + " notifications enabled for this challenge.");
                 } else {
-                    this.challengeList[challengeID].joinedUsers
+                    challengelist.challengeList[challengeID].joinedUsers
                         [msg.author.id] = {"countData": undefined,
                         "countType": undefined, "channelID": msg.channel.id};
                     var pushID = msg.channel.id;
-                    var searchIndex = this.challengeList[challengeID]
+                    var searchIndex = challengelist.challengeList[challengeID]
                         .hookedChannels.indexOf(pushID);
                     if (searchIndex == -1) {
-                        this.challengeList[challengeID].hookedChannels
+                        challengelist.challengeList[challengeID].hookedChannels
                             .push(pushID);
                     }
                     msg.channel.send(msg.author + ", you have joined "
-                        + this.challengeList[challengeID].displayName);
+                        + challengelist.challengeList[challengeID].displayName);
                     try {
                         conn.collection("challengeDB").update(
                             {_id: parseInt(challengeID)},
-                            {$set: {"joinedUsers": this.challengeList
+                            {$set: {"joinedUsers": challengelist.challengeList
                                 [challengeID].joinedUsers}},
                             {upsert: true}
                         )
                     } catch(e) {
-                        logger.info("Error: " + e);
+                        logger.error("Error: " + e);
                     }
                 }
             }
@@ -70,16 +70,16 @@ class Challenges {
             msg.channel.send("Challenge ID must be an integer.");
         } else if (challengeID < 1) {
             msg.channel.send("Challenge ID must be an integer.");
-        } else if (challengeID in this.challengeList) {
-            if(msg.author.id in this.challengeList[challengeID]
+        } else if (challengeID in challengelist.challengeList) {
+            if(msg.author.id in challengelist.challengeList[challengeID]
                 .joinedUsers) {
-                delete this.challengeList[challengeID]
+                delete challengelist.challengeList[challengeID]
                     .joinedUsers[msg.author.id];
                 msg.channel.send(msg.author + ", you have left "
-                    + this.challengeList[challengeID].displayName);
+                    + challengelist.challengeList[challengeID].displayName);
                 conn.collection("challengeDB").update(
                     {_id: parseInt(challengeID)},
-                    {$set: {"joinedUsers": this.challengeList
+                    {$set: {"joinedUsers": challengelist.challengeList
                         [challengeID].joinedUsers}},
                     {upsert: true}
                 )
@@ -126,7 +126,7 @@ class Challenges {
                     sprintName = msg.author.username + "'s sprint";
                 }
                 var startTime = new Date().getTime();
-                this.challengeList[this.timerID] =
+                challengelist.challengeList[this.timerID] =
                     new Sprint(this.timerID, creatorID,
                     sprintName, startTime, start, words, timeout,
                     msg.channel.id, this.crossServerStatus
@@ -172,7 +172,7 @@ class Challenges {
                     warName = msg.author.username + "'s war";
                 }
                 var startTime = new Date().getTime();
-                this.challengeList[this.timerID] =
+                challengelist.challengeList[this.timerID] =
                     new War(this.timerID, creatorID, warName,
                     startTime, start, duration, msg.channel.id, this
                     .crossServerStatus[msg.guild.id]);
@@ -196,7 +196,7 @@ class Challenges {
         var timeBetween = args.shift();
         var warName = args.join(" ");
         if (timeBetween === undefined) {
-            start = 1;
+            timeBetween = 1;
         }
         if(isNaN(chainWarCount)) {
             msg.channel.send("War count must be a number.");
@@ -224,7 +224,7 @@ class Challenges {
                     warName = msg.author.username + "'s war";
                 }
                 var startTime = new Date().getTime();
-                this.challengeList[this.timerID] =
+                challengelist.challengeList[this.timerID] =
                     new ChainWar(this.timerID, creatorID,
                     warName, startTime, 1, chainWarCount, timeBetween,
                     duration, msg.channel.id, this.crossServerStatus
@@ -242,26 +242,27 @@ class Challenges {
         }
     }
     
-    stopChallenge(client,msg,suffix) {
+    stopChallenge(msg,suffix) {
         var challengeID = suffix;
         if (isNaN(challengeID) || challengeID < 1) {
             msg.channel.send("Challenge ID must be an integer.");
-        } else if (challengeID in this.challengeList) {
-            var stopName = this.challengeList[challengeID].displayName;
-            if (!(this.challengeList[challengeID].hidden && this
-                .challengeList[challengeID].channelID != msg.channel.id)) {
-                if(this.challengeList[challengeID].creator
+        } else if (challengeID in challengelist.challengeList) {
+            var stopName = challengelist.challengeList[challengeID].displayName;
+            if (!(challengelist.challengeList[challengeID].hidden &&
+                challengelist.challengeList[challengeID].channelID
+                != msg.channel.id)) {
+                if(challengelist.challengeList[challengeID].creator
                     == msg.author.id) {
                     conn.collection("challengeDB").remove(
                         {_id: Number(challengeID)}
                     );
-                    for(var i = 0; i < this.challengeList[challengeID]
+                    for(var i = 0; i < challengelist.challengeList[challengeID]
                         .hookedChannels.length; i++) {
-                        client.channels.get(this.challengeList
+                        client.channels.get(challengelist.challengeList
                             [challengeID].hookedChannels[i]).send(stopName
-                            + " has been exterminated by the creator.");
+                            + " has been ended by the creator.");
                     }
-                    delete this.challengeList[challengeID];
+                    delete challengelist.challengeList[challengeID];
                 } else {
                     msg.channel.send("Only the creator of " + stopName
                         + " can end this challenge.");
@@ -277,93 +278,97 @@ class Challenges {
     }
 
     listChallenges(client,msg) {
-        if(Object.keys(this.challengeList).length == 0) {
-            msg.channel.send("There are no challenges running."
-                + " Why don't you start one?");
-        } else {
-            if(Object.keys(this.challengeList).length == 1) {
-                var timerInfo = "There is " + Object.keys(this
-                    .challengeList).length + " challenge running:\n";
-            } else {
-                var timerInfo = "There are " + Object.keys(this
-                    .challengeList).length + " challenges running:\n";
-            }
-            for(var i in this.challengeList) {
-                // check whether a challenge is hidden
-                if (!(this.challengeList[i].hidden &&
-                    this.challengeList[i].channelID
-                    != msg.channel.id)) {
-                    // find originating server name
-                    var parentChannel = client.chaallnels.get(this
-                        .challengeList[i].channelID);
-                    var parentGuild = parentChannel.guild;
-                    var parentGuildName = parentGuild.name;
-                    switch(this.challengeList[i].state){
-                        case 0:
-                            var timeout = "";
-                            if ((this.challengeList[i].cStart % 60)
-                                 < 10) {
-                                timeout = "0" + (this.challengeList[i]
-                                    .cStart % 60).toString();
-                            } else {
-                                timeout = this.challengeList[i].cStart
-                                    % 60;
-                            }
-                            timerInfo += i + ": " + this.challengeList
-                                [i].displayName + " (";
-                            if (this.challengeList[i].type ==
-                                "sprint") {
-                                timerInfo += this.challengeList[i].goal
-                                    + " words, ";
-                            }
-                            timerInfo += this.challengeList[i].duration
-                                + " minutes, starts in "
-                                + Math.floor(this.challengeList[i]
-                                .cStart/ 60) + ":" + timeout + "), "
-                                + parentGuildName + "\n";
-                            break;
-                        case 1:
-                            var timeout = "";
-                            if ((this.challengeList[i].cDur % 60)
+        var nonHiddenTotal = 0;
+        var timerInfo = "";
+        for(var i in challengelist.challengeList) {
+            var parentChannel = client.channels.get(challengelist
+                .challengeList[i].channelID);
+            var parentGuild = parentChannel.guild;
+            // check whether a challenge is hidden
+            if (!(challengelist.challengeList[i].hidden &&
+                parentGuild.id != msg.guild.id)) {
+                nonHiddenTotal += 1;
+                // find originating server name
+                var parentGuildName = parentGuild.name;
+                switch(challengelist.challengeList[i].state){
+                    case 0:
+                        var timeout = "";
+                        if ((challengelist.challengeList[i].cStart % 60)
                                 < 10) {
-                                timeout = "0" + (this.challengeList[i]
-                                    .cDur % 60).toString();
-                            } else {
-                                timeout = this.challengeList[i].cDur
-                                    % 60;
-                            }
-                            timerInfo += i + ": " + this.challengeList
-                                [i].displayName +  " (";
-                            if (this.challengeList[i].type == "sprint")
-                                {
-                                timerInfo += this.challengeList[i].goal
+                            timeout = "0" + (challengelist.challengeList[i]
+                                .cStart % 60).toString();
+                        } else {
+                            timeout = challengelist.challengeList[i].cStart
+                                % 60;
+                        }
+                        timerInfo += i + ": " + challengelist.challengeList
+                            [i].displayName + " (";
+                        if (challengelist.challengeList[i].type ==
+                            "sprint") {
+                            timerInfo += challengelist.challengeList[i].goal
                                 + " words, ";
-                            }
-                            timerInfo += this.challengeList[i].duration
-                                + " minutes, "
-                                + Math.floor(this.challengeList[i].cDur
-                                / 60) + ":" + timeout + " remaining), "
-                                + parentGuildName + "\n";
-                            break;
-                        case 2:
-                        case 3:
-                            timerInfo += i + ": " + this.challengeList
-                                [i].displayName +  " (";
-                            if (this.challengeList[i].type == "sprint")
-                                {
-                                timerInfo += this.challengeList[i].goal
-                                + " words, ";
-                            }
-                            timerInfo += this.challengeList[i].duration
-                            + " minutes, ended), " + parentGuildName + "\n";
-                            break;
-                        default:
-                            break;
-                    }
+                        }
+                        timerInfo += challengelist.challengeList[i].duration
+                            + " minutes, starts in "
+                            + Math.floor(challengelist.challengeList[i]
+                            .cStart/ 60) + ":" + timeout + "), "
+                            + parentGuildName + "\n";
+                        break;
+                    case 1:
+                        var timeout = "";
+                        if ((challengelist.challengeList[i].cDur % 60)
+                            < 10) {
+                            timeout = "0" + (challengelist.challengeList[i]
+                                .cDur % 60).toString();
+                        } else {
+                            timeout = challengelist.challengeList[i].cDur
+                                % 60;
+                        }
+                        timerInfo += i + ": " + challengelist.challengeList
+                            [i].displayName +  " (";
+                        if (challengelist.challengeList[i].type == "sprint")
+                            {
+                            timerInfo += challengelist.challengeList[i].goal
+                            + " words, ";
+                        }
+                        timerInfo += challengelist.challengeList[i].duration
+                            + " minutes, "
+                            + Math.floor(challengelist.challengeList[i].cDur
+                            / 60) + ":" + timeout + " remaining), "
+                            + parentGuildName + "\n";
+                        break;
+                    case 2:
+                    case 3:
+                        timerInfo += i + ": " + challengelist.challengeList
+                            [i].displayName +  " (";
+                        if (challengelist.challengeList[i].type == "sprint")
+                            {
+                            timerInfo += challengelist.challengeList[i].goal
+                            + " words, ";
+                        }
+                        timerInfo += challengelist.challengeList[i].duration
+                        + " minutes, ended), " + parentGuildName + "\n";
+                        break;
+                    default:
+                        break;
                 }
             }
-            msg.channel.send(timerInfo);
         }
+        var listMsg = "";
+        if(nonHiddenTotal == 0) {
+            listMsg += ("There are no challenges running."
+                + " Why don't you start one?");
+        } else if(nonHiddenTotal == 1) {
+            listMsg += "There is " + nonHiddenTotal
+                + " challenge running:\n";
+        } else {
+            listMsg += "There are " + nonHiddenTotal
+                + " challenges running:\n";
+        }
+        if (nonHiddenTotal > 0) {
+            listMsg += timerInfo;
+        }
+        msg.channel.send(listMsg);
     }
     
     addTotal(msg,suffix) {
@@ -385,16 +390,16 @@ class Challenges {
             if (writtenType === undefined) {
                 writtenType = "words";
             }
-            if (challengeID in this.challengeList) {
-                if (this.challengeList[challengeID].state >= 2) {
-                    if (!(this.challengeList[challengeID].hidden &&
-                        this.challengeList[challengeID].channelID
-                        != msg.channel.id)) {
+            if (challengeID in challengelist.challengeList) {
+                if (challengelist.challengeList[challengeID].state >= 2) {
+                    if (!(challengelist.challengeList[challengeID].hidden &&
+                        client.channels.get(challengelist.challengeList
+                        [challengeID].channelID).guild.id != msg.guild.id)) {
                         if(Number.isInteger(Number(wordsWritten))){
-                            for(user in this.challengeList[challengeID]
-                                .joinedUsers) {
+                            for(var user in challengelist.challengeList
+                                [challengeID].joinedUsers) {
                                 if(user == msg.author.id) {
-                                    if(!(this.challengeList
+                                    if(!(challengelist.challengeList
                                         [challengeID].joinedUsers[user]
                                         .countData === undefined)) {
                                         raptorCheck = false;
@@ -404,7 +409,7 @@ class Challenges {
                             if (Number(wordsWritten) < 1) {
                                 raptorCheck = false;
                             }
-                            this.challengeList[challengeID]
+                            challengelist.challengeList[challengeID]
                                 .joinedUsers[msg.author.id] = {
                                 "countData": wordsWritten,
                                 "countType": writtenType,
@@ -413,12 +418,12 @@ class Challenges {
                                 conn.collection("challengeDB").update(
                                     {_id: parseInt(challengeID)},
                                     {$set: {"joinedUsers":
-                                        this.challengeList
+                                        challengelist.challengeList
                                         [challengeID].joinedUsers}},
                                     {upsert: true}
                                 )
                             } catch(e) {
-                                logger.info("Error: " + e);
+                                logger.error("Error: " + e);
                             }
                             msg.channel.send("Total added to summary.");
                         } else {
@@ -427,7 +432,7 @@ class Challenges {
                         }
                     } else {
                         msg.channel.send(msg.author + ", you do not have"
-                            + " permission to join  challenge.")
+                            + " permission to join this challenge.")
                     }
                 } else {
                     msg.channel.send("This challenge has not ended yet!");
@@ -437,167 +442,6 @@ class Challenges {
             }
         }
         return raptorCheck;
-    }
-    
-    generateSummary(channel, challengeID) {
-        if (challengeID in this.challengeList) {
-            if (this.challengeList[challengeID].state >= 2) {
-                var userTotal = "";
-                var totalWords = {};
-                var totalLines = {};
-                var totalPages = {};
-                var totalMinutes = {};
-                for(var user in this.challengeList[challengeID].joinedUsers) {
-                    if(Number.isInteger(Number(this.challengeList[challengeID]
-                        .joinedUsers[user].countData)) && this.challengeList
-                        [challengeID].joinedUsers[user].countType != undefined){
-                        if (this.challengeList[challengeID].joinedUsers[user]
-                            .channelID == channel.id) {
-                            userTotal += client.users.get(user) + ": **"
-                                + this.challengeList[challengeID].joinedUsers
-                                [user].countData + "** "
-                                + this.challengeList[challengeID].joinedUsers
-                                [user].countType + "\n";
-                        }
-                        var userChannel = this.challengeList[challengeID]
-                            .joinedUsers[user].channelID;
-                        if (!(userChannel in totalWords)) {
-                            totalWords[userChannel] = 0;
-                        }
-                        if (!(userChannel in totalLines)) {
-                            totalLines[userChannel] = 0;
-                        }
-                        if (!(userChannel in totalPages)) {
-                            totalPages[userChannel] = 0;
-                        }
-                        if (!(userChannel in totalMinutes)) {
-                            totalMinutes[userChannel] = 0;
-                        }
-                        switch (this.challengeList[challengeID].
-                            joinedUsers[user].countType) {
-                            case "words":
-                            case "word":
-                                totalWords[userChannel] += parseInt(this.
-                                    challengeList[challengeID].joinedUsers[user]
-                                    .countData);
-                                break;
-                            case "lines":
-                            case "line":
-                                totalLines[userChannel] += parseInt(this.
-                                    challengeList[challengeID].joinedUsers[user]
-                                    .countData);
-                                break;
-                            case "pages":
-                            case "page":
-                                totalPages[userChannel] += parseInt(this.
-                                    challengeList[challengeID].joinedUsers[user]
-                                    .countData);
-                                break;
-                            case "minutes":
-                            case "minute":
-                                totalMinutes[userChannel] += parseInt(this.
-                                    challengeList[challengeID].joinedUsers[user]
-                                    .countData);
-                                break;
-                            default:
-                                break;
-                        }
-                    }
-                }
-                var firstType = true;
-                var summaryData = "***Statistics for " + this.challengeList
-                    [challengeID].displayName + ":***\n\n" + userTotal
-                    + channel.guild.name + " Total:";
-                if (totalWords[channel.id] > 0) {
-                    summaryData += " **" + totalWords[channel.id] + "** words";
-                    firstType = false;
-                }
-                if (totalLines[channel.id] > 0 ) {
-                    if (!firstType) {
-                        summaryData += ",";
-                    }
-                    summaryData += " **" + totalLines[channel.id] + "** lines";
-                    firstType = false;
-                }
-                if (totalPages[channel.id] > 0) {
-                    if (!firstType) {
-                        summaryData += ",";
-                    }
-                    summaryData += " **" + totalPages[channel.id] + "** pages";
-                    firstType = false;
-                }
-                if (totalMinutes[channel.id] > 0) {
-                    if (!firstType) {
-                        summaryData += ",";
-                    }
-                    summaryData += " **" + totalMinutes[channel.id] + "** minutes";
-                    firstType = false;
-                }
-                //this server's summary
-                if (!firstType) {
-                    channel.send(summaryData);
-                }
-                //other servers' summaries
-                var crossServerSummary = "\n";
-                var crossData = false;
-                for(var i = 0; i < this.challengeList[challengeID]
-                    .hookedChannels.length; i++) {
-                    var currentChannel = this.challengeList[challengeID]
-                        .hookedChannels[i];
-                    if(currentChannel != channel.id) {
-                        console.log(currentChannel);
-                        var currentServer = client.channels.get(currentChannel)
-                            .guild.name;
-                        var serverSummary = "__*" + currentServer + "*__:";
-                        var xfirstType = true;
-                        if (totalWords[currentChannel] > 0) {
-                            serverSummary += " **" + totalWords[currentChannel]
-                                + "** words";
-                            xfirstType = false;
-                        }
-                        if (totalLines[currentChannel] > 0 ) {
-                            if (!xfirstType) {
-                                serverSummary += ",";
-                            }
-                            serverSummary += " **" + totalLines[currentChannel]
-                                + "** lines";
-                            xfirstType = false;
-                        }
-                        if (totalPages[currentChannel] > 0) {
-                            if (!xfirstType) {
-                                serverSummary += ",";
-                            }
-                            serverSummary += " **" + totalPages[currentChannel]
-                                + "** pages";
-                            xfirstType = false;
-                        }
-                        if (totalMinutes[currentChannel] > 0) {
-                            if (!xfirstType) {
-                                serverSummary += ",";
-                            }
-                            serverSummary += " **" + totalMinutes[currentChannel]
-                                + "** minutes";
-                            xfirstType = false;
-                        }
-                        if (!xfirstType) {
-                            crossData = true;
-                            crossServerSummary += serverSummary + "\n";
-                        }
-                    }
-                }
-                if (crossData) {
-                    if(firstType) {
-                        channel.send("***Statistics for " + this.challengeList
-                        [challengeID].displayName + ":***\n");
-                    }
-                    channel.send(crossServerSummary);
-                }
-            } else {
-                channel.send("This challenge has not ended yet!");
-            }
-        } else {
-            channel.send("This challenge does not exist!");
-        }
     }
 
     xsDisplay(msg,suffix) {

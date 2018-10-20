@@ -1,4 +1,4 @@
-const challenges = require("./challenges.js");
+const challengelist = require("./challengelist.js");
 const conn = require("mongoose").connection;
 
 class Challenge {
@@ -20,7 +20,7 @@ class Challenge {
 
         this.cStart = this.countdown * 60;
         this.cDur = this.duration * 60;
-        this.cPost = challenges.DUR_AFTER;
+        this.cPost = challengelist.DUR_AFTER;
 
         this.startStamp = this.initStamp + (this.cStart * 1000);
         this.endStamp = this.startStamp + (this.cDur * 1000);
@@ -70,7 +70,7 @@ class Challenge {
                 break;
             default:
                 this.channel.send("Error: Invalid state reached.");
-                delete challenges.challengeList[this.objectID];
+                delete challengelist.challengeList[this.objectID];
                 break;
         }
     }
@@ -164,13 +164,13 @@ class Challenge {
         this.cPost--;
         if(this.cPost == 0) {
             for(var i = 0; i < this.hookedChannels.length; i++) {
-                challenges.generateSummary(client.channels.get(
+                challengelist.generateSummary(client.channels.get(
                     this.hookedChannels[i]), this.objectID);
             }
             conn.collection("challengeDB").remove(
                 {_id: this.objectID}
             );
-            delete challenges.challengeList[this.objectID];
+            delete challengelist.challengeList[this.objectID];
         }
     }
 }

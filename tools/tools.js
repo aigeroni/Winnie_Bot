@@ -1,5 +1,4 @@
 const prompts = require("./data.js");
-const logger = require("../logger.js");
 const conn = require("mongoose").connection;
 
 class Tools {
@@ -33,12 +32,12 @@ class Tools {
             }
             if (base === null) {
                 msg.channel.send("Invalid input. You need to select an"
-                    + " easy, average, or hard goal.");
+                    + " easy, average, or hard target.");
             } else {
                 var goalPerMinute = ((Math.ceil(Math.random() * 12)
                     + base));
                 var goalTotal = (goalPerMinute * time);
-                msg.channel.send(msg.author + ", your goal is **"
+                msg.channel.send(msg.author + ", your target is **"
                     + goalTotal + "**.");
             }
         }
@@ -94,30 +93,27 @@ class Tools {
     };
 
     raptorStats(client,msg) {
-        var raptorMsg = "__**Raptor Statistics:**__\n";
-        var raptorOrd = sortCollection(this.raptorCount);
-        for (var i = 0; i < 10; i++) {
-            if (raptorOrd[i] === undefined) {
-                break;
-            }
-            raptorMsg += "\n" + (i+1) + ". *"
+        var raptorMsg = "__**Raptor Statistics:**__";
+        var raptorOrd = this.sortCollection(this.raptorCount);
+        for (var i = 0; i < raptorOrd.length; i++) {
+            if (i < 10 || raptorOrd[i] == msg.guild.id) {
+                raptorMsg += "\n" + (i+1) + ". *"
                 + client.guilds.get(raptorOrd[i]) + ":* "
                 + this.raptorCount[raptorOrd[i]];
+            }
         }
-        msg.channel.send(raptorMsg);
-        var userOrd = sortCollection(this.userRaptors[msg.guild.id]);
+        var userOrd = this.sortCollection(this.userRaptors[msg.guild.id]);
         if (this.raptorCount[msg.guild.id] > 0) {
-            var userRaptorMsg = "**Raptors by Author:**";
-            for (var i = 0; i < 10; i++) {
-                if (userOrd[i] === undefined) {
-                    break;
-                }
-                userRaptorMsg += "\n" + (i+1) + ". *"
+            raptorMsg += "\n\n**Raptors by Author:**";
+            for (var i = 0; i < userOrd.length; i++) {
+                if (i < 10 || userOrd[i] == msg.author.id) {
+                    raptorMsg += "\n" + (i+1) + ". *"
                     + client.users.get(userOrd[i]).username + ":* "
                     + this.userRaptors[msg.guild.id][userOrd[i]];
+                }
             }
-            msg.channel.send(userRaptorMsg);
         }
+        msg.channel.send(raptorMsg);
     }
 
     sortCollection(toSort) {
@@ -144,7 +140,7 @@ class Tools {
                     diceSum += Number(faces[i]);
                 }
             } else if (faces[i].split("d").length == 2) { // RPG-style roll
-                rpgRoll = faces[i].split("d");
+                var rpgRoll = faces[i].split("d");
                 if (rpgRoll[0] == "") {
                     rpgRoll[0] = 1;
                 }
@@ -172,7 +168,7 @@ class Tools {
                     }
                 }
             } else if(faces[i].split(" ").length == 2){ // Range roll
-                rangeRoll = faces[i].split(" ");
+                var rangeRoll = faces[i].split(" ");
                 if (!Number.isInteger(Number(rangeRoll[0])) ||
                     !Number.isInteger(Number(rangeRoll[1]))) {
                     diceString = "Error: Both values in a range roll"
@@ -202,10 +198,10 @@ class Tools {
                 diceString += ", "
             }
         }
-        msg.channel.send(diceString);
         if (diceSum > 0) {
-            msg.channel.send("Total = " + diceSum);
+            diceString += ("\nTotal = " + diceSum);
         }
+        msg.channel.send(diceString);
     }
 }
 

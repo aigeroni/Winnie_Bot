@@ -1,4 +1,5 @@
-const goals = require("./goals.js");
+const goallist = require("./goallist.js");
+const conn = require("mongoose").connection;
 
 class Goal {
     constructor(authorID, goal, goalType, written, startTime, terminationTime,
@@ -31,22 +32,23 @@ class Goal {
 
     update() {
         if(new Date().getTime() >= this.terminationTime) {
-            var raptorPct = ((this.written / this.goal) * 100);
-            goals.raptor(this.channel.guild.id, this.channel,
-                client.users.get(this.authorID), raptorPct);
+            var raptorRollData = [this.channel,
+                ((this.written / this.goal) * 100)];
+            delete goallist.goalList[this.authorID];
             conn.collection("goalDB").remove(
                 {authorID: this.authorID}
             );
-            delete goals.goalList[this.authorID];
+            return raptorRollData;
         }
+        return false;
     }
 
     addWords(wordNumber, type) {
         switch(type){
-            case 0:
+            case false:
                 this.written += parseInt(wordNumber);
                 break;
-            case 1:
+            case true:
                 this.written = parseInt(wordNumber);
                 break;
         }

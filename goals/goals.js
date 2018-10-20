@@ -1,11 +1,16 @@
-const goal = require("./goal.js");
+const goallist = require("./goallist.js");
+const Goal = require("./goal");
+const timezoneJS = require("timezone-js");
 const logger = require("../logger.js");
 const conn = require("mongoose").connection;
 
 class Goals {
     constructor() {
-        this.goalList = {};
         this.regionRegex = /^(Africa|America|Antarctica|Asia|Atlantic|Australia|Europe|Indian|Pacific|Etc)/;
+    }
+
+    regexCheck(roleList) {
+        return this.test(roleList.name);
     }
 
     async setTimezone(msg,suffix) {
@@ -16,7 +21,7 @@ class Goals {
         } else {
             try{
                 //check to see if timezone is in IANA library
-                dateCheck.setTimezone(timezone)
+                dateCheck.setTimezone(timezone);
             } catch(e) {
                 if (e.code == "ENOENT") {
                     await msg.channel.send("Fatal error. Please contact"
@@ -31,6 +36,14 @@ class Goals {
                         + " about IANA timezone identifiers, go here:"
                         + " https://en.wikipedia.org/wiki/Tz_database");
                 }
+                return false;
+            }
+            //check entered timezone against regex
+            if (!(this.regionRegex.test(timezone))){
+                msg.channel.send("Winnie_Bot accepts IANA timezone"
+                    + " identifiers only.  For detailed information"
+                    + " about IANA timezone identifiers, go here:"
+                    + " https://en.wikipedia.org/wiki/Tz_database");
                 return false;
             }
             //create new role if needed, find role ID
@@ -51,9 +64,8 @@ class Goals {
             }
             var tzRole = msg.guild.roles.find("name", timezone);
             //get timezone
-            currentRoleList = msg.member.roles.filter(function (a) {
-                return regionRegex.test(a.name);
-            });
+            var currentRoleList = msg.member.roles.filter(this.regexCheck,
+                this.regionRegex);
             //add user to role, confirm
             await msg.member.removeRoles(currentRoleList);
             msg.channel.send(msg.author + ", you have set your timezone"
@@ -71,13 +83,13 @@ class Goals {
         } else if(!Number.isInteger(Number(goal))){
             msg.channel.send("Your goal must be a whole"
                 + " number.");
-        } else if((msg.author.id in goalList)) {
+        } else if((msg.author.id in goallist.goalList)) {
             msg.channel.send(msg.author + ", you have already set a goal"
                 + " today. Use !update/!progress to record your progress.");
         } else {
-            if (writtenType == "line" || writtenType == "page"
-                || writtenType == "word" || writtenType == "minute") {
-                writtenType += "s";
+            if (goalType == "line" || goalType == "page"
+                || goalType == "word" || goalType == "minute") {
+                goalType += "s";
             }   
             if (!(goalType == "lines" || goalType == "pages" ||
                 goalType == "minutes" || goalType == "words" ||
@@ -91,9 +103,8 @@ class Goals {
                 }
                 try {
                     //get timezone
-                    var tzRole = msg.member.roles.filter(function (a) {
-                        return regionRegex.test(a.name);
-                    });
+                    var tzRole = msg.member.roles.filter(this.regexCheck,
+                        this.regionRegex);
                     var userTZ = tzRole.first().name;
                     //get current time
                     var startTime = new timezoneJS.Date();
@@ -102,13 +113,14 @@ class Goals {
                     var endTime = new timezoneJS.Date();
                     endTime.setTimezone(userTZ);
                     endTime.setHours(24,0,0,0);
-                    goalList[msg.author.id] = new goal.Goal
+                    goallist.goalList[msg.author.id] = new Goal
                         (msg.author.id, goal, goalType, 0,
                         startTime.getTime(), endTime.getTime(),
                         msg.channel.id);
                     msg.channel.send(msg.author + ", your goal for today"
                         + " is **" + goal + "** " + goalType + ".");
                 } catch(e) {
+                    logger.info(e, e.stack);
                     msg.channel.send(msg.author + ", you need to set your"
                         + " timezone before setting a daily goal."
                         + " Use the !timezone command to do so.");
@@ -125,29 +137,29 @@ class Goals {
         } else if(!Number.isInteger(Number(goal))){
             msg.channel.send("Invalid input. Your goal must be a whole"
                 + " number.");
-        } else if(!(msg.author.id in goalList)) {
+        } else if(!(msg.author.id in goallist.goalList)) {
             msg.channel.send(msg.author + ", you have not yet set a goal"
                 + " for today. Use !set to do so.");
         } else {
-            goalList[msg.author.id].addWords(goal, overwrite);
+            goallist.goalList[msg.author.id].addWords(goal, overwrite);
             msg.channel.send(msg.author + ", you have written **"
-                + goalList[msg.author.id].written + "** "
-                + goalList[msg.author.id].goalType + " of your **"
-                + goalList[msg.author.id].goal + "**-"
-                + goalList[msg.author.id].goalType.slice(0, -1)
+                + goallist.goalList[msg.author.id].written + "** "
+                + goallist.goalList[msg.author.id].goalType + " of your **"
+                + goallist.goalList[msg.author.id].goal + "**-"
+                + goallist.goalList[msg.author.id].goalType.slice(0, -1)
                 + " goal.");
         }
     }
     
     resetGoal(msg) {
-        if(!(msg.author.id in goalList)) {
+        if(!(msg.author.id in goallist.goalList)) {
             msg.channel.send(msg.author + ", you have not yet set a goal"
                 + " for today. Use !set to do so.");
         } else {
             conn.collection("goalDB").remove(
                 {authorID: msg.author.id}
             );
-            delete goalList[msg.author.id];
+            delete goallist.goalList[msg.author.id];
     
             msg.channel.send(msg.author + ", you have successfully reset"
                 + " your daily goal.");
@@ -155,15 +167,15 @@ class Goals {
     }
     
     viewGoal(msg) {
-        if(!(msg.author.id in goalList)) {
+        if(!(msg.author.id in goallist.goalList)) {
             msg.channel.send(msg.author + ", you have not yet set a goal"
                 + " for today. Use !set to do so.");
         } else {
             msg.channel.send(msg.author + ", you have written **"
-                + goalList[msg.author.id].written + "** "
-                + goalList[msg.author.id].goalType + " of your **"
-                + goalList[msg.author.id].goal + "**-"
-                + goalList[msg.author.id].goalType.slice(0, -1)
+                + goallist.goalList[msg.author.id].written + "** "
+                + goallist.goalList[msg.author.id].goalType + " of your **"
+                + goallist.goalList[msg.author.id].goal + "**-"
+                + goallist.goalList[msg.author.id].goalType.slice(0, -1)
                 + " goal.");
         }
     }
