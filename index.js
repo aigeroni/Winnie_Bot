@@ -16,43 +16,59 @@ const mongoose = require('mongoose');
 
 const conn = mongoose.connection;
 
-global.client = new Discord.Client;
+global.client = new Discord.Client();
 timezoneJS.timezone.zoneFileBasePath = 'node_modules/timezone-js/tz';
 timezoneJS.timezone.init();
 
 const tickTimer = gameloop.setGameLoop(async function(delta) {
-  for (var item in challengelist.challengeList) {
-    if (challengelist.challengeList[item].type == 'chain war') {
-      if (challengelist.challengeList[item].state == 2) {
-        challengelist.challengeList[item].state = 3;
-        if (challengelist.challengeList[item].current < challengelist
-            .challengeList[item].total) {
-          const startTime = new Date().getTime();
-          challengelist.challengeList[challenges.timerID] = new
-          ChainWar(challenges.timerID, challengelist.challengeList
-              [item].creator, challengelist.challengeList[item]
-              .warName, startTime, challengelist.challengeList[item]
-              .current+1, challengelist.challengeList[item].total,
-          challengelist.challengeList[item].countdown,
-          challengelist.challengeList[item].duration,
-          challengelist.challengeList[item].channelID,
-          challengelist.challengeList[item].hidden, {});
-          conn.collection('timer').update(
-              {data: challenges.timerID},
-              {data: (challenges.timerID+1)},
-              {upsert: true}
-          );
-          challenges.timerID = challenges.timerID + 1;
+  for (const item in challengelist.challengeList) {
+    if (challengelist.challengeList.hasOwnProperty(item)) {
+      if (challengelist.challengeList[item].type == 'chain war') {
+        if (challengelist.challengeList[item].state == 2) {
+          challengelist.challengeList[item].state = 3;
+          if (
+            challengelist.challengeList[item].current <
+            challengelist.challengeList[item].total
+          ) {
+            const startTime = new Date().getTime();
+            challengelist.challengeList[challenges.timerID] = new ChainWar(
+                challenges.timerID,
+                challengelist.challengeList[item].creator,
+                challengelist.challengeList[item].warName,
+                startTime,
+                challengelist.challengeList[item].current + 1,
+                challengelist.challengeList[item].total,
+                challengelist.challengeList[item].countdown,
+                challengelist.challengeList[item].duration,
+                challengelist.challengeList[item].channelID,
+                challengelist.challengeList[item].hidden,
+                {}
+            );
+            conn
+                .collection('timer')
+                .update(
+                    {data: challenges.timerID},
+                    {data: challenges.timerID + 1},
+                    {upsert: true}
+                );
+            challenges.timerID = challenges.timerID + 1;
+          }
         }
       }
+      challengelist.challengeList[item].update();
     }
-    challengelist.challengeList[item].update();
   }
-  for (var item in goallist.goalList) {
-    const raptorRoll = goallist.goalList[item].update();
-    if (raptorRoll != false) {
-      tools.raptor(raptorRoll[0].guild.id, raptorRoll[0],
-          client.users.get(item), raptorRoll[1]);
+  for (const item in goallist.goalList) {
+    if (goallist.goalList.hasOwnProperty(item)) {
+      const raptorRoll = goallist.goalList[item].update();
+      if (raptorRoll != false) {
+        tools.raptor(
+            raptorRoll[0].guild.id,
+            raptorRoll[0],
+            client.users.get(item),
+            raptorRoll[1]
+        );
+      }
     }
   }
 }, 1000);
@@ -60,118 +76,137 @@ const tickTimer = gameloop.setGameLoop(async function(delta) {
 client.on('ready', () => {
   logger.info('Winnie_Bot is online');
   // Connect to the database
-  mongoose.connect(config.storage_url, {useNewUrlParser: true, autoIndex:
-        false}, function(e, db) {
-    if (e) throw e;
-    logger.info('Database created!');
-    conn.collection('timer').find(
-        {}, function(e, t) {
+  mongoose.connect(
+      config.storage_url,
+      {
+        useNewUrlParser: true,
+        autoIndex: false,
+      },
+      function(e, db) {
+        if (e) throw e;
+        logger.info('Database created!');
+        conn.collection('timer').find({}, function(e, t) {
           t.forEach(function(tx) {
             challenges.timerID = tx.data;
           });
-        }
-    );
-    conn.collection('challengeDB').find(
-        {}, function(e, challengeinput) {
+        });
+        conn.collection('challengeDB').find({}, function(e, challengeinput) {
           challengeinput.forEach(function(challenge) {
-            logger.info(challenge.hidden);
             if (challenge.type == 'sprint') {
               challengelist.challengeList[challenge._id] = new Sprint(
-                  challenge._id, challenge.creator,
-                  challenge.name, challenge.startTime,
-                  challenge.countdown, challenge.goal,
-                  challenge.duration, challenge.channel,
-                  challenge.hidden, challenge.joinedUsers);
+                  challenge._id,
+                  challenge.creator,
+                  challenge.name,
+                  challenge.startTime,
+                  challenge.countdown,
+                  challenge.goal,
+                  challenge.duration,
+                  challenge.channel,
+                  challenge.hidden,
+                  challenge.joinedUsers
+              );
             } else if (challenge.type == 'war') {
               challengelist.challengeList[challenge._id] = new War(
-                  challenge._id, challenge.creator, challenge.name,
-                  challenge.startTime, challenge.countdown,
-                  challenge.duration, challenge.channel,
-                  challenge.hidden, challenge.joinedUsers);
+                  challenge._id,
+                  challenge.creator,
+                  challenge.name,
+                  challenge.startTime,
+                  challenge.countdown,
+                  challenge.duration,
+                  challenge.channel,
+                  challenge.hidden,
+                  challenge.joinedUsers
+              );
             } else if (challenge.type == 'chain war') {
-              challengelist.challengeList[challenge._id] =
-                        new ChainWar(challenge._id, challenge.creator,
-                            challenge.name, challenge.startTime, challenge.current,
-                            challenge.total, challenge.countdown,
-                            challenge.duration, challenge.channel,
-                            challenge.hidden, challenge.joinedUsers);
+              challengelist.challengeList[challenge._id] = new ChainWar(
+                  challenge._id,
+                  challenge.creator,
+                  challenge.name,
+                  challenge.startTime,
+                  challenge.current,
+                  challenge.total,
+                  challenge.countdown,
+                  challenge.duration,
+                  challenge.channel,
+                  challenge.hidden,
+                  challenge.joinedUsers
+              );
             }
           });
-        }
-    );
-    conn.collection('goalDB').find(
-        {}, function(e, goals) {
+        });
+        conn.collection('goalDB').find({}, function(e, goals) {
           goals.forEach(function(goal) {
-            goallist.goalList[goal.authorID] = new Goal
-            (goal.authorID, goal.goal, goal.goalType, goal.written,
-                goal.startTime, goal.terminationTime,
-                goal.channelID);
+            goallist.goalList[goal.authorID] = new Goal(
+                goal.authorID,
+                goal.goal,
+                goal.goalType,
+                goal.written,
+                goal.startTime,
+                goal.terminationTime,
+                goal.channelID
+            );
           });
-        }
-    );
-    conn.collection('raptorDB').find(
-        {}, function(e, guilds) {
+        });
+        conn.collection('raptorDB').find({}, function(e, guilds) {
           guilds.forEach(function(guild) {
             tools.raptorCount[guild.server] = guild.count;
           });
-        }
-    );
-    conn.collection('raptorUserDB').find(
-        {}, function(e, authors) {
+        });
+        conn.collection('raptorUserDB').find({}, function(e, authors) {
           authors.forEach(function(author) {
             if (!(author.server in tools.userRaptors)) {
               tools.userRaptors[author.server] = {};
             }
-            tools.userRaptors[author.server][author.user]
-                        = author.count;
+            tools.userRaptors[author.server][author.user] = author.count;
           });
-        }
-    );
-    conn.collection('configDB').find(
-        {}, function(e, guilds) {
+        });
+        conn.collection('configDB').find({}, function(e, guilds) {
           guilds.forEach(function(guild) {
             challenges.crossServerStatus[guild.server] = guild.xStatus;
             challenges.autoSumStatus[guild.server] = guild.autoStatus;
           });
-        }
-    );
-  });
+        });
+      }
+  );
 });
 
-var cmdList = {
-  'sprint': {
+const cmdList = {
+  sprint: {
     name: 'sprint',
-    description: 'Starts a sprint of <words> words which times out in'
-            + ' <duration> minutes in [time to start] minutes,'
-            + ' with optional [name] (can only be set'
-            + ' if time to start is also set)',
+    description:
+      'Starts a sprint of <words> words which times out in' +
+      ' <duration> minutes in [time to start] minutes,' +
+      ' with optional [name] (can only be set' +
+      ' if time to start is also set)',
     usage: 'words duration [time to start [name]]',
     process: function(client, msg, suffix) {
       challenges.startSprint(msg, suffix);
     },
   },
-  'war': {
+  war: {
     name: 'war',
-    description: 'Starts a word war of <duration> minutes in'
-            + ' [time to start] minutes, with optional [name] (can only be set'
-            + ' if time to start is also set)',
+    description:
+      'Starts a word war of <duration> minutes in' +
+      ' [time to start] minutes, with optional [name] (can only be set' +
+      ' if time to start is also set)',
     usage: 'duration [time to start [name]]',
     process: function(client, msg, suffix) {
       challenges.startWar(msg, suffix);
     },
   },
-  'chainwar': {
+  chainwar: {
     name: 'chainwar',
-    description: 'Starts a chain of <number of wars>, each of <duration>'
-            + ' minutes, with [time between wars] minutes between wars,'
-            + ' and optional [name] (can only be set'
-            + ' if time to start is also set)',
+    description:
+      'Starts a chain of <number of wars>, each of <duration>' +
+      ' minutes, with [time between wars] minutes between wars,' +
+      ' and optional [name] (can only be set' +
+      ' if time to start is also set)',
     usage: 'number of wars duration [time between wars [name]]',
     process: function(client, msg, suffix) {
       challenges.startChainWar(msg, suffix);
     },
   },
-  'join': {
+  join: {
     name: 'join',
     description: 'Joins war/sprint with ID number <id>',
     usage: 'id',
@@ -179,7 +214,7 @@ var cmdList = {
       challenges.joinChallenge(msg, suffix);
     },
   },
-  'leave': {
+  leave: {
     name: 'leave',
     description: 'Leaves war/sprint with ID number <id>',
     usage: 'id',
@@ -187,47 +222,54 @@ var cmdList = {
       challenges.leaveChallenge(msg, suffix);
     },
   },
-  'cancel': {
+  cancel: {
     name: 'cancel',
-    description: 'Ends war/sprint with ID number <id>.'
-            + ' Can only be performed by creator.',
+    description:
+      'Ends war/sprint with ID number <id>.' +
+      ' Can only be performed by creator.',
     usage: 'id',
     process: function(client, msg, suffix) {
       challenges.stopChallenge(msg, suffix);
     },
   },
-  'exterminate': {
+  exterminate: {
     name: 'exterminate',
-    description: 'Ends war/sprint with ID number <id>.'
-            + ' Can only be performed by creator.',
+    description:
+      'Ends war/sprint with ID number <id>.' +
+      ' Can only be performed by creator.',
     usage: 'id',
     process: function(client, msg, suffix) {
       challenges.stopChallenge(msg, suffix);
     },
   },
-  'total': {
+  total: {
     name: 'total',
-    description: 'Adds your <total> for completed war/sprint with ID number'
-            + ' <id>, optional [lines|pages|minutes]',
+    description:
+      'Adds your <total> for completed war/sprint with ID number' +
+      ' <id>, optional [lines|pages|minutes]',
     usage: 'id total [lines|pages|minutes]',
     process: function(client, msg, suffix) {
       const raptorRoll = challenges.addTotal(msg, suffix);
       if (raptorRoll) {
-        tools.raptor(msg.guild.id, msg.channel, msg.author,
-            challenges.WAR_RAPTOR_CHANCE);
+        tools.raptor(
+            msg.guild.id,
+            msg.channel,
+            msg.author,
+            challenges.WAR_RAPTOR_CHANCE
+        );
       }
     },
   },
-  'summary': {
+  summary: {
     name: 'summary',
-    description: 'Shows the summary for completed war/sprint with ID number'
-            + ' <id>',
+    description:
+      'Shows the summary for completed war/sprint with ID number' + ' <id>',
     usage: 'id',
     process: function(client, msg, suffix) {
       challengelist.generateSummary(msg.channel, suffix);
     },
   },
-  'list': {
+  list: {
     name: 'list',
     description: 'Lists all running wars/sprints',
     usage: '',
@@ -235,7 +277,7 @@ var cmdList = {
       challenges.listChallenges(client, msg);
     },
   },
-  'timezone': {
+  timezone: {
     name: 'timezone',
     description: 'Sets your <IANA timezone identifier>',
     usage: 'IANA timezone identifier',
@@ -244,47 +286,49 @@ var cmdList = {
       goals.setTimezone(msg, suffix);
     },
   },
-  'set': {
+  set: {
     name: 'set',
-    description: 'Sets a daily goal <goal>, with optional'
-            + ' [lines|pages|minutes]',
+    description:
+      'Sets a daily goal <goal>, with optional' + ' [lines|pages|minutes]',
     usage: 'goal [lines|pages|minutes]',
     type: 'goals',
     process: function(client, msg, suffix) {
       goals.setGoal(msg, suffix);
     },
   },
-  'goal': {
+  goal: {
     name: 'goal',
-    description: 'Sets a daily goal <goal>, with optional'
-            + ' [lines|pages|minutes]',
+    description:
+      'Sets a daily goal <goal>, with optional' + ' [lines|pages|minutes]',
     usage: 'goal [lines|pages|minutes]',
     type: 'goals',
     process: function(client, msg, suffix) {
       goals.setGoal(msg, suffix);
     },
   },
-  'update': {
+  update: {
     name: 'update',
-    description: 'Updates your daily goal with your <progress> since your'
-            + ' last update',
+    description:
+      'Updates your daily goal with your <progress> since your' +
+      ' last update',
     usage: 'progress',
     type: 'goals',
     process: function(client, msg, suffix) {
       goals.updateGoal(msg, suffix, false);
     },
   },
-  'add': {
+  add: {
     name: 'add',
-    description: 'Updates your daily goal with your <progress> since your'
-            + ' last update',
+    description:
+      'Updates your daily goal with your <progress> since your' +
+      ' last update',
     usage: 'progress',
     type: 'goals',
     process: function(client, msg, suffix) {
       goals.updateGoal(msg, suffix, false);
     },
   },
-  'overwrite': {
+  overwrite: {
     name: 'overwrite',
     description: 'Updates your daily goal with your <progress> today',
     usage: 'progress',
@@ -293,7 +337,7 @@ var cmdList = {
       goals.updateGoal(msg, suffix, true);
     },
   },
-  'progress': {
+  progress: {
     name: 'progress',
     description: 'Updates your daily goal with your <progress> today',
     usage: 'progress',
@@ -302,7 +346,7 @@ var cmdList = {
       goals.updateGoal(msg, suffix, true);
     },
   },
-  'reset': {
+  reset: {
     name: 'reset',
     description: 'Resets your daily goal',
     type: 'goals',
@@ -310,7 +354,7 @@ var cmdList = {
       goals.resetGoal(msg);
     },
   },
-  'goalinfo': {
+  goalinfo: {
     name: 'goalinfo',
     description: 'Displays progress towards your daily goal',
     type: 'goals',
@@ -318,17 +362,17 @@ var cmdList = {
       goals.viewGoal(msg);
     },
   },
-  'target': {
+  target: {
     name: 'target',
-    description: 'Generates an <easy|average|hard> target for'
-            + ' <minutes> minutes',
+    description:
+      'Generates an <easy|average|hard> target for' + ' <minutes> minutes',
     usage: 'easy|average|hard minutes',
     type: 'tools',
     process: function(client, msg, suffix) {
       tools.calcTarget(msg, suffix);
     },
   },
-  'prompt': {
+  prompt: {
     name: 'prompt',
     description: 'Provides a writing prompt',
     type: 'tools',
@@ -336,27 +380,28 @@ var cmdList = {
       tools.getPrompt(msg);
     },
   },
-  'roll': {
+  roll: {
     name: 'roll',
-    description: 'Rolls any combination of the given options,'
-            + ' separated by the + operator',
+    description:
+      'Rolls any combination of the given options,' +
+      ' separated by the + operator',
     usage: 'x, x y, xdy',
     type: 'tools',
     process: function(client, msg, suffix) {
       tools.rollDice(msg, suffix);
     },
   },
-  'choose': {
+  choose: {
     name: 'choose',
-    description: 'Selects an item from a list <list> of items,'
-            + ' separated by commas',
+    description:
+      'Selects an item from a list <list> of items,' + ' separated by commas',
     usage: 'list',
     type: 'tools',
     process: function(client, msg, suffix) {
       tools.chooseItem(msg, suffix);
     },
   },
-  'raptors': {
+  raptors: {
     name: 'raptors',
     description: 'Displays raptor statistics.',
     type: 'tools',
@@ -364,20 +409,22 @@ var cmdList = {
       tools.raptorStats(client, msg);
     },
   },
-  'display': {
+  display: {
     name: 'display',
-    description: 'Allows server admins to toggle cross-server display for '
-            + 'challenges.',
+    description:
+      'Allows server admins to toggle cross-server display for ' +
+      'challenges.',
     usage: 'on|off',
     type: 'config',
     process: function(client, msg, suffix) {
       challenges.xsDisplay(msg, suffix);
     },
   },
-  'autosum': {
+  autosum: {
     name: 'autosum',
-    description: 'Allows server admins to toggle automatic display of'
-            + ' challenge summaries.',
+    description:
+      'Allows server admins to toggle automatic display of' +
+      ' challenge summaries.',
     usage: 'show|hide',
     type: 'config',
     process: function(client, msg, suffix) {
@@ -388,22 +435,29 @@ var cmdList = {
 
 client.on('message', (msg) => {
   if (msg.isMentioned(client.user)) {
-    msg.channel.send('My name is Winnie, and I run challenges, track goals,'
-            + ' and provide other useful commands for writing.  I use the '
-            + config.cmd_prefix + ' prefix. Use ' + config.cmd_prefix + 'help'
-            + ' for command information.');
+    msg.channel.send(
+        'My name is Winnie, and I run challenges, track goals,' +
+        ' and provide other useful commands for writing.  I use the ' +
+        config.cmd_prefix + ' prefix. Use ' + config.cmd_prefix + 'help' +
+        ' for command information.'
+    );
   }
-  if (msg.author.id != client.user.id && (msg.content.startsWith(config
-      .cmd_prefix))) {
+  if (
+    msg.author.id != client.user.id &&
+    msg.content.startsWith(config.cmd_prefix)
+  ) {
     logger.info(msg.author + ' entered command ' + msg.content);
-    const cmdData = msg.content.split(' ')[0]
-        .substring(config.cmd_prefix.length).toLowerCase();
-    const suffix = msg.content.substring(cmdData.length
-            + config.cmd_prefix.length + 1);
-    var cmd = cmdList[cmdData];
+    const cmdData = msg.content
+        .split(' ')[0]
+        .substring(config.cmd_prefix.length)
+        .toLowerCase();
+    const suffix = msg.content.substring(
+        cmdData.length + config.cmd_prefix.length + 1
+    );
+    let cmd = cmdList[cmdData];
     if (cmdData === 'help') {
       if (suffix) {
-        var cmd = cmdList[suffix];
+        cmd = cmdList[suffix];
         let helpMsg = '';
         try {
           helpMsg += 'Data for ' + cmd.name;
@@ -424,20 +478,22 @@ client.on('message', (msg) => {
         msg.author.send('**Winnie_Bot Commands:**').then(function() {
           let helpMsg = '';
           for (const i in cmdList) {
-            helpMsg += '**' + config.cmd_prefix;
-            const cmdName = cmdList[i].name;
-            if (cmdName) {
-              helpMsg += cmdName;
+            if (cmdList.hasOwnProperty(i)) {
+              helpMsg += '**' + config.cmd_prefix;
+              const cmdName = cmdList[i].name;
+              if (cmdName) {
+                helpMsg += cmdName;
+              }
+              const cmdUse = cmdList[i].usage;
+              if (cmdUse) {
+                helpMsg += ' ' + cmdUse;
+              }
+              const cmdDesc = cmdList[i].description;
+              if (cmdDesc) {
+                helpMsg += ':** ' + cmdDesc;
+              }
+              helpMsg += '\n';
             }
-            const cmdUse = cmdList[i].usage;
-            if (cmdUse) {
-              helpMsg += ' ' + cmdUse;
-            }
-            const cmdDesc = cmdList[i].description;
-            if (cmdDesc) {
-              helpMsg += ':** ' + cmdDesc;
-            }
-            helpMsg += '\n';
           }
           msg.channel.send(msg.author + ', I sent you a DM.');
           msg.author.send(helpMsg);
@@ -455,13 +511,17 @@ client.on('message', (msg) => {
 });
 
 process.on('uncaughtException', function(e) {
-  logger.error('Error %s: %s.\nWinnie_Bot will now attempt to reconnect.',
-      e, e.stack);
+  logger.error(
+      'Error %s: %s.\nWinnie_Bot will now attempt to reconnect.',
+      e,
+      e.stack
+  );
   try {
     client.login(config.token);
     fileSystemCheck();
   } catch (e) {
     logger.error('Reconnection failed.\nWinnie_Bot will now terminate.');
+    gameloop.clearGameLoop(tickTimer);
     process.exit(1);
   }
 });

@@ -18,10 +18,10 @@ class Challenges {
     this.autoSumStatus = {};
   }
   /**
-  * Add a user to the list of joined users for a challenge.
-  * @param {Object} msg - The message that ran this function.
-  * @param {String} suffix - Information after the bot command.
-  */
+   * Add a user to the list of joined users for a challenge.
+   * @param {Object} msg - The message that ran this function.
+   * @param {String} suffix - Information after the bot command.
+   */
   joinChallenge(msg, suffix) {
     const challengeID = suffix;
     if (isNaN(challengeID)) {
@@ -29,34 +29,56 @@ class Challenges {
     } else if (challengeID < 1) {
       msg.channel.send('Challenge ID must be an integer.');
     } else if (challengeID in challengelist.challengeList) {
-      if (challengelist.challengeList[challengeID].hidden && client
-          .channels.get(challengelist.challengeList[challengeID]
-              .channelID).guild.id != msg.guild.id) {
-        msg.channel.send(msg.author + ', you do not have permission to join'
-         + ' this challenge.');
+      if (
+        challengelist.challengeList[challengeID].hidden &&
+        client.channels.get(challengelist.challengeList[challengeID].channelID)
+            .guild.id != msg.guild.id
+      ) {
+        msg.channel.send(
+            msg.author +
+            ', you do not have permission to join' +
+            ' this challenge.'
+        );
       } else {
-        if (msg.author.id in challengelist.challengeList[challengeID]
-            .joinedUsers) {
-          msg.channel.send(msg.author + ', you already have notifications'
-            + ' enabled for this challenge.');
+        if (
+          msg.author.id in challengelist.challengeList[challengeID].joinedUsers
+        ) {
+          msg.channel.send(
+              msg.author +
+              ', you already have notifications' +
+              ' enabled for this challenge.'
+          );
         } else {
-          challengelist.challengeList[challengeID].joinedUsers[msg.author.id]
-                = {'countData': undefined,
-              'countType': undefined, 'channelID': msg.channel.id};
+          challengelist.challengeList[challengeID].joinedUsers[
+              msg.author.id
+          ] = {
+            countData: undefined,
+            countType: undefined,
+            channelID: msg.channel.id,
+          };
           const pushID = msg.channel.id;
-          const searchIndex = challengelist.challengeList[challengeID]
-              .hookedChannels.indexOf(pushID);
+          const searchIndex = challengelist.challengeList[
+              challengeID
+          ].hookedChannels.indexOf(pushID);
           if (searchIndex == -1) {
-            challengelist.challengeList[challengeID].hookedChannels
-                .push(pushID);
+            challengelist.challengeList[challengeID].hookedChannels.push(
+                pushID
+            );
           }
-          msg.channel.send(msg.author + ', you have joined '
-              + challengelist.challengeList[challengeID].displayName);
+          msg.channel.send(
+              msg.author +
+              ', you have joined ' +
+              challengelist.challengeList[challengeID].displayName
+          );
           try {
             conn.collection('challengeDB').update(
                 {_id: parseInt(challengeID)},
-                {$set: {'joinedUsers': challengelist.challengeList[challengeID]
-                    .joinedUsers}},
+                {
+                  $set: {
+                    joinedUsers:
+                    challengelist.challengeList[challengeID].joinedUsers,
+                  },
+                },
                 {upsert: true}
             );
           } catch (e) {
@@ -69,10 +91,10 @@ class Challenges {
     }
   }
   /**
-  * Remove a user from the list of joined users for a challenge.
-  * @param {Object} msg - The message that ran this function.
-  * @param {String} suffix - Information after the bot command.
-  */
+   * Remove a user from the list of joined users for a challenge.
+   * @param {Object} msg - The message that ran this function.
+   * @param {String} suffix - Information after the bot command.
+   */
   leaveChallenge(msg, suffix) {
     const challengeID = suffix;
     if (isNaN(challengeID)) {
@@ -80,31 +102,41 @@ class Challenges {
     } else if (challengeID < 1) {
       msg.channel.send('Challenge ID must be an integer.');
     } else if (challengeID in challengelist.challengeList) {
-      if (msg.author.id in challengelist.challengeList[challengeID]
-          .joinedUsers) {
-        delete challengelist.challengeList[challengeID]
-            .joinedUsers[msg.author.id];
-        msg.channel.send(msg.author + ', you have left '
-          + challengelist.challengeList[challengeID].displayName);
+      if (
+        msg.author.id in challengelist.challengeList[challengeID].joinedUsers
+      ) {
+        delete challengelist.challengeList[challengeID].joinedUsers[
+            msg.author.id
+        ];
+        msg.channel.send(
+            msg.author +
+            ', you have left ' +
+            challengelist.challengeList[challengeID].displayName
+        );
         conn.collection('challengeDB').update(
             {_id: parseInt(challengeID)},
-            {$set: {'joinedUsers': challengelist.challengeList[challengeID]
-                .joinedUsers}},
+            {
+              $set: {
+                joinedUsers: challengelist.challengeList[challengeID]
+                    .joinedUsers,
+              },
+            },
             {upsert: true}
         );
       } else {
-        msg.channel.send(msg.author + ', you have not yet joined this'
-          + ' challenge.');
+        msg.channel.send(
+            msg.author + ', you have not yet joined this' + ' challenge.'
+        );
       }
     } else {
       msg.channel.send('Challenge ' + challengeID + ' does not exist!');
     }
   }
   /**
-  * Creates a new sprint.
-  * @param {Object} msg - The message that ran this function.
-  * @param {String} suffix - Information after the bot command.
-  */
+   * Creates a new sprint.
+   * @param {Object} msg - The message that ran this function.
+   * @param {String} suffix - Information after the bot command.
+   */
   startSprint(msg, suffix) {
     const args = suffix.split(' ');
     const words = args.shift();
@@ -121,8 +153,9 @@ class Challenges {
     } else if (isNaN(start)) {
       msg.channel.send('Time to start must be a number.');
     } else if (start > 30) {
-      msg.channel.send('Sprints cannot start more than 30 minutes in the'
-        + ' future.');
+      msg.channel.send(
+          'Sprints cannot start more than 30 minutes in the' + ' future.'
+      );
     } else if (timeout > 60) {
       msg.channel.send('Sprints cannot last for more than an hour.');
     } else if (words < 1) {
@@ -138,14 +171,25 @@ class Challenges {
           sprintName = msg.author.username + '\'s sprint';
         }
         const startTime = new Date().getTime();
-        challengelist.challengeList[this.timerID] = new Sprint(this.timerID,
-            creatorID, sprintName, startTime, start, words, timeout,
-            msg.channel.id, this.crossServerStatus[msg.guild.id], {});
-        conn.collection('timer').update(
-            {data: this.timerID},
-            {data: (this.timerID+1)},
-            {upsert: true}
+        challengelist.challengeList[this.timerID] = new Sprint(
+            this.timerID,
+            creatorID,
+            sprintName,
+            startTime,
+            start,
+            words,
+            timeout,
+            msg.channel.id,
+            this.crossServerStatus[msg.guild.id],
+            {}
         );
+        conn
+            .collection('timer')
+            .update(
+                {data: this.timerID},
+                {data: this.timerID + 1},
+                {upsert: true}
+            );
         this.timerID = this.timerID + 1;
       } catch (e) {
         msg.channel.send('Error: Sprint creation failed.');
@@ -154,10 +198,10 @@ class Challenges {
     }
   }
   /**
-  * Creates a new war.
-  * @param {Object} msg - The message that ran this function.
-  * @param {String} suffix - Information after the bot command.
-  */
+   * Creates a new war.
+   * @param {Object} msg - The message that ran this function.
+   * @param {String} suffix - Information after the bot command.
+   */
   startWar(msg, suffix) {
     const args = suffix.split(' ');
     const duration = args.shift();
@@ -171,8 +215,9 @@ class Challenges {
     } else if (isNaN(duration)) {
       msg.channel.send('War duration must be a number.');
     } else if (start > 30) {
-      msg.channel.send('Wars cannot start more than 30 minutes'
-                + ' in the future.');
+      msg.channel.send(
+          'Wars cannot start more than 30 minutes' + ' in the future.'
+      );
     } else if (duration > 60) {
       msg.channel.send('Wars cannot last for more than an hour.');
     } else if (start <= 0) {
@@ -186,14 +231,24 @@ class Challenges {
           warName = msg.author.username + '\'s war';
         }
         const startTime = new Date().getTime();
-        challengelist.challengeList[this.timerID] = new War(this.timerID,
-            creatorID, warName, startTime, start, duration, msg.channel.id,
-            this.crossServerStatus[msg.guild.id], {});
-        conn.collection('timer').update(
-            {data: this.timerID},
-            {data: (this.timerID+1)},
-            {upsert: true}
+        challengelist.challengeList[this.timerID] = new War(
+            this.timerID,
+            creatorID,
+            warName,
+            startTime,
+            start,
+            duration,
+            msg.channel.id,
+            this.crossServerStatus[msg.guild.id],
+            {}
         );
+        conn
+            .collection('timer')
+            .update(
+                {data: this.timerID},
+                {data: this.timerID + 1},
+                {upsert: true}
+            );
         this.timerID = this.timerID + 1;
       } catch (e) {
         msg.channel.send('Error: War creation failed.');
@@ -202,10 +257,10 @@ class Challenges {
     }
   }
   /**
-  * Creates a new chain war.
-  * @param {Object} msg - The message that ran this function.
-  * @param {String} suffix - Information after the bot command.
-  */
+   * Creates a new chain war.
+   * @param {Object} msg - The message that ran this function.
+   * @param {String} suffix - Information after the bot command.
+   */
   startChainWar(msg, suffix) {
     const args = suffix.split(' ');
     const chainWarCount = args.shift();
@@ -220,16 +275,19 @@ class Challenges {
     } else if (isNaN(timeBetween)) {
       msg.channel.send('Time between wars must be a number.');
     } else if (timeBetween > 30) {
-      msg.channel.send('There cannot be more than 30 minutes'
-                + ' between wars in a chain.');
+      msg.channel.send(
+          'There cannot be more than 30 minutes' + ' between wars in a chain.'
+      );
     } else if (isNaN(duration)) {
       msg.channel.send('War duration must be a number.');
     } else if (!(2 < chainWarCount < 10)) {
-      msg.channel.send('Chain wars must be between two and ten wars'
-                + ' long.');
+      msg.channel.send(
+          'Chain wars must be between two and ten wars' + ' long.'
+      );
     } else if (duration * chainWarCount > 120) {
-      msg.channel.send('Chain wars cannot last for more than two'
-                + ' hours of writing time.');
+      msg.channel.send(
+          'Chain wars cannot last for more than two' + ' hours of writing time.'
+      );
     } else if (timeBetween <= 0) {
       msg.channel.send('Chain wars cannot overlap.');
     } else if (duration < 1) {
@@ -241,14 +299,26 @@ class Challenges {
           warName = msg.author.username + '\'s war';
         }
         const startTime = new Date().getTime();
-        challengelist.challengeList[this.timerID] = new ChainWar(this.timerID,
-            creatorID, warName, startTime, 1, chainWarCount, timeBetween,
-            duration, msg.channel.id, this.crossServerStatus[msg.guild.id], {});
-        conn.collection('timer').update(
-            {data: this.timerID},
-            {data: (this.timerID+1)},
-            {upsert: true}
+        challengelist.challengeList[this.timerID] = new ChainWar(
+            this.timerID,
+            creatorID,
+            warName,
+            startTime,
+            1,
+            chainWarCount,
+            timeBetween,
+            duration,
+            msg.channel.id,
+            this.crossServerStatus[msg.guild.id],
+            {}
         );
+        conn
+            .collection('timer')
+            .update(
+                {data: this.timerID},
+                {data: this.timerID + 1},
+                {upsert: true}
+            );
         this.timerID = this.timerID + 1;
       } catch (e) {
         msg.channel.send('Error: Chain war creation failed.');
@@ -257,105 +327,132 @@ class Challenges {
     }
   }
   /**
-  * Terminates a challenge early.
-  * @param {Object} msg - The message that ran this function.
-  * @param {String} suffix - Information after the bot command.
-  */
+   * Terminates a challenge early.
+   * @param {Object} msg - The message that ran this function.
+   * @param {String} suffix - Information after the bot command.
+   */
   stopChallenge(msg, suffix) {
     const challengeID = suffix;
     if (isNaN(challengeID) || challengeID < 1) {
       msg.channel.send('Challenge ID must be an integer.');
     } else if (challengeID in challengelist.challengeList) {
       const stopName = challengelist.challengeList[challengeID].displayName;
-      if (!(challengelist.challengeList[challengeID].hidden && challengelist
-          .challengeList[challengeID].channelID != msg.channel.id)) {
+      if (
+        !(
+          challengelist.challengeList[challengeID].hidden &&
+          challengelist.challengeList[challengeID].channelID != msg.channel.id
+        )
+      ) {
         if (challengelist.challengeList[challengeID].creator == msg.author.id) {
-          conn.collection('challengeDB').remove(
-              {_id: Number(challengeID)}
-          );
-          for (let i = 0; i < challengelist.challengeList[challengeID]
-              .hookedChannels.length; i++) {
-            client.channels.get(challengelist.challengeList[challengeID]
-                .hookedChannels[i]).send(stopName
-                + ' has been ended by the creator.');
+          conn.collection('challengeDB').remove({_id: Number(challengeID)});
+          for (
+            let i = 0;
+            i < challengelist.challengeList[challengeID].hookedChannels.length;
+            i++
+          ) {
+            client.channels
+                .get(challengelist.challengeList[challengeID].hookedChannels[i])
+                .send(stopName + ' has been ended by the creator.');
           }
           delete challengelist.challengeList[challengeID];
         } else {
-          msg.channel.send('Only the creator of ' + stopName
-          + ' can end this challenge.');
+          msg.channel.send(
+              'Only the creator of ' + stopName + ' can end this challenge.'
+          );
         }
       } else {
-        msg.channel.send(msg.author + ', you do not have permission to end'
-          + ' this challenge.');
+        msg.channel.send(
+            msg.author +
+            ', you do not have permission to end' +
+            ' this challenge.'
+        );
       }
     } else {
       msg.channel.send('Challenge ' + challengeID + ' does not exist!');
     }
   }
   /**
-  * Lists all running challenges.
-  * @param {Object} client - The Discord client.
-  * @param {Object} msg - The message that ran this function.
-  */
+   * Lists all running challenges.
+   * @param {Object} client - The Discord client.
+   * @param {Object} msg - The message that ran this function.
+   */
   listChallenges(client, msg) {
     let nonHiddenTotal = 0;
     let timerInfo = '';
     for (const i in challengelist.challengeList) {
       if (object.hasOwnProperty(variable)) {
-        const parentChannel = client.channels.get(challengelist.challengeList[i]
-            .channelID);
+        const parentChannel = client.channels.get(
+            challengelist.challengeList[i].channelID
+        );
         const parentGuild = parentChannel.guild;
         // check whether a challenge is hidden
-        if (!(challengelist.challengeList[i].hidden && parentGuild.id
-            != msg.guild.id)) {
+        if (
+          !(
+            challengelist.challengeList[i].hidden &&
+            parentGuild.id != msg.guild.id
+          )
+        ) {
           nonHiddenTotal += 1;
           // find originating server name
           const parentGuildName = parentGuild.name;
           let timeout = '';
           switch (challengelist.challengeList[i].state) {
             case 0:
-              if ((challengelist.challengeList[i].cStart % 60) < 10) {
-                timeout = '0' + (challengelist.challengeList[i].cStart % 60)
-                    .toString();
+              if (challengelist.challengeList[i].cStart % 60 < 10) {
+                timeout =
+                  '0' + (challengelist.challengeList[i].cStart % 60).toString();
               } else {
                 timeout = challengelist.challengeList[i].cStart % 60;
               }
-              timerInfo += i + ': ' + challengelist.challengeList[i].displayName
-                + ' (';
+              timerInfo +=
+                i + ': ' + challengelist.challengeList[i].displayName + ' (';
               if (challengelist.challengeList[i].type == 'sprint') {
                 timerInfo += challengelist.challengeList[i].goal + ' words, ';
               }
-              timerInfo += challengelist.challengeList[i].duration
-                + ' minutes, starts in ' + Math.floor(challengelist
-                  .challengeList[i].cStart/ 60) + ':' + timeout + '), '
-                  + parentGuildName + '\n';
+              timerInfo +=
+                challengelist.challengeList[i].duration +
+                ' minutes, starts in ' +
+                Math.floor(challengelist.challengeList[i].cStart / 60) +
+                ':' +
+                timeout +
+                '), ' +
+                parentGuildName +
+                '\n';
               break;
             case 1:
-              if ((challengelist.challengeList[i].cDur % 60) < 10) {
-                timeout = '0' + (challengelist.challengeList[i].cDur % 60)
-                    .toString();
+              if (challengelist.challengeList[i].cDur % 60 < 10) {
+                timeout =
+                  '0' + (challengelist.challengeList[i].cDur % 60).toString();
               } else {
                 timeout = challengelist.challengeList[i].cDur % 60;
               }
-              timerInfo += i + ': ' + challengelist.challengeList[i].displayName
-                + ' (';
+              timerInfo +=
+                i + ': ' + challengelist.challengeList[i].displayName + ' (';
               if (challengelist.challengeList[i].type == 'sprint') {
                 timerInfo += challengelist.challengeList[i].goal + ' words, ';
               }
-              timerInfo += challengelist.challengeList[i].duration
-                + ' minutes, ' + Math.floor(challengelist.challengeList[i].cDur
-                / 60) + ':' + timeout + ' remaining), ' + parentGuildName
-                + '\n';
+              timerInfo +=
+                challengelist.challengeList[i].duration +
+                ' minutes, ' +
+                Math.floor(challengelist.challengeList[i].cDur / 60) +
+                ':' +
+                timeout +
+                ' remaining), ' +
+                parentGuildName +
+                '\n';
               break;
             case 2:
             case 3:
-              timerInfo += i + ': ' + challengelist.challengeList[i]
-                  .displayName + ' (';
+              timerInfo +=
+                i + ': ' + challengelist.challengeList[i].displayName + ' (';
               if (challengelist.challengeList[i].type == 'sprint') {
                 timerInfo += challengelist.challengeList[i].goal + ' words, ';
               }
-              timerInfo += challengelist.challengeList[i].duration
-                + ' minutes, ended), ' + parentGuildName + '\n';
+              timerInfo +=
+                challengelist.challengeList[i].duration +
+                ' minutes, ended), ' +
+                parentGuildName +
+                '\n';
               break;
             default:
               break;
@@ -365,14 +462,12 @@ class Challenges {
     }
     let listMsg = '';
     if (nonHiddenTotal == 0) {
-      listMsg += ('There are no challenges running.'
-                + ' Why don\'t you start one?');
+      listMsg +=
+        'There are no challenges running.' + ' Why don\'t you start one?';
     } else if (nonHiddenTotal == 1) {
-      listMsg += 'There is ' + nonHiddenTotal
-                + ' challenge running:\n';
+      listMsg += 'There is ' + nonHiddenTotal + ' challenge running:\n';
     } else {
-      listMsg += 'There are ' + nonHiddenTotal
-                + ' challenges running:\n';
+      listMsg += 'There are ' + nonHiddenTotal + ' challenges running:\n';
     }
     if (nonHiddenTotal > 0) {
       listMsg += timerInfo;
@@ -380,41 +475,61 @@ class Challenges {
     msg.channel.send(listMsg);
   }
   /**
-  * Adds a total to a challenge.
-  * @param {Object} msg - The message that ran this function.
-  * @param {String} suffix - Information after the bot command.
-  * @return {Boolean} - determines whether to roll for a raptor.
-  */
+   * Adds a total to a challenge.
+   * @param {Object} msg - The message that ran this function.
+   * @param {String} suffix - Information after the bot command.
+   * @return {Boolean} - determines whether to roll for a raptor.
+   */
   addTotal(msg, suffix) {
     const args = suffix.split(' ');
     const challengeID = args.shift();
     const wordsWritten = args.shift();
     let writtenType = args.shift();
     let raptorCheck = true;
-    if (writtenType == 'line' || writtenType == 'page'
-            || writtenType == 'word' || writtenType == 'minute') {
+    if (
+      writtenType == 'line' ||
+      writtenType == 'page' ||
+      writtenType == 'word' ||
+      writtenType == 'minute'
+    ) {
       writtenType += 's';
     }
-    if (!(writtenType == 'lines' || writtenType == 'pages'
-            || writtenType == 'words' || writtenType == 'minutes'
-            || writtenType === undefined)) {
-      msg.channel.send('Invalid input.  You must work in words,'
-                + ' lines, or pages.');
+    if (
+      !(
+        writtenType == 'lines' ||
+        writtenType == 'pages' ||
+        writtenType == 'words' ||
+        writtenType == 'minutes' ||
+        writtenType === undefined
+      )
+    ) {
+      msg.channel.send(
+          'Invalid input.  You must work in words,' + ' lines, or pages.'
+      );
     } else {
       if (writtenType === undefined) {
         writtenType = 'words';
       }
       if (challengeID in challengelist.challengeList) {
         if (challengelist.challengeList[challengeID].state >= 2) {
-          if (!(challengelist.challengeList[challengeID].hidden &&
-            client.channels.get(challengelist.challengeList[challengeID]
-                .channelID).guild.id != msg.guild.id)) {
+          if (
+            !(
+              challengelist.challengeList[challengeID].hidden &&
+              client.channels.get(
+                  challengelist.challengeList[challengeID].channelID
+              ).guild.id != msg.guild.id
+            )
+          ) {
             if (Number.isInteger(Number(wordsWritten))) {
               for (const user in challengelist.challengeList[challengeID]
                   .joinedUsers) {
                 if (user == msg.author.id) {
-                  if (!(challengelist.challengeList[challengeID]
-                      .joinedUsers[user].countData === undefined)) {
+                  if (
+                    !(
+                      challengelist.challengeList[challengeID].joinedUsers[user]
+                          .countData === undefined
+                    )
+                  ) {
                     raptorCheck = false;
                   }
                 }
@@ -422,17 +537,22 @@ class Challenges {
               if (Number(wordsWritten) < 1) {
                 raptorCheck = false;
               }
-              challengelist.challengeList[challengeID]
-                  .joinedUsers[msg.author.id] = {
-                    'countData': wordsWritten,
-                    'countType': writtenType,
-                    'channelID': msg.channel.id};
+              challengelist.challengeList[challengeID].joinedUsers[
+                  msg.author.id
+              ] = {
+                countData: wordsWritten,
+                countType: writtenType,
+                channelID: msg.channel.id,
+              };
               try {
                 conn.collection('challengeDB').update(
                     {_id: parseInt(challengeID)},
-                    {$set:
-                      {'joinedUsers': challengelist.challengeList[challengeID]
-                          .joinedUsers}},
+                    {
+                      $set: {
+                        joinedUsers:
+                        challengelist.challengeList[challengeID].joinedUsers,
+                      },
+                    },
                     {upsert: true}
                 );
               } catch (e) {
@@ -441,13 +561,19 @@ class Challenges {
               msg.channel.send('Total added to summary.');
             } else {
               raptorCheck = false;
-              msg.channel.send(msg.author + ', I need a whole number to include'
-                + ' in the summary!');
+              msg.channel.send(
+                  msg.author +
+                  ', I need a whole number to include' +
+                  ' in the summary!'
+              );
             }
           } else {
             raptorCheck = false;
-            msg.channel.send(msg.author + ', you do not have permission to join'
-              + ' this challenge.');
+            msg.channel.send(
+                msg.author +
+                ', you do not have permission to join' +
+                ' this challenge.'
+            );
           }
         } else {
           raptorCheck = false;
@@ -461,18 +587,23 @@ class Challenges {
     return raptorCheck;
   }
   /**
-  * Toggles cross-server display for a server's challenges.
-  * @param {Object} msg - The message that ran this function.
-  * @param {String} suffix - Information after the bot command.
-  */
+   * Toggles cross-server display for a server's challenges.
+   * @param {Object} msg - The message that ran this function.
+   * @param {String} suffix - Information after the bot command.
+   */
   xsDisplay(msg, suffix) {
     if (suffix == '') {
       let xsType = 'on';
       if (this.crossServerStatus[msg.guild.id] == true) {
         xsType = 'off';
       }
-      msg.channel.send(msg.guild.name + ' currently has cross-server'
-                + ' challenges turned **' + xsType + '**.');
+      msg.channel.send(
+          msg.guild.name +
+          ' currently has cross-server' +
+          ' challenges turned **' +
+          xsType +
+          '**.'
+      );
     } else {
       if (msg.member.permissions.has('ADMINISTRATOR')) {
         if (suffix == 'on' || suffix == 'off') {
@@ -484,36 +615,53 @@ class Challenges {
             xsType = 'on';
             this.crossServerStatus[msg.guild.id] = false;
           }
-          conn.collection('configDB').update(
-              {'server': msg.guild.id},
-              {$set: {'xStatus': this.crossServerStatus[msg.guild.id]}},
-              {upsert: true}
+          conn
+              .collection('configDB')
+              .update(
+                  {server: msg.guild.id},
+                  {$set: {xStatus: this.crossServerStatus[msg.guild.id]}},
+                  {upsert: true}
+              );
+          msg.channel.send(
+              msg.author +
+              ', you have turned cross-server' +
+              ' challenges **' +
+              xsType +
+              '**.'
           );
-          msg.channel.send(msg.author + ', you have turned cross-server'
-            + ' challenges **' + xsType + '**.');
         } else {
-          msg.channel.send(msg.author + ', use **on|off** to toggle'
-            + ' cross-server challenges.');
+          msg.channel.send(
+              msg.author +
+              ', use **on|off** to toggle' +
+              ' cross-server challenges.'
+          );
         }
       } else {
-        msg.channel.send('Only server administrators are permitted to configure'
-          + ' challenges.');
+        msg.channel.send(
+            'Only server administrators are permitted to configure' +
+            ' challenges.'
+        );
       }
     }
   }
   /**
-  * Toggles automatic summaries after challenges for a server.
-  * @param {Object} msg - The message that ran this function.
-  * @param {String} suffix - Information after the bot command.
-  */
+   * Toggles automatic summaries after challenges for a server.
+   * @param {Object} msg - The message that ran this function.
+   * @param {String} suffix - Information after the bot command.
+   */
   autoSum(msg, suffix) {
     if (suffix == '') {
       let autoType = 'visible';
       if (this.autoSumStatus[msg.guild.id] == true) {
         autoType = 'hidden';
       }
-      msg.channel.send(msg.guild.name + ' currently has automatic'
-                + ' summaries **' + autoType + '**.');
+      msg.channel.send(
+          msg.guild.name +
+          ' currently has automatic' +
+          ' summaries **' +
+          autoType +
+          '**.'
+      );
     } else {
       if (msg.member.permissions.has('ADMINISTRATOR')) {
         if (suffix == 'show' || suffix == 'hide') {
@@ -525,20 +673,32 @@ class Challenges {
             autoType = 'on';
             this.autoSumStatus[msg.guild.id] = false;
           }
-          conn.collection('configDB').update(
-              {'server': msg.guild.id},
-              {$set: {'autoStatus': this.autoSumStatus[msg.guild.id]}},
-              {upsert: true}
+          conn
+              .collection('configDB')
+              .update(
+                  {server: msg.guild.id},
+                  {$set: {autoStatus: this.autoSumStatus[msg.guild.id]}},
+                  {upsert: true}
+              );
+          msg.channel.send(
+              msg.author +
+              ', you have turned' +
+              ' automatic summaries **' +
+              autoType +
+              '**.'
           );
-          msg.channel.send(msg.author + ', you have turned'
-            + ' automatic summaries **' + autoType + '**.');
         } else {
-          msg.channel.send(msg.author + ', use **show|hide** to'
-            + ' toggle automatic summaries.');
+          msg.channel.send(
+              msg.author +
+              ', use **show|hide** to' +
+              ' toggle automatic summaries.'
+          );
         }
       } else {
-        msg.channel.send('Only server administrators are permitted'
-          + ' to configure automatic summaries.');
+        msg.channel.send(
+            'Only server administrators are permitted' +
+            ' to configure automatic summaries.'
+        );
       }
     }
   }

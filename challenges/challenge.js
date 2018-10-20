@@ -4,21 +4,31 @@ const conn = require('mongoose').connection;
 /** Represents a challenge. */
 class Challenge {
   /**
-  * Create a challenge.
-  * @param {Number} objectID - The unique ID of the challenge.
-  * @param {Number} creator - The Discord ID of the creator.
-  * @param {String} displayName - The name of the challenge.
-  * @param {Number} initStamp - UNIX timestamp of creation time.
-  * @param {Number} countdown - Time in minutes from creation to start.
-  * @param {Number} duration - Duration in minutes.
-  * @param {String} channel - Discord ID of start channel.
-  * @param {String} type - The type of challenge that this object represents.
-  * @param {Boolean} hidden - Flag for whether challenge is visible to users
-  *  on other servers.
-  * @param {Object} joinedUsers - A list of users who have joined the sprint.
-  */
-  constructor(objectID, creator, displayName, initStamp, countdown, duration,
-      channel, type, hidden, joinedUsers) {
+   * Create a challenge.
+   * @param {Number} objectID - The unique ID of the challenge.
+   * @param {Number} creator - The Discord ID of the creator.
+   * @param {String} displayName - The name of the challenge.
+   * @param {Number} initStamp - UNIX timestamp of creation time.
+   * @param {Number} countdown - Time in minutes from creation to start.
+   * @param {Number} duration - Duration in minutes.
+   * @param {String} channel - Discord ID of start channel.
+   * @param {String} type - The type of challenge that this object represents.
+   * @param {Boolean} hidden - Flag for whether challenge is visible to users
+   *  on other servers.
+   * @param {Object} joinedUsers - A list of users who have joined the sprint.
+   */
+  constructor(
+      objectID,
+      creator,
+      displayName,
+      initStamp,
+      countdown,
+      duration,
+      channel,
+      type,
+      hidden,
+      joinedUsers
+  ) {
     this.objectID = objectID;
     this.creator = creator;
     this.displayName = displayName;
@@ -37,9 +47,9 @@ class Challenge {
     this.cDur = this.duration * 60;
     this.cPost = challengelist.DUR_AFTER;
 
-    this.startStamp = this.initStamp + (this.cStart * 1000);
-    this.endStamp = this.startStamp + (this.cDur * 1000);
-    this.delStamp = this.endStamp + (this.cPost * 1000);
+    this.startStamp = this.initStamp + this.cStart * 1000;
+    this.endStamp = this.startStamp + this.cDur * 1000;
+    this.delStamp = this.endStamp + this.cPost * 1000;
 
     const dateCheck = new Date().getTime();
     if (this.startStamp < dateCheck) {
@@ -61,13 +71,29 @@ class Challenge {
     }
     if (this.state == 0 && this.cStart == this.countdown * 60) {
       if (this.countdown == 1) {
-        this.channel.send('Your ' + type + ', ' + this.displayName
-                    + ' (ID ' + this.objectID + '), starts in ' + this.countdown
-                    + ' minute.');
+        this.channel.send(
+            'Your ' +
+            type +
+            ', ' +
+            this.displayName +
+            ' (ID ' +
+            this.objectID +
+            '), starts in ' +
+            this.countdown +
+            ' minute.'
+        );
       } else {
-        this.channel.send('Your ' + type + ', ' + this.displayName
-                    + ' (ID ' + this.objectID + '), starts in ' + this.countdown
-                    + ' minutes.');
+        this.channel.send(
+            'Your ' +
+            type +
+            ', ' +
+            this.displayName +
+            ' (ID ' +
+            this.objectID +
+            '), starts in ' +
+            this.countdown +
+            ' minutes.'
+        );
       }
     }
   }
@@ -90,8 +116,8 @@ class Challenge {
     }
   }
   /** Check to see whether the countdown is over, and start the challenge
-  * if so.
-  */
+   * if so.
+   */
   start() {
     if (this.cStart > 0) {
       this.cStart--;
@@ -106,14 +132,16 @@ class Challenge {
     } else if (this.cStart % 300 == 0) {
       for (let i = 0; i < this.hookedChannels.length; i++) {
         const channelObject = client.channels.get(this.hookedChannels[i]);
-        channelObject.send(this.displayName + ' starts in '
-                    + this.cStart / 60 + ' minutes.');
+        channelObject.send(
+            this.displayName + ' starts in ' + this.cStart / 60 + ' minutes.'
+        );
       }
     } else if ([30, 10, 5].includes(this.cStart)) {
       for (let i = 0; i < this.hookedChannels.length; i++) {
         const channelObject = client.channels.get(this.hookedChannels[i]);
-        channelObject.send(this.displayName + ' starts in '
-                    + this.cStart + ' seconds.');
+        channelObject.send(
+            this.displayName + ' starts in ' + this.cStart + ' seconds.'
+        );
       }
     }
   }
@@ -127,8 +155,10 @@ class Challenge {
         }
       }
       const channelObject = client.channels.get(this.hookedChannels[i]);
-      channelObject.send(this.displayName + ' (ID ' + this.objectID
-                + ') starts now!' + userList);
+      channelObject.send(
+          this.displayName + ' (ID ' + this.objectID + ') starts now!'
+          + userList
+      );
     }
     this.state = 1;
   }
@@ -144,28 +174,44 @@ class Challenge {
           }
         }
         const channelObject = client.channels.get(this.hookedChannels[i]);
-        channelObject.send(this.displayName + ' (ID ' + this.objectID
-                    + ') has ended! Post your total to be '
-                    + 'included in the summary.' + userList);
+        channelObject.send(
+            this.displayName +
+            ' (ID ' +
+            this.objectID +
+            ') has ended! Post your total to be ' +
+            'included in the summary.' +
+            userList
+        );
       }
       this.state = 2;
     } else if (this.cDur == 60) {
       for (let i = 0; i < this.hookedChannels.length; i++) {
         const channelObject = client.channels.get(this.hookedChannels[i]);
-        channelObject.send('There is 1 minute remaining in '
-                    + this.displayName + '.');
+        channelObject.send(
+            'There is 1 minute remaining in ' + this.displayName + '.'
+        );
       }
     } else if (this.cDur % 300 == 0) {
       for (let i = 0; i < this.hookedChannels.length; i++) {
         const channelObject = client.channels.get(this.hookedChannels[i]);
-        channelObject.send('There are ' + this.cDur/60
-                    + ' minutes remaining in ' + this.displayName + '.');
+        channelObject.send(
+            'There are ' +
+            this.cDur / 60 +
+            ' minutes remaining in ' +
+            this.displayName +
+            '.'
+        );
       }
     } else if ([30, 10, 5].includes(this.cDur)) {
       for (let i = 0; i < this.hookedChannels.length; i++) {
         const channelObject = client.channels.get(this.hookedChannels[i]);
-        channelObject.send('There are ' + this.cDur
-                    + ' seconds remaining in ' + this.displayName + '.');
+        channelObject.send(
+            'There are ' +
+            this.cDur +
+            ' seconds remaining in ' +
+            this.displayName +
+            '.'
+        );
       }
     }
   }
@@ -174,12 +220,12 @@ class Challenge {
     this.cPost--;
     if (this.cPost == 0) {
       for (let i = 0; i < this.hookedChannels.length; i++) {
-        challengelist.generateSummary(client.channels.get(
-            this.hookedChannels[i]), this.objectID);
+        challengelist.generateSummary(
+            client.channels.get(this.hookedChannels[i]),
+            this.objectID
+        );
       }
-      conn.collection('challengeDB').remove(
-          {_id: this.objectID}
-      );
+      conn.collection('challengeDB').remove({_id: this.objectID});
       delete challengelist.challengeList[this.objectID];
     }
   }

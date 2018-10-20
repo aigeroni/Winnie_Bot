@@ -5,49 +5,67 @@ const conn = require('mongoose').connection;
 /** Represents a chain war. */
 class ChainWar extends Challenge {
   /**
-  * Create a chain war.
-  * @param {Number} objectID - The unique ID of the chain war.
-  * @param {Number} creator - The Discord ID of the creator.
-  * @param {String} warName - The name of the chain war.
-  * @param {Number} initStamp - UNIX timestamp of creation time.
-  * @param {Number} current - The number of the current war in the chain.
-  * @param {Number} total - The total number of wars in the chain.
-  * @param {Number} countdown - Time in minutes from creation to start.
-  * @param {Number} duration - Duration in minutes.
-  * @param {String} channel - Discord ID of start channel.
-  * @param {Boolean} hidden - Flag for whether challenge is visible to users
-  *  on other servers.
-  * @param {Object} joinedUsers - A list of users who have joined the chain war.
-  */
-  constructor(objectID, creator, warName, initStamp, current, total,
-      countdown, duration, channel, hidden, joinedUsers) {
-    super(objectID, creator, warName + ' (' + current + '/' + total + ')',
-        initStamp, countdown, duration, channel, 'chain war', hidden,
-        joinedUsers);
+   * Create a chain war.
+   * @param {Number} objectID - The unique ID of the chain war.
+   * @param {Number} creator - The Discord ID of the creator.
+   * @param {String} warName - The name of the chain war.
+   * @param {Number} initStamp - UNIX timestamp of creation time.
+   * @param {Number} current - The number of the current war in the chain.
+   * @param {Number} total - The total number of wars in the chain.
+   * @param {Number} countdown - Time in minutes from creation to start.
+   * @param {Number} duration - Duration in minutes.
+   * @param {String} channel - Discord ID of start channel.
+   * @param {Boolean} hidden - Flag for whether challenge is visible to users
+   *  on other servers.
+   * @param {Object} joinedUsers - A list of users who have joined the war.
+   */
+  constructor(
+      objectID,
+      creator,
+      warName,
+      initStamp,
+      current,
+      total,
+      countdown,
+      duration,
+      channel,
+      hidden,
+      joinedUsers
+  ) {
+    super(
+        objectID,
+        creator,
+        warName + ' (' + current + '/' + total + ')',
+        initStamp,
+        countdown,
+        duration,
+        channel,
+        'chain war',
+        hidden,
+        joinedUsers
+    );
     this.warName = warName;
     this.current = current;
     this.total = total;
 
     const challengeData = {
-      '_id': this.objectID,
-      'creator': this.creator,
-      'name': this.warName,
-      'startTime': this.initStamp,
-      'current': this.current,
-      'total': this.total,
-      'countdown': this.countdown,
-      'duration': this.duration,
-      'channel': this.channelID,
-      'joinedUsers': this.joinedUsers,
-      'state': this.state,
-      'type': 'chain war',
-      'hidden': this.hidden,
+      _id: this.objectID,
+      creator: this.creator,
+      name: this.warName,
+      startTime: this.initStamp,
+      current: this.current,
+      total: this.total,
+      countdown: this.countdown,
+      duration: this.duration,
+      channel: this.channelID,
+      joinedUsers: this.joinedUsers,
+      state: this.state,
+      type: 'chain war',
+      hidden: this.hidden,
     };
     const array = [challengeData];
 
-    conn.collection('challengeDB').insert(
-        array, {}, function(e, docs) {}
-    );
+    conn.collection('challengeDB').insert(array, {}, function(e, docs) {});
   }
   /** Update the chain war at each tick. */
   update() {
