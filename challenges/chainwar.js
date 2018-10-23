@@ -47,7 +47,9 @@ class ChainWar extends Challenge {
     this.warName = warName;
     this.current = current;
     this.total = total;
-
+    if (this.state == 2) {
+      this.state = 3;
+    }
     const challengeData = {
       _id: this.objectID,
       creator: this.creator,

@@ -19,7 +19,7 @@ class Tools {
     const time = args.shift();
     let base = null;
     if (!Number.isInteger(Number(time))) {
-      msg.channel.send('Invalid input. Duration must be a' + ' whole number.');
+      msg.channel.send('Error: Duration must be a whole number.');
     } else {
       switch (difficulty) {
         case 'easy':
@@ -37,8 +37,7 @@ class Tools {
       }
       if (base === null) {
         msg.channel.send(
-            'Invalid input. You need to select an' +
-            ' easy, average, or hard target.'
+            'Error: You need to select an easy, average, or hard target.'
         );
       } else {
         const goalPerMinute = Math.ceil(Math.random() * 12) + base;
@@ -126,8 +125,7 @@ class Tools {
       );
       channel.send(
           author +
-          ', you have hatched a raptor! Your server' +
-          ' currently houses ' +
+          ', you have hatched a raptor! Your server currently houses ' +
           this.raptorCount[server] +
           ' raptors.'
       );
@@ -216,7 +214,7 @@ class Tools {
           !Number.isInteger(Number(rpgRoll[1]))
         ) {
           diceString =
-            'Error: Both values in an RPG-style roll must be' + ' integers.';
+            'Error: Both values in an RPG-style roll must be integers.';
           diceSum = 0;
           break;
         } else {
