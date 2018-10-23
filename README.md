@@ -22,17 +22,18 @@ If you want to invite the public Winnie_Bot account to your server, go [here](ht
 
 * Sign in to Discord
 * Go to https://discordapp.com/developers/, and click on 'My Apps'
-* Click on 'New App' to create a Discord
-* Reveal the token under Bot/Token - you will need this in the next step
+* Click on 'New App' to create a Discord application
+* Go to the Bot tab, and click the Add Bot button to create a bot user
+* Copy the token under Bot/Token - you will need this in the next step
 
 #### Installation Instructions
 
 * Clone the Winnie_Bot repository onto your server.
 * Run `npm install` to get package dependencies.
-* Edit the `config.json` file in Winnie's root directory as follows: {"token": "your bot's token", "storageUrl": "location of your MongoDB"}
+* Edit the `config.json` file in Winnie's root directory as follows: {"token": "your bot's token from the previous step", "storageUrl": "location of your MongoDB"}
 * Initialise MongoDB.
 * Run `bash tz-script.sh` to download the IANA timezone data.
-* Run `node main.js` to initialise Winnie.
+* Run `node index.js` to initialise Winnie.
 
 #### Inviting your instance of Winnie to your server
 
@@ -75,4 +76,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 * Prompts were brainstormed by NaNo's Australia::Melbourne region.
 
 Winnie's repository is located at https://github.com/lisushka/Winnie_Bot.
-Winnie's avatar, 'Tiny Cities', was created by Rachael Wheeler (Etlu-Yume on NaNo).  Prints, notebooks, and other items featuring 'Tiny Cities' are available for purchase [here](https://www.redbubble.com/people/scorpiraw/works/33012468-tiny-cities).
+Winnie's avatar, 'Tiny Cities', was created by [Rachael Wheeler](http://www.rachaelw.com.au/).  Prints, notebooks, and other items featuring 'Tiny Cities' are available for purchase [here](https://www.redbubble.com/people/scorpiraw/works/33012468-tiny-cities).
