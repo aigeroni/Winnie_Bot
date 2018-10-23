@@ -7,6 +7,7 @@ const challenges = require('./challenges/challenges.js');
 const goallist = require('./goals/goallist.js');
 const goals = require('./goals/goals.js');
 const tools = require('./tools/tools.js');
+const help = require('./help.js');
 const config = require('./config.json');
 const Discord = require('discord.js');
 const logger = require('./logger.js');
@@ -454,50 +455,15 @@ client.on('message', (msg) => {
     const suffix = msg.content.substring(
         cmdData.length + config.cmd_prefix.length + 1
     );
-    let cmd = cmdList[cmdData];
     if (cmdData === 'help') {
-      if (suffix) {
-        cmd = cmdList[suffix];
-        let helpMsg = '';
-        try {
-          helpMsg += 'Data for ' + cmd.name;
-          const cmdUse = cmd.usage;
-          if (cmdUse) {
-            helpMsg += ' ' + cmdUse;
-          }
-          const cmdDesc = cmd.description;
-          if (cmdDesc) {
-            helpMsg += ': ' + cmdDesc;
-          }
-          helpMsg += '\n';
-          msg.channel.send(helpMsg);
-        } catch (e) {
-          msg.channel.send('That command does not exist.');
+      const helpReturn = (help.buildHelpMsg(cmdList, suffix));
+      if (helpReturn.constructor === Array) {
+        msg.channel.send(msg.author + ', I sent you a DM.');
+        for(i = 0; i < helpReturn.length; i++) {
+          msg.author.send(helpReturn[i]);
         }
       } else {
-        msg.author.send('**Winnie_Bot Commands:**').then(function() {
-          let helpMsg = '';
-          for (const i in cmdList) {
-            if (cmdList.hasOwnProperty(i)) {
-              helpMsg += '**' + config.cmd_prefix;
-              const cmdName = cmdList[i].name;
-              if (cmdName) {
-                helpMsg += cmdName;
-              }
-              const cmdUse = cmdList[i].usage;
-              if (cmdUse) {
-                helpMsg += ' ' + cmdUse;
-              }
-              const cmdDesc = cmdList[i].description;
-              if (cmdDesc) {
-                helpMsg += ':** ' + cmdDesc;
-              }
-              helpMsg += '\n';
-            }
-          }
-          msg.channel.send(msg.author + ', I sent you a DM.');
-          msg.author.send(helpMsg);
-        });
+        msg.channel.send(helpReturn);
       }
     } else if (cmd) {
       try {
