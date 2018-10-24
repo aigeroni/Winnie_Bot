@@ -175,10 +175,8 @@ const cmdList = {
   sprint: {
     name: 'sprint',
     description:
-      'Starts a sprint of <words> words which times out in' +
-      ' <duration> minutes in [time to start] minutes,' +
-      ' with optional [name] (can only be set' +
-      ' if time to start is also set)',
+      'Starts a sprint of <words> words which times out in <duration> minutes' +
+      ' in [time to start] minutes, with optional [name]',
     usage: 'words duration [time to start [name]]',
     type: 'challenges',
     process: function(client, msg, suffix) {
@@ -188,9 +186,8 @@ const cmdList = {
   war: {
     name: 'war',
     description:
-      'Starts a word war of <duration> minutes in' +
-      ' [time to start] minutes, with optional [name] (can only be set' +
-      ' if time to start is also set)',
+      'Starts a word war of <duration> minutes in [time to start] minutes,' +
+      ' with optional [name]',
     usage: 'duration [time to start [name]]',
     type: 'challenges',
     process: function(client, msg, suffix) {
@@ -200,10 +197,8 @@ const cmdList = {
   chainwar: {
     name: 'chainwar',
     description:
-      'Starts a chain of <number of wars>, each of <duration>' +
-      ' minutes, with [time between wars] minutes between wars,' +
-      ' and optional [name] (can only be set' +
-      ' if time to start is also set)',
+      'Starts a chain of <number of wars>, each of <duration> minutes, with' +
+      ' [time between wars] minutes between wars, and optional [name]',
     usage: 'number of wars duration [time between wars [name]]',
     type: 'challenges',
     process: function(client, msg, suffix) {
@@ -231,8 +226,7 @@ const cmdList = {
   cancel: {
     name: 'cancel',
     description:
-      'Ends war/sprint with ID number <id>.' +
-      ' Can only be performed by creator.',
+      'Ends war/sprint with ID number <id>. Can only be performed by creator.',
     usage: 'id',
     type: 'challenges',
     process: function(client, msg, suffix) {
@@ -242,8 +236,7 @@ const cmdList = {
   exterminate: {
     name: 'exterminate',
     description:
-      'Ends war/sprint with ID number <id>.' +
-      ' Can only be performed by creator.',
+      'Ends war/sprint with ID number <id>. Can only be performed by creator.',
     usage: 'id',
     type: 'challenges',
     process: function(client, msg, suffix) {
@@ -272,7 +265,7 @@ const cmdList = {
   summary: {
     name: 'summary',
     description:
-      'Shows the summary for completed war/sprint with ID number' + ' <id>',
+      'Shows the summary for completed war/sprint with ID number <id>',
     usage: 'id',
     type: 'challenges',
     process: function(client, msg, suffix) {
@@ -300,7 +293,7 @@ const cmdList = {
   set: {
     name: 'set',
     description:
-      'Sets a daily goal <goal>, with optional' + ' [lines|pages|minutes]',
+      'Sets a daily goal <goal>, with optional [lines|pages|minutes]',
     usage: 'goal [lines|pages|minutes]',
     type: 'goals',
     process: function(client, msg, suffix) {
@@ -310,7 +303,7 @@ const cmdList = {
   goal: {
     name: 'goal',
     description:
-      'Sets a daily goal <goal>, with optional' + ' [lines|pages|minutes]',
+      'Sets a daily goal <goal>, with optional [lines|pages|minutes]',
     usage: 'goal [lines|pages|minutes]',
     type: 'goals',
     process: function(client, msg, suffix) {
@@ -320,8 +313,7 @@ const cmdList = {
   update: {
     name: 'update',
     description:
-      'Updates your daily goal with your <progress> since your' +
-      ' last update',
+      'Updates your daily goal with your <progress> since your last update',
     usage: 'progress',
     type: 'goals',
     process: function(client, msg, suffix) {
@@ -331,8 +323,7 @@ const cmdList = {
   add: {
     name: 'add',
     description:
-      'Updates your daily goal with your <progress> since your' +
-      ' last update',
+      'Updates your daily goal with your <progress> since your last update',
     usage: 'progress',
     type: 'goals',
     process: function(client, msg, suffix) {
@@ -376,7 +367,7 @@ const cmdList = {
   target: {
     name: 'target',
     description:
-      'Generates an <easy|average|hard> target for' + ' <minutes> minutes',
+      'Generates an <easy|average|hard> target for <minutes> minutes',
     usage: 'easy|average|hard minutes',
     type: 'tools',
     process: function(client, msg, suffix) {
@@ -394,8 +385,7 @@ const cmdList = {
   roll: {
     name: 'roll',
     description:
-      'Rolls any combination of the given options,' +
-      ' separated by the + operator',
+      'Rolls any combination of the given options, separated by the + operator',
     usage: 'x, x y, xdy',
     type: 'tools',
     process: function(client, msg, suffix) {
@@ -405,7 +395,7 @@ const cmdList = {
   choose: {
     name: 'choose',
     description:
-      'Selects an item from a list <list> of items,' + ' separated by commas',
+      'Selects an item from a list <list> of items, separated by commas',
     usage: 'list',
     type: 'tools',
     process: function(client, msg, suffix) {
@@ -423,8 +413,7 @@ const cmdList = {
   display: {
     name: 'display',
     description:
-      'Allows server admins to toggle cross-server display for ' +
-      'challenges.',
+      'Allows server admins to toggle cross-server display of challenges.',
     usage: 'on|off',
     type: 'config',
     process: function(client, msg, suffix) {
@@ -434,8 +423,7 @@ const cmdList = {
   autosum: {
     name: 'autosum',
     description:
-      'Allows server admins to toggle automatic display of' +
-      ' challenge summaries.',
+      'Allows server admins to toggle automatic print of challenge summaries.',
     usage: 'show|hide',
     type: 'config',
     process: function(client, msg, suffix) {
@@ -465,6 +453,7 @@ client.on('message', (msg) => {
     const suffix = msg.content.substring(
         cmdData.length + config.cmd_prefix.length + 1
     );
+    const cmd = cmdList[cmdData];
     if (cmdData === 'help') {
       const helpReturn = (help.buildHelpMsg(cmdList, suffix));
       if (helpReturn.constructor === Array) {
