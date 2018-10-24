@@ -180,6 +180,7 @@ const cmdList = {
       ' with optional [name] (can only be set' +
       ' if time to start is also set)',
     usage: 'words duration [time to start [name]]',
+    type: 'challenges',
     process: function(client, msg, suffix) {
       challenges.startSprint(msg, suffix);
     },
@@ -191,6 +192,7 @@ const cmdList = {
       ' [time to start] minutes, with optional [name] (can only be set' +
       ' if time to start is also set)',
     usage: 'duration [time to start [name]]',
+    type: 'challenges',
     process: function(client, msg, suffix) {
       challenges.startWar(msg, suffix);
     },
@@ -203,6 +205,7 @@ const cmdList = {
       ' and optional [name] (can only be set' +
       ' if time to start is also set)',
     usage: 'number of wars duration [time between wars [name]]',
+    type: 'challenges',
     process: function(client, msg, suffix) {
       challenges.startChainWar(msg, suffix);
     },
@@ -211,6 +214,7 @@ const cmdList = {
     name: 'join',
     description: 'Joins war/sprint with ID number <id>',
     usage: 'id',
+    type: 'challenges',
     process: function(client, msg, suffix) {
       challenges.joinChallenge(msg, suffix);
     },
@@ -219,6 +223,7 @@ const cmdList = {
     name: 'leave',
     description: 'Leaves war/sprint with ID number <id>',
     usage: 'id',
+    type: 'challenges',
     process: function(client, msg, suffix) {
       challenges.leaveChallenge(msg, suffix);
     },
@@ -229,6 +234,7 @@ const cmdList = {
       'Ends war/sprint with ID number <id>.' +
       ' Can only be performed by creator.',
     usage: 'id',
+    type: 'challenges',
     process: function(client, msg, suffix) {
       challenges.stopChallenge(msg, suffix);
     },
@@ -239,6 +245,7 @@ const cmdList = {
       'Ends war/sprint with ID number <id>.' +
       ' Can only be performed by creator.',
     usage: 'id',
+    type: 'challenges',
     process: function(client, msg, suffix) {
       challenges.stopChallenge(msg, suffix);
     },
@@ -249,6 +256,7 @@ const cmdList = {
       'Adds your <total> for completed war/sprint with ID number' +
       ' <id>, optional [lines|pages|minutes]',
     usage: 'id total [lines|pages|minutes]',
+    type: 'challenges',
     process: function(client, msg, suffix) {
       const raptorRoll = challenges.addTotal(msg, suffix);
       if (raptorRoll) {
@@ -266,6 +274,7 @@ const cmdList = {
     description:
       'Shows the summary for completed war/sprint with ID number' + ' <id>',
     usage: 'id',
+    type: 'challenges',
     process: function(client, msg, suffix) {
       challengelist.generateSummary(msg.channel, suffix);
     },
@@ -274,6 +283,7 @@ const cmdList = {
     name: 'list',
     description: 'Lists all running wars/sprints',
     usage: '',
+    type: 'challenges',
     process: function(client, msg, suffix) {
       challenges.listChallenges(client, msg);
     },
@@ -459,7 +469,7 @@ client.on('message', (msg) => {
       const helpReturn = (help.buildHelpMsg(cmdList, suffix));
       if (helpReturn.constructor === Array) {
         msg.channel.send(msg.author + ', I sent you a DM.');
-        for(i = 0; i < helpReturn.length; i++) {
+        for (i = 0; i < helpReturn.length; i++) {
           msg.author.send(helpReturn[i]);
         }
       } else {
