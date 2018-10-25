@@ -1,5 +1,5 @@
 const challengelist = require('./challengelist.js');
-const config = require('./config.json');
+const config = require('../config.json');
 const conn = require('mongoose').connection;
 
 /** Represents a challenge. */
