@@ -183,7 +183,7 @@ class Goals {
     if (suffix == '') {
       msg.channel.send(msg.author + ', I need some progress to update!');
     } else {
-      const args = suffix.split();
+      const args = suffix.split(' ');
       const goal = args.shift();
       if (!Number.isInteger(Number(goal))) {
         msg.channel.send('Your goal must be a whole number.');
