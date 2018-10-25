@@ -1,4 +1,5 @@
 const challengelist = require('./challengelist.js');
+const config = require('./config.json');
 const conn = require('mongoose').connection;
 
 /** Represents a challenge. */
@@ -178,8 +179,11 @@ class Challenge {
             this.displayName +
             ' (ID ' +
             this.objectID +
-            ') has ended! Post your total to be ' +
-            'included in the summary.' +
+            ') has ended! Post your total using ' +
+            config.cmd_prefix +
+            'total ' +
+            this.objectID +
+            ' <total> to be included in the summary.' +
             userList
         );
       }

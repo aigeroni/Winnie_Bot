@@ -474,6 +474,88 @@ class Challenges {
     }
     msg.channel.send(listMsg);
   }
+  // /**
+  //  * Calls time for a sprint.
+  //  * @param {Object} msg - The message that ran this function.
+  //  * @param {String} suffix - Information after the bot command.
+  //  * @return {Boolean} - determines whether to roll for a raptor.
+  //  */
+  // callTime(msg, suffix) {
+  //   const args = suffix.split(' ');
+  //   const challengeID = args.shift();
+  //   let raptorCheck = true;
+  //   if (challengeID in challengelist.challengeList) {
+  //     if (challengelist.challengeList[challengeID].type == 'sprint') {
+
+  //     } else {
+  //       raptorCheck = false;
+  //         msg.channel.send('This challenge has not ended yet!');
+  //     }
+  //   } else {
+  //     raptorCheck = false;
+  //     msg.channel.send('This challenge does not exist!');
+  //   }
+  //     if (challengelist.challengeList[challengeID].state >= 2) {
+  //       if (
+  //         !(
+  //           challengelist.challengeList[challengeID].hidden &&
+  //             client.channels.get(
+  //                 challengelist.challengeList[challengeID].channelID
+  //             ).guild.id != msg.guild.id
+  //           )
+  //         ) {
+  //           if (Number.isInteger(Number(wordsWritten))) {
+              
+  //             if (Number(wordsWritten) < 1) {
+  //               raptorCheck = false;
+  //             }
+  //             challengelist.challengeList[challengeID].joinedUsers[
+  //                 msg.author.id
+  //             ] = {
+  //               countData: wordsWritten,
+  //               countType: writtenType,
+  //               channelID: msg.channel.id,
+  //             };
+  //             try {
+  //               conn.collection('challengeDB').update(
+  //                   {_id: parseInt(challengeID)},
+  //                   {
+  //                     $set: {
+  //                       joinedUsers:
+  //                       challengelist.challengeList[challengeID].joinedUsers,
+  //                     },
+  //                   },
+  //                   {upsert: true}
+  //               );
+  //             } catch (e) {
+  //               logger.error('Error: ' + e);
+  //             }
+  //             msg.channel.send('Total added to summary.');
+  //           } else {
+  //             raptorCheck = false;
+  //             msg.channel.send(
+  //                 msg.author +
+  //                 ', I need a whole number to include' +
+  //                 ' in the summary!'
+  //             );
+  //           }
+  //         } else {
+  //           raptorCheck = false;
+  //           msg.channel.send(
+  //               msg.author +
+  //               ', you do not have permission to join' +
+  //               ' this challenge.'
+  //           );
+  //         }
+  //       } else {
+          
+  //       }
+  //     } else {
+        
+  //     }
+  //   }
+  //   return raptorCheck;
+  // }
   /**
    * Adds a total to a challenge.
    * @param {Object} msg - The message that ran this function.

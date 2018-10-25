@@ -243,11 +243,21 @@ const cmdList = {
       challenges.stopChallenge(msg, suffix);
     },
   },
+  // time: {
+  //   name: 'time',
+  //   description:
+  //     'Notifies Winnie that you have reached the word goal for sprint <id>',
+  //   usage: 'id',
+  //   type: 'challenges',
+  //   process: function(client, msg, suffix) {
+  //     challenges.callTime(msg, suffix);
+  //   },
+  // },
   total: {
     name: 'total',
     description:
-      'Adds your <total> for completed war/sprint with ID number' +
-      ' <id>, optional [lines|pages|minutes]',
+      'Adds your <total> for completed war <id>, optional' +
+      ' [lines|pages|minutes]',
     usage: 'id total [lines|pages|minutes]',
     type: 'challenges',
     process: function(client, msg, suffix) {
@@ -265,7 +275,7 @@ const cmdList = {
   summary: {
     name: 'summary',
     description:
-      'Shows the summary for completed war/sprint with ID number <id>',
+      'Displays the summary for completed war/sprint with ID number <id>',
     usage: 'id',
     type: 'challenges',
     process: function(client, msg, suffix) {
@@ -274,7 +284,7 @@ const cmdList = {
   },
   list: {
     name: 'list',
-    description: 'Lists all running wars/sprints',
+    description: 'Lists all running challenges',
     usage: '',
     type: 'challenges',
     process: function(client, msg, suffix) {

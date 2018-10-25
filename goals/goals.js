@@ -180,31 +180,33 @@ class Goals {
    * or overwritten (true).
    */
   updateGoal(msg, suffix, overwrite) {
-    const goal = suffix;
     if (suffix == '') {
       msg.channel.send(msg.author + ', I need some progress to update!');
-    } else if (!Number.isInteger(Number(goal))) {
-      msg.channel.send('Your goal must be a whole number.');
-    } else if (!(msg.author.id in goallist.goalList)) {
-      msg.channel.send(
-          msg.author +
-          ', you have not yet set a goal' +
-          ' for today. Use !set to do so.'
-      );
     } else {
-      goallist.goalList[msg.author.id].addWords(goal, overwrite);
-      msg.channel.send(
-          msg.author +
-          ', you have written **' +
-          goallist.goalList[msg.author.id].written +
-          '** ' +
-          goallist.goalList[msg.author.id].goalType +
-          ' of your **' +
-          goallist.goalList[msg.author.id].goal +
-          '**-' +
-          goallist.goalList[msg.author.id].goalType.slice(0, -1) +
-          ' goal.'
-      );
+      const args = suffix.split();
+      const goal = args.shift();
+      if (!Number.isInteger(Number(goal))) {
+        msg.channel.send('Your goal must be a whole number.');
+      } else if (!(msg.author.id in goallist.goalList)) {
+        msg.channel.send(
+            msg.author +
+            ', you have not yet set a goal for today. Use !set to do so.'
+        );
+      } else {
+        goallist.goalList[msg.author.id].addWords(goal, overwrite);
+        msg.channel.send(
+            msg.author +
+            ', you have written **' +
+            goallist.goalList[msg.author.id].written +
+            '** ' +
+            goallist.goalList[msg.author.id].goalType +
+            ' of your **' +
+            goallist.goalList[msg.author.id].goal +
+            '**-' +
+            goallist.goalList[msg.author.id].goalType.slice(0, -1) +
+            ' goal.'
+        );
+      }
     }
   }
   /**
