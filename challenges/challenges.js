@@ -503,6 +503,7 @@ class Challenges {
         writtenType === undefined
       )
     ) {
+      raptorCheck = false;
       msg.channel.send(
           'Invalid input.  You must work in words,' + ' lines, or pages.'
       );

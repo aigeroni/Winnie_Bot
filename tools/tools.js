@@ -23,13 +23,16 @@ class Tools {
     } else {
       switch (difficulty) {
         case 'easy':
-          base = 12;
+          base = 6;
           break;
-        case 'average':
-          base = 24;
+        case 'medium':
+          base = 17;
           break;
         case 'hard':
-          base = 36;
+          base = 28;
+          break;
+        case 'insane':
+          base = 39;
           break;
         default:
           base = null;
@@ -40,7 +43,7 @@ class Tools {
             'Error: You need to select an easy, average, or hard target.'
         );
       } else {
-        const goalPerMinute = Math.ceil(Math.random() * 12) + base;
+        const goalPerMinute = Math.ceil(Math.random() * 11) + base;
         const goalTotal = goalPerMinute * time;
         msg.channel.send(
             msg.author + ', your target is **' + goalTotal + '**.'

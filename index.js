@@ -367,8 +367,8 @@ const cmdList = {
   target: {
     name: 'target',
     description:
-      'Generates an <easy|average|hard> target for <minutes> minutes',
-    usage: 'easy|average|hard minutes',
+      'Generates an <easy|medium|hard|insane> target for <minutes> minutes',
+    usage: 'easy|medium|hard|insane minutes',
     type: 'tools',
     process: function(client, msg, suffix) {
       tools.calcTarget(msg, suffix);
