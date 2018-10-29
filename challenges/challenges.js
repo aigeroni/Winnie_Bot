@@ -25,9 +25,9 @@ class Challenges {
   joinChallenge(msg, suffix) {
     const challengeID = suffix;
     if (isNaN(challengeID)) {
-      msg.channel.send('Challenge ID must be an integer.');
+      msg.channel.send('Error: Challenge ID must be an integer.');
     } else if (challengeID < 1) {
-      msg.channel.send('Challenge ID must be an integer.');
+      msg.channel.send('Error: Challenge ID must be an integer.');
     } else if (challengeID in challengelist.challengeList) {
       if (
         challengelist.challengeList[challengeID].hidden &&
@@ -49,13 +49,23 @@ class Challenges {
               ' enabled for this challenge.'
           );
         } else {
-          challengelist.challengeList[challengeID].joinedUsers[
-              msg.author.id
-          ] = {
-            countData: undefined,
-            countType: undefined,
-            channelID: msg.channel.id,
-          };
+          if (challengelist.challengeList[challengeID].type == 'sprint') {
+            challengelist.challengeList[challengeID].joinedUsers[
+                msg.author.id
+            ] = {
+              timestampCalled: undefined,
+              timeTaken: undefined,
+              channelID: msg.channel.id
+            };
+          } else {
+            challengelist.challengeList[challengeID].joinedUsers[
+                msg.author.id
+            ] = {
+              countData: undefined,
+              countType: undefined,
+              channelID: msg.channel.id
+            };
+          }
           const pushID = msg.channel.id;
           const searchIndex = challengelist.challengeList[
               challengeID
@@ -98,9 +108,9 @@ class Challenges {
   leaveChallenge(msg, suffix) {
     const challengeID = suffix;
     if (isNaN(challengeID)) {
-      msg.channel.send('Challenge ID must be an integer.');
+      msg.channel.send('Error: Challenge ID must be an integer.');
     } else if (challengeID < 1) {
-      msg.channel.send('Challenge ID must be an integer.');
+      msg.channel.send('Error: Challenge ID must be an integer.');
     } else if (challengeID in challengelist.challengeList) {
       if (
         msg.author.id in challengelist.challengeList[challengeID].joinedUsers
@@ -129,7 +139,7 @@ class Challenges {
         );
       }
     } else {
-      msg.channel.send('Challenge ' + challengeID + ' does not exist!');
+      msg.channel.send('Error: Challenge ' + challengeID + ' does not exist!');
     }
   }
   /**
@@ -147,23 +157,23 @@ class Challenges {
       start = 1;
     }
     if (!Number.isInteger(Number(words))) {
-      msg.channel.send('Word goal must be a whole number.');
+      msg.channel.send('Error: Word goal must be a whole number.');
     } else if (isNaN(timeout)) {
-      msg.channel.send('Sprint duration must be a number.');
+      msg.channel.send('Error: Sprint duration must be a number.');
     } else if (isNaN(start)) {
-      msg.channel.send('Time to start must be a number.');
+      msg.channel.send('Error: Time to start must be a number.');
     } else if (start > 30) {
       msg.channel.send(
-          'Sprints cannot start more than 30 minutes in the' + ' future.'
+          'Error: Sprints cannot start more than 30 minutes in the future.'
       );
     } else if (timeout > 60) {
-      msg.channel.send('Sprints cannot last for more than an hour.');
+      msg.channel.send('Error: Sprints cannot last for more than an hour.');
     } else if (words < 1) {
-      msg.channel.send('Word goal cannot be negative.');
+      msg.channel.send('Error: Word goal cannot be negative.');
     } else if (start <= 0) {
-      msg.channel.send('Sprints cannot start in the past.');
+      msg.channel.send('Error: Sprints cannot start in the past.');
     } else if (timeout < 1) {
-      msg.channel.send('Sprints must run for at least a minute.');
+      msg.channel.send('Error: Sprints must run for at least a minute.');
     } else {
       try {
         const creatorID = msg.author.id;
@@ -211,19 +221,19 @@ class Challenges {
       start = 1;
     }
     if (isNaN(start)) {
-      msg.channel.send('Time to start must be a number.');
+      msg.channel.send('Error: Time to start must be a number.');
     } else if (isNaN(duration)) {
-      msg.channel.send('War duration must be a number.');
+      msg.channel.send('Error: War duration must be a number.');
     } else if (start > 30) {
       msg.channel.send(
-          'Wars cannot start more than 30 minutes' + ' in the future.'
+          'Error: Wars cannot start more than 30 minutes in the future.'
       );
     } else if (duration > 60) {
-      msg.channel.send('Wars cannot last for more than an hour.');
+      msg.channel.send('Error: Wars cannot last for more than an hour.');
     } else if (start <= 0) {
-      msg.channel.send('Wars cannot start in the past.');
+      msg.channel.send('Error: Wars cannot start in the past.');
     } else if (duration < 1) {
-      msg.channel.send('Wars must run for at least a minute.');
+      msg.channel.send('Error: Wars must run for at least a minute.');
     } else {
       try {
         const creatorID = msg.author.id;
@@ -271,27 +281,27 @@ class Challenges {
       timeBetween = 1;
     }
     if (isNaN(chainWarCount)) {
-      msg.channel.send('War count must be a number.');
+      msg.channel.send('Error: War count must be a number.');
     } else if (isNaN(timeBetween)) {
-      msg.channel.send('Time between wars must be a number.');
+      msg.channel.send('Error: Time between wars must be a number.');
     } else if (timeBetween > 30) {
       msg.channel.send(
-          'There cannot be more than 30 minutes' + ' between wars in a chain.'
+          'Error: There cannot be more than 30 minutes between wars in a chain.'
       );
     } else if (isNaN(duration)) {
-      msg.channel.send('War duration must be a number.');
+      msg.channel.send('Error: War duration must be a number.');
     } else if (!(2 < chainWarCount < 10)) {
       msg.channel.send(
-          'Chain wars must be between two and ten wars' + ' long.'
+          'Error: Chain wars must be between two and ten wars long.'
       );
     } else if (duration * chainWarCount > 120) {
       msg.channel.send(
-          'Chain wars cannot last for more than two' + ' hours of writing time.'
+          'Error: Chain wars cannot run for more than two hours in total.'
       );
     } else if (timeBetween <= 0) {
-      msg.channel.send('Chain wars cannot overlap.');
+      msg.channel.send('Error: Chain wars cannot overlap.');
     } else if (duration < 1) {
-      msg.channel.send('Wars must run for at least a minute.');
+      msg.channel.send('Error: Wars must run for at least a minute.');
     } else {
       try {
         const creatorID = msg.author.id;
@@ -334,7 +344,7 @@ class Challenges {
   stopChallenge(msg, suffix) {
     const challengeID = suffix;
     if (isNaN(challengeID) || challengeID < 1) {
-      msg.channel.send('Challenge ID must be an integer.');
+      msg.channel.send('Error: Challenge ID must be an integer.');
     } else if (challengeID in challengelist.challengeList) {
       const stopName = challengelist.challengeList[challengeID].displayName;
       if (
@@ -357,7 +367,9 @@ class Challenges {
           delete challengelist.challengeList[challengeID];
         } else {
           msg.channel.send(
-              'Only the creator of ' + stopName + ' can end this challenge.'
+              'Error: Only the creator of ' +
+              stopName +
+              ' can end this challenge.'
           );
         }
       } else {
@@ -368,7 +380,7 @@ class Challenges {
         );
       }
     } else {
-      msg.channel.send('Challenge ' + challengeID + ' does not exist!');
+      msg.channel.send('Error: Challenge ' + challengeID + ' does not exist!');
     }
   }
   /**
@@ -474,88 +486,40 @@ class Challenges {
     }
     msg.channel.send(listMsg);
   }
-  // /**
-  //  * Calls time for a sprint.
-  //  * @param {Object} msg - The message that ran this function.
-  //  * @param {String} suffix - Information after the bot command.
-  //  * @return {Boolean} - determines whether to roll for a raptor.
-  //  */
-  // callTime(msg, suffix) {
-  //   const args = suffix.split(' ');
-  //   const challengeID = args.shift();
-  //   let raptorCheck = true;
-  //   if (challengeID in challengelist.challengeList) {
-  //     if (challengelist.challengeList[challengeID].type == 'sprint') {
-
-  //     } else {
-  //       raptorCheck = false;
-  //         msg.channel.send('This challenge has not ended yet!');
-  //     }
-  //   } else {
-  //     raptorCheck = false;
-  //     msg.channel.send('This challenge does not exist!');
-  //   }
-  //     if (challengelist.challengeList[challengeID].state >= 2) {
-  //       if (
-  //         !(
-  //           challengelist.challengeList[challengeID].hidden &&
-  //             client.channels.get(
-  //                 challengelist.challengeList[challengeID].channelID
-  //             ).guild.id != msg.guild.id
-  //           )
-  //         ) {
-  //           if (Number.isInteger(Number(wordsWritten))) {
-              
-  //             if (Number(wordsWritten) < 1) {
-  //               raptorCheck = false;
-  //             }
-  //             challengelist.challengeList[challengeID].joinedUsers[
-  //                 msg.author.id
-  //             ] = {
-  //               countData: wordsWritten,
-  //               countType: writtenType,
-  //               channelID: msg.channel.id,
-  //             };
-  //             try {
-  //               conn.collection('challengeDB').update(
-  //                   {_id: parseInt(challengeID)},
-  //                   {
-  //                     $set: {
-  //                       joinedUsers:
-  //                       challengelist.challengeList[challengeID].joinedUsers,
-  //                     },
-  //                   },
-  //                   {upsert: true}
-  //               );
-  //             } catch (e) {
-  //               logger.error('Error: ' + e);
-  //             }
-  //             msg.channel.send('Total added to summary.');
-  //           } else {
-  //             raptorCheck = false;
-  //             msg.channel.send(
-  //                 msg.author +
-  //                 ', I need a whole number to include' +
-  //                 ' in the summary!'
-  //             );
-  //           }
-  //         } else {
-  //           raptorCheck = false;
-  //           msg.channel.send(
-  //               msg.author +
-  //               ', you do not have permission to join' +
-  //               ' this challenge.'
-  //           );
-  //         }
-  //       } else {
-          
-  //       }
-  //     } else {
-        
-  //     }
-  //   }
-  //   return raptorCheck;
-  // }
+  /**
+   * Calls time for a sprint.
+   * @param {Object} msg - The message that ran this function.
+   * @param {String} suffix - Information after the bot command.
+   * @return {Boolean} - determines whether to roll for a raptor.
+   */
+  callTime(msg, suffix) {
+    const args = suffix.split(' ');
+    const challengeID = args.shift();
+    let raptorCheck = true;
+    if (challengeID in challengelist.challengeList) {
+      if (challengelist.challengeList[challengeID].type == 'sprint') {
+        const doneStamp = new Date().getTime();
+        const timeTaken = (
+          doneStamp -
+          challengelist.challengeList[challengeID].initStamp
+        ) * 60000;
+        challengelist.challengeList[challengeID].joinedUsers[
+          msg.author.id
+        ] = {
+          timestampCalled: doneStamp,
+          timeTaken: timeTaken,
+          channelID: msg.channel.id,
+        };
+      } else {
+        raptorCheck = false;
+          msg.channel.send('Error: You can only call time on a sprint.');
+      }
+    } else {
+      raptorCheck = false;
+      msg.channel.send('Error: This challenge does not exist.');
+    }
+    return raptorCheck;
+  }
   /**
    * Adds a total to a challenge.
    * @param {Object} msg - The message that ran this function.
@@ -587,7 +551,7 @@ class Challenges {
     ) {
       raptorCheck = false;
       msg.channel.send(
-          'Invalid input.  You must work in words,' + ' lines, or pages.'
+          'Error: You must work in words, lines, or pages.'
       );
     } else {
       if (writtenType === undefined) {
@@ -660,11 +624,11 @@ class Challenges {
           }
         } else {
           raptorCheck = false;
-          msg.channel.send('This challenge has not ended yet!');
+          msg.channel.send('Error: This challenge has not ended yet!');
         }
       } else {
         raptorCheck = false;
-        msg.channel.send('This challenge does not exist!');
+        msg.channel.send('Error: This challenge does not exist!');
       }
     }
     return raptorCheck;
@@ -721,7 +685,7 @@ class Challenges {
         }
       } else {
         msg.channel.send(
-            'Only server administrators are permitted to configure' +
+            'Error: Only server administrators are permitted to configure' +
             ' challenges.'
         );
       }
@@ -779,7 +743,7 @@ class Challenges {
         }
       } else {
         msg.channel.send(
-            'Only server administrators are permitted' +
+            'Error: Only server administrators are permitted' +
             ' to configure automatic summaries.'
         );
       }
