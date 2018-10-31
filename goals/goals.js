@@ -36,13 +36,13 @@ class Goals {
       } catch (e) {
         if (e.code == 'ENOENT') {
           await msg.channel.send(
-              'Fatal error. Winnie_Bot cannot locate' +
+              'Fatal error: Winnie_Bot cannot locate' +
               ' timezone information.\nWinnie_Bot will now terminate.'
           );
           process.exit(1);
         } else {
           msg.channel.send(
-              'Winnie_Bot accepts IANA timezone identifiers only.' +
+              'Error: Winnie_Bot accepts IANA timezone identifiers only.' +
               ' For detailed information about IANA timezone identifiers, go' +
               ' here: https://en.wikipedia.org/wiki/Tz_database'
           );
@@ -52,7 +52,7 @@ class Goals {
       // check entered timezone against regex
       if (!this.regionRegex.test(timezone)) {
         msg.channel.send(
-            'Winnie_Bot accepts IANA timezone identifiers only.' +
+            'Error: Winnie_Bot accepts IANA timezone identifiers only.' +
             ' For detailed information about IANA timezone identifiers, go' +
             ' here: https://en.wikipedia.org/wiki/Tz_database'
         );
@@ -66,7 +66,7 @@ class Goals {
       } catch (e) {
         if (e.code == 50013) {
           msg.channel.send(
-              'Winnie requires the Manage Roles permission to set' +
+              'Error: Winnie requires the Manage Roles permission to set' +
               ' timezones.  Please contact your server admin.'
           );
         } else {
@@ -98,9 +98,9 @@ class Goals {
     const goal = args.shift();
     let goalType = args.shift();
     if (goal === undefined || goal == '') {
-      msg.channel.send('I need a goal to set!');
+      msg.channel.send(msg.author + ', I need a goal to set!');
     } else if (!Number.isInteger(Number(goal))) {
-      msg.channel.send('Your goal must be a whole number.');
+      msg.channel.send('Error: Your goal must be a whole number.');
     } else if (msg.author.id in goallist.goalList) {
       msg.channel.send(
           msg.author +
@@ -125,7 +125,8 @@ class Goals {
           goalType === undefined
         )
       ) {
-        msg.channel.send('Goal type must be words, lines, pages, or minutes.');
+        msg.channel.send('Error: Goal type must be words, lines, pages,' +
+          ' or minutes.');
       } else {
         if (goalType === undefined) {
           goalType = 'words';
@@ -186,7 +187,7 @@ class Goals {
       const args = suffix.split(' ');
       const goal = args.shift();
       if (!Number.isInteger(Number(goal))) {
-        msg.channel.send('Your goal must be a whole number.');
+        msg.channel.send('Error: Your goal must be a whole number.');
       } else if (!(msg.author.id in goallist.goalList)) {
         msg.channel.send(
             msg.author +
@@ -217,14 +218,13 @@ class Goals {
     if (!(msg.author.id in goallist.goalList)) {
       msg.channel.send(
           msg.author +
-          ', you have not yet set a goal' +
-          ' for today. Use !set to do so.'
+          ', you have not yet set a goal for today. Use !set to do so.'
       );
     } else {
       conn.collection('goalDB').remove({authorID: msg.author.id});
       delete goallist.goalList[msg.author.id];
       msg.channel.send(
-          msg.author + ', you have successfully reset your daily' + ' goal.'
+          msg.author + ', you have successfully reset your daily goal.'
       );
     }
   }
@@ -236,8 +236,7 @@ class Goals {
     if (!(msg.author.id in goallist.goalList)) {
       msg.channel.send(
           msg.author +
-          ', you have not yet set a goal' +
-          ' for today. Use !set to do so.'
+          ', you have not yet set a goal for today. Use !set to do so.'
       );
     } else {
       msg.channel.send(

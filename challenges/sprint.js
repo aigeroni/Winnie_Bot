@@ -1,4 +1,5 @@
 const Challenge = require('./challenge');
+const challengelist = require('./challengelist.js');
 const conn = require('mongoose').connection;
 
 /** Represents a sprint. */
@@ -63,7 +64,18 @@ class Sprint extends Challenge {
   }
   /** Update the sprint at each tick. */
   update() {
-    super.update();
+    switch (this.state) {
+      case 0:
+        this.start();
+        break;
+      case 1:
+        this.end();
+        break;
+      default:
+        this.channel.send('Error: Invalid state reached.');
+        delete challengelist.challengeList[this.objectID];
+        break;
+    }
   }
   /** Check to see whether the countdown is over, and start the sprint if so. */
   start() {
@@ -91,13 +103,48 @@ class Sprint extends Challenge {
     }
     this.state = 1;
   }
-  /** Check to see whether the sprint is over, and end it if so. */
+  /** Check to see whether the sprint is over, and post the summary if so. */
   end() {
-    super.end();
-  }
-  /** Check to see whether the total period is over, and post the summary. */
-  terminate() {
-    super.terminate();
+    this.cDur--;
+    if (this.cDur <= 0) {
+      for (let i = 0; i < this.hookedChannels.length; i++) {
+        challengelist.generateSummary(
+            client.channels.get(this.hookedChannels[i]),
+            this.objectID
+        );
+      }
+      conn.collection('challengeDB').remove({_id: this.objectID});
+      delete challengelist.challengeList[this.objectID];
+    } else if (this.cDur == 60) {
+      for (let i = 0; i < this.hookedChannels.length; i++) {
+        const channelObject = client.channels.get(this.hookedChannels[i]);
+        channelObject.send(
+            'There is 1 minute remaining in ' + this.displayName + '.'
+        );
+      }
+    } else if (this.cDur % 300 == 0) {
+      for (let i = 0; i < this.hookedChannels.length; i++) {
+        const channelObject = client.channels.get(this.hookedChannels[i]);
+        channelObject.send(
+            'There are ' +
+            this.cDur / 60 +
+            ' minutes remaining in ' +
+            this.displayName +
+            '.'
+        );
+      }
+    } else if ([30, 10, 5].includes(this.cDur)) {
+      for (let i = 0; i < this.hookedChannels.length; i++) {
+        const channelObject = client.channels.get(this.hookedChannels[i]);
+        channelObject.send(
+            'There are ' +
+            this.cDur +
+            ' seconds remaining in ' +
+            this.displayName +
+            '.'
+        );
+      }
+    }
   }
 }
 

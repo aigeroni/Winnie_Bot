@@ -169,6 +169,7 @@ client.on('ready', () => {
         });
       }
   );
+  client.user.setActivity('twitter.com/Winnie_Discord');
 });
 
 const cmdList = {
@@ -243,16 +244,16 @@ const cmdList = {
       challenges.stopChallenge(msg, suffix);
     },
   },
-  // time: {
-  //   name: 'time',
-  //   description:
-  //     'Notifies Winnie that you have reached the word goal for sprint <id>',
-  //   usage: 'id',
-  //   type: 'challenges',
-  //   process: function(client, msg, suffix) {
-  //     challenges.callTime(msg, suffix);
-  //   },
-  // },
+  time: {
+    name: 'time',
+    description:
+      'Notifies Winnie that you have reached the word goal for sprint <id>',
+    usage: 'id',
+    type: 'challenges',
+    process: function(client, msg, suffix) {
+      challenges.callTime(msg, suffix);
+    },
+  },
   total: {
     name: 'total',
     description:

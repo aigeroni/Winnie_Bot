@@ -40,7 +40,7 @@ class Tools {
       }
       if (base === null) {
         msg.channel.send(
-            'Error: You need to select an easy, average, or hard target.'
+            'Error: Targets must be easy, medium, hard, or insane.'
         );
       } else {
         const goalPerMinute = Math.ceil(Math.random() * 11) + base;
