@@ -55,7 +55,7 @@ class Challenges {
             ] = {
               timestampCalled: undefined,
               timeTaken: undefined,
-              channelID: msg.channel.id
+              channelID: msg.channel.id,
             };
           } else {
             challengelist.challengeList[challengeID].joinedUsers[
@@ -63,7 +63,7 @@ class Challenges {
             ] = {
               countData: undefined,
               countType: undefined,
-              channelID: msg.channel.id
+              channelID: msg.channel.id,
             };
           }
           const pushID = msg.channel.id;
@@ -498,21 +498,54 @@ class Challenges {
     let raptorCheck = true;
     if (challengeID in challengelist.challengeList) {
       if (challengelist.challengeList[challengeID].type == 'sprint') {
-        const doneStamp = new Date().getTime();
-        const timeTaken = (
-          doneStamp -
-          challengelist.challengeList[challengeID].initStamp
-        ) * 60000;
-        challengelist.challengeList[challengeID].joinedUsers[
-          msg.author.id
-        ] = {
-          timestampCalled: doneStamp,
-          timeTaken: timeTaken,
-          channelID: msg.channel.id,
-        };
+        if (challengelist.challengeList[challengeID].state < 2) {
+          const doneStamp = new Date().getTime();
+          const timeTaken = (
+            doneStamp -
+            challengelist.challengeList[challengeID].startStamp
+          ) / 60000;
+          challengelist.challengeList[challengeID].joinedUsers[
+              msg.author.id
+          ] = {
+            timestampCalled: doneStamp,
+            timeTaken: timeTaken,
+            channelID: msg.channel.id,
+          };
+          const pushID = msg.channel.id;
+          const searchIndex = challengelist.challengeList[
+              challengeID
+          ].hookedChannels.indexOf(pushID);
+          if (searchIndex == -1) {
+            challengelist.challengeList[challengeID].hookedChannels.push(
+                pushID
+            );
+          }
+          try {
+            conn.collection('challengeDB').update(
+                {_id: parseInt(challengeID)},
+                {
+                  $set: {
+                    joinedUsers:
+                  challengelist.challengeList[challengeID].joinedUsers,
+                  },
+                },
+                {upsert: true}
+            );
+          } catch (e) {
+            logger.error('Error: ' + e);
+          }
+          msg.channel.send(
+              msg.author +
+              ', you completed the sprint in ' +
+              timeTaken.toFixed(2) +
+              ' minutes.');
+        } else {
+          raptorCheck = false;
+          msg.channel.send('Error: This sprint has timed out.');
+        }
       } else {
         raptorCheck = false;
-          msg.channel.send('Error: You can only call time on a sprint.');
+        msg.channel.send('Error: You can only call time on a sprint.');
       }
     } else {
       raptorCheck = false;
@@ -558,73 +591,87 @@ class Challenges {
         writtenType = 'words';
       }
       if (challengeID in challengelist.challengeList) {
-        if (challengelist.challengeList[challengeID].state >= 2) {
-          if (
-            !(
-              challengelist.challengeList[challengeID].hidden &&
-              client.channels.get(
-                  challengelist.challengeList[challengeID].channelID
-              ).guild.id != msg.guild.id
-            )
-          ) {
-            if (Number.isInteger(Number(wordsWritten))) {
-              for (const user in challengelist.challengeList[challengeID]
-                  .joinedUsers) {
-                if (user == msg.author.id) {
-                  if (
-                    !(
-                      challengelist.challengeList[challengeID].joinedUsers[user]
-                          .countData === undefined
-                    )
-                  ) {
-                    raptorCheck = false;
+        if (challengelist.challengeList[challengeID].type != 'sprint') {
+          if (challengelist.challengeList[challengeID].state >= 2) {
+            if (
+              !(
+                challengelist.challengeList[challengeID].hidden &&
+                client.channels.get(
+                    challengelist.challengeList[challengeID].channelID
+                ).guild.id != msg.guild.id
+              )
+            ) {
+              if (Number.isInteger(Number(wordsWritten))) {
+                for (const user in challengelist.challengeList[challengeID]
+                    .joinedUsers) {
+                  if (user == msg.author.id) {
+                    if (
+                      !(
+                        challengelist.challengeList[challengeID]
+                            .joinedUsers[user].countData === undefined
+                      )
+                    ) {
+                      raptorCheck = false;
+                    }
                   }
                 }
-              }
-              if (Number(wordsWritten) < 1) {
-                raptorCheck = false;
-              }
-              challengelist.challengeList[challengeID].joinedUsers[
-                  msg.author.id
-              ] = {
-                countData: wordsWritten,
-                countType: writtenType,
-                channelID: msg.channel.id,
-              };
-              try {
-                conn.collection('challengeDB').update(
-                    {_id: parseInt(challengeID)},
-                    {
-                      $set: {
-                        joinedUsers:
-                        challengelist.challengeList[challengeID].joinedUsers,
+                if (Number(wordsWritten) < 1) {
+                  raptorCheck = false;
+                }
+                challengelist.challengeList[challengeID].joinedUsers[
+                    msg.author.id
+                ] = {
+                  countData: wordsWritten,
+                  countType: writtenType,
+                  channelID: msg.channel.id,
+                };
+                const pushID = msg.channel.id;
+                const searchIndex = challengelist.challengeList[
+                    challengeID
+                ].hookedChannels.indexOf(pushID);
+                if (searchIndex == -1) {
+                  challengelist.challengeList[challengeID].hookedChannels.push(
+                      pushID
+                  );
+                }
+                try {
+                  conn.collection('challengeDB').update(
+                      {_id: parseInt(challengeID)},
+                      {
+                        $set: {
+                          joinedUsers:
+                          challengelist.challengeList[challengeID].joinedUsers,
+                        },
                       },
-                    },
-                    {upsert: true}
+                      {upsert: true}
+                  );
+                } catch (e) {
+                  logger.error('Error: ' + e);
+                }
+                msg.channel.send('Total added to summary.');
+              } else {
+                raptorCheck = false;
+                msg.channel.send(
+                    msg.author +
+                    ', I need a whole number to include' +
+                    ' in the summary!'
                 );
-              } catch (e) {
-                logger.error('Error: ' + e);
               }
-              msg.channel.send('Total added to summary.');
             } else {
               raptorCheck = false;
               msg.channel.send(
                   msg.author +
-                  ', I need a whole number to include' +
-                  ' in the summary!'
+                  ', you do not have permission to join' +
+                  ' this challenge.'
               );
             }
           } else {
             raptorCheck = false;
-            msg.channel.send(
-                msg.author +
-                ', you do not have permission to join' +
-                ' this challenge.'
-            );
+            msg.channel.send('Error: This challenge has not ended yet!');
           }
         } else {
           raptorCheck = false;
-          msg.channel.send('Error: This challenge has not ended yet!');
+          msg.channel.send('Error: You cannot post a total for sprints.');
         }
       } else {
         raptorCheck = false;
