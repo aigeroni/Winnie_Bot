@@ -48,12 +48,23 @@ class ChallengeList {
                   userTotal +=
                     this.challengeList[challengeID].joinedUsers[
                         user
-                    ].countType.slice(0, -1) + '\n';
+                    ].countType.slice(0, -1) + '(**';
                 } else {
                   userTotal +=
                     this.challengeList[challengeID].joinedUsers[user]
                         .countType +
-                    '\n';
+                    ' (**';
+                }
+                if (this.challengeList[challengeID].joinedUsers[user]
+                    .countType != 'minutes') {
+                  userTotal += (this.challengeList[challengeID]
+                      .joinedUsers[user].countData /
+                  this.challengeList[challengeID].duration).toFixed(2) +
+                  '** ' +
+                  this.challengeList[challengeID].joinedUsers[
+                      user
+                  ].countType.slice(0, 1) +
+                  'pm)\n';
                 }
               }
               if (!(homeServer in totalWords)) {
