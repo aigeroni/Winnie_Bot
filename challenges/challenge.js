@@ -156,9 +156,20 @@ class Challenge {
         }
       }
       const channelObject = client.channels.get(this.hookedChannels[i]);
+      let timeString = 'minutes';
+      if (this.duration == 1) {
+        timeString = 'minute'
+      }
       channelObject.send(
-          this.displayName + ' (ID ' + this.objectID + ') starts now!'
-          + userList
+          this.displayName +
+          ' (ID ' +
+          this.objectID +
+          ', ' +
+          this.duration +
+          ' ' +
+          timeString +
+          ') starts now!'+
+          userList
       );
     }
     this.state = 1;

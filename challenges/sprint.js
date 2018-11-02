@@ -91,14 +91,22 @@ class Sprint extends Challenge {
         }
       }
       const channelObject = client.channels.get(this.hookedChannels[i]);
+      let timeString = 'minutes';
+      if (this.duration == 1) {
+        timeString = 'minute'
+      }
       channelObject.send(
-          this.displayName +
-          ' (ID ' +
-          this.objectID +
-          ') starts now! Race to ' +
-          this.goal +
-          ' words!' +
-          userList
+        this.displayName +
+        ' (ID ' +
+        this.objectID +
+        ', ' +
+        this.duration +
+        ' ' +
+        timeString +
+        ') starts now! Race to ' +
+        this.goal +
+        ' words!' +
+        userList
       );
     }
     this.state = 1;
