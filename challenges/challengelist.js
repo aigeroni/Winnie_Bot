@@ -48,16 +48,17 @@ class ChallengeList {
                   userTotal +=
                     this.challengeList[challengeID].joinedUsers[
                         user
-                    ].countType.slice(0, -1) + '(**';
+                    ].countType.slice(0, -1);
                 } else {
                   userTotal +=
                     this.challengeList[challengeID].joinedUsers[user]
-                        .countType +
-                    ' (**';
+                        .countType
                 }
                 if (this.challengeList[challengeID].joinedUsers[user]
                     .countType != 'minutes') {
-                  userTotal += (this.challengeList[challengeID]
+                  userTotal +=
+                  ' (**' +
+                  (this.challengeList[challengeID]
                       .joinedUsers[user].countData /
                   this.challengeList[challengeID].duration).toFixed(2) +
                   '** ' +
@@ -65,6 +66,8 @@ class ChallengeList {
                       user
                   ].countType.slice(0, 1) +
                   'pm)\n';
+                } else {
+                  userTotal += '\n';
                 }
               }
               if (!(homeServer in totalWords)) {
