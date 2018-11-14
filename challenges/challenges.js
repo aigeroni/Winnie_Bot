@@ -485,7 +485,7 @@ class Challenges {
               break;
             default:
               break;
-          //}
+          }
         }
       }
     }
