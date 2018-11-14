@@ -415,12 +415,12 @@ class Challenges {
         );
         const parentGuild = parentChannel.guild;
         // check whether a challenge is hidden
-        // if (
-        //  !(
+        if (
+        !(
         //    challengelist.challengeList[i].hidden &&
-        //    parentGuild.id != msg.guild.id
-        //  )
-        //) {
+            parentGuild.id != msg.guild.id
+          )
+        ) {
           nonHiddenTotal += 1;
           // find originating server name
           const parentGuildName = parentGuild.name;
