@@ -158,7 +158,7 @@ class Challenge {
       const channelObject = client.channels.get(this.hookedChannels[i]);
       let timeString = 'minutes';
       if (this.duration == 1) {
-        timeString = 'minute'
+        timeString = 'minute';
       }
       channelObject.send(
           this.displayName +

@@ -1,3 +1,6 @@
+const profanity = require('profanity-util', {substring: 'lite'});
+const emojiRegex = require('emoji-regex/es2015/index.js');
+const emojiRegexText = require('emoji-regex/es2015/text.js');
 const ChainWar = require('./chainwar');
 const Sprint = require('./sprint');
 const War = require('./war');
@@ -16,6 +19,8 @@ class Challenges {
     this.timerID = 1;
     this.crossServerStatus = {};
     this.autoSumStatus = {};
+    this.regex = emojiRegex();
+    this.regexText = emojiRegexText();
   }
   /**
    * Add a user to the list of joined users for a challenge.
@@ -156,7 +161,14 @@ class Challenges {
     if (start === undefined) {
       start = 1;
     }
-    if (!Number.isInteger(Number(words))) {
+    if (sprintName == '') {
+      sprintName = msg.author.username + '\'s sprint';
+    }
+    if (profanity.check(sprintName).length > 0) {
+      msg.channel.send('Error: Sprint names may not contain profanity.');
+    } else if (this.regex.exec(sprintName) || this.regexText.exec(sprintName)) {
+      msg.channel.send('Error: Sprint names may not contain emoji.');
+    } else if (!Number.isInteger(Number(words))) {
       msg.channel.send('Error: Word goal must be a whole number.');
     } else if (isNaN(timeout)) {
       msg.channel.send('Error: Sprint duration must be a number.');
@@ -177,9 +189,6 @@ class Challenges {
     } else {
       try {
         const creatorID = msg.author.id;
-        if (sprintName == '') {
-          sprintName = msg.author.username + '\'s sprint';
-        }
         const startTime = new Date().getTime();
         challengelist.challengeList[this.timerID] = new Sprint(
             this.timerID,
@@ -220,7 +229,14 @@ class Challenges {
     if (start === undefined) {
       start = 1;
     }
-    if (isNaN(start)) {
+    if (warName == '') {
+      warName = msg.author.username + '\'s war';
+    }
+    if (profanity.check(warName).length > 0) {
+      msg.channel.send('Error: War names may not contain profanity.');
+    } else if (this.regex.exec(warName) || this.regexText.exec(warName)) {
+      msg.channel.send('Error: War names may not contain emoji.');
+    } else if (isNaN(start)) {
       msg.channel.send('Error: Time to start must be a number.');
     } else if (isNaN(duration)) {
       msg.channel.send('Error: War duration must be a number.');
@@ -237,9 +253,6 @@ class Challenges {
     } else {
       try {
         const creatorID = msg.author.id;
-        if (warName == '') {
-          warName = msg.author.username + '\'s war';
-        }
         const startTime = new Date().getTime();
         challengelist.challengeList[this.timerID] = new War(
             this.timerID,
@@ -280,7 +293,14 @@ class Challenges {
     if (timeBetween === undefined) {
       timeBetween = 1;
     }
-    if (isNaN(chainWarCount)) {
+    if (warName == '') {
+      warName = msg.author.username + '\'s war';
+    }
+    if (profanity.check(warName).length > 0) {
+      msg.channel.send('Error: War names may not contain profanity.');
+    } else if (this.regex.exec(warName) || this.regexText.exec(warName)) {
+      msg.channel.send('Error: War names may not contain emoji.');
+    } else if (isNaN(chainWarCount)) {
       msg.channel.send('Error: War count must be a number.');
     } else if (isNaN(timeBetween)) {
       msg.channel.send('Error: Time between wars must be a number.');
@@ -305,9 +325,6 @@ class Challenges {
     } else {
       try {
         const creatorID = msg.author.id;
-        if (warName == '') {
-          warName = msg.author.username + '\'s war';
-        }
         const startTime = new Date().getTime();
         challengelist.challengeList[this.timerID] = new ChainWar(
             this.timerID,

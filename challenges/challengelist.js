@@ -52,7 +52,7 @@ class ChallengeList {
                 } else {
                   userTotal +=
                     this.challengeList[challengeID].joinedUsers[user]
-                        .countType
+                        .countType;
                 }
                 if (this.challengeList[challengeID].joinedUsers[user]
                     .countType != 'minutes') {
