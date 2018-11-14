@@ -35,7 +35,7 @@ class Challenges {
       msg.channel.send('Error: Challenge ID must be an integer.');
     } else if (challengeID in challengelist.challengeList) {
       if (
-        challengelist.challengeList[challengeID].hidden &&
+        //challengelist.challengeList[challengeID].hidden &&
         client.channels.get(challengelist.challengeList[challengeID].channelID)
             .guild.id != msg.guild.id
       ) {
@@ -415,12 +415,12 @@ class Challenges {
         );
         const parentGuild = parentChannel.guild;
         // check whether a challenge is hidden
-        if (
-          !(
-            challengelist.challengeList[i].hidden &&
-            parentGuild.id != msg.guild.id
-          )
-        ) {
+        // if (
+        //  !(
+        //    challengelist.challengeList[i].hidden &&
+        //    parentGuild.id != msg.guild.id
+        //  )
+        //) {
           nonHiddenTotal += 1;
           // find originating server name
           const parentGuildName = parentGuild.name;
@@ -485,7 +485,7 @@ class Challenges {
               break;
             default:
               break;
-          }
+          //}
         }
       }
     }
@@ -612,7 +612,7 @@ class Challenges {
           if (challengelist.challengeList[challengeID].state >= 2) {
             if (
               !(
-                challengelist.challengeList[challengeID].hidden &&
+                //challengelist.challengeList[challengeID].hidden &&
                 client.channels.get(
                     challengelist.challengeList[challengeID].channelID
                 ).guild.id != msg.guild.id
