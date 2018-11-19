@@ -186,7 +186,7 @@ class Goals {
     } else {
       const args = suffix.split(' ');
       const goal = args.shift();
-      if (!Number.isInteger(Number(goal))) {
+      if (!Number.isInteger(parseInt(goal))) {
         msg.channel.send('Error: Your goal must be a whole number.');
       } else if (!(msg.author.id in goallist.goalList)) {
         msg.channel.send(

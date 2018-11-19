@@ -1,6 +1,5 @@
 const profanity = require('profanity-util', {substring: 'lite'});
 const emojiRegex = require('emoji-regex/es2015/index.js');
-const emojiRegexText = require('emoji-regex/es2015/text.js');
 const ChainWar = require('./chainwar');
 const Sprint = require('./sprint');
 const War = require('./war');
@@ -20,7 +19,6 @@ class Challenges {
     this.crossServerStatus = {};
     this.autoSumStatus = {};
     this.regex = emojiRegex();
-    this.regexText = emojiRegexText();
   }
   /**
    * Add a user to the list of joined users for a challenge.
@@ -166,7 +164,7 @@ class Challenges {
     }
     if (profanity.check(sprintName).length > 0) {
       msg.channel.send('Error: Sprint names may not contain profanity.');
-    } else if (this.regex.exec(sprintName) || this.regexText.exec(sprintName)) {
+    } else if (this.regex.exec(sprintName)) {
       msg.channel.send('Error: Sprint names may not contain emoji.');
     } else if (!Number.isInteger(Number(words))) {
       msg.channel.send('Error: Word goal must be a whole number.');
@@ -186,6 +184,8 @@ class Challenges {
       msg.channel.send('Error: Sprints cannot start in the past.');
     } else if (timeout < 1) {
       msg.channel.send('Error: Sprints must run for at least a minute.');
+    } else if (sprintName.length > 150) {
+      msg.channel.send('Error: Sprint names must be 150 characters or less.');
     } else {
       try {
         const creatorID = msg.author.id;
@@ -234,7 +234,7 @@ class Challenges {
     }
     if (profanity.check(warName).length > 0) {
       msg.channel.send('Error: War names may not contain profanity.');
-    } else if (this.regex.exec(warName) || this.regexText.exec(warName)) {
+    } else if (this.regex.exec(warName)) {
       msg.channel.send('Error: War names may not contain emoji.');
     } else if (isNaN(start)) {
       msg.channel.send('Error: Time to start must be a number.');
@@ -250,6 +250,8 @@ class Challenges {
       msg.channel.send('Error: Wars cannot start in the past.');
     } else if (duration < 1) {
       msg.channel.send('Error: Wars must run for at least a minute.');
+    } else if (warName.length > 150) {
+      msg.channel.send('Error: War names must be 150 characters or less.');
     } else {
       try {
         const creatorID = msg.author.id;
@@ -298,7 +300,7 @@ class Challenges {
     }
     if (profanity.check(warName).length > 0) {
       msg.channel.send('Error: War names may not contain profanity.');
-    } else if (this.regex.exec(warName) || this.regexText.exec(warName)) {
+    } else if (this.regex.exec(warName)) {
       msg.channel.send('Error: War names may not contain emoji.');
     } else if (isNaN(chainWarCount)) {
       msg.channel.send('Error: War count must be a number.');
@@ -310,7 +312,7 @@ class Challenges {
       );
     } else if (isNaN(duration)) {
       msg.channel.send('Error: War duration must be a number.');
-    } else if (!(2 < chainWarCount < 10)) {
+    } else if (chainWarCount < 2 || chainWarCount > 10) {
       msg.channel.send(
           'Error: Chain wars must be between two and ten wars long.'
       );
@@ -322,6 +324,8 @@ class Challenges {
       msg.channel.send('Error: Chain wars cannot overlap.');
     } else if (duration < 1) {
       msg.channel.send('Error: Wars must run for at least a minute.');
+    } else if (warName.length > 150) {
+      msg.channel.send('Error: War names must be 150 characters or less.');
     } else {
       try {
         const creatorID = msg.author.id;
