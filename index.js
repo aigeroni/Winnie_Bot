@@ -456,12 +456,13 @@ client.on('message', (msg) => {
     msg.author.id != client.user.id &&
     msg.content.startsWith(config.cmd_prefix)
   ) {
+    const userEnteredText = msg.content.replace(/\s\s+/g, ' ');
     logger.info(msg.author + ' entered command ' + msg.content);
-    const cmdData = msg.content
+    const cmdData = userEnteredText
         .split(' ')[0]
         .substring(config.cmd_prefix.length)
         .toLowerCase();
-    const suffix = msg.content.substring(
+    const suffix = userEnteredText.substring(
         cmdData.length + config.cmd_prefix.length + 1
     );
     const cmd = cmdList[cmdData];
