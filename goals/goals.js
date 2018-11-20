@@ -43,8 +43,9 @@ class Goals {
         } else {
           msg.channel.send(
               'Error: Winnie_Bot accepts IANA timezone identifiers only.' +
-              ' For detailed information about IANA timezone identifiers, go' +
-              ' here: https://en.wikipedia.org/wiki/Tz_database'
+              ' These generally take the format of' +
+              ' Continent/Your_Areas_Largest_City.\n' +
+              'For example: America/New_York, Australia/Sydney, Europe/London'
           );
         }
         return false;
@@ -53,8 +54,10 @@ class Goals {
       if (!this.regionRegex.test(timezone)) {
         msg.channel.send(
             'Error: Winnie_Bot accepts IANA timezone identifiers only.' +
-            ' For detailed information about IANA timezone identifiers, go' +
-            ' here: https://en.wikipedia.org/wiki/Tz_database'
+            ' These generally take the format of' +
+            ' Continent/Your_Areas_Largest_City.\n' +
+            '**For example:** `America/New_York`, `Australia/Sydney`,' +
+            ' `Europe/London`'
         );
         return false;
       }
