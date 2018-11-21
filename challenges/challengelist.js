@@ -126,7 +126,7 @@ class ChallengeList {
             userTotal +
             summaryServer.name +
             ' Total:';
-          if (!(summaryServer.id in totalWords)) {
+          if ((summaryServer.id in totalWords)) {
             if (totalWords[summaryServer.id][1] > 0) {
               summaryData += ' **' + totalWords[summaryServer.id][1];
               if (totalWords[summaryServer.id][1] == 1) {
@@ -141,7 +141,7 @@ class ChallengeList {
               firstType = false;
             }
           }
-          if (!(summaryServer.id in totalLines)) {
+          if ((summaryServer.id in totalLines)) {
             if (totalLines[summaryServer.id][1] > 0) {
               if (!firstType) {
                 summaryData += ',';
@@ -159,7 +159,7 @@ class ChallengeList {
               firstType = false;
             }
           }
-          if (!(summaryServer.id in totalPages)) {
+          if ((summaryServer.id in totalPages)) {
             if (totalPages[summaryServer.id][1] > 0) {
               if (!firstType) {
                 summaryData += ',';
@@ -177,7 +177,7 @@ class ChallengeList {
               firstType = false;
             }
           }
-          if (!(summaryServer.id in totalMinutes)) {
+          if ((summaryServer.id in totalMinutes)) {
             if (totalMinutes[summaryServer.id][1] > 0) {
               if (!firstType) {
                 summaryData += ',';
@@ -215,7 +215,7 @@ class ChallengeList {
             if (currentServer.id != channel.guild.id) {
               let serverSummary = '__*' + currentServer.name + '*__:';
               let xfirstType = true;
-              if (!(currentServer.id in totalWords)) {
+              if ((currentServer.id in totalWords)) {
                 if (totalWords[currentServer.id][1] > 0) {
                   serverSummary += ' **' + totalWords[currentServer.id][1];
                   if (totalWords[currentServer.id][1] == 1) {
@@ -230,7 +230,7 @@ class ChallengeList {
                   xfirstType = false;
                 }
               }
-              if (!(currentServer.id in totalLines)) {
+              if ((currentServer.id in totalLines)) {
                 if (totalLines[currentServer.id][1] > 0) {
                   if (!xfirstType) {
                     serverSummary += ',';
@@ -248,7 +248,7 @@ class ChallengeList {
                   xfirstType = false;
                 }
               }
-              if (!(currentServer.id in totalPages)) {
+              if ((currentServer.id in totalPages)) {
                 if (totalPages[currentServer.id][1] > 0) {
                   if (!xfirstType) {
                     serverSummary += ',';
@@ -266,7 +266,7 @@ class ChallengeList {
                   xfirstType = false;
                 }
               }
-              if (!(currentServer.id in totalMinutes)) {
+              if ((currentServer.id in totalMinutes)) {
                 if (totalMinutes[currentServer.id][1] > 0) {
                   if (!xfirstType) {
                     serverSummary += ',';
