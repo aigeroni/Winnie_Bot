@@ -126,66 +126,74 @@ class ChallengeList {
             userTotal +
             summaryServer.name +
             ' Total:';
-          if (totalWords[summaryServer.id][1] > 0) {
-            summaryData += ' **' + totalWords[summaryServer.id][1];
-            if (totalWords[summaryServer.id][1] == 1) {
-              summaryData += '** word';
-            } else {
-              summaryData += '** words';
+          if (!(summaryServer.id in totalWords)) {
+            if (totalWords[summaryServer.id][1] > 0) {
+              summaryData += ' **' + totalWords[summaryServer.id][1];
+              if (totalWords[summaryServer.id][1] == 1) {
+                summaryData += '** word';
+              } else {
+                summaryData += '** words';
+              }
+              summaryData += ' (**' + (
+                totalWords[summaryServer.id][1]/
+                totalWords[summaryServer.id][0]).toFixed(0)
+                + '** avg)';
+              firstType = false;
             }
-            summaryData += ' (**' + (
-              totalWords[summaryServer.id][1]/
-              totalWords[summaryServer.id][0]).toFixed(0)
-              + '** avg)';
-            firstType = false;
           }
-          if (totalLines[summaryServer.id][1] > 0) {
-            if (!firstType) {
-              summaryData += ',';
+          if (!(summaryServer.id in totalLines)) {
+            if (totalLines[summaryServer.id][1] > 0) {
+              if (!firstType) {
+                summaryData += ',';
+              }
+              summaryData += ' **' + totalLines[summaryServer.id][1];
+              if (totalLines[summaryServer.id][1] == 1) {
+                summaryData += '** line';
+              } else {
+                summaryData += '** lines';
+              }
+              summaryData += ' (**' + (
+                totalLines[summaryServer.id][1]/
+                totalLines[summaryServer.id][0]).toFixed(0)
+                + '** avg)';
+              firstType = false;
             }
-            summaryData += ' **' + totalLines[summaryServer.id][1];
-            if (totalLines[summaryServer.id][1] == 1) {
-              summaryData += '** line';
-            } else {
-              summaryData += '** lines';
-            }
-            summaryData += ' (**' + (
-              totalLines[summaryServer.id][1]/
-              totalLines[summaryServer.id][0]).toFixed(0)
-              + '** avg)';
-            firstType = false;
           }
-          if (totalPages[summaryServer.id][1] > 0) {
-            if (!firstType) {
-              summaryData += ',';
+          if (!(summaryServer.id in totalPages)) {
+            if (totalPages[summaryServer.id][1] > 0) {
+              if (!firstType) {
+                summaryData += ',';
+              }
+              summaryData += ' **' + totalPages[summaryServer.id][1];
+              if (totalPages[summaryServer.id][1] == 1) {
+                summaryData += '** page';
+              } else {
+                summaryData += '** pages';
+              }
+              summaryData += ' (**' + (
+                totalPages[summaryServer.id][1]/
+                totalPages[summaryServer.id][0]).toFixed(0)
+                + '** avg)';
+              firstType = false;
             }
-            summaryData += ' **' + totalPages[summaryServer.id][1];
-            if (totalPages[summaryServer.id][1] == 1) {
-              summaryData += '** page';
-            } else {
-              summaryData += '** pages';
-            }
-            summaryData += ' (**' + (
-              totalPages[summaryServer.id][1]/
-              totalPages[summaryServer.id][0]).toFixed(0)
-              + '** avg)';
-            firstType = false;
           }
-          if (totalMinutes[summaryServer.id][1] > 0) {
-            if (!firstType) {
-              summaryData += ',';
+          if (!(summaryServer.id in totalMinutes)) {
+            if (totalMinutes[summaryServer.id][1] > 0) {
+              if (!firstType) {
+                summaryData += ',';
+              }
+              summaryData += ' **' + totalMinutes[summaryServer.id][1];
+              if (totalMinutes[summaryServer.id][1] == 1) {
+                summaryData += '** minute';
+              } else {
+                summaryData += '** minutes';
+              }
+              summaryData += ' (**' + (
+                totalMinutes[summaryServer.id][1]/
+                totalMinutes[summaryServer.id][0]).toFixed(0)
+                + '** avg)';
+              firstType = false;
             }
-            summaryData += ' **' + totalMinutes[summaryServer.id][1];
-            if (totalMinutes[summaryServer.id][1] == 1) {
-              summaryData += '** minute';
-            } else {
-              summaryData += '** minutes';
-            }
-            summaryData += ' (**' + (
-              totalMinutes[summaryServer.id][1]/
-              totalMinutes[summaryServer.id][0]).toFixed(0)
-              + '** avg)';
-            firstType = false;
           }
           // this server's summary
           if (!firstType) {
@@ -207,70 +215,78 @@ class ChallengeList {
             if (currentServer.id != channel.guild.id) {
               let serverSummary = '__*' + currentServer.name + '*__:';
               let xfirstType = true;
-              if (totalWords[currentServer.id][1] > 0) {
-                serverSummary += ' **' + totalWords[currentServer.id][1];
-                if (totalWords[currentServer.id][1] == 1) {
-                  serverSummary += '** word';
-                } else {
-                  serverSummary += '** words';
+              if (!(currentServer.id in totalWords)) {
+                if (totalWords[currentServer.id][1] > 0) {
+                  serverSummary += ' **' + totalWords[currentServer.id][1];
+                  if (totalWords[currentServer.id][1] == 1) {
+                    serverSummary += '** word';
+                  } else {
+                    serverSummary += '** words';
+                  }
+                  serverSummary += ' (**' + (
+                    totalWords[currentServer.id][1]/
+                    totalWords[currentServer.id][0]).toFixed(0)
+                    + '** avg)';
+                  xfirstType = false;
                 }
-                serverSummary += ' (**' + (
-                  totalWords[currentServer.id][1]/
-                  totalWords[currentServer.id][0]).toFixed(0)
-                  + '** avg)';
-                xfirstType = false;
               }
-              if (totalLines[currentServer.id][1] > 0) {
+              if (!(currentServer.id in totalLines)) {
+                if (totalLines[currentServer.id][1] > 0) {
+                  if (!xfirstType) {
+                    serverSummary += ',';
+                  }
+                  serverSummary += ' **' + totalLines[currentServer.id][1];
+                  if (totalLines[currentServer.id][1] == 1) {
+                    serverSummary += '** line';
+                  } else {
+                    serverSummary += '** lines';
+                  }
+                  serverSummary += ' (**' + (
+                    totalLines[currentServer.id][1]/
+                    totalLines[currentServer.id][0]).toFixed(0)
+                    + '** avg)';
+                  xfirstType = false;
+                }
+              }
+              if (!(currentServer.id in totalPages)) {
+                if (totalPages[currentServer.id][1] > 0) {
+                  if (!xfirstType) {
+                    serverSummary += ',';
+                  }
+                  serverSummary += ' **' + totalPages[currentServer.id][1];
+                  if (totalPages[currentServer.id][1] == 1) {
+                    serverSummary += '** page';
+                  } else {
+                    serverSummary += '** pages';
+                  }
+                  serverSummary += ' (**' + (
+                    totalPages[currentServer.id][1]/
+                    totalPages[currentServer.id][0]).toFixed(0)
+                    + '** avg)';
+                  xfirstType = false;
+                }
+              }
+              if (!(currentServer.id in totalMinutes)) {
+                if (totalMinutes[currentServer.id][1] > 0) {
+                  if (!xfirstType) {
+                    serverSummary += ',';
+                  }
+                  serverSummary += ' **' + totalMinutes[currentServer.id][1];
+                  if (totalMinutes[currentServer.id][1] == 1) {
+                    serverSummary += '** minute';
+                  } else {
+                    serverSummary += '** minutes';
+                  }
+                  serverSummary += ' (**' + (
+                    totalMinutes[currentServer.id][1]/
+                    totalMinutes[currentServer.id][0]).toFixed(0)
+                    + '** avg)';
+                  xfirstType = false;
+                }
                 if (!xfirstType) {
-                  serverSummary += ',';
+                  crossData = true;
+                  crossServerSummary += serverSummary + '\n';
                 }
-                serverSummary += ' **' + totalLines[currentServer.id][1];
-                if (totalLines[currentServer.id][1] == 1) {
-                  serverSummary += '** line';
-                } else {
-                  serverSummary += '** lines';
-                }
-                serverSummary += ' (**' + (
-                  totalLines[currentServer.id][1]/
-                  totalLines[currentServer.id][0]).toFixed(0)
-                  + '** avg)';
-                xfirstType = false;
-              }
-              if (totalPages[currentServer.id][1] > 0) {
-                if (!xfirstType) {
-                  serverSummary += ',';
-                }
-                serverSummary += ' **' + totalPages[currentServer.id][1];
-                if (totalPages[currentServer.id][1] == 1) {
-                  serverSummary += '** page';
-                } else {
-                  serverSummary += '** pages';
-                }
-                serverSummary += ' (**' + (
-                  totalPages[currentServer.id][1]/
-                  totalPages[currentServer.id][0]).toFixed(0)
-                  + '** avg)';
-                xfirstType = false;
-              }
-              if (totalMinutes[currentServer.id][1] > 0) {
-                if (!xfirstType) {
-                  serverSummary += ',';
-                }
-                serverSummary += ' **' + totalMinutes[currentServer.id][1];
-                if (totalMinutes[currentServer.id][1] == 1) {
-                  serverSummary += '** minute';
-                } else {
-                  serverSummary += '** minutes';
-                }
-                serverSummary += ' (**' + (
-                  totalMinutes[currentServer.id][1]/
-                  totalMinutes[currentServer.id][0]).toFixed(0)
-                  + '** avg)';
-                xfirstType = false;
-              }
-              if (!xfirstType) {
-                crossData = true;
-                crossServerSummary += serverSummary + '\n';
               }
             }
           }
