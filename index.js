@@ -175,10 +175,11 @@ client.on('ready', () => {
 const cmdList = {
   sprint: {
     name: 'sprint',
+    example: 'sprint 200 10 1 This is a sprint',
     description:
       'Starts a sprint of <words> words which times out in <duration> minutes' +
       ' in [time to start] minutes, with optional [name]',
-    usage: 'words duration [time to start [name]]',
+    usage: '<words> <duration> [time to start [name]]',
     type: 'challenges',
     process: function(client, msg, suffix) {
       challenges.startSprint(msg, suffix);
@@ -186,10 +187,11 @@ const cmdList = {
   },
   war: {
     name: 'war',
+    example: 'war 10 1 This is a war',
     description:
       'Starts a word war of <duration> minutes in [time to start] minutes,' +
       ' with optional [name]',
-    usage: 'duration [time to start [name]]',
+    usage: '<duration> [time to start [name]]',
     type: 'challenges',
     process: function(client, msg, suffix) {
       challenges.startWar(msg, suffix);
@@ -197,10 +199,11 @@ const cmdList = {
   },
   chainwar: {
     name: 'chainwar',
+    example: 'chainwar 2 10 1 This is a chain war',
     description:
       'Starts a chain of <number of wars>, each of <duration> minutes, with' +
       ' [time between wars] minutes between wars, and optional [name]',
-    usage: 'number of wars duration [time between wars [name]]',
+    usage: '<number of wars> <duration> [time between wars [name]]',
     type: 'challenges',
     process: function(client, msg, suffix) {
       challenges.startChainWar(msg, suffix);
@@ -208,8 +211,9 @@ const cmdList = {
   },
   join: {
     name: 'join',
-    description: 'Joins war/sprint with ID number <id>',
-    usage: 'id',
+    example: 'join 10793',
+    description: 'Joins war/sprint <id>',
+    usage: '<id>',
     type: 'challenges',
     process: function(client, msg, suffix) {
       challenges.joinChallenge(msg, suffix);
@@ -217,8 +221,9 @@ const cmdList = {
   },
   leave: {
     name: 'leave',
-    description: 'Leaves war/sprint with ID number <id>',
-    usage: 'id',
+    example: 'leave 10793',
+    description: 'Leaves war/sprint <id>',
+    usage: '<id>',
     type: 'challenges',
     process: function(client, msg, suffix) {
       challenges.leaveChallenge(msg, suffix);
@@ -226,9 +231,11 @@ const cmdList = {
   },
   cancel: {
     name: 'cancel',
+    example: 'cancel 10793',
     description:
-      'Ends war/sprint with ID number <id>. Can only be performed by creator.',
-    usage: 'id',
+      'Ends war/sprint <id>. Can only be performed by creator.',
+    usage: '<id>',
+    aliases: 'exterminate',
     type: 'challenges',
     process: function(client, msg, suffix) {
       challenges.stopChallenge(msg, suffix);
@@ -236,9 +243,11 @@ const cmdList = {
   },
   exterminate: {
     name: 'exterminate',
+    example: 'exterminate 10793',
     description:
-      'Ends war/sprint with ID number <id>. Can only be performed by creator.',
-    usage: 'id',
+      'Ends war/sprint <id>. Can only be performed by creator.',
+    usage: '<id>',
+    alias: true,
     type: 'challenges',
     process: function(client, msg, suffix) {
       challenges.stopChallenge(msg, suffix);
@@ -246,9 +255,10 @@ const cmdList = {
   },
   time: {
     name: 'time',
+    example: 'time 10793',
     description:
       'Notifies Winnie that you have reached the word goal for sprint <id>',
-    usage: 'id',
+    usage: '<id>',
     type: 'challenges',
     process: function(client, msg, suffix) {
       challenges.callTime(msg, suffix);
@@ -256,10 +266,11 @@ const cmdList = {
   },
   total: {
     name: 'total',
+    example: 'total 10793 45 lines',
     description:
       'Adds your <total> for completed war <id>, optional' +
       ' [lines|pages|minutes]',
-    usage: 'id total [lines|pages|minutes]',
+    usage: '<id> <total> [lines|pages|minutes]',
     type: 'challenges',
     process: function(client, msg, suffix) {
       const raptorRoll = challenges.addTotal(msg, suffix);
@@ -275,9 +286,10 @@ const cmdList = {
   },
   summary: {
     name: 'summary',
+    example: 'summary 10793',
     description:
-      'Displays the summary for completed war/sprint with ID number <id>',
-    usage: 'id',
+      'Displays the summary for completed war/sprint <id>',
+    usage: '<id>',
     type: 'challenges',
     process: function(client, msg, suffix) {
       challengelist.generateSummary(msg.channel, suffix);
@@ -294,8 +306,9 @@ const cmdList = {
   },
   timezone: {
     name: 'timezone',
+    example: 'timezone Australia/Melbourne',
     description: 'Sets your <IANA timezone identifier>',
-    usage: 'IANA timezone identifier',
+    usage: '<IANA timezone identifier>',
     type: 'goals',
     process: function(client, msg, suffix) {
       goals.setTimezone(msg, suffix);
@@ -303,9 +316,11 @@ const cmdList = {
   },
   set: {
     name: 'set',
+    example: 'set 1667',
     description:
       'Sets a daily goal <goal>, with optional [lines|pages|minutes]',
-    usage: 'goal [lines|pages|minutes]',
+    usage: '<goal> [lines|pages|minutes]',
+    aliases: 'goal',
     type: 'goals',
     process: function(client, msg, suffix) {
       goals.setGoal(msg, suffix);
@@ -313,9 +328,11 @@ const cmdList = {
   },
   goal: {
     name: 'goal',
+    example: 'goal 1667',
     description:
       'Sets a daily goal <goal>, with optional [lines|pages|minutes]',
-    usage: 'goal [lines|pages|minutes]',
+    usage: '<goal> [lines|pages|minutes]',
+    alias: true,
     type: 'goals',
     process: function(client, msg, suffix) {
       goals.setGoal(msg, suffix);
@@ -323,9 +340,11 @@ const cmdList = {
   },
   update: {
     name: 'update',
+    example: 'update 256',
     description:
       'Updates your daily goal with your <progress> since your last update',
-    usage: 'progress',
+    usage: '<progress>',
+    aliases: 'add',
     type: 'goals',
     process: function(client, msg, suffix) {
       goals.updateGoal(msg, suffix, false);
@@ -333,9 +352,11 @@ const cmdList = {
   },
   add: {
     name: 'add',
+    example: 'add 256',
     description:
       'Updates your daily goal with your <progress> since your last update',
-    usage: 'progress',
+    usage: '<progress>',
+    alias: true,
     type: 'goals',
     process: function(client, msg, suffix) {
       goals.updateGoal(msg, suffix, false);
@@ -343,8 +364,10 @@ const cmdList = {
   },
   overwrite: {
     name: 'overwrite',
+    example: 'overwrite 508',
     description: 'Updates your daily goal with your <progress> today',
-    usage: 'progress',
+    usage: '<progress>',
+    aliases: 'progress',
     type: 'goals',
     process: function(client, msg, suffix) {
       goals.updateGoal(msg, suffix, true);
@@ -352,8 +375,10 @@ const cmdList = {
   },
   progress: {
     name: 'progress',
+    example: 'progress 508',
     description: 'Updates your daily goal with your <progress> today',
-    usage: 'progress',
+    usage: '<progress>',
+    alias: true,
     type: 'goals',
     process: function(client, msg, suffix) {
       goals.updateGoal(msg, suffix, true);
@@ -377,9 +402,10 @@ const cmdList = {
   },
   target: {
     name: 'target',
+    example: 'target medium 15',
     description:
       'Generates an <easy|medium|hard|insane> target for <minutes> minutes',
-    usage: 'easy|medium|hard|insane minutes',
+    usage: '<easy|medium|hard|insane> <minutes>',
     type: 'tools',
     process: function(client, msg, suffix) {
       tools.calcTarget(msg, suffix);
@@ -395,9 +421,10 @@ const cmdList = {
   },
   roll: {
     name: 'roll',
+    example: 'roll 2d6 + 5',
     description:
       'Rolls any combination of the given options, separated by the + operator',
-    usage: 'x, x y, xdy',
+    usage: '<x, x y, xdy>',
     type: 'tools',
     process: function(client, msg, suffix) {
       tools.rollDice(msg, suffix);
@@ -405,9 +432,10 @@ const cmdList = {
   },
   choose: {
     name: 'choose',
+    example: 'choose red, white, black',
     description:
       'Selects an item from a list <list> of items, separated by commas',
-    usage: 'list',
+    usage: '<list>',
     type: 'tools',
     process: function(client, msg, suffix) {
       tools.chooseItem(msg, suffix);
@@ -425,7 +453,7 @@ const cmdList = {
     name: 'display',
     description:
       'Allows server admins to toggle cross-server display of challenges.',
-    usage: 'on|off',
+    usage: '<on|off>',
     type: 'config',
     process: function(client, msg, suffix) {
       challenges.xsDisplay(msg, suffix);
@@ -435,7 +463,7 @@ const cmdList = {
     name: 'autosum',
     description:
       'Allows server admins to toggle automatic print of challenge summaries.',
-    usage: 'show|hide',
+    usage: '<show|hide>',
     type: 'config',
     process: function(client, msg, suffix) {
       challenges.autoSum(msg, suffix);
@@ -468,14 +496,7 @@ client.on('message', (msg) => {
     const cmd = cmdList[cmdData];
     if (cmdData === 'help') {
       const helpReturn = (help.buildHelpMsg(cmdList, suffix));
-      if (helpReturn.constructor === Array) {
-        msg.channel.send(msg.author + ', I sent you a DM.');
-        for (i = 0; i < helpReturn.length; i++) {
-          msg.author.send(helpReturn[i]);
-        }
-      } else {
-        msg.channel.send(helpReturn);
-      }
+      msg.channel.send(helpReturn);
     } else if (cmd) {
       try {
         cmd.process(client, msg, suffix);
