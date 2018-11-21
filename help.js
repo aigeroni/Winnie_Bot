@@ -18,7 +18,10 @@ class Help {
       let helpMsg = '';
       for (let i = 0; i < this.commandTypes.length; i++) {
         if (this.commandTypes[i] == suffix) {
-          helpMsg = this.buildHelpSection(cmdList, this.commandTypes[i]);
+          helpMsg = '**Winnie_Bot Commands:**\n' +
+          '*Replace the <angled brackets> with the relevant information. ' +
+          'Anything in [square brackets] is optional.*\n\n';
+          helpMsg += this.buildHelpSection(cmdList, this.commandTypes[i]);
           return helpMsg;
         }
       }
@@ -46,15 +49,37 @@ class Help {
       }
       return helpMsg;
     } else {
-      const helpMsgArray = [];
-      helpMsgArray.push('**Winnie_Bot Commands:**\n' +
-        '*Replace the <angled brackets> with the relevant information. ' +
-        'Anything in [square brackets] is optional.*');
+      let helpMsg = '**Winnie_Bot Commands:**';
       for (let i = 0; i < this.commandTypes.length; i++) {
-        helpMsgArray.push(this
-            .buildHelpSection(cmdList, this.commandTypes[i]));
+        const typeTitle = this.commandTypes[i].charAt(0).toUpperCase()
+          + this.commandTypes[i].substr(1).toLowerCase();
+        helpMsg += '\n__*' + typeTitle + ':*__\n';
+        let first = true;
+        for (const j in cmdList) {
+          if (cmdList.hasOwnProperty(j)) {
+            if (cmdList[j].type == this.commandTypes[i]) {
+              if (!(cmdList[j].alias)) {
+                if (first == false) {
+                  helpMsg += ', ';
+                }
+                helpMsg += config.cmd_prefix + cmdList[j].name;
+                if (cmdList[j].aliases) {
+                  helpMsg += ' (aliases: ' +
+                  cmdList[j].aliases +
+                  ')';
+                }
+                first = false;
+              }
+            }
+          }
+        }
       }
-      return helpMsgArray;
+      helpMsg += '\n\nUse `' +
+        config.cmd_prefix +
+        'help <command>` to get help for a specific command, or `' +
+        config.cmd_prefix +
+        'help <challenges|goals|tools|config>` to get help for a command type.';
+      return helpMsg;
     }
   }
   /**

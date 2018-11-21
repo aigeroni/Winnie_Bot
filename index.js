@@ -496,14 +496,7 @@ client.on('message', (msg) => {
     const cmd = cmdList[cmdData];
     if (cmdData === 'help') {
       const helpReturn = (help.buildHelpMsg(cmdList, suffix));
-      if (helpReturn.constructor === Array) {
-        msg.channel.send(msg.author + ', I sent you a DM.');
-        for (i = 0; i < helpReturn.length; i++) {
-          msg.author.send(helpReturn[i]);
-        }
-      } else {
-        msg.channel.send(helpReturn);
-      }
+      msg.channel.send(helpReturn);
     } else if (cmd) {
       try {
         cmd.process(client, msg, suffix);
