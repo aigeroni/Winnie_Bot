@@ -1,4 +1,5 @@
 const prompts = require('./data.js');
+const config = require('../config.json');
 const conn = require('mongoose').connection;
 
 /** Class containing functions to handle miscellaneous tools. */
@@ -19,7 +20,11 @@ class Tools {
     const time = args.shift();
     let base = null;
     if (!Number.isInteger(Number(time))) {
-      msg.channel.send('Error: Duration must be a whole number.');
+      msg.channel.send(
+          'Error: Duration must be a whole number. Example: `' +
+          config.cmd_prefix +
+          'target medium 15`.'
+      );
     } else {
       switch (difficulty) {
         case 'easy':
@@ -40,7 +45,9 @@ class Tools {
       }
       if (base === null) {
         msg.channel.send(
-            'Error: Targets must be easy, medium, hard, or insane.'
+            'Error: Targets must be easy, medium, hard, or insane. Example: `' +
+            config.cmd_prefix +
+            'target medium 15`.'
         );
       } else {
         const goalPerMinute = Math.ceil(Math.random() * 11) + base;
@@ -217,12 +224,15 @@ class Tools {
           !Number.isInteger(Number(rpgRoll[1]))
         ) {
           diceString =
-            'Error: Both values in an RPG-style roll must be integers.';
+            'Error: Both values in an RPG-style roll must be integers.' +
+            ' Example: `' +
+            config.cmd_prefix +
+            'roll 2d6`.';
           diceSum = 0;
           break;
         } else {
           if (rpgRoll[0] > 20) {
-            diceString = 'ERROR: TOO BIG.';
+            diceString = 'Error: I cannot roll more than 20 dice at once.';
             diceSum = 0;
             break;
           } else {
@@ -243,7 +253,10 @@ class Tools {
           !Number.isInteger(Number(rangeRoll[0])) ||
           !Number.isInteger(Number(rangeRoll[1]))
         ) {
-          diceString = 'Error: Both values in a range roll must be integers.';
+          diceString = 'Error: Both values in a range roll must be integers.' +
+            ' Example: `' +
+            config.cmd_prefix +
+            'roll 1 100`.';
           diceSum = 0;
           break;
         } else {
@@ -265,7 +278,10 @@ class Tools {
           }
         }
       } else {
-        diceString = 'Error: ' + faces[i] + ' is not a valid roll.';
+        diceString = 'Error: ' + faces[i] + ' is not a valid roll.' +
+          ' Example: `' +
+          config.cmd_prefix +
+          'roll 2d6 + 5`.';
         diceSum = 0;
         break;
       }

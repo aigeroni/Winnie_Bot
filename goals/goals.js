@@ -2,6 +2,7 @@ const goallist = require('./goallist.js');
 const Goal = require('./goal');
 const timezoneJS = require('timezone-js');
 const logger = require('../logger.js');
+const config = require('../config.json');
 const conn = require('mongoose').connection;
 
 /** Class containing functions for goal management. */
@@ -50,8 +51,13 @@ class Goals {
               'Error: Winnie_Bot accepts IANA timezone identifiers only.' +
               ' These generally take the format of' +
               ' Continent/Your_Areas_Largest_City.\n' +
-              '**For example:** `America/New_York`, `Australia/Sydney`,' +
-              ' `Europe/London`'
+              '**For example:** `' +
+              config.cmd_prefix +
+              'timezone America/New_York`, `' +
+              config.cmd_prefix +
+              'timezone Australia/Sydney`, `' +
+              config.cmd_prefix +
+              'timezone Europe/London`'
           );
         }
         return false;
@@ -62,8 +68,13 @@ class Goals {
             'Error: Winnie_Bot accepts IANA timezone identifiers only.' +
             ' These generally take the format of' +
             ' Continent/Your_Areas_Largest_City.\n' +
-            '**For example:** `America/New_York`, `Australia/Sydney`,' +
-            ' `Europe/London`'
+            '**For example:** `' +
+            config.cmd_prefix +
+            'timezone America/New_York`, `' +
+            config.cmd_prefix +
+            'timezone Australia/Sydney`, `' +
+            config.cmd_prefix +
+            'timezone Europe/London`'
         );
         return false;
       }
@@ -109,7 +120,11 @@ class Goals {
     if (goal === undefined || goal == '') {
       msg.channel.send(msg.author + ', I need a goal to set!');
     } else if (!Number.isInteger(Number(goal))) {
-      msg.channel.send('Error: Your goal must be a whole number.');
+      msg.channel.send(
+          'Error: Your goal must be a whole number. Example: `' +
+          config.cmd_prefix +
+          'set 1667`.'
+      );
     } else if (msg.author.id in goallist.goalList) {
       msg.channel.send(
           msg.author +
@@ -134,8 +149,11 @@ class Goals {
           goalType === undefined
         )
       ) {
-        msg.channel.send('Error: Goal type must be words, lines, pages,' +
-          ' or minutes.');
+        msg.channel.send(
+            'Error: Goal type must be words, lines, pages,' +
+            ' or minutes. Example: `' +
+            config.cmd_prefix +
+            'set 50 lines`.');
       } else {
         if (goalType === undefined) {
           goalType = 'words';
@@ -196,11 +214,15 @@ class Goals {
       const args = suffix.split(' ');
       const goal = args.shift();
       if (!Number.isInteger(parseInt(goal))) {
-        msg.channel.send('Error: Your goal must be a whole number.');
+        msg.channel.send(
+            'Error: Your progress must be a whole number. Example: `' +
+            config.cmd_prefix +
+            'update 256`.');
       } else if (!(msg.author.id in goallist.goalList)) {
         msg.channel.send(
             msg.author +
-            ', you have not yet set a goal for today. Use !set to do so.'
+            ', you have not yet set a goal for today.' +
+            ' Use `!set <goal>` to do so.'
         );
       } else {
         goallist.goalList[msg.author.id].addWords(goal, overwrite);
@@ -227,7 +249,7 @@ class Goals {
     if (!(msg.author.id in goallist.goalList)) {
       msg.channel.send(
           msg.author +
-          ', you have not yet set a goal for today. Use !set to do so.'
+          ', you have not yet set a goal for today. Use `!set <goal>` to do so.'
       );
     } else {
       conn.collection('goalDB').remove({authorID: msg.author.id});
@@ -245,7 +267,7 @@ class Goals {
     if (!(msg.author.id in goallist.goalList)) {
       msg.channel.send(
           msg.author +
-          ', you have not yet set a goal for today. Use !set to do so.'
+          ', you have not yet set a goal for today. Use `!set <goal>` to do so.'
       );
     } else {
       msg.channel.send(
