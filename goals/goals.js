@@ -25,7 +25,12 @@ class Goals {
    * @return {Boolean} - False in the event of an error.
    */
   async setTimezone(msg, suffix) {
-    const timezone = suffix;
+    const timezone = suffix.replace(/[a-zA-Z0-9]*/g,
+        function(txt) {
+          return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+        }
+    );
+    logger.info(timezone);
     const dateCheck = new timezoneJS.Date();
     if (suffix == '') {
       msg.channel.send(msg.author + ', I need a timezone to set!');
@@ -45,7 +50,8 @@ class Goals {
               'Error: Winnie_Bot accepts IANA timezone identifiers only.' +
               ' These generally take the format of' +
               ' Continent/Your_Areas_Largest_City.\n' +
-              'For example: America/New_York, Australia/Sydney, Europe/London'
+              '**For example:** `America/New_York`, `Australia/Sydney`,' +
+              ' `Europe/London`'
           );
         }
         return false;
