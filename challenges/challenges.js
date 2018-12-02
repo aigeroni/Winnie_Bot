@@ -4,6 +4,7 @@ const ChainWar = require('./chainwar');
 const Sprint = require('./sprint');
 const War = require('./war');
 const challengelist = require('./challengelist.js');
+const config = require('../config.json');
 const logger = require('../logger.js');
 const conn = require('mongoose').connection;
 
@@ -28,9 +29,17 @@ class Challenges {
   joinChallenge(msg, suffix) {
     const challengeID = suffix;
     if (isNaN(challengeID)) {
-      msg.channel.send('Error: Challenge ID must be an integer.');
+      msg.channel.send(
+          'Error: Challenge ID must be an integer. Example: `' +
+          config.cmd_prefix +
+          'join 10793`.'
+      );
     } else if (challengeID < 1) {
-      msg.channel.send('Error: Challenge ID must be an integer.');
+      msg.channel.send(
+          'Error: Challenge ID must be an integer. Example: `' +
+          config.cmd_prefix +
+          'join 10793`.'
+      );
     } else if (challengeID in challengelist.challengeList) {
       if (
         challengelist.challengeList[challengeID].hidden &&
@@ -100,7 +109,7 @@ class Challenges {
         }
       }
     } else {
-      msg.channel.send('Challenge ' + challengeID + ' does not exist!');
+      msg.channel.send('Error: Challenge ' + challengeID + ' does not exist!');
     }
   }
   /**
@@ -111,9 +120,17 @@ class Challenges {
   leaveChallenge(msg, suffix) {
     const challengeID = suffix;
     if (isNaN(challengeID)) {
-      msg.channel.send('Error: Challenge ID must be an integer.');
+      msg.channel.send(
+          'Error: Challenge ID must be an integer. Example: `' +
+          config.cmd_prefix +
+          'leave 10793`.'
+      );
     } else if (challengeID < 1) {
-      msg.channel.send('Error: Challenge ID must be an integer.');
+      msg.channel.send(
+          'Error: Challenge ID must be an integer. Example: `' +
+          config.cmd_prefix +
+          'leave 10793`.'
+      );
     } else if (challengeID in challengelist.challengeList) {
       if (
         msg.author.id in challengelist.challengeList[challengeID].joinedUsers
@@ -167,11 +184,23 @@ class Challenges {
     } else if (this.regex.exec(sprintName)) {
       msg.channel.send('Error: Sprint names may not contain emoji.');
     } else if (!Number.isInteger(Number(words))) {
-      msg.channel.send('Error: Word goal must be a whole number.');
+      msg.channel.send(
+          'Error: Word goal must be a whole number. Example: `' +
+          config.cmd_prefix +
+          'sprint 200 10 1`.'
+      );
     } else if (isNaN(timeout)) {
-      msg.channel.send('Error: Sprint duration must be a number.');
+      msg.channel.send(
+          'Error: Sprint duration must be a number. Example: `' +
+          config.cmd_prefix +
+          'sprint 200 10 1`.'
+      );
     } else if (isNaN(start)) {
-      msg.channel.send('Error: Time to start must be a number.');
+      msg.channel.send(
+          'Error: Time to start must be a number. Example: `' +
+          config.cmd_prefix +
+          'sprint 200 10 1`.'
+      );
     } else if (start > 30) {
       msg.channel.send(
           'Error: Sprints cannot start more than 30 minutes in the future.'
@@ -237,9 +266,17 @@ class Challenges {
     } else if (this.regex.exec(warName)) {
       msg.channel.send('Error: War names may not contain emoji.');
     } else if (isNaN(start)) {
-      msg.channel.send('Error: Time to start must be a number.');
+      msg.channel.send(
+          'Error: Time to start must be a number. Example: `' +
+          config.cmd_prefix +
+          'war 10 1`.'
+      );
     } else if (isNaN(duration)) {
-      msg.channel.send('Error: War duration must be a number.');
+      msg.channel.send(
+          'Error: War duration must be a number. Example: `' +
+          config.cmd_prefix +
+          'war 10 1`.'
+      );
     } else if (start > 30) {
       msg.channel.send(
           'Error: Wars cannot start more than 30 minutes in the future.'
@@ -303,15 +340,27 @@ class Challenges {
     } else if (this.regex.exec(warName)) {
       msg.channel.send('Error: War names may not contain emoji.');
     } else if (isNaN(chainWarCount)) {
-      msg.channel.send('Error: War count must be a number.');
+      msg.channel.send(
+          'Error: War count must be a number. Example: `' +
+          config.cmd_prefix +
+          'chainwar 2 10 1`.'
+      );
     } else if (isNaN(timeBetween)) {
-      msg.channel.send('Error: Time between wars must be a number.');
+      msg.channel.send(
+          'Error: Time between wars must be a number. Example: `' +
+          config.cmd_prefix +
+          'chainwar 2 10 1`.'
+      );
     } else if (timeBetween > 30) {
       msg.channel.send(
           'Error: There cannot be more than 30 minutes between wars in a chain.'
       );
     } else if (isNaN(duration)) {
-      msg.channel.send('Error: War duration must be a number.');
+      msg.channel.send(
+          'Error: War duration must be a number. Example: `' +
+          config.cmd_prefix +
+          'chainwar 2 10 1`.'
+      );
     } else if (chainWarCount < 2 || chainWarCount > 10) {
       msg.channel.send(
           'Error: Chain wars must be between two and ten wars long.'
@@ -365,7 +414,11 @@ class Challenges {
   stopChallenge(msg, suffix) {
     const challengeID = suffix;
     if (isNaN(challengeID) || challengeID < 1) {
-      msg.channel.send('Error: Challenge ID must be an integer.');
+      msg.channel.send(
+          'Error: Challenge ID must be an integer. Example: `' +
+          config.cmd_prefix +
+          'cancel 10793`.'
+      );
     } else if (challengeID in challengelist.challengeList) {
       const stopName = challengelist.challengeList[challengeID].displayName;
       if (
