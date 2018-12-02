@@ -84,6 +84,21 @@ client.on('ready', () => {
         autoIndex: false,
       },
       function(e, db) {
+        client.guilds.forEach(function(guild) {
+          guild.members.forEach(function(member) {
+            const currentRoleList = member.user.roles.filter(
+              this.regexCheck,
+              this.regionRegex
+            );
+            logger.info(current)
+            conn.collection('userDB').update(
+              {_id: member.user.id},
+              {_id: member.user.id, timezone: this.raptorCount[server]},
+              {upsert: true}
+            );
+            logger.info(member.guild.name + ' - ' + member.user.username);
+          });
+        });
         if (e) throw e;
         logger.info('Database created!');
         conn.collection('timer').find({}, function(e, t) {
