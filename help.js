@@ -16,6 +16,18 @@ class Help {
   buildHelpMsg(cmdList, suffix) {
     if (suffix) {
       let helpMsg = '';
+      if (suffix == 'all') {
+        helpMsg = [];
+        helpMsg.push(
+            '**Winnie_Bot Commands:**\n' +
+            '*Replace the <angled brackets> with the relevant information. ' +
+            'Anything in [square brackets] is optional.*\n\n'
+        );
+        for (let i = 0; i < this.commandTypes.length; i++) {
+          helpMsg.push(this.buildHelpSection(cmdList, this.commandTypes[i]));
+        }
+        return helpMsg;
+      }
       for (let i = 0; i < this.commandTypes.length; i++) {
         if (this.commandTypes[i] == suffix) {
           helpMsg = '**Winnie_Bot Commands:**\n' +
@@ -76,9 +88,12 @@ class Help {
       }
       helpMsg += '\n\nUse `' +
         config.cmd_prefix +
-        'help <command>` to get help for a specific command, or `' +
+        'help <command>` to get help for a specific command, `' +
         config.cmd_prefix +
-        'help <challenges|goals|tools|config>` to get help for a command type.';
+        'help <challenges|goals|tools|config>` to get help' +
+        ' for a command type, or `' +
+        config.cmd_prefix +
+        'help all` to have Winnie DM you help for all commands.';
       return helpMsg;
     }
   }
