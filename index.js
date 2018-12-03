@@ -426,10 +426,14 @@ const cmdList = {
   },
   reset: {
     name: 'reset',
-    description: 'Resets your daily goal',
+    example: 'reset 40 lines',
+    description:
+      'Resets your daily goal to [goal], with optional [lines|pages|minutes].' +
+      '  If no new goal is specified, removes your daily goal.',
+    usage: '[goal] [lines|pages|minutes]',
     type: 'goals',
     process: function(client, msg, suffix) {
-      goals.resetGoal(msg);
+      goals.resetGoal(msg, suffix);
     },
   },
   goalinfo: {
