@@ -244,19 +244,49 @@ class Goals {
   /**
    * Resets a user's goal.
    * @param {Object} msg - The message that ran this function.
+   * @param {String} suffix - Information after the bot command.
    */
-  resetGoal(msg) {
+  resetGoal(msg, suffix) {
     if (!(msg.author.id in goallist.goalList)) {
       msg.channel.send(
           msg.author +
           ', you have not yet set a goal for today. Use `!set <goal>` to do so.'
       );
     } else {
-      conn.collection('goalDB').remove({authorID: msg.author.id});
-      delete goallist.goalList[msg.author.id];
-      msg.channel.send(
-          msg.author + ', you have successfully reset your daily goal.'
-      );
+      const args = suffix.split(' ');
+      const newGoal = args.shift();
+      logger.info(newGoal);
+      let newType = args.join(' ');
+      if (newType == '') {
+        newType = 'words';
+      }
+      if (suffix === undefined || !(Number.isInteger(parseInt(newGoal)))) {
+        conn.collection('goalDB').remove({authorID: msg.author.id});
+        delete goallist.goalList[msg.author.id];
+        msg.channel.send(
+            msg.author + ', you have successfully reset your daily goal.'
+        );
+      } else {
+        if (newType == goallist.goalList[msg.author.id].goalType) {
+          goallist.goalList[msg.author.id].goal = newGoal;
+          msg.channel.send(
+              msg.author +
+              ', you have written **' +
+              goallist.goalList[msg.author.id].written +
+              '** ' +
+              goallist.goalList[msg.author.id].goalType +
+              ' of your **' +
+              goallist.goalList[msg.author.id].goal +
+              '**-' +
+              goallist.goalList[msg.author.id].goalType.slice(0, -1) +
+              ' goal.'
+          );
+        } else {
+          conn.collection('goalDB').remove({authorID: msg.author.id});
+          delete goallist.goalList[msg.author.id];
+          this.setGoal(msg, suffix);
+        }
+      }
     }
   }
   /**

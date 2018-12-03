@@ -303,7 +303,18 @@ const cmdList = {
     process: function(client, msg, suffix) {
       const raptorRoll = challenges.addTotal(msg, suffix);
       if (raptorRoll) {
-        // goals.updateGoal(msg, suffix, false);
+        slice = suffix.split(' ');
+        totalNumber = slice[1];
+        totalType = slice[2];
+        if (msg.author.id in goallist.goalList) {
+          authorGoalType = goallist.goalList[msg.author.id].goalType;
+          if (totalType === undefined) {
+            totalType = 'words';
+          }
+          if (totalType == authorGoalType) {
+            goals.updateGoal(msg, totalNumber, false);
+          }
+        }
         tools.raptor(
             msg.guild.id,
             msg.channel,
@@ -415,10 +426,14 @@ const cmdList = {
   },
   reset: {
     name: 'reset',
-    description: 'Resets your daily goal',
+    example: 'reset 40 lines',
+    description:
+      'Resets your daily goal to [goal], with optional [lines|pages|minutes].' +
+      '  If no new goal is specified, removes your daily goal.',
+    usage: '[goal] [lines|pages|minutes]',
     type: 'goals',
     process: function(client, msg, suffix) {
-      goals.resetGoal(msg);
+      goals.resetGoal(msg, suffix);
     },
   },
   goalinfo: {
