@@ -195,8 +195,10 @@ const cmdList = {
       'Starts a sprint of <words> words which times out in <duration> minutes' +
       ' in [time to start] minutes, with optional [name].  Use `' +
       config.cmd_prefix +
-      ' sprint join` to join the sprint on creation.',
-    usage: '[join] <words> <duration> [time to start [name]]',
+      'sprint join` to join the sprint on creation, and `' +
+      config.cmd_prefix +
+      'sprint hide` to hide the sprint from other servers.',
+    usage: '[join] [hide] <words> <duration> [time to start [name]]',
     type: 'challenges',
     process: function(client, msg, suffix) {
       challenges.startSprint(msg, suffix);
@@ -209,8 +211,10 @@ const cmdList = {
       'Starts a word war of <duration> minutes in [time to start] minutes,' +
       ' with optional [name].  Use `' +
       config.cmd_prefix +
-      'war join` to join the war on creation.',
-    usage: '[join] <duration> [time to start [name]]',
+      'war join` to join the war on creation, and `' +
+      config.cmd_prefix +
+      'war hide` to hide the war from other servers.',
+    usage: '[join] [hide] <duration> [time to start [name]]',
     type: 'challenges',
     process: function(client, msg, suffix) {
       challenges.startWar(msg, suffix);
@@ -223,8 +227,11 @@ const cmdList = {
       'Starts a chain of <number of wars>, each of <duration> minutes, with' +
       ' [time between wars] minutes between wars, and optional [name].  Use `' +
       config.cmd_prefix +
-      'chainwar join` to join the war on creation.',
-    usage: '[join] <number of wars> <duration> [time between wars [name]]',
+      'chainwar join` to join the chain on creation, and `' +
+      config.cmd_prefix +
+      'chainwar hide` to hide the chain from other servers.',
+    usage: '[join] [hide] <number of wars> <duration>' +
+      ' [time between wars [name]]',
     type: 'challenges',
     process: function(client, msg, suffix) {
       challenges.startChainWar(msg, suffix);

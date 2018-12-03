@@ -169,10 +169,15 @@ class Challenges {
    */
   startSprint(msg, suffix) {
     let joinFlag = false;
+    let crossServerHide = this.crossServerStatus[msg.guild.id];
     const args = suffix.split(' ');
     if (args[0] == 'join') {
       args.shift();
       joinFlag = true;
+    }
+    if (args[0] == 'hide') {
+      args.shift();
+      crossServerHide = true;
     }
     const words = args.shift();
     const timeout = args.shift();
@@ -236,7 +241,7 @@ class Challenges {
             words,
             timeout,
             msg.channel.id,
-            this.crossServerStatus[msg.guild.id],
+            crossServerHide,
             {}
         );
         conn
@@ -263,10 +268,15 @@ class Challenges {
    */
   startWar(msg, suffix) {
     let joinFlag = false;
+    let crossServerHide = this.crossServerStatus[msg.guild.id];
     const args = suffix.split(' ');
     if (args[0] == 'join') {
       args.shift();
       joinFlag = true;
+    }
+    if (args[0] == 'hide') {
+      args.shift();
+      crossServerHide = true;
     }
     const duration = args.shift();
     let start = args.shift();
@@ -320,7 +330,7 @@ class Challenges {
             start,
             duration,
             msg.channel.id,
-            this.crossServerStatus[msg.guild.id],
+            crossServerHide,
             {}
         );
         conn
@@ -347,10 +357,15 @@ class Challenges {
    */
   startChainWar(msg, suffix) {
     let joinFlag = false;
+    let crossServerHide = this.crossServerStatus[msg.guild.id];
     const args = suffix.split(' ');
     if (args[0] == 'join') {
       args.shift();
       joinFlag = true;
+    }
+    if (args[0] == 'hide') {
+      args.shift();
+      crossServerHide = true;
     }
     const chainWarCount = args.shift();
     const duration = args.shift();
@@ -419,7 +434,7 @@ class Challenges {
             timeBetween,
             duration,
             msg.channel.id,
-            this.crossServerStatus[msg.guild.id],
+            crossServerHide,
             {}
         );
         conn
