@@ -303,7 +303,18 @@ const cmdList = {
     process: function(client, msg, suffix) {
       const raptorRoll = challenges.addTotal(msg, suffix);
       if (raptorRoll) {
-        // goals.updateGoal(msg, suffix, false);
+        slice = suffix.split(' ');
+        totalNumber = slice[1];
+        totalType = slice[2];
+        if (msg.author.id in goallist.goalList) {
+          authorGoalType = goallist.goalList[msg.author.id].goalType;
+          if (totalType === undefined) {
+            totalType = 'words';
+          }
+          if (totalType == authorGoalType) {
+            goals.updateGoal(msg, totalNumber, false);
+          }
+        }
         tools.raptor(
             msg.guild.id,
             msg.channel,

@@ -190,11 +190,11 @@ class Challenge {
             this.displayName +
             ' (ID ' +
             this.objectID +
-            ') has ended! Post your total using ' +
+            ') has ended! Post your total using `' +
             config.cmd_prefix +
             'total ' +
             this.objectID +
-            ' <total> to be included in the summary.' +
+            ' <total>` to be included in the summary.' +
             userList
         );
       }
