@@ -168,7 +168,17 @@ class Challenges {
    * @param {String} suffix - Information after the bot command.
    */
   startSprint(msg, suffix) {
+    let joinFlag = false;
+    let crossServerHide = this.crossServerStatus[msg.guild.id];
     const args = suffix.split(' ');
+    if (args[0] == 'join') {
+      args.shift();
+      joinFlag = true;
+    }
+    if (args[0] == 'hide') {
+      args.shift();
+      crossServerHide = true;
+    }
     const words = args.shift();
     const timeout = args.shift();
     let start = args.shift();
@@ -183,6 +193,8 @@ class Challenges {
       msg.channel.send('Error: Sprint names may not contain profanity.');
     } else if (this.regex.exec(sprintName)) {
       msg.channel.send('Error: Sprint names may not contain emoji.');
+    } else if (msg.mentions.members.size > 0) {
+      msg.channel.send('Error: Sprint names may not mention users.');
     } else if (!Number.isInteger(Number(words))) {
       msg.channel.send(
           'Error: Word goal must be a whole number. Example: `' +
@@ -218,9 +230,10 @@ class Challenges {
     } else {
       try {
         const creatorID = msg.author.id;
+        const challengeID = this.timerID;
         const startTime = new Date().getTime();
-        challengelist.challengeList[this.timerID] = new Sprint(
-            this.timerID,
+        challengelist.challengeList[challengeID] = new Sprint(
+            challengeID,
             creatorID,
             sprintName,
             startTime,
@@ -228,7 +241,7 @@ class Challenges {
             words,
             timeout,
             msg.channel.id,
-            this.crossServerStatus[msg.guild.id],
+            crossServerHide,
             {}
         );
         conn
@@ -239,6 +252,9 @@ class Challenges {
                 {upsert: true}
             );
         this.timerID = this.timerID + 1;
+        if (joinFlag) {
+          this.joinChallenge(msg, challengeID);
+        }
       } catch (e) {
         msg.channel.send('Error: Sprint creation failed.');
         logger.error('Error %s: %s.', e, e.stack);
@@ -251,7 +267,17 @@ class Challenges {
    * @param {String} suffix - Information after the bot command.
    */
   startWar(msg, suffix) {
+    let joinFlag = false;
+    let crossServerHide = this.crossServerStatus[msg.guild.id];
     const args = suffix.split(' ');
+    if (args[0] == 'join') {
+      args.shift();
+      joinFlag = true;
+    }
+    if (args[0] == 'hide') {
+      args.shift();
+      crossServerHide = true;
+    }
     const duration = args.shift();
     let start = args.shift();
     let warName = args.join(' ');
@@ -265,6 +291,8 @@ class Challenges {
       msg.channel.send('Error: War names may not contain profanity.');
     } else if (this.regex.exec(warName)) {
       msg.channel.send('Error: War names may not contain emoji.');
+    } else if (msg.mentions.members.size > 0) {
+      msg.channel.send('Error: War names may not mention users.');
     } else if (isNaN(start)) {
       msg.channel.send(
           'Error: Time to start must be a number. Example: `' +
@@ -292,16 +320,17 @@ class Challenges {
     } else {
       try {
         const creatorID = msg.author.id;
+        const challengeID = this.timerID;
         const startTime = new Date().getTime();
-        challengelist.challengeList[this.timerID] = new War(
-            this.timerID,
+        challengelist.challengeList[challengeID] = new War(
+            challengeID,
             creatorID,
             warName,
             startTime,
             start,
             duration,
             msg.channel.id,
-            this.crossServerStatus[msg.guild.id],
+            crossServerHide,
             {}
         );
         conn
@@ -312,6 +341,9 @@ class Challenges {
                 {upsert: true}
             );
         this.timerID = this.timerID + 1;
+        if (joinFlag) {
+          this.joinChallenge(msg, challengeID);
+        }
       } catch (e) {
         msg.channel.send('Error: War creation failed.');
         logger.error('Error %s: %s.', e, e.stack);
@@ -324,7 +356,17 @@ class Challenges {
    * @param {String} suffix - Information after the bot command.
    */
   startChainWar(msg, suffix) {
+    let joinFlag = false;
+    let crossServerHide = this.crossServerStatus[msg.guild.id];
     const args = suffix.split(' ');
+    if (args[0] == 'join') {
+      args.shift();
+      joinFlag = true;
+    }
+    if (args[0] == 'hide') {
+      args.shift();
+      crossServerHide = true;
+    }
     const chainWarCount = args.shift();
     const duration = args.shift();
     let timeBetween = args.shift();
@@ -339,6 +381,8 @@ class Challenges {
       msg.channel.send('Error: War names may not contain profanity.');
     } else if (this.regex.exec(warName)) {
       msg.channel.send('Error: War names may not contain emoji.');
+    } else if (msg.mentions.members.size > 0) {
+      msg.channel.send('Error: War names may not mention users.');
     } else if (isNaN(chainWarCount)) {
       msg.channel.send(
           'Error: War count must be a number. Example: `' +
@@ -378,9 +422,10 @@ class Challenges {
     } else {
       try {
         const creatorID = msg.author.id;
+        const challengeID = this.timerID;
         const startTime = new Date().getTime();
-        challengelist.challengeList[this.timerID] = new ChainWar(
-            this.timerID,
+        challengelist.challengeList[challengeID] = new ChainWar(
+            challengeID,
             creatorID,
             warName,
             startTime,
@@ -389,7 +434,7 @@ class Challenges {
             timeBetween,
             duration,
             msg.channel.id,
-            this.crossServerStatus[msg.guild.id],
+            crossServerHide,
             {}
         );
         conn
@@ -400,6 +445,9 @@ class Challenges {
                 {upsert: true}
             );
         this.timerID = this.timerID + 1;
+        if (joinFlag) {
+          this.joinChallenge(msg, challengeID);
+        }
       } catch (e) {
         msg.channel.send('Error: Chain war creation failed.');
         logger.error('Error %s: %s.', e, e.stack);
