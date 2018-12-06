@@ -142,6 +142,70 @@ class Tools {
     }
   }
   /**
+   * Displays user information.
+   * @param {Object} client - The Discord client.
+   * @param {Object} msg - The message that ran this function.
+   */
+  userInfo(client, msg) {
+    conn
+        .collection('userDB')
+        .findOne(
+            {_id: msg.author.id}, function(err, document) {
+              let statsTable = '';
+              if (!(document == null)) {
+                statsTable += '***User Statistics for ' +
+                client.users.get(document._id).username +
+                ':***\n';
+                if (!(document.lifetimeSprintMinutes === undefined)) {
+                  statsTable += '*Sprint Statistics:* **' +
+                  document.lifetimeSprintMinutes +
+                  '** minutes to write **' +
+                  document.lifetimeSprintWords +
+                  '** words (**' +
+                  (document.lifetimeSprintWords / document.lifetimeSprintMinutes)
+                      .toFixed(2) +
+                  '** wpm)\n';
+                }
+                if (!(document.lifetimeWarWords === undefined)) {
+                  statsTable += '*War Statistics:* **' +
+                    document.lifetimeWarWords +
+                    '** words in **' +
+                    document.lifetimeWarMinutes +
+                    '** minutes (**' +
+                    (document.lifetimeWarWords / document.lifetimeWarMinutes)
+                        .toFixed(2) +
+                    '** wpm)\n';
+                }
+                if (!(document.raptorTotal === undefined)) {
+                  statsTable += '*Raptors:* **' + document.raptorTotal + '**\n';
+                } else {
+                  statsTable += '*Raptors:* **0**\n';
+                }
+                if (!(document.siteName === undefined)) {
+                  statsTable += '*NaNo Site Name:* `' +
+                    document.siteName +
+                    '`\n';
+                } else {
+                  statsTable += '*NaNo Site Name:* unknown\n';
+                }
+                if (!(document.timezone === undefined)) {
+                  statsTable += '*Timezone:* `' + document.timezone + '`\n';
+                } else {
+                  statsTable += '*Timezone:* unknown\n';
+                }
+              } else {
+                statsTable += '***User Statistics for ' +
+                msg.author.username +
+                ':***\n';
+                statsTable += '*Raptors:* **0**\n';
+                statsTable += '*NaNo Site Name:* unknown\n';
+                statsTable += '*Timezone:* unknown\n';
+              }
+              console.log(document);
+              msg.channel.send(statsTable);
+            });
+  }
+  /**
    * Displays raptor statistics.
    * @param {Object} client - The Discord client.
    * @param {Object} msg - The message that ran this function.

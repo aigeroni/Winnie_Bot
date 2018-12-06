@@ -493,6 +493,15 @@ const cmdList = {
       tools.raptorStats(client, msg);
     },
   },
+  stats: {
+    name: 'stats',
+    description:
+      'Displays user statistics.',
+    type: 'tools',
+    process: function(client, msg, suffix) {
+      tools.userInfo(client, msg);
+    },
+  },
   display: {
     name: 'display',
     description:
