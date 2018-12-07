@@ -78,34 +78,18 @@ class Goals {
         );
         return false;
       }
-      // create new role if needed, find role ID
-      try {
-        if (msg.guild.roles.find('name', timezone) === null) {
-          await msg.guild.createRole({name: timezone});
-        }
-      } catch (e) {
-        if (e.code == 50013) {
-          msg.channel.send(
-              'Error: Winnie requires the Manage Roles permission to set' +
-              ' timezones.  Please contact your server admin.'
-          );
-        } else {
-          msg.channel.send('Unknown error. Check log file for details.');
-        }
-        return false;
-      }
-      const tzRole = msg.guild.roles.find('name', timezone);
-      // get timezone
-      const currentRoleList = msg.member.roles.filter(
-          this.regexCheck,
-          this.regionRegex
-      );
       // add user to role, confirm
-      await msg.member.removeRoles(currentRoleList);
+      conn.collection('userDB').update(
+        {_id: msg.author.id},
+        {$set: {
+            timezone: timezone,
+          },
+        },
+        {upsert: true}
+      );
       msg.channel.send(
           msg.author + ', you have set your timezone to **' + timezone + '**.'
       );
-      await msg.member.addRole(tzRole);
     }
   }
   /**
