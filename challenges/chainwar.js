@@ -107,16 +107,51 @@ class ChainWar extends Challenge {
     if (this.cPost == 0) {
       for (const user in this.joinedUsers) {
         if (this.joinedUsers[user].countType == 'words') {
-          console.log(this.joinedUsers[user].countData);
-          console.log(this.duration);
           conn.collection('userDB').update(
               {_id: user},
               {
                 $inc: {
                   lifetimeWarWords:
                   parseInt(this.joinedUsers[user].countData),
-                  lifetimeWarMinutes:
+                  lifetimeWordMinutes:
                   parseFloat(this.duration),
+                },
+              },
+              {upsert: true}
+          );
+        } else if (this.joinedUsers[user].countType == 'lines') {
+          conn.collection('userDB').update(
+              {_id: user},
+              {
+                $inc: {
+                  lifetimeWarLines:
+                  parseInt(this.joinedUsers[user].countData),
+                  lifetimeLineMinutes:
+                  parseFloat(this.duration),
+                },
+              },
+              {upsert: true}
+          );
+        } else if (this.joinedUsers[user].countType == 'pages') {
+          conn.collection('userDB').update(
+              {_id: user},
+              {
+                $inc: {
+                  lifetimeWarPages:
+                  parseInt(this.joinedUsers[user].countData),
+                  lifetimePageMinutes:
+                  parseFloat(this.duration),
+                },
+              },
+              {upsert: true}
+          );
+        } else {
+          conn.collection('userDB').update(
+              {_id: user},
+              {
+                $inc: {
+                  lifetimeWarMinutes:
+                  parseInt(this.joinedUsers[user].countData),
                 },
               },
               {upsert: true}
