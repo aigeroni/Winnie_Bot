@@ -84,42 +84,42 @@ client.on('ready', () => {
         autoIndex: false,
       },
       function(e, db) {
-        // conn.collection('raptorUserDB').find().forEach(function(document) {
-        //     conn.collection('userDB').update(
-        //       {_id: document.user},
-        //       {$inc: {
-        //           raptorTotal: document.count,
-        //         },
-        //       },
-        //       {upsert: true}
-        //     );
-        //   }
-        // );
-        // client.guilds.forEach(function(guild) {
-        //   guild.members.forEach(function(member) {
-        //     const currentRoleList = member.roles.filter(
-        //         goals.regexCheck,
-        //         goals.regionRegex
-        //     );
-        //     if (currentRoleList.first() != undefined) {
-        //       conn.collection('userDB').update(
-        //           {_id: member.user.id},
-        //           {$set: {
-        //             timezone: currentRoleList.first().name,
-        //           },
-        //           },
-        //           {upsert: true}
-        //       );
-        //     }
-        //   });
-        //   const tzRoles = guild.roles.filter(
-        //       goals.regexCheck,
-        //       goals.regionRegex
-        //   );
-        //   tzRoles.forEach(function(role) {
-        //     role.delete();
-        //   });
-        // });
+        conn.collection('raptorUserDB').find().forEach(function(document) {
+            conn.collection('userDB').update(
+              {_id: document.user},
+              {$inc: {
+                  raptorTotal: document.count,
+                },
+              },
+              {upsert: true}
+            );
+          }
+        );
+        client.guilds.forEach(function(guild) {
+          guild.members.forEach(function(member) {
+            const currentRoleList = member.roles.filter(
+                goals.regexCheck,
+                goals.regionRegex
+            );
+            if (currentRoleList.first() != undefined) {
+              conn.collection('userDB').update(
+                  {_id: member.user.id},
+                  {$set: {
+                    timezone: currentRoleList.first().name,
+                  },
+                  },
+                  {upsert: true}
+              );
+            }
+          });
+          const tzRoles = guild.roles.filter(
+              goals.regexCheck,
+              goals.regionRegex
+          );
+          tzRoles.forEach(function(role) {
+            role.delete();
+          });
+        });
         if (e) throw e;
         logger.info('Database created!');
         conn.collection('timer').find({}, function(e, t) {
