@@ -103,7 +103,35 @@ class ChainWar extends Challenge {
   }
   /** Check to see whether the total period is over, and post the summary. */
   terminate() {
-    super.terminate();
+    this.cPost--;
+    if (this.cPost == 0) {
+      for (const user in this.joinedUsers) {
+        if (this.joinedUsers[user].countType == 'words') {
+          console.log(this.joinedUsers[user].countData);
+          console.log(this.duration);
+          conn.collection('userDB').update(
+              {_id: user},
+              {
+                $inc: {
+                  lifetimeWarWords:
+                  parseInt(this.joinedUsers[user].countData),
+                  lifetimeWarMinutes:
+                  parseFloat(this.duration),
+                },
+              },
+              {upsert: true}
+          );
+        }
+      }
+      for (let i = 0; i < this.hookedChannels.length; i++) {
+        challengelist.generateSummary(
+            client.channels.get(this.hookedChannels[i]),
+            this.objectID
+        );
+      }
+      conn.collection('challengeDB').remove({_id: this.objectID});
+      delete challengelist.challengeList[this.objectID];
+    }
   }
 }
 

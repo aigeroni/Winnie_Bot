@@ -208,44 +208,90 @@ class Tools {
               if (!(document == null)) {
                 statsTable += '***User Statistics for ' +
                 client.users.get(document._id).username +
-                ':***\n';
+                ':***';
+                let firstSeen = true;
                 if (!(document.lifetimeSprintMinutes === undefined)) {
-                  statsTable += '*Sprint Statistics:* **' +
-                  document.lifetimeSprintMinutes +
+                  statsTable += '\n*Sprint Statistics:* **' +
+                  document.lifetimeSprintMinutes.toFixed(2) +
                   '** minutes to write **' +
                   document.lifetimeSprintWords +
                   '** words (**' +
                   (document.lifetimeSprintWords /
                     document.lifetimeSprintMinutes)
                       .toFixed(2) +
-                  '** wpm)\n';
+                  '** wpm)';
                 }
                 if (!(document.lifetimeWarWords === undefined)) {
-                  statsTable += '*War Statistics:* **' +
+                  firstSeen = false;
+                  statsTable += '\n*War Statistics:* ' +
+                    '**' +
                     document.lifetimeWarWords +
                     '** words in **' +
-                    document.lifetimeWarMinutes +
+                    document.lifetimeWordMinutes.toFixed(0) +
                     '** minutes (**' +
-                    (document.lifetimeWarWords / document.lifetimeWarMinutes)
+                    (document.lifetimeWarWords / document.lifetimeWordMinutes)
                         .toFixed(2) +
-                    '** wpm)\n';
+                    '** wpm)';
+                }
+                if (!(document.lifetimeWarLines === undefined)) {
+                  if (firstSeen == true) {
+                    statsTable += '\n*War Statistics:* ';
+                  } else {
+                    statsTable += ', ';
+                  }
+                  statsTable += '**' +
+                    document.lifetimeWarLines +
+                    '** lines in **' +
+                    document.lifetimeLineMinutes.toFixed(0) +
+                    '** minutes (**' +
+                    (document.lifetimeWarLines / document.lifetimeLineMinutes)
+                        .toFixed(2) +
+                    '** lpm)';
+                  firstSeen = false;
+                }
+                if (!(document.lifetimeWarPages === undefined)) {
+                  if (firstSeen == true) {
+                    statsTable += '\n*War Statistics:* ';
+                  } else {
+                    statsTable += ', ';
+                  }
+                  statsTable += '**' +
+                    document.lifetimeWarPages +
+                    '** pages in **' +
+                    document.lifetimePageMinutes.toFixed(0) +
+                    '** minutes (**' +
+                    (document.lifetimeWarPages / document.lifetimePageMinutes)
+                        .toFixed(2) +
+                    '** ppm)';
+                  firstSeen = false;
+                }
+                if (!(document.lifetimeWarMinutes === undefined)) {
+                  if (firstSeen == true) {
+                    statsTable += '\n*War Statistics:* ';
+                  } else {
+                    statsTable += ', ';
+                  }
+                  statsTable += '**' +
+                    document.lifetimeWarMinutes +
+                    '** minutes';
+                  firstSeen = false;
                 }
                 if (!(document.raptorTotal === undefined)) {
-                  statsTable += '*Raptors:* **' + document.raptorTotal + '**\n';
+                  statsTable += '\n*Raptors:* **' + document.raptorTotal + '**';
                 } else {
-                  statsTable += '*Raptors:* **0**\n';
+                  statsTable += '\n*Raptors:* **0**';
                 }
                 if (!(document.siteName === undefined)) {
-                  statsTable += '*NaNo Site Name:* `' +
+                  statsTable += '\n*NaNo Site Name:* `' +
                     document.siteName +
-                    '`\n';
+                    '`';
                 } else {
-                  statsTable += '*NaNo Site Name:* unknown\n';
+                  statsTable += '\n*NaNo Site Name:* unknown';
                 }
                 if (!(document.timezone === undefined)) {
-                  statsTable += '*Timezone:* `' + document.timezone + '`\n';
+                  statsTable += '\n*Timezone:* `' + document.timezone + '`';
                 } else {
-                  statsTable += '*Timezone:* unknown\n';
+                  statsTable += '\n*Timezone:* unknown';
                 }
               } else {
                 statsTable += '***User Statistics for ' +

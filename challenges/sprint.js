@@ -115,6 +115,22 @@ class Sprint extends Challenge {
   end() {
     this.cDur--;
     if (this.cDur <= 0) {
+      for (const user in this.joinedUsers) {
+        if (this.joinedUsers[user].timeTaken != undefined) {
+          conn.collection('userDB').update(
+              {_id: user},
+              {
+                $inc: {
+                  lifetimeSprintWords:
+                  parseInt(this.goal),
+                  lifetimeSprintMinutes:
+                  this.joinedUsers[user].timeTaken,
+                },
+              },
+              {upsert: true}
+          );
+        }
+      }
       for (let i = 0; i < this.hookedChannels.length; i++) {
         challengelist.generateSummary(
             client.channels.get(this.hookedChannels[i]),
