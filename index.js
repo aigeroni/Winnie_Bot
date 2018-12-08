@@ -84,19 +84,40 @@ client.on('ready', () => {
         autoIndex: false,
       },
       function(e, db) {
+        // conn.collection('raptorUserDB').find().forEach(function(document) {
+        //     conn.collection('userDB').update(
+        //       {_id: document.user},
+        //       {$inc: {
+        //           raptorTotal: document.count,
+        //         },
+        //       },
+        //       {upsert: true}
+        //     );
+        //   }
+        // );
         // client.guilds.forEach(function(guild) {
         //   guild.members.forEach(function(member) {
-        //     const currentRoleList = member.user.roles.filter(
-        //         this.regexCheck,
-        //         this.regionRegex
+        //     const currentRoleList = member.roles.filter(
+        //         goals.regexCheck,
+        //         goals.regionRegex
         //     );
-        //     logger.info(current);
-        //     conn.collection('userDB').update(
-        //         {_id: member.user.id},
-        //         {_id: member.user.id, timezone: this.raptorCount[server]},
-        //         {upsert: true}
-        //     );
-        //     logger.info(member.guild.name + ' - ' + member.user.username);
+        //     if (currentRoleList.first() != undefined) {
+        //       conn.collection('userDB').update(
+        //           {_id: member.user.id},
+        //           {$set: {
+        //             timezone: currentRoleList.first().name,
+        //           },
+        //           },
+        //           {upsert: true}
+        //       );
+        //     }
+        //   });
+        //   const tzRoles = guild.roles.filter(
+        //       goals.regexCheck,
+        //       goals.regionRegex
+        //   );
+        //   tzRoles.forEach(function(role) {
+        //     role.delete();
         //   });
         // });
         if (e) throw e;
@@ -485,6 +506,16 @@ const cmdList = {
       tools.chooseItem(msg, suffix);
     },
   },
+  site: {
+    name: 'site',
+    description:
+      'Sets your <NaNo site username>.',
+    usage: '<NaNo site username>',
+    type: 'tools',
+    process: function(client, msg, suffix) {
+      tools.siteName(msg, suffix);
+    },
+  },
   raptors: {
     name: 'raptors',
     description: 'Displays raptor statistics.',
@@ -493,11 +524,21 @@ const cmdList = {
       tools.raptorStats(client, msg);
     },
   },
+  stats: {
+    name: 'stats',
+    description:
+      'Displays user statistics.',
+    type: 'tools',
+    process: function(client, msg, suffix) {
+      tools.userInfo(client, msg);
+    },
+  },
   display: {
     name: 'display',
     description:
-      'Allows server admins to toggle cross-server display of challenges.',
-    usage: '<on|off>',
+      'Toggles cross-server display of challenges created by you. ' +
+      'The [server] flag allows server admins to toggle for the whole server.',
+    usage: '[server] <on|off>',
     type: 'config',
     process: function(client, msg, suffix) {
       challenges.xsDisplay(msg, suffix);
@@ -506,8 +547,10 @@ const cmdList = {
   autosum: {
     name: 'autosum',
     description:
-      'Allows server admins to toggle automatic print of challenge summaries.',
-    usage: '<show|hide>',
+      'Toggles automatic display of summaries for' +
+      ' challenges created by you. ' +
+      'The [server] flag allows server admins to toggle for the whole server.',
+    usage: '[server] <show|hide>',
     type: 'config',
     process: function(client, msg, suffix) {
       challenges.autoSum(msg, suffix);

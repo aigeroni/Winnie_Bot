@@ -1,5 +1,6 @@
 const prompts = require('./data.js');
 const config = require('../config.json');
+const XMLHttpRequest = require('xmlhttprequest').XMLHttpRequest;
 const conn = require('mongoose').connection;
 
 /** Class containing functions to handle miscellaneous tools. */
@@ -121,15 +122,25 @@ class Tools {
           .collection('raptorDB')
           .update(
               {server: server},
-              {server: server, count: this.raptorCount[server]},
+              {$inc: {
+                count: 1,
+              },
+              },
               {upsert: true}
           );
       conn.collection('raptorUserDB').update(
           {server: server, user: author.id},
-          {
-            server: server,
-            user: author.id,
-            count: this.userRaptors[server][author.id],
+          {$inc: {
+            count: 1,
+          },
+          },
+          {upsert: true}
+      );
+      conn.collection('userDB').update(
+          {_id: author.id},
+          {$inc: {
+            raptorTotal: 1,
+          },
           },
           {upsert: true}
       );
@@ -140,6 +151,113 @@ class Tools {
           ' raptors.'
       );
     }
+  }
+  /**
+   * Displays user information.
+   * @param {Object} msg - The message that ran this function.
+   * @param {String} suffix - Information after the bot command.
+   */
+  siteName(msg, suffix) {
+    const xmlRequest = new XMLHttpRequest();
+    const siteUrl = 'https://nanowrimo.org/participants/' + suffix + '/stats';
+    console.log(siteUrl);
+    xmlRequest.open(
+        'GET',
+        siteUrl,
+        true
+    );
+    xmlRequest.send();
+    xmlRequest.onreadystatechange = function processRequest(e) {
+      if (xmlRequest.readyState == 4) {
+        if (xmlRequest.status == 200) {
+          conn.collection('userDB').update(
+              {_id: msg.author.id},
+              {$set: {
+                siteName: suffix,
+              },
+              },
+              {upsert: true}
+          );
+          msg.channel.send(
+              msg.author +
+              ', your NaNo username has been set to `' +
+              suffix +
+              '`.'
+          );
+        } else {
+          msg.channel.send(
+              msg.author +
+              ', I could not find the username `' +
+              suffix +
+              '` on the NaNo website!');
+        }
+      }
+    };
+  }
+  /**
+   * Displays user information.
+   * @param {Object} client - The Discord client.
+   * @param {Object} msg - The message that ran this function.
+   */
+  userInfo(client, msg) {
+    conn
+        .collection('userDB')
+        .findOne(
+            {_id: msg.author.id}, function(err, document) {
+              let statsTable = '';
+              if (!(document == null)) {
+                statsTable += '***User Statistics for ' +
+                client.users.get(document._id).username +
+                ':***\n';
+                if (!(document.lifetimeSprintMinutes === undefined)) {
+                  statsTable += '*Sprint Statistics:* **' +
+                  document.lifetimeSprintMinutes +
+                  '** minutes to write **' +
+                  document.lifetimeSprintWords +
+                  '** words (**' +
+                  (document.lifetimeSprintWords /
+                    document.lifetimeSprintMinutes)
+                      .toFixed(2) +
+                  '** wpm)\n';
+                }
+                if (!(document.lifetimeWarWords === undefined)) {
+                  statsTable += '*War Statistics:* **' +
+                    document.lifetimeWarWords +
+                    '** words in **' +
+                    document.lifetimeWarMinutes +
+                    '** minutes (**' +
+                    (document.lifetimeWarWords / document.lifetimeWarMinutes)
+                        .toFixed(2) +
+                    '** wpm)\n';
+                }
+                if (!(document.raptorTotal === undefined)) {
+                  statsTable += '*Raptors:* **' + document.raptorTotal + '**\n';
+                } else {
+                  statsTable += '*Raptors:* **0**\n';
+                }
+                if (!(document.siteName === undefined)) {
+                  statsTable += '*NaNo Site Name:* `' +
+                    document.siteName +
+                    '`\n';
+                } else {
+                  statsTable += '*NaNo Site Name:* unknown\n';
+                }
+                if (!(document.timezone === undefined)) {
+                  statsTable += '*Timezone:* `' + document.timezone + '`\n';
+                } else {
+                  statsTable += '*Timezone:* unknown\n';
+                }
+              } else {
+                statsTable += '***User Statistics for ' +
+                msg.author.username +
+                ':***\n';
+                statsTable += '*Raptors:* **0**\n';
+                statsTable += '*NaNo Site Name:* unknown\n';
+                statsTable += '*Timezone:* unknown\n';
+              }
+              console.log(document);
+              msg.channel.send(statsTable);
+            });
   }
   /**
    * Displays raptor statistics.
