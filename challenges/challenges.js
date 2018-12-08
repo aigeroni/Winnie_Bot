@@ -170,6 +170,15 @@ class Challenges {
   startSprint(msg, suffix) {
     let joinFlag = false;
     let crossServerHide = this.crossServerStatus[msg.guild.id];
+    conn
+        .collection('userDB')
+        .findOne(
+            {_id: msg.author.id}, function(e, user) {
+              if (user.autoStatus == 'off') {
+                crossServerHide = true;
+              }
+            }
+        );
     const args = suffix.split(' ');
     if (args[0] == 'join') {
       args.shift();
@@ -269,6 +278,15 @@ class Challenges {
   startWar(msg, suffix) {
     let joinFlag = false;
     let crossServerHide = this.crossServerStatus[msg.guild.id];
+    conn
+        .collection('userDB')
+        .findOne(
+            {_id: msg.author.id}, function(e, user) {
+              if (user.autoStatus == 'off') {
+                crossServerHide = true;
+              }
+            }
+        );
     const args = suffix.split(' ');
     if (args[0] == 'join') {
       args.shift();
@@ -358,6 +376,15 @@ class Challenges {
   startChainWar(msg, suffix) {
     let joinFlag = false;
     let crossServerHide = this.crossServerStatus[msg.guild.id];
+    conn
+        .collection('userDB')
+        .findOne(
+            {_id: msg.author.id}, function(e, user) {
+              if (user.autoStatus == 'off') {
+                crossServerHide = true;
+              }
+            }
+        );
     const args = suffix.split(' ');
     if (args[0] == 'join') {
       args.shift();
@@ -809,39 +836,93 @@ class Challenges {
    */
   xsDisplay(msg, suffix) {
     if (suffix == '') {
-      let xsType = 'on';
-      if (this.crossServerStatus[msg.guild.id] == true) {
-        xsType = 'off';
-      }
-      msg.channel.send(
-          msg.guild.name +
-          ' currently has cross-server' +
-          ' challenges turned **' +
-          xsType +
-          '**.'
-      );
+      conn
+          .collection('userDB')
+          .findOne(
+              {_id: msg.author.id}, function(e, user) {
+                let xsType = 'on';
+                if (user.xStatus == 'off') {
+                  xsType = 'off';
+                }
+                msg.channel.send(
+                    msg.author +
+                    ', you currently have cross-server display' +
+                    ' for your challenges **' +
+                    xsType +
+                    '**.'
+                );
+              }
+          );
     } else {
-      if (msg.member.permissions.has('ADMINISTRATOR')) {
+      const args = suffix.split(' ');
+      if (args[0] == 'server') {
+        if (args[1] === undefined) {
+          let xsType = 'on';
+          if (this.crossServerStatus[msg.guild.id] == true) {
+            xsType = 'off';
+          }
+          msg.channel.send(
+              msg.guild.name +
+              ' currently has cross-server challenges turned **' +
+              xsType +
+              '**.'
+          );
+        } else if (msg.member.permissions.has('ADMINISTRATOR')) {
+          if (args[1] == 'on' || args[1] == 'off') {
+            let xsType = 'on';
+            if (suffix == 'off') {
+              xsType = 'off';
+              this.crossServerStatus[msg.guild.id] = true;
+            } else {
+              xsType = 'on';
+              this.crossServerStatus[msg.guild.id] = false;
+            }
+            conn
+                .collection('configDB')
+                .update(
+                    {server: msg.guild.id},
+                    {$set: {xStatus: this.crossServerStatus[msg.guild.id]}},
+                    {upsert: true}
+                );
+            msg.channel.send(
+                msg.author +
+                ', you have turned cross-server' +
+                ' challenges **' +
+                xsType +
+                '**.'
+            );
+          } else {
+            msg.channel.send(
+                msg.author +
+                ', use **on|off** to toggle' +
+                ' cross-server challenges.'
+            );
+          }
+        } else {
+          msg.channel.send(
+              'Error: Only server administrators are permitted to configure' +
+              ' challenges.'
+          );
+        }
+      } else {
         if (suffix == 'on' || suffix == 'off') {
           let xsType = 'on';
           if (suffix == 'off') {
             xsType = 'off';
-            this.crossServerStatus[msg.guild.id] = true;
           } else {
             xsType = 'on';
-            this.crossServerStatus[msg.guild.id] = false;
           }
           conn
-              .collection('configDB')
+              .collection('userDB')
               .update(
-                  {server: msg.guild.id},
-                  {$set: {xStatus: this.crossServerStatus[msg.guild.id]}},
+                  {_id: msg.author.id},
+                  {$set: {xStatus: xsType}},
                   {upsert: true}
               );
           msg.channel.send(
               msg.author +
-              ', you have turned cross-server' +
-              ' challenges **' +
+              ', you have turned' +
+              ' cross-server display for your challenges **' +
               xsType +
               '**.'
           );
@@ -852,11 +933,6 @@ class Challenges {
               ' cross-server challenges.'
           );
         }
-      } else {
-        msg.channel.send(
-            'Error: Only server administrators are permitted to configure' +
-            ' challenges.'
-        );
       }
     }
   }
@@ -867,39 +943,94 @@ class Challenges {
    */
   autoSum(msg, suffix) {
     if (suffix == '') {
-      let autoType = 'visible';
-      if (this.autoSumStatus[msg.guild.id] == true) {
-        autoType = 'hidden';
-      }
-      msg.channel.send(
-          msg.guild.name +
-          ' currently has automatic' +
-          ' summaries **' +
-          autoType +
-          '**.'
-      );
+      conn
+          .collection('userDB')
+          .findOne(
+              {_id: msg.author.id}, function(e, user) {
+                let autoType = 'visible';
+                if (user.autoStatus == 'off') {
+                  autoType = 'hidden';
+                }
+                msg.channel.send(
+                    msg.author +
+                    ', you currently have automatic' +
+                    ' summaries for your challenges **' +
+                    autoType +
+                    '**.'
+                );
+              }
+          );
     } else {
-      if (msg.member.permissions.has('ADMINISTRATOR')) {
+      const args = suffix.split(' ');
+      if (args[0] == 'server') {
+        if (args[1] === undefined) {
+          let autoType = 'visible';
+          if (this.autoSumStatus[msg.guild.id] == true) {
+            autoType = 'hidden';
+          }
+          msg.channel.send(
+              msg.guild.name +
+              ' currently has automatic' +
+              ' summaries **' +
+              autoType +
+              '**.'
+          );
+        } else if (msg.member.permissions.has('ADMINISTRATOR')) {
+          if (args[1] == 'show' || args[1] == 'hide') {
+            let autoType = 'on';
+            if (suffix == 'hide') {
+              autoType = 'off';
+              this.autoSumStatus[msg.guild.id] = true;
+            } else {
+              autoType = 'on';
+              this.autoSumStatus[msg.guild.id] = false;
+            }
+            conn
+                .collection('configDB')
+                .update(
+                    {server: msg.guild.id},
+                    {$set: {autoStatus: this.autoSumStatus[msg.guild.id]}},
+                    {upsert: true}
+                );
+            msg.channel.send(
+                msg.author +
+                ', you have turned' +
+                ' automatic summaries **' +
+                autoType +
+                '**.'
+            );
+          } else {
+            msg.channel.send(
+                msg.author +
+                ', use **show|hide** to' +
+                ' toggle automatic summaries.'
+            );
+          }
+        } else {
+          msg.channel.send(
+              'Error: Only server administrators are permitted' +
+              ' to configure automatic summaries.'
+          );
+        }
+      } else {
         if (suffix == 'show' || suffix == 'hide') {
           let autoType = 'on';
           if (suffix == 'hide') {
             autoType = 'off';
-            this.autoSumStatus[msg.guild.id] = true;
           } else {
             autoType = 'on';
-            this.autoSumStatus[msg.guild.id] = false;
           }
           conn
-              .collection('configDB')
+              .collection('userDB')
               .update(
-                  {server: msg.guild.id},
-                  {$set: {autoStatus: this.autoSumStatus[msg.guild.id]}},
+                  {_id: msg.author.id},
+                  {$set: {autoStatus: autoType}},
                   {upsert: true}
               );
           msg.channel.send(
               msg.author +
               ', you have turned' +
-              ' automatic summaries **' +
+              ' automatic summaries for your challenges **' +
               autoType +
               '**.'
           );
@@ -910,11 +1041,6 @@ class Challenges {
               ' toggle automatic summaries.'
           );
         }
-      } else {
-        msg.channel.send(
-            'Error: Only server administrators are permitted' +
-            ' to configure automatic summaries.'
-        );
       }
     }
   }

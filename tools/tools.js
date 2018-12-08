@@ -1,5 +1,6 @@
 const prompts = require('./data.js');
 const config = require('../config.json');
+const XMLHttpRequest = require('xmlhttprequest').XMLHttpRequest;
 const conn = require('mongoose').connection;
 
 /** Class containing functions to handle miscellaneous tools. */
@@ -121,15 +122,25 @@ class Tools {
           .collection('raptorDB')
           .update(
               {server: server},
-              {server: server, count: this.raptorCount[server]},
+              {$inc: {
+                count: 1,
+              },
+              },
               {upsert: true}
           );
       conn.collection('raptorUserDB').update(
           {server: server, user: author.id},
-          {
-            server: server,
-            user: author.id,
-            count: this.userRaptors[server][author.id],
+          {$inc: {
+            count: 1,
+          },
+          },
+          {upsert: true}
+      );
+      conn.collection('userDB').update(
+          {_id: author.id},
+          {$inc: {
+            raptorTotal: 1,
+          },
           },
           {upsert: true}
       );
@@ -140,6 +151,48 @@ class Tools {
           ' raptors.'
       );
     }
+  }
+  /**
+   * Displays user information.
+   * @param {Object} msg - The message that ran this function.
+   * @param {String} suffix - Information after the bot command.
+   */
+  siteName(msg, suffix) {
+    const xmlRequest = new XMLHttpRequest();
+    const siteUrl = 'https://nanowrimo.org/participants/' + suffix + '/stats';
+    console.log(siteUrl);
+    xmlRequest.open(
+        'GET',
+        siteUrl,
+        true
+    );
+    xmlRequest.send();
+    xmlRequest.onreadystatechange = function processRequest(e) {
+      if (xmlRequest.readyState == 4) {
+        if (xmlRequest.status == 200) {
+          conn.collection('userDB').update(
+              {_id: msg.author.id},
+              {$set: {
+                siteName: suffix,
+              },
+              },
+              {upsert: true}
+          );
+          msg.channel.send(
+              msg.author +
+              ', your NaNo username has been set to `' +
+              suffix +
+              '`.'
+          );
+        } else {
+          msg.channel.send(
+              msg.author +
+              ', I could not find the username `' +
+              suffix +
+              '` on the NaNo website!');
+        }
+      }
+    };
   }
   /**
    * Displays user information.
@@ -162,7 +215,8 @@ class Tools {
                   '** minutes to write **' +
                   document.lifetimeSprintWords +
                   '** words (**' +
-                  (document.lifetimeSprintWords / document.lifetimeSprintMinutes)
+                  (document.lifetimeSprintWords /
+                    document.lifetimeSprintMinutes)
                       .toFixed(2) +
                   '** wpm)\n';
                 }
