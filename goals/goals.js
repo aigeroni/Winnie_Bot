@@ -80,12 +80,12 @@ class Goals {
       }
       // add user to role, confirm
       conn.collection('userDB').update(
-        {_id: msg.author.id},
-        {$set: {
+          {_id: msg.author.id},
+          {$set: {
             timezone: timezone,
           },
-        },
-        {upsert: true}
+          },
+          {upsert: true}
       );
       msg.channel.send(
           msg.author + ', you have set your timezone to **' + timezone + '**.'
@@ -143,35 +143,44 @@ class Goals {
           goalType = 'words';
         }
         try {
-          // get timezone
-          const tzRole = msg.member.roles.filter(
-              this.regexCheck,
-              this.regionRegex
-          );
-          const userTZ = tzRole.first().name;
-          // get current time
-          const startTime = new timezoneJS.Date();
-          startTime.setTimezone(userTZ);
-          // calculate next midnight based on timezone
-          const endTime = new timezoneJS.Date();
-          endTime.setTimezone(userTZ);
-          endTime.setHours(24, 0, 0, 0);
-          goallist.goalList[msg.author.id] = new Goal(
-              msg.author.id,
-              goal,
-              goalType,
-              0,
-              startTime.getTime(),
-              endTime.getTime(),
-              msg.channel.id
-          );
-          msg.channel.send(
-              msg.author +
-              ', your goal for today is **' +
-              goal +
-              '** ' +
-              goalType +
-              '.'
+          conn.collection('userDB').findOne(
+              {_id: msg.author.id}, function(err, user) {
+                if (user == null) {
+                  msg.channel.send(
+                      msg.author +
+                      ', you need to set your timezone before' +
+                      ' setting a daily goal. Use the `!timezone`' +
+                      ' command to do so.'
+                  );
+                } else {
+                  // get timezone
+                  const userTZ = user.timezone;
+                  // get current time
+                  const startTime = new timezoneJS.Date();
+                  startTime.setTimezone(userTZ);
+                  // calculate next midnight based on timezone
+                  const endTime = new timezoneJS.Date();
+                  endTime.setTimezone(userTZ);
+                  endTime.setHours(24, 0, 0, 0);
+                  goallist.goalList[msg.author.id] = new Goal(
+                      msg.author.id,
+                      goal,
+                      goalType,
+                      0,
+                      startTime.getTime(),
+                      endTime.getTime(),
+                      msg.channel.id
+                  );
+                  msg.channel.send(
+                      msg.author +
+                      ', your goal for today is **' +
+                      goal +
+                      '** ' +
+                      goalType +
+                      '.'
+                  );
+                }
+              }
           );
         } catch (e) {
           logger.info(e, e.stack);
