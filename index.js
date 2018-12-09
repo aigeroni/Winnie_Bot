@@ -296,6 +296,14 @@ const cmdList = {
           if (totalType === undefined) {
             totalType = 'words';
           }
+          if (
+            totalType == 'line' ||
+            totalType == 'page' ||
+            totalType == 'word' ||
+            totalType == 'minute'
+          ) {
+            totalType += 's';
+          }
           if (totalType == authorGoalType) {
             goals.updateGoal(msg, totalNumber, false);
           }
