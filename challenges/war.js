@@ -123,7 +123,7 @@ class War extends Challenge {
               },
               {upsert: true}
           );
-        } else {
+        } else if (this.joinedUsers[user].countType == 'minutes') {
           conn.collection('userDB').update(
               {_id: user},
               {
