@@ -17,6 +17,8 @@ class ChainWar extends Challenge {
    * @param {String} channel - Discord ID of start channel.
    * @param {Boolean} hidden - Flag for whether challenge is visible to users
    *  on other servers.
+   * @param {Array} hookedChannels - A list of channels that have joined the
+   *  war.
    * @param {Object} joinedUsers - A list of users who have joined the war.
    */
   constructor(
@@ -30,6 +32,7 @@ class ChainWar extends Challenge {
       duration,
       channel,
       hidden,
+      hookedChannels,
       joinedUsers
   ) {
     super(
@@ -42,6 +45,7 @@ class ChainWar extends Challenge {
         channel,
         'chain war',
         hidden,
+        hookedChannels,
         joinedUsers
     );
     this.warName = warName;
@@ -60,6 +64,7 @@ class ChainWar extends Challenge {
       countdown: this.countdown,
       duration: this.duration,
       channel: this.channelID,
+      hookedChannels: this.hookedChannels,
       joinedUsers: this.joinedUsers,
       state: this.state,
       type: 'chain war',

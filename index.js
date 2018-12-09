@@ -43,6 +43,7 @@ const tickTimer = gameloop.setGameLoop(async function(delta) {
                 challengelist.challengeList[item].duration,
                 challengelist.challengeList[item].channelID,
                 challengelist.challengeList[item].hidden,
+                challengelist.challengeList[item].hookedChannels,
                 {}
             );
             conn
@@ -104,6 +105,7 @@ client.on('ready', () => {
                   challenge.duration,
                   challenge.channel,
                   challenge.hidden,
+                  challenge.hookedChannels,
                   challenge.joinedUsers
               );
             } else if (challenge.type == 'war') {
@@ -116,6 +118,7 @@ client.on('ready', () => {
                   challenge.duration,
                   challenge.channel,
                   challenge.hidden,
+                  challenge.hookedChannels,
                   challenge.joinedUsers
               );
             } else if (challenge.type == 'chain war') {
@@ -130,6 +133,7 @@ client.on('ready', () => {
                   challenge.duration,
                   challenge.channel,
                   challenge.hidden,
+                  challenge.hookedChannels,
                   challenge.joinedUsers
               );
             }
@@ -295,6 +299,14 @@ const cmdList = {
           authorGoalType = goallist.goalList[msg.author.id].goalType;
           if (totalType === undefined) {
             totalType = 'words';
+          }
+          if (
+            totalType == 'line' ||
+            totalType == 'page' ||
+            totalType == 'word' ||
+            totalType == 'minute'
+          ) {
+            totalType += 's';
           }
           if (totalType == authorGoalType) {
             goals.updateGoal(msg, totalNumber, false);
