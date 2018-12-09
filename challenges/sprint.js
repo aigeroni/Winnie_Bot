@@ -16,6 +16,8 @@ class Sprint extends Challenge {
    * @param {String} channel - Discord ID of start channel.
    * @param {Boolean} hidden - Flag for whether challenge is visible to users
    *  on other servers.
+   * @param {Array} hookedChannels - A list of channels that have joined the
+   *  sprint.
    * @param {Object} joinedUsers - A list of users who have joined the sprint.
    */
   constructor(
@@ -28,6 +30,7 @@ class Sprint extends Challenge {
       duration,
       channel,
       hidden,
+      hookedChannels,
       joinedUsers
   ) {
     super(
@@ -40,6 +43,7 @@ class Sprint extends Challenge {
         channel,
         'sprint',
         hidden,
+        hookedChannels,
         joinedUsers
     );
     this.goal = goal;
@@ -53,6 +57,7 @@ class Sprint extends Challenge {
       goal: this.goal,
       duration: this.duration,
       channel: this.channelID,
+      hookedChannels: this.hookedChannels,
       joinedUsers: this.joinedUsers,
       state: this.state,
       type: 'sprint',

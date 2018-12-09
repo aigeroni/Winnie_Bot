@@ -97,6 +97,8 @@ class Challenges {
                 {_id: parseInt(challengeID)},
                 {
                   $set: {
+                    hookedChannels:
+                    challengelist.challengeList[challengeID].hookedChannels,
                     joinedUsers:
                     challengelist.challengeList[challengeID].joinedUsers,
                   },
@@ -174,8 +176,10 @@ class Challenges {
         .collection('userDB')
         .findOne(
             {_id: msg.author.id}, function(e, user) {
-              if (user.autoStatus == 'off') {
-                crossServerHide = true;
+              if (user != null) {
+                if (user.autoStatus == 'off') {
+                  crossServerHide = true;
+                }
               }
             }
         );
@@ -251,6 +255,7 @@ class Challenges {
             timeout,
             msg.channel.id,
             crossServerHide,
+            [msg.channel.id],
             {}
         );
         conn
@@ -282,8 +287,10 @@ class Challenges {
         .collection('userDB')
         .findOne(
             {_id: msg.author.id}, function(e, user) {
-              if (user.autoStatus == 'off') {
-                crossServerHide = true;
+              if (user != null) {
+                if (user.autoStatus == 'off') {
+                  crossServerHide = true;
+                }
               }
             }
         );
@@ -349,6 +356,7 @@ class Challenges {
             duration,
             msg.channel.id,
             crossServerHide,
+            [msg.channel.id],
             {}
         );
         conn
@@ -380,8 +388,10 @@ class Challenges {
         .collection('userDB')
         .findOne(
             {_id: msg.author.id}, function(e, user) {
-              if (user.autoStatus == 'off') {
-                crossServerHide = true;
+              if (user != null) {
+                if (user.autoStatus == 'off') {
+                  crossServerHide = true;
+                }
               }
             }
         );
@@ -462,6 +472,7 @@ class Challenges {
             duration,
             msg.channel.id,
             crossServerHide,
+            [msg.channel.id],
             {}
         );
         conn

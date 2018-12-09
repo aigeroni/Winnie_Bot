@@ -16,7 +16,10 @@ class Challenge {
    * @param {String} type - The type of challenge that this object represents.
    * @param {Boolean} hidden - Flag for whether challenge is visible to users
    *  on other servers.
-   * @param {Object} joinedUsers - A list of users who have joined the sprint.
+   * @param {Array} hookedChannels - A list of channels that have joined the
+   *  challenge.
+   * @param {Object} joinedUsers - A list of users who have joined the
+   *  challenge.
    */
   constructor(
       objectID,
@@ -28,6 +31,7 @@ class Challenge {
       channel,
       type,
       hidden,
+      hookedChannels,
       joinedUsers
   ) {
     this.objectID = objectID;
@@ -40,7 +44,7 @@ class Challenge {
     this.channel = client.channels.get(this.channelID);
     this.type = type;
     this.joinedUsers = joinedUsers;
-    this.hookedChannels = [channel];
+    this.hookedChannels = hookedChannels;
     this.state = 0;
     this.hidden = hidden;
 
