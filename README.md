@@ -39,10 +39,6 @@ If you want to invite the public Winnie_Bot account to your server, go [here](ht
 
 Click the 'Generate OAuth2 URL' button in the Discord Developer pane to generate your invite URL.  Using the invite URL, you can invite your instance of Winnie to any Discord server on which you have administrator permissions.
 
-## Role permissions
-
-In order to be able to set timezones, Winnie needs to have the Manage Roles permission turned on.  Go to Server Settings > Roles, and select the role to which Winnie is assigned.  Turn the Manage Roles permission on for that role.
-
 ## Dependencies and frameworks
 
 * [Discord.js](https://discord.js.org) - Discord API for Node.js

@@ -650,14 +650,14 @@ client.on('message', async (msg) => {
     );
     const cmd = cmdList[cmdData];
     if (cmdData === 'help') {
-      const helpReturn = (help.buildHelpMsg(cmdList, suffix));
-      if (helpReturn.constructor === Array) {
+      sentMsg = (help.buildHelpMsg(cmdList, suffix));
+      if (sentMsg.constructor === Array) {
         msg.channel.send(msg.author + ', I sent you a DM.');
-        for (i = 0; i < helpReturn.length; i++) {
-          msg.author.send(helpReturn[i]);
+        for (i = 0; i < sentMsg.length; i++) {
+          msg.author.send(sentMsg[i]);
         }
       } else {
-        msg.channel.send(helpReturn);
+        msg.channel.send(sentMsg);
       }
     } else if (cmd) {
       try {

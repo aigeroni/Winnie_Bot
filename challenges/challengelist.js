@@ -9,6 +9,7 @@ class ChallengeList {
    * Generate a summary of posted totals for a challenge.
    * @param {Number} channel - Discord ID of the channel being posted to.
    * @param {Number} challengeID - Unique ID of the challenge being summarised.
+   * @return {String} - The message to send to the user.
    */
   generateSummary(channel, challengeID) {
     let msgToSend = '';
