@@ -189,8 +189,12 @@ const cmdList = {
       'sprint hide` to hide the sprint from other servers.',
     usage: '[join] [hide] <words> <duration> [time to start [name]]',
     type: 'challenges',
-    process: function(client, msg, suffix) {
-      challenges.startSprint(msg, suffix);
+    process: async function(client, msg, suffix) {
+      const returnMsg = await challenges.startSprint(msg, suffix);
+      if (returnMsg != '') {
+        msg.channel.send(returnMsg);
+      }
+      return returnMsg;
     },
   },
   war: {
@@ -205,8 +209,12 @@ const cmdList = {
       'war hide` to hide the war from other servers.',
     usage: '[join] [hide] <duration> [time to start [name]]',
     type: 'challenges',
-    process: function(client, msg, suffix) {
-      challenges.startWar(msg, suffix);
+    process: async function(client, msg, suffix) {
+      const returnMsg = await challenges.startWar(msg, suffix);
+      if (returnMsg != '') {
+        msg.channel.send(returnMsg);
+      }
+      return returnMsg;
     },
   },
   chainwar: {
@@ -222,8 +230,12 @@ const cmdList = {
     usage: '[join] [hide] <number of wars> <duration>' +
       ' [time between wars [name]]',
     type: 'challenges',
-    process: function(client, msg, suffix) {
-      challenges.startChainWar(msg, suffix);
+    process: async function(client, msg, suffix) {
+      const returnMsg = await challenges.startChainWar(msg, suffix);
+      if (returnMsg != '') {
+        msg.channel.send(returnMsg);
+      }
+      return returnMsg;
     },
   },
   join: {
@@ -232,8 +244,10 @@ const cmdList = {
     description: 'Joins war/sprint <id>',
     usage: '<id>',
     type: 'challenges',
-    process: function(client, msg, suffix) {
-      challenges.joinChallenge(msg, suffix);
+    process: async function(client, msg, suffix) {
+      const msgToSend = await challenges.joinChallenge(msg, suffix);
+      msg.channel.send(msgToSend);
+      return msgToSend;
     },
   },
   leave: {
@@ -242,8 +256,10 @@ const cmdList = {
     description: 'Leaves war/sprint <id>',
     usage: '<id>',
     type: 'challenges',
-    process: function(client, msg, suffix) {
-      challenges.leaveChallenge(msg, suffix);
+    process: async function(client, msg, suffix) {
+      const msgToSend = await challenges.leaveChallenge(msg, suffix);
+      msg.channel.send(msgToSend);
+      return msgToSend;
     },
   },
   cancel: {
@@ -254,8 +270,14 @@ const cmdList = {
     usage: '<id>',
     aliases: 'exterminate',
     type: 'challenges',
-    process: function(client, msg, suffix) {
-      challenges.stopChallenge(msg, suffix);
+    process: async function(client, msg, suffix) {
+      const returnData = await challenges.stopChallenge(msg, suffix);
+      for (let i = 0; i < returnData.channelList.length; i++) {
+        client.channels
+            .get(returnData.channelList[i])
+            .send(returnData.returnMsg);
+      }
+      return returnData.returnMsg;
     },
   },
   exterminate: {
@@ -266,8 +288,14 @@ const cmdList = {
     usage: '<id>',
     alias: true,
     type: 'challenges',
-    process: function(client, msg, suffix) {
-      challenges.stopChallenge(msg, suffix);
+    process: async function(client, msg, suffix) {
+      const returnData = await challenges.stopChallenge(msg, suffix);
+      for (let i = 0; i < returnData.channelList.length; i++) {
+        client.channels
+            .get(returnData.channelList[i])
+            .send(returnData.returnMsg);
+      }
+      return returnData.returnMsg;
     },
   },
   time: {
@@ -277,8 +305,27 @@ const cmdList = {
       'Notifies Winnie that you have reached the word goal for sprint <id>',
     usage: '<id>',
     type: 'challenges',
-    process: function(client, msg, suffix) {
-      challenges.callTime(msg, suffix);
+    process: async function(client, msg, suffix) {
+      const returnData = await challenges.callTime(msg, suffix);
+      msg.channel.send(returnData.returnMsg);
+      if (returnData.raptorCheck) {
+        const args = suffix.split(' ');
+        const challengeID = args.shift();
+        if (msg.author.id in goallist.goalList) {
+          authorGoalType = goallist.goalList[msg.author.id].goalType;
+          updateWords = challengelist.challengeList[challengeID].goal;
+          if (authorGoalType == 'words') {
+            goals.updateGoal(msg, updateWords, false);
+          }
+        }
+        tools.raptor(
+            msg.guild.id,
+            msg.channel,
+            msg.author,
+            challenges.WAR_RAPTOR_CHANCE
+        );
+      }
+      return returnData.returnMsg;
     },
   },
   total: {
@@ -289,9 +336,10 @@ const cmdList = {
       ' [lines|pages|minutes]',
     usage: '<id> <total> [lines|pages|minutes]',
     type: 'challenges',
-    process: function(client, msg, suffix) {
-      const raptorRoll = challenges.addTotal(msg, suffix);
-      if (raptorRoll) {
+    process: async function(client, msg, suffix) {
+      const returnData = await challenges.addTotal(msg, suffix);
+      msg.channel.send(returnData.returnMsg);
+      if (returnData.raptorCheck) {
         slice = suffix.split(' ');
         totalNumber = slice[1];
         totalType = slice[2];
@@ -319,6 +367,7 @@ const cmdList = {
             challenges.WAR_RAPTOR_CHANCE
         );
       }
+      return returnData.returnMsg;
     },
   },
   summary: {
@@ -329,7 +378,9 @@ const cmdList = {
     usage: '<id>',
     type: 'challenges',
     process: function(client, msg, suffix) {
-      challengelist.generateSummary(msg.channel, suffix);
+      const msgToSend = challengelist.generateSummary(msg.channel, suffix);
+      msg.channel.send(msgToSend);
+      return msgToSend;
     },
   },
   list: {
@@ -338,7 +389,9 @@ const cmdList = {
     usage: '',
     type: 'challenges',
     process: function(client, msg, suffix) {
-      challenges.listChallenges(client, msg);
+      const msgToSend = challenges.listChallenges(client, msg);
+      msg.channel.send(msgToSend);
+      return msgToSend;
     },
   },
   timezone: {
@@ -347,8 +400,10 @@ const cmdList = {
     description: 'Sets your <IANA timezone identifier>',
     usage: '<IANA timezone identifier>',
     type: 'goals',
-    process: function(client, msg, suffix) {
-      goals.setTimezone(msg, suffix);
+    process: async function(client, msg, suffix) {
+      const msgToSend = await goals.setTimezone(msg, suffix);
+      msg.channel.send(msgToSend);
+      return msgToSend;
     },
   },
   set: {
@@ -359,8 +414,10 @@ const cmdList = {
     usage: '<goal> [lines|pages|minutes]',
     aliases: 'goal',
     type: 'goals',
-    process: function(client, msg, suffix) {
-      goals.setGoal(msg, suffix);
+    process: async function(client, msg, suffix) {
+      const msgToSend = await goals.setGoal(msg, suffix);
+      msg.channel.send(msgToSend);
+      return msgToSend;
     },
   },
   goal: {
@@ -371,8 +428,10 @@ const cmdList = {
     usage: '<goal> [lines|pages|minutes]',
     alias: true,
     type: 'goals',
-    process: function(client, msg, suffix) {
-      goals.setGoal(msg, suffix);
+    process: async function(client, msg, suffix) {
+      const msgToSend = await goals.setGoal(msg, suffix);
+      msg.channel.send(msgToSend);
+      return msgToSend;
     },
   },
   update: {
@@ -384,7 +443,9 @@ const cmdList = {
     aliases: 'add',
     type: 'goals',
     process: function(client, msg, suffix) {
-      goals.updateGoal(msg, suffix, false);
+      const msgToSend = goals.updateGoal(msg, suffix, false);
+      msg.channel.send(msgToSend);
+      return msgToSend;
     },
   },
   add: {
@@ -396,7 +457,9 @@ const cmdList = {
     alias: true,
     type: 'goals',
     process: function(client, msg, suffix) {
-      goals.updateGoal(msg, suffix, false);
+      const msgToSend = goals.updateGoal(msg, suffix, false);
+      msg.channel.send(msgToSend);
+      return msgToSend;
     },
   },
   overwrite: {
@@ -407,7 +470,9 @@ const cmdList = {
     aliases: 'progress',
     type: 'goals',
     process: function(client, msg, suffix) {
-      goals.updateGoal(msg, suffix, true);
+      const msgToSend = goals.updateGoal(msg, suffix, true);
+      msg.channel.send(msgToSend);
+      return msgToSend;
     },
   },
   progress: {
@@ -418,7 +483,9 @@ const cmdList = {
     alias: true,
     type: 'goals',
     process: function(client, msg, suffix) {
-      goals.updateGoal(msg, suffix, true);
+      const msgToSend = goals.updateGoal(msg, suffix, true);
+      msg.channel.send(msgToSend);
+      return msgToSend;
     },
   },
   reset: {
@@ -429,8 +496,10 @@ const cmdList = {
       '  If no new goal is specified, removes your daily goal.',
     usage: '[goal] [lines|pages|minutes]',
     type: 'goals',
-    process: function(client, msg, suffix) {
-      goals.resetGoal(msg, suffix);
+    process: async function(client, msg, suffix) {
+      const msgToSend = await goals.resetGoal(msg, suffix);
+      msg.channel.send(msgToSend);
+      return msgToSend;
     },
   },
   goalinfo: {
@@ -438,7 +507,9 @@ const cmdList = {
     description: 'Displays progress towards your daily goal',
     type: 'goals',
     process: function(client, msg, suffix) {
-      goals.viewGoal(msg);
+      const msgToSend = goals.viewGoal(msg);
+      msg.channel.send(msgToSend);
+      return msgToSend;
     },
   },
   target: {
@@ -449,7 +520,9 @@ const cmdList = {
     usage: '<easy|medium|hard|insane> <minutes>',
     type: 'tools',
     process: function(client, msg, suffix) {
-      tools.calcTarget(msg, suffix);
+      const msgToSend = tools.calcTarget(msg, suffix);
+      msg.channel.send(msgToSend);
+      return msgToSend;
     },
   },
   prompt: {
@@ -457,7 +530,9 @@ const cmdList = {
     description: 'Provides a writing prompt',
     type: 'tools',
     process: function(client, msg, suffix) {
-      tools.getPrompt(msg);
+      const msgToSend = tools.getPrompt(msg);
+      msg.channel.send(msgToSend);
+      return msgToSend;
     },
   },
   roll: {
@@ -468,7 +543,9 @@ const cmdList = {
     usage: '<x, x y, xdy>',
     type: 'tools',
     process: function(client, msg, suffix) {
-      tools.rollDice(msg, suffix);
+      const msgToSend = tools.rollDice(msg, suffix);
+      msg.channel.send(msgToSend);
+      return msgToSend;
     },
   },
   choose: {
@@ -479,17 +556,24 @@ const cmdList = {
     usage: '<list>',
     type: 'tools',
     process: function(client, msg, suffix) {
-      tools.chooseItem(msg, suffix);
+      const msgToSend = tools.chooseItem(msg, suffix);
+      msg.channel.send(msgToSend);
+      return msgToSend;
     },
   },
   site: {
     name: 'site',
+    example: 'site your-username-here',
     description:
-      'Sets your <NaNo site username>.',
+      'Sets your <NaNo site username>.' +
+      ' This is the last section of your profile page URL: ' +
+      '`https://nanowrimo.org/participants/your-username-here`',
     usage: '<NaNo site username>',
     type: 'tools',
-    process: function(client, msg, suffix) {
-      tools.siteName(msg, suffix);
+    process: async function(client, msg, suffix) {
+      const msgToSend = await tools.siteName(msg, suffix);
+      msg.channel.send(msgToSend);
+      return msgToSend;
     },
   },
   raptors: {
@@ -497,7 +581,9 @@ const cmdList = {
     description: 'Displays raptor statistics.',
     type: 'tools',
     process: function(client, msg, suffix) {
-      tools.raptorStats(client, msg);
+      const msgToSend = tools.raptorStats(client, msg);
+      msg.channel.send(msgToSend);
+      return msgToSend;
     },
   },
   stats: {
@@ -505,8 +591,10 @@ const cmdList = {
     description:
       'Displays user statistics.',
     type: 'tools',
-    process: function(client, msg, suffix) {
-      tools.userInfo(client, msg);
+    process: async function(client, msg, suffix) {
+      const msgToSend = await tools.userInfo(client, msg);
+      msg.channel.send(msgToSend);
+      return msgToSend;
     },
   },
   display: {
@@ -516,8 +604,10 @@ const cmdList = {
       'The [server] flag allows server admins to toggle for the whole server.',
     usage: '[server] <on|off>',
     type: 'config',
-    process: function(client, msg, suffix) {
-      challenges.xsDisplay(msg, suffix);
+    process: async function(client, msg, suffix) {
+      const msgToSend = await challenges.xsDisplay(msg, suffix);
+      msg.channel.send(msgToSend);
+      return msgToSend;
     },
   },
   autosum: {
@@ -528,13 +618,15 @@ const cmdList = {
       'The [server] flag allows server admins to toggle for the whole server.',
     usage: '[server] <show|hide>',
     type: 'config',
-    process: function(client, msg, suffix) {
-      challenges.autoSum(msg, suffix);
+    process: async function(client, msg, suffix) {
+      const msgToSend = await challenges.autoSum(msg, suffix);
+      msg.channel.send(msgToSend);
+      return msgToSend;
     },
   },
 };
 
-client.on('message', (msg) => {
+client.on('message', async (msg) => {
   if (msg.isMentioned(client.user)) {
     msg.channel.send(
         'My name is Winnie, and I run challenges, track goals,' +
@@ -547,8 +639,8 @@ client.on('message', (msg) => {
     msg.author.id != client.user.id &&
     msg.content.startsWith(config.cmd_prefix)
   ) {
+    let sentMsg = 'Command Not Parsed';
     const userEnteredText = msg.content.replace(/\s\s+/g, ' ');
-    logger.info(msg.author + ' entered command ' + msg.content);
     const cmdData = userEnteredText
         .split(' ')[0]
         .substring(config.cmd_prefix.length)
@@ -569,12 +661,17 @@ client.on('message', (msg) => {
       }
     } else if (cmd) {
       try {
-        cmd.process(client, msg, suffix);
+        sentMsg = await cmd.process(client, msg, suffix);
       } catch (e) {
         msg.channel.send('Unknown error.  See log file for details.');
         logger.error('Error %s: %s.', e, e.stack);
       }
     }
+    logger.info(
+        'User: ' + msg.author +
+        ' Command: ' + msg.content+
+        ' Response: ' + sentMsg
+    );
   }
 });
 

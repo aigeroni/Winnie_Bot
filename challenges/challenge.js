@@ -239,10 +239,11 @@ class Challenge {
     this.cPost--;
     if (this.cPost == 0) {
       for (let i = 0; i < this.hookedChannels.length; i++) {
-        challengelist.generateSummary(
-            client.channels.get(this.hookedChannels[i]),
+        const channelToSend = client.channels.get(this.hookedChannels[i]);
+        channelToSend.send(challengelist.generateSummary(
+            channelToSend,
             this.objectID
-        );
+        ));
       }
       conn.collection('challengeDB').remove({_id: this.objectID});
       delete challengelist.challengeList[this.objectID];

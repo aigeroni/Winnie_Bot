@@ -26,6 +26,7 @@ class Goals {
    * @return {Boolean} - False in the event of an error.
    */
   async setTimezone(msg, suffix) {
+    let returnMsg = '';
     const timezone = suffix.replace(/[a-zA-Z0-9]*/g,
         function(txt) {
           return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
@@ -34,20 +35,20 @@ class Goals {
     logger.info(timezone);
     const dateCheck = new timezoneJS.Date();
     if (suffix == '') {
-      msg.channel.send(msg.author + ', I need a timezone to set!');
+      returnMsg = msg.author + ', I need a timezone to set!';
     } else {
       try {
         // check to see if timezone is in IANA library
         dateCheck.setTimezone(timezone);
       } catch (e) {
         if (e.code == 'ENOENT') {
-          await msg.channel.send(
+          await logger.info(
               'Fatal error: Winnie_Bot cannot locate' +
               ' timezone information.\nWinnie_Bot will now terminate.'
           );
           process.exit(1);
         } else {
-          msg.channel.send(
+          returnMsg =
               'Error: Winnie_Bot accepts IANA timezone identifiers only.' +
               ' These generally take the format of' +
               ' Continent/Your_Areas_Largest_City.\n' +
@@ -57,14 +58,13 @@ class Goals {
               config.cmd_prefix +
               'timezone Australia/Sydney`, `' +
               config.cmd_prefix +
-              'timezone Europe/London`'
-          );
+              'timezone Europe/London`';
         }
-        return false;
+        return returnMsg;
       }
       // check entered timezone against regex
       if (!this.regionRegex.test(timezone)) {
-        msg.channel.send(
+        returnMsg =
             'Error: Winnie_Bot accepts IANA timezone identifiers only.' +
             ' These generally take the format of' +
             ' Continent/Your_Areas_Largest_City.\n' +
@@ -74,9 +74,8 @@ class Goals {
             config.cmd_prefix +
             'timezone Australia/Sydney`, `' +
             config.cmd_prefix +
-            'timezone Europe/London`'
-        );
-        return false;
+            'timezone Europe/London`';
+        return returnMsg;
       }
       // add user to role, confirm
       conn.collection('userDB').update(
@@ -87,34 +86,34 @@ class Goals {
           },
           {upsert: true}
       );
-      msg.channel.send(
-          msg.author + ', you have set your timezone to **' + timezone + '**.'
-      );
+      returnMsg = msg.author +
+          ', you have set your timezone to **' +
+          timezone +
+          '**.';
     }
+    return returnMsg;
   }
   /**
    * Set a goal for a user.
    * @param {Object} msg - The message that ran this function.
    * @param {String} suffix - Information after the bot command.
+   * @return {String} - The message to send to the user.
    */
-  setGoal(msg, suffix) {
+  async setGoal(msg, suffix) {
+    let returnMsg = '';
     const args = suffix.split(' ');
     const goal = args.shift();
     let goalType = args.shift();
     if (goal === undefined || goal == '') {
-      msg.channel.send(msg.author + ', I need a goal to set!');
+      returnMsg = msg.author + ', I need a goal to set!';
     } else if (!Number.isInteger(Number(goal))) {
-      msg.channel.send(
-          'Error: Your goal must be a whole number. Example: `' +
+      returnMsg = 'Error: Your goal must be a whole number. Example: `' +
           config.cmd_prefix +
-          'set 1667`.'
-      );
+          'set 1667`.';
     } else if (msg.author.id in goallist.goalList) {
-      msg.channel.send(
-          msg.author +
+      returnMsg = msg.author +
           ', you have already set a goal today. Use' +
-          ' the update commands to record your progress.'
-      );
+          ' the update commands to record your progress.';
     } else {
       if (
         goalType == 'line' ||
@@ -133,65 +132,59 @@ class Goals {
           goalType === undefined
         )
       ) {
-        msg.channel.send(
-            'Error: Goal type must be words, lines, pages,' +
+        returnMsg = 'Error: Goal type must be words, lines, pages,' +
             ' or minutes. Example: `' +
             config.cmd_prefix +
-            'set 50 lines`.');
+            'set 50 lines`.';
       } else {
         if (goalType === undefined) {
           goalType = 'words';
         }
         try {
-          conn.collection('userDB').findOne(
-              {_id: msg.author.id}, function(err, user) {
-                if (user == null) {
-                  msg.channel.send(
-                      msg.author +
-                      ', you need to set your timezone before' +
-                      ' setting a daily goal. Use the `!timezone`' +
-                      ' command to do so.'
-                  );
-                } else {
-                  // get timezone
-                  const userTZ = user.timezone;
-                  // get current time
-                  const startTime = new timezoneJS.Date();
-                  startTime.setTimezone(userTZ);
-                  // calculate next midnight based on timezone
-                  const endTime = new timezoneJS.Date();
-                  endTime.setTimezone(userTZ);
-                  endTime.setHours(24, 0, 0, 0);
-                  goallist.goalList[msg.author.id] = new Goal(
-                      msg.author.id,
-                      goal,
-                      goalType,
-                      0,
-                      startTime.getTime(),
-                      endTime.getTime(),
-                      msg.channel.id
-                  );
-                  msg.channel.send(
-                      msg.author +
-                      ', your goal for today is **' +
-                      goal +
-                      '** ' +
-                      goalType +
-                      '.'
-                  );
-                }
-              }
+          const user = await conn.collection('userDB').findOne(
+              {_id: msg.author.id}
           );
+          logger.info(user);
+          if (user == null) {
+            return msg.author +
+                ', you need to set your timezone before' +
+                ' setting a daily goal. Use the `!timezone`' +
+                ' command to do so.';
+          } else {
+            // get timezone
+            const userTZ = user.timezone;
+            // get current time
+            const startTime = new timezoneJS.Date();
+            startTime.setTimezone(userTZ);
+            // calculate next midnight based on timezone
+            const endTime = new timezoneJS.Date();
+            endTime.setTimezone(userTZ);
+            endTime.setHours(24, 0, 0, 0);
+            goallist.goalList[msg.author.id] = new Goal(
+                msg.author.id,
+                goal,
+                goalType,
+                0,
+                startTime.getTime(),
+                endTime.getTime(),
+                msg.channel.id
+            );
+            return msg.author +
+                ', your goal for today is **' +
+                goal +
+                '** ' +
+                goalType +
+                '.';
+          }
         } catch (e) {
           logger.info(e, e.stack);
-          msg.channel.send(
-              msg.author +
+          returnMsg = msg.author +
               ', you need to set your timezone before' +
-              ' setting a daily goal. Use the !timezone command to do so.'
-          );
+              ' setting a daily goal. Use the `!timezone` command to do so.';
         }
       }
     }
+    return returnMsg;
   }
   /**
    * Update a user's goal.
@@ -199,28 +192,26 @@ class Goals {
    * @param {String} suffix - Information after the bot command.
    * @param {Boolean} overwrite - Whether the progress is being added to (false)
    * or overwritten (true).
+   * @return {String} - The message to send to the user.
    */
   updateGoal(msg, suffix, overwrite) {
+    let returnMsg = '';
     if (suffix == '') {
-      msg.channel.send(msg.author + ', I need some progress to update!');
+      returnMsg = msg.author + ', I need some progress to update!';
     } else {
       const args = suffix.split(' ');
       const goal = args.shift();
       if (!Number.isInteger(parseInt(goal))) {
-        msg.channel.send(
-            'Error: Your progress must be a whole number. Example: `' +
+        returnMsg = 'Error: Your progress must be a whole number. Example: `' +
             config.cmd_prefix +
-            'update 256`.');
+            'update 256`.';
       } else if (!(msg.author.id in goallist.goalList)) {
-        msg.channel.send(
-            msg.author +
+        returnMsg = msg.author +
             ', you have not yet set a goal for today.' +
-            ' Use `!set <goal>` to do so.'
-        );
+            ' Use `!set <goal>` to do so.';
       } else {
         goallist.goalList[msg.author.id].addWords(goal, overwrite);
-        msg.channel.send(
-            msg.author +
+        returnMsg = msg.author +
             ', you have written **' +
             goallist.goalList[msg.author.id].written +
             '** ' +
@@ -229,22 +220,23 @@ class Goals {
             goallist.goalList[msg.author.id].goal +
             '**-' +
             goallist.goalList[msg.author.id].goalType.slice(0, -1) +
-            ' goal.'
-        );
+            ' goal.';
       }
     }
+    return returnMsg;
   }
   /**
    * Resets a user's goal.
    * @param {Object} msg - The message that ran this function.
    * @param {String} suffix - Information after the bot command.
+   * @return {String} - The message to send to the user.
    */
-  resetGoal(msg, suffix) {
+  async resetGoal(msg, suffix) {
+    let returnMsg = '';
     if (!(msg.author.id in goallist.goalList)) {
-      msg.channel.send(
-          msg.author +
-          ', you have not yet set a goal for today. Use `!set <goal>` to do so.'
-      );
+      returnMsg = msg.author +
+          ', you have not yet set a goal for today.' +
+          ' Use `!set <goal>` to do so.';
     } else {
       const args = suffix.split(' ');
       const newGoal = args.shift();
@@ -256,14 +248,12 @@ class Goals {
       if (suffix === undefined || !(Number.isInteger(parseInt(newGoal)))) {
         conn.collection('goalDB').remove({authorID: msg.author.id});
         delete goallist.goalList[msg.author.id];
-        msg.channel.send(
-            msg.author + ', you have successfully reset your daily goal.'
-        );
+        returnMsg = msg.author +
+            ', you have successfully reset your daily goal.';
       } else {
         if (newType == goallist.goalList[msg.author.id].goalType) {
           goallist.goalList[msg.author.id].goal = newGoal;
-          msg.channel.send(
-              msg.author +
+          returnMsg = msg.author +
               ', you have written **' +
               goallist.goalList[msg.author.id].written +
               '** ' +
@@ -272,29 +262,29 @@ class Goals {
               goallist.goalList[msg.author.id].goal +
               '**-' +
               goallist.goalList[msg.author.id].goalType.slice(0, -1) +
-              ' goal.'
-          );
+              ' goal.';
         } else {
           conn.collection('goalDB').remove({authorID: msg.author.id});
           delete goallist.goalList[msg.author.id];
-          this.setGoal(msg, suffix);
+          returnMsg = await this.setGoal(msg, suffix);
         }
       }
     }
+    return returnMsg;
   }
   /**
    * Allows a user to view their progress towards their goal.
    * @param {Object} msg - The message that ran this function.
+   * @return {String} - The message to send to the user.
    */
   viewGoal(msg) {
+    let returnMsg = '';
     if (!(msg.author.id in goallist.goalList)) {
-      msg.channel.send(
-          msg.author +
-          ', you have not yet set a goal for today. Use `!set <goal>` to do so.'
-      );
+      returnMsg = msg.author +
+          ', you have not yet set a goal for today.' +
+          ' Use `!set <goal>` to do so.';
     } else {
-      msg.channel.send(
-          msg.author +
+      returnMsg = msg.author +
           ', you have written **' +
           goallist.goalList[msg.author.id].written +
           '** ' +
@@ -303,9 +293,9 @@ class Goals {
           goallist.goalList[msg.author.id].goal +
           '**-' +
           goallist.goalList[msg.author.id].goalType.slice(0, -1) +
-          ' goal.'
-      );
+          ' goal.';
     }
+    return returnMsg;
   }
 }
 
