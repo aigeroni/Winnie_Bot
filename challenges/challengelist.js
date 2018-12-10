@@ -422,7 +422,7 @@ class ChallengeList {
     } else {
       msgToSend = 'Error: This challenge does not exist.';
     }
-    channel.send(msgToSend);
+    return msgToSend;
   }
 }
 

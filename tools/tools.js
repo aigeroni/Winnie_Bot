@@ -1,6 +1,6 @@
 const prompts = require('./data.js');
 const config = require('../config.json');
-const XMLHttpRequest = require('xmlhttprequest').XMLHttpRequest;
+const fetch = require('node-fetch');
 const conn = require('mongoose').connection;
 
 /** Class containing functions to handle miscellaneous tools. */
@@ -14,18 +14,18 @@ class Tools {
    * Gives the user a target for a number of minutes.
    * @param {Object} msg - The message that ran this function.
    * @param {String} suffix - Information after the bot command.
+   * @return {String} - The message to send to the user.
    */
   calcTarget(msg, suffix) {
+    let returnMsg = '';
     const args = suffix.split(' ');
     const difficulty = args.shift();
     const time = args.shift();
     let base = null;
     if (!Number.isInteger(Number(time))) {
-      msg.channel.send(
-          'Error: Duration must be a whole number. Example: `' +
+      returnMsg = 'Error: Duration must be a whole number. Example: `' +
           config.cmd_prefix +
-          'target medium 15`.'
-      );
+          'target medium 15`.';
     } else {
       switch (difficulty) {
         case 'easy':
@@ -45,50 +45,50 @@ class Tools {
           break;
       }
       if (base === null) {
-        msg.channel.send(
+        returnMsg =
             'Error: Targets must be easy, medium, hard, or insane. Example: `' +
             config.cmd_prefix +
-            'target medium 15`.'
-        );
+            'target medium 15`.';
       } else {
         const goalPerMinute = Math.ceil(Math.random() * 11) + base;
         const goalTotal = goalPerMinute * time;
-        msg.channel.send(
-            msg.author + ', your target is **' + goalTotal + '**.'
-        );
+        returnMsg = msg.author + ', your target is **' + goalTotal + '**.';
       }
     }
+    return returnMsg;
   }
   /**
    * Fetches a writing prompt for a user.
    * @param {Object} msg - The message that ran this function.
    * @param {String} suffix - Information after the bot command.
+   * @return {String} - The message to send to the user.
    */
   getPrompt(msg) {
     const choiceID = Math.floor(Math.random() * prompts.PROMPT_LIST.length);
-    msg.channel.send(
-        msg.author +
+    return msg.author +
         ', your prompt is: **' +
         prompts.PROMPT_LIST[choiceID].trim() +
-        '**'
-    );
+        '**';
   }
   /**
    * Chooses an item from a comma-separated list.
    * @param {Object} msg - The message that ran this function.
    * @param {String} suffix - Information after the bot command.
+   * @return {String} - The message to send to the user.
    */
   chooseItem(msg, suffix) {
-    const items = suffix.split(',');
-    const choiceID = Math.floor(Math.random() * items.length);
-    msg.channel.send(
-        msg.author +
-        ', from ' +
-        suffix +
-        ', I selected **' +
-        items[choiceID].trim() +
-        '**'
-    );
+    if (suffix == '') {
+      return msg.author + ', I need something to choose from!';
+    } else {
+      const items = suffix.split(',');
+      const choiceID = Math.floor(Math.random() * items.length);
+      return msg.author +
+          ', from ' +
+          suffix +
+          ', I selected **' +
+          items[choiceID].trim() +
+          '**';
+    }
   }
   /**
    * Roll to see whether a user hatches a raptor.
@@ -156,159 +156,147 @@ class Tools {
    * Displays user information.
    * @param {Object} msg - The message that ran this function.
    * @param {String} suffix - Information after the bot command.
+   * @return {String} - The message to send to the user.
    */
-  siteName(msg, suffix) {
-    const xmlRequest = new XMLHttpRequest();
+  async siteName(msg, suffix) {
+    let returnMsg = '';
     const siteUrl = 'https://nanowrimo.org/participants/' + suffix + '/stats';
-    console.log(siteUrl);
-    xmlRequest.open(
-        'GET',
-        siteUrl,
-        true
-    );
-    xmlRequest.send();
-    xmlRequest.onreadystatechange = function processRequest(e) {
-      if (xmlRequest.readyState == 4) {
-        if (xmlRequest.status == 200) {
-          conn.collection('userDB').update(
-              {_id: msg.author.id},
-              {$set: {
-                siteName: suffix,
-              },
-              },
-              {upsert: true}
-          );
-          msg.channel.send(
-              msg.author +
-              ', your NaNo username has been set to `' +
-              suffix +
-              '`.'
-          );
-        } else {
-          msg.channel.send(
-              msg.author +
-              ', I could not find the username `' +
-              suffix +
-              '` on the NaNo website!');
-        }
-      }
-    };
+    const requestData = await fetch(siteUrl);
+    if (requestData.status == 200) {
+      await conn.collection('userDB').update(
+          {_id: msg.author.id},
+          {$set: {
+            siteName: suffix,
+          },
+          },
+          {upsert: true}
+      );
+      returnMsg = msg.author +
+          ', your NaNo username has been set to `' +
+          suffix +
+          '`.';
+    } else {
+      returnMsg = msg.author +
+          ', I could not find the username `' +
+          suffix +
+          '` on the NaNo website!';
+    }
+    return returnMsg;
   }
   /**
    * Displays user information.
    * @param {Object} client - The Discord client.
    * @param {Object} msg - The message that ran this function.
+   * @return {String} - The message to send to the user.
    */
-  userInfo(client, msg) {
-    conn
-        .collection('userDB')
-        .findOne(
-            {_id: msg.author.id}, function(err, document) {
-              let statsTable = '';
-              if (!(document == null)) {
-                statsTable += '***User Statistics for ' +
-                client.users.get(document._id).username +
-                ':***';
-                let firstSeen = true;
-                if (!(document.lifetimeSprintMinutes === undefined)) {
-                  statsTable += '\n*Sprint Statistics:* **' +
-                  document.lifetimeSprintMinutes.toFixed(2) +
-                  '** minutes to write **' +
-                  document.lifetimeSprintWords +
-                  '** words (**' +
-                  (document.lifetimeSprintWords /
-                    document.lifetimeSprintMinutes)
-                      .toFixed(2) +
-                  '** wpm)';
-                }
-                if (!(document.lifetimeWarWords === undefined)) {
-                  firstSeen = false;
-                  statsTable += '\n*War Statistics:* ' +
-                    '**' +
-                    document.lifetimeWarWords +
-                    '** words in **' +
-                    document.lifetimeWordMinutes.toFixed(0) +
-                    '** minutes (**' +
-                    (document.lifetimeWarWords / document.lifetimeWordMinutes)
-                        .toFixed(2) +
-                    '** wpm)';
-                }
-                if (!(document.lifetimeWarLines === undefined)) {
-                  if (firstSeen == true) {
-                    statsTable += '\n*War Statistics:* ';
-                  } else {
-                    statsTable += ', ';
-                  }
-                  statsTable += '**' +
-                    document.lifetimeWarLines +
-                    '** lines in **' +
-                    document.lifetimeLineMinutes.toFixed(0) +
-                    '** minutes (**' +
-                    (document.lifetimeWarLines / document.lifetimeLineMinutes)
-                        .toFixed(2) +
-                    '** lpm)';
-                  firstSeen = false;
-                }
-                if (!(document.lifetimeWarPages === undefined)) {
-                  if (firstSeen == true) {
-                    statsTable += '\n*War Statistics:* ';
-                  } else {
-                    statsTable += ', ';
-                  }
-                  statsTable += '**' +
-                    document.lifetimeWarPages +
-                    '** pages in **' +
-                    document.lifetimePageMinutes.toFixed(0) +
-                    '** minutes (**' +
-                    (document.lifetimeWarPages / document.lifetimePageMinutes)
-                        .toFixed(2) +
-                    '** ppm)';
-                  firstSeen = false;
-                }
-                if (!(document.lifetimeWarMinutes === undefined)) {
-                  if (firstSeen == true) {
-                    statsTable += '\n*War Statistics:* ';
-                  } else {
-                    statsTable += ', ';
-                  }
-                  statsTable += '**' +
-                    document.lifetimeWarMinutes +
-                    '** minutes';
-                  firstSeen = false;
-                }
-                if (!(document.raptorTotal === undefined)) {
-                  statsTable += '\n*Raptors:* **' + document.raptorTotal + '**';
-                } else {
-                  statsTable += '\n*Raptors:* **0**';
-                }
-                if (!(document.siteName === undefined)) {
-                  statsTable += '\n*NaNo Site Name:* `' +
-                    document.siteName +
-                    '`';
-                } else {
-                  statsTable += '\n*NaNo Site Name:* unknown';
-                }
-                if (!(document.timezone === undefined)) {
-                  statsTable += '\n*Timezone:* `' + document.timezone + '`';
-                } else {
-                  statsTable += '\n*Timezone:* unknown';
-                }
-              } else {
-                statsTable += '***User Statistics for ' +
-                msg.author.username +
-                ':***\n';
-                statsTable += '*Raptors:* **0**\n';
-                statsTable += '*NaNo Site Name:* unknown\n';
-                statsTable += '*Timezone:* unknown\n';
-              }
-              console.log(document);
-              msg.channel.send(statsTable);
-            });
+  async userInfo(client, msg) {
+    let statsTable = '';
+    const document = await conn.collection('userDB').findOne(
+        {_id: msg.author.id}
+    );
+    if (!(document == null)) {
+      statsTable += '***User Statistics for ' +
+      client.users.get(document._id).username +
+      ':***';
+      let firstSeen = true;
+      if (!(document.lifetimeSprintMinutes === undefined)) {
+        statsTable += '\n*Sprint Statistics:* **' +
+        parseFloat(document.lifetimeSprintMinutes).toFixed(2) +
+        '** minutes to write **' +
+        document.lifetimeSprintWords +
+        '** words (**' +
+        (document.lifetimeSprintWords /
+          document.lifetimeSprintMinutes)
+            .toFixed(2) +
+        '** wpm)';
+      }
+      if (!(document.lifetimeWarWords === undefined)) {
+        firstSeen = false;
+        statsTable += '\n*War Statistics:* ' +
+          '**' +
+          document.lifetimeWarWords +
+          '** words in **' +
+          document.lifetimeWordMinutes.toFixed(0) +
+          '** minutes (**' +
+          (document.lifetimeWarWords / document.lifetimeWordMinutes)
+              .toFixed(2) +
+          '** wpm)';
+      }
+      if (!(document.lifetimeWarLines === undefined)) {
+        if (firstSeen == true) {
+          statsTable += '\n*War Statistics:* ';
+        } else {
+          statsTable += ', ';
+        }
+        statsTable += '**' +
+          document.lifetimeWarLines +
+          '** lines in **' +
+          document.lifetimeLineMinutes.toFixed(0) +
+          '** minutes (**' +
+          (document.lifetimeWarLines / document.lifetimeLineMinutes)
+              .toFixed(2) +
+          '** lpm)';
+        firstSeen = false;
+      }
+      if (!(document.lifetimeWarPages === undefined)) {
+        if (firstSeen == true) {
+          statsTable += '\n*War Statistics:* ';
+        } else {
+          statsTable += ', ';
+        }
+        statsTable += '**' +
+          document.lifetimeWarPages +
+          '** pages in **' +
+          document.lifetimePageMinutes.toFixed(0) +
+          '** minutes (**' +
+          (document.lifetimeWarPages / document.lifetimePageMinutes)
+              .toFixed(2) +
+          '** ppm)';
+        firstSeen = false;
+      }
+      if (!(document.lifetimeWarMinutes === undefined)) {
+        if (firstSeen == true) {
+          statsTable += '\n*War Statistics:* ';
+        } else {
+          statsTable += ', ';
+        }
+        statsTable += '**' +
+          document.lifetimeWarMinutes +
+          '** minutes';
+        firstSeen = false;
+      }
+      if (!(document.raptorTotal === undefined)) {
+        statsTable += '\n*Raptors:* **' + document.raptorTotal + '**';
+      } else {
+        statsTable += '\n*Raptors:* **0**';
+      }
+      if (!(document.siteName === undefined)) {
+        statsTable += '\n*NaNo Site Username:* `' +
+          document.siteName +
+          '`';
+      } else {
+        statsTable += '\n*NaNo Site Username:* unknown';
+      }
+      if (!(document.timezone === undefined)) {
+        statsTable += '\n*Timezone:* `' + document.timezone + '`';
+      } else {
+        statsTable += '\n*Timezone:* unknown';
+      }
+    } else {
+      statsTable += '***User Statistics for ' +
+      msg.author.username +
+      ':***\n';
+      statsTable += '*Raptors:* **0**\n';
+      statsTable += '*NaNo Site Username:* unknown\n';
+      statsTable += '*Timezone:* unknown\n';
+    }
+    return statsTable;
   }
   /**
    * Displays raptor statistics.
    * @param {Object} client - The Discord client.
    * @param {Object} msg - The message that ran this function.
+   * @return {String} - The message to send to the user.
    */
   raptorStats(client, msg) {
     let raptorMsg = '__**Raptor Statistics:**__';
@@ -341,7 +329,7 @@ class Tools {
         }
       }
     }
-    msg.channel.send(raptorMsg);
+    return raptorMsg;
   }
   /**
    * Sorts a collection.
@@ -359,6 +347,7 @@ class Tools {
    * Roll dice according to the user's specifications.
    * @param {Object} msg - The message that ran this function.
    * @param {String} suffix - Information after the bot command.
+   * @return {String} - The message to send to the user.
    */
   rollDice(msg, suffix) {
     let diceString = '';
@@ -456,7 +445,7 @@ class Tools {
     if (diceSum > 0) {
       diceString += '\nTotal = ' + diceSum;
     }
-    msg.channel.send(diceString);
+    return diceString;
   }
 }
 
