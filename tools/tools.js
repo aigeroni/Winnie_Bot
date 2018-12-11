@@ -96,8 +96,9 @@ class Tools {
    * @param {Object} channel - The channel from which this function was called.
    * @param {Object} author - The user for whom a raptor is being rolled.
    * @param {Number} raptorChance - The chance of the user receiving a raptor.
+   * @return {Object} - Async promise.
    */
-  raptor(server, channel, author, raptorChance) {
+  async raptor(server, channel, author, raptorChance) {
     if (!(server in this.raptorCount)) {
       this.raptorCount[server] = 0;
       conn
@@ -136,10 +137,45 @@ class Tools {
           },
           {upsert: true}
       );
+      let currentRaptors = await conn.collection('userDB').findOne(
+          {_id: author.id}
+      ).raptorTotal;
+      if (currentRaptors == undefined) {
+        currentRaptors = 0;
+      }
       conn.collection('userDB').update(
           {_id: author.id},
           {$inc: {
             raptorTotal: 1,
+          },
+          },
+          {upsert: true}
+      );
+      if (currentRaptors == 0) {
+        await conn.collection('raptorBuckets').update(
+            {_id: 0},
+            {$inc: {
+              rank: 1,
+            },
+            }
+        );
+      } else {
+        await conn.collection('raptorBuckets').update(
+            {users: author.id},
+            {$inc: {
+              rank: 1,
+            }, $pull: {
+              users: author.id,
+            },
+            }
+        );
+      }
+      await conn.collection('raptorBuckets').update(
+          {_id: currentRaptors + 1},
+          {$setOnInsert: {
+            rank: 1,
+          }, $push: {
+            users: author.id,
           },
           },
           {upsert: true}
@@ -193,6 +229,12 @@ class Tools {
     let statsTable = '';
     const document = await conn.collection('userDB').findOne(
         {_id: msg.author.id}
+    );
+    const data = await conn.collection('raptorBuckets').findOne(
+        {users: msg.author.id}
+    );
+    const usersWithRaptors = await conn.collection('raptorBuckets').findOne(
+        {_id: 1}
     );
     if (!(document == null)) {
       statsTable += '***User Statistics for ' +
@@ -266,7 +308,13 @@ class Tools {
         firstSeen = false;
       }
       if (!(document.raptorTotal === undefined)) {
-        statsTable += '\n*Raptors:* **' + document.raptorTotal + '**';
+        statsTable += '\n*Raptors:* **' +
+            document.raptorTotal +
+            '** (Global Rank **' +
+            data.rank +
+            '** of **' +
+            usersWithRaptors.rank +
+            '**)';
       } else {
         statsTable += '\n*Raptors:* **0**';
       }
