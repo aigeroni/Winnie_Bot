@@ -137,20 +137,19 @@ class Tools {
           },
           {upsert: true}
       );
-      let currentRaptors = await conn.collection('userDB').findOne(
-          {_id: author.id}
-      ).raptorTotal;
-      if (currentRaptors == undefined) {
-        currentRaptors = 0;
-      }
       conn.collection('userDB').update(
-          {_id: author.id},
-          {$inc: {
-            raptorTotal: 1,
-          },
-          },
-          {upsert: true}
+        {_id: author.id},
+        {$inc: {
+          raptorTotal: 1,
+        },
+        },
+        {upsert: true}
       );
+      const userData = await conn.collection('userDB').findOne(
+          {_id: author.id}
+      );
+      const currentRaptors = userData.raptorTotal;
+      console.log(currentRaptors);
       if (currentRaptors == 0) {
         await conn.collection('raptorBuckets').update(
             {_id: 0},
@@ -161,7 +160,7 @@ class Tools {
         );
       } else {
         await conn.collection('raptorBuckets').update(
-            {users: author.id},
+            {_id: currentRaptors},
             {$inc: {
               rank: 1,
             }, $pull: {
