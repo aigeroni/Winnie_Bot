@@ -233,7 +233,7 @@ class Tools {
         {users: msg.author.id}
     );
     const usersWithRaptors = await conn.collection('raptorBuckets').findOne(
-        {_id: 1}
+        {_id: 0}
     );
     if (!(document == null)) {
       statsTable += '***User Statistics for ' +
@@ -312,10 +312,14 @@ class Tools {
             '** (Global Rank **' +
             data.rank +
             '** of **' +
-            usersWithRaptors.rank +
+            (usersWithRaptors.rank - 1) +
             '**)';
       } else {
-        statsTable += '\n*Raptors:* **0**';
+        statsTable += '\n*Raptors:* **0** (Global Rank **' +
+            usersWithRaptors.rank +
+            '** of **' +
+            (usersWithRaptors.rank - 1) +
+            '**)';
       }
       if (!(document.siteName === undefined)) {
         statsTable += '\n*NaNo Site Username:* `' +

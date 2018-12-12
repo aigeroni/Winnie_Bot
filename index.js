@@ -165,37 +165,6 @@ client.on('ready', () => {
             tools.userRaptors[author.server][author.user] = author.count;
           });
         });
-        await conn.collection('userDB').find({}, async function(e, users) {
-          users.forEach(async function(user) {
-          // for (const user of users) {
-            logger.info('entered bracket for user ' + user._id);
-            const userRaptors = user.raptorTotal;
-            logger.info(user.raptorTotal);
-            for (let i = 0; i <= userRaptors; i++) {
-              logger.info(user._id + ' ' + i + ' remove start');
-              await conn.collection('raptorBuckets').update(
-                  {users: user._id},
-                  {$inc: {
-                    rank: 1,
-                  }, $pull: {
-                    users: user._id,
-                  },
-                  }
-              ).then(logger.info(user._id + ' ' + i + ' remove complete'));
-              logger.info(user._id + ' ' + i + ' add start');
-              await conn.collection('raptorBuckets').update(
-                  {_id: i},
-                  {$setOnInsert: {
-                    rank: 1,
-                  }, $push: {
-                    users: user._id,
-                  },
-                  },
-                  {upsert: true}
-              ).then(logger.info(user._id + ' ' + i + ' add complete'));
-            }
-          });
-        });
         conn.collection('configDB').find({}, function(e, guilds) {
           guilds.forEach(function(guild) {
             challenges.crossServerStatus[guild.server] = guild.xStatus;
@@ -338,7 +307,7 @@ const cmdList = {
     type: 'challenges',
     process: async function(client, msg, suffix) {
       const returnData = await challenges.callTime(msg, suffix);
-      msg.channel.send(returnData.returnMsg);
+      let msgToSend = returnData.returnMsg;
       if (returnData.raptorCheck) {
         const args = suffix.split(' ');
         const challengeID = args.shift();
@@ -346,7 +315,7 @@ const cmdList = {
           authorGoalType = goallist.goalList[msg.author.id].goalType;
           updateWords = challengelist.challengeList[challengeID].goal;
           if (authorGoalType == 'words') {
-            msg.channel.send(goals.updateGoal(msg, updateWords, false));
+            msgToSend += '\n' + await goals.updateGoal(msg, totalNumber, false);
           }
         }
         tools.raptor(
@@ -356,7 +325,8 @@ const cmdList = {
             challenges.WAR_RAPTOR_CHANCE
         );
       }
-      return returnData.returnMsg;
+      msg.channel.send(msgToSend);
+      return msgToSend;
     },
   },
   total: {
@@ -369,7 +339,7 @@ const cmdList = {
     type: 'challenges',
     process: async function(client, msg, suffix) {
       const returnData = await challenges.addTotal(msg, suffix);
-      msg.channel.send(returnData.returnMsg);
+      let msgToSend = returnData.returnMsg;
       if (returnData.raptorCheck) {
         slice = suffix.split(' ');
         totalNumber = slice[1];
@@ -388,7 +358,7 @@ const cmdList = {
             totalType += 's';
           }
           if (totalType == authorGoalType) {
-            msg.channel.send(goals.updateGoal(msg, totalNumber, false));
+            msgToSend += '\n' + await goals.updateGoal(msg, totalNumber, false);
           }
         }
         tools.raptor(
@@ -398,7 +368,8 @@ const cmdList = {
             challenges.WAR_RAPTOR_CHANCE
         );
       }
-      return returnData.returnMsg;
+      msg.channel.send(msgToSend);
+      return msgToSend;
     },
   },
   summary: {
