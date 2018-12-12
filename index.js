@@ -165,6 +165,37 @@ client.on('ready', () => {
             tools.userRaptors[author.server][author.user] = author.count;
           });
         });
+        await conn.collection('userDB').find({}, async function(e, users) {
+          users.forEach(async function(user) {
+          // for (const user of users) {
+            logger.info('entered bracket for user ' + user._id);
+            const userRaptors = user.raptorTotal;
+            logger.info(user.raptorTotal);
+            for (let i = 0; i <= userRaptors; i++) {
+              logger.info(user._id + ' ' + i + ' remove start');
+              await conn.collection('raptorBuckets').update(
+                  {users: user._id},
+                  {$inc: {
+                    rank: 1,
+                  }, $pull: {
+                    users: user._id,
+                  },
+                  }
+              ).then(logger.info(user._id + ' ' + i + ' remove complete'));
+              logger.info(user._id + ' ' + i + ' add start');
+              await conn.collection('raptorBuckets').update(
+                  {_id: i},
+                  {$setOnInsert: {
+                    rank: 1,
+                  }, $push: {
+                    users: user._id,
+                  },
+                  },
+                  {upsert: true}
+              ).then(logger.info(user._id + ' ' + i + ' add complete'));
+            }
+          });
+        });
         conn.collection('configDB').find({}, function(e, guilds) {
           guilds.forEach(function(guild) {
             challenges.crossServerStatus[guild.server] = guild.xStatus;
@@ -315,7 +346,7 @@ const cmdList = {
           authorGoalType = goallist.goalList[msg.author.id].goalType;
           updateWords = challengelist.challengeList[challengeID].goal;
           if (authorGoalType == 'words') {
-            goals.updateGoal(msg, updateWords, false);
+            msg.channel.send(goals.updateGoal(msg, updateWords, false));
           }
         }
         tools.raptor(
@@ -357,7 +388,7 @@ const cmdList = {
             totalType += 's';
           }
           if (totalType == authorGoalType) {
-            goals.updateGoal(msg, totalNumber, false);
+            msg.channel.send(goals.updateGoal(msg, totalNumber, false));
           }
         }
         tools.raptor(

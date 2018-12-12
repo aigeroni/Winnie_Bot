@@ -137,14 +137,6 @@ class Tools {
           },
           {upsert: true}
       );
-      conn.collection('userDB').update(
-        {_id: author.id},
-        {$inc: {
-          raptorTotal: 1,
-        },
-        },
-        {upsert: true}
-      );
       const userData = await conn.collection('userDB').findOne(
           {_id: author.id}
       );
@@ -175,6 +167,14 @@ class Tools {
             rank: 1,
           }, $push: {
             users: author.id,
+          },
+          },
+          {upsert: true}
+      );
+      conn.collection('userDB').update(
+          {_id: author.id},
+          {$inc: {
+            raptorTotal: 1,
           },
           },
           {upsert: true}
