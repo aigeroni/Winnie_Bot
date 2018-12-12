@@ -167,8 +167,8 @@ client.on('ready', () => {
         });
         conn.collection('configDB').find({}, function(e, guilds) {
           guilds.forEach(function(guild) {
-            challenges.crossServerStatus[guild.server] = guild.xStatus;
-            challenges.autoSumStatus[guild.server] = guild.autoStatus;
+            challenges.crossServerStatus[guild._id] = guild.xStatus;
+            challenges.autoSumStatus[guild._id] = guild.autoStatus;
           });
         });
       }
@@ -622,6 +622,32 @@ const cmdList = {
     type: 'config',
     process: async function(client, msg, suffix) {
       const msgToSend = await challenges.autoSum(msg, suffix);
+      msg.channel.send(msgToSend);
+      return msgToSend;
+    },
+  },
+  prefix: {
+    name: 'prefix',
+    example: 'prefix ~',
+    description:
+      'Allows server admins to change Winnie\'s prefix.',
+    usage: '<prefix>',
+    type: 'config',
+    process: async function(client, msg, suffix) {
+      const msgToSend = await tools.customPrefix(msg, suffix);
+      msg.channel.send(msgToSend);
+      return msgToSend;
+    },
+  },
+  announce: {
+    name: 'announce',
+    example: 'prefix ~',
+    description:
+      'Allows server admins to change Winnie\'s prefix.',
+    usage: '<prefix>',
+    type: 'config',
+    process: async function(client, msg, suffix) {
+      const msgToSend = await tools.announcementChannel(msg, suffix);
       msg.channel.send(msgToSend);
       return msgToSend;
     },

@@ -845,7 +845,7 @@ class Challenges {
             await conn
                 .collection('configDB')
                 .update(
-                    {server: msg.guild.id},
+                    {_id: msg.guild.id},
                     {$set: {xStatus: this.crossServerStatus[msg.guild.id]}},
                     {upsert: true}
                 );
@@ -934,7 +934,7 @@ class Challenges {
             await conn
                 .collection('configDB')
                 .update(
-                    {server: msg.guild.id},
+                    {_id: msg.guild.id},
                     {$set: {autoStatus: this.autoSumStatus[msg.guild.id]}},
                     {upsert: true}
                 );
