@@ -641,12 +641,14 @@ const cmdList = {
   },
   announce: {
     name: 'announce',
-    example: 'prefix ~',
+    example: 'announce #announcements',
     description:
-      'Allows server admins to change Winnie\'s prefix.',
-    usage: '<prefix>',
+      'Allows server admins to select a channel for daily word count' +
+      ' announcements.',
+    usage: '<channel>',
     type: 'config',
     process: async function(client, msg, suffix) {
+      logger.info(suffix);
       const msgToSend = await tools.announcementChannel(msg, suffix);
       msg.channel.send(msgToSend);
       return msgToSend;

@@ -248,7 +248,7 @@ class Challenges {
             );
         this.timerID = this.timerID + 1;
         if (joinFlag) {
-          returnMsg += this.joinChallenge(msg, challengeID);
+          returnMsg += await this.joinChallenge(msg, challengeID);
         }
       } catch (e) {
         returnMsg = 'Error: Sprint creation failed.';
@@ -344,7 +344,7 @@ class Challenges {
             );
         this.timerID = this.timerID + 1;
         if (joinFlag) {
-          returnMsg += this.joinChallenge(msg, challengeID);
+          returnMsg += await this.joinChallenge(msg, challengeID);
         }
       } catch (e) {
         returnMsg = 'Error: War creation failed.';
@@ -450,7 +450,7 @@ class Challenges {
             );
         this.timerID = this.timerID + 1;
         if (joinFlag) {
-          returnMsg += this.joinChallenge(msg, challengeID);
+          returnMsg += await this.joinChallenge(msg, challengeID);
         }
       } catch (e) {
         returnMsg = 'Error: Chain war creation failed.';
