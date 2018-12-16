@@ -77,27 +77,27 @@ const tickTimer = gameloop.setGameLoop(async function(delta) {
   }
   // post wordcount goal announcements
   // logger.info(client.guilds);
-  const guildList = client.guilds;
-  for (const guild in guildList) {
-    if (guildList.hasOwnProperty(guild)) {
-      logger.info('entered check');
-      const serverData = await conn.collection('configDB').find(
-          {_id: guild.id} // **replace server placeholder**
-      );
-      if (serverData.announcements != undefined) {
-        logger.info(serverData.announcements);
-        // // calculate next midnight based on timezone
-        // const endTime = new timezoneJS.Date();
-        // endTime.setTimezone(userTZ);
-        // endTime.setHours(24, 0, 0, 0);
-        // if (new Date().getTime() >= this.terminationTime) {
-        //   // set up to handle timezones
-        //   const channel = client.channels.get(serverData.announcements);
-        //   channel.send('placeholder message');
-        // }
-      }
-    }
-  }
+  // const guildList = client.guilds;
+  // for (const guild in guildList) {
+  //   if (guildList.hasOwnProperty(guild)) {
+  //     logger.info('entered check');
+  //     const serverData = await conn.collection('configDB').find(
+  //         {_id: guild.id} // **replace server placeholder**
+  //     );
+  //     if (serverData.announcements != undefined) {
+  //       logger.info(serverData.announcements);
+  //       // // calculate next midnight based on timezone
+  //       // const endTime = new timezoneJS.Date();
+  //       // endTime.setTimezone(userTZ);
+  //       // endTime.setHours(24, 0, 0, 0);
+  //       // if (new Date().getTime() >= this.terminationTime) {
+  //       //   // set up to handle timezones
+  //       //   const channel = client.channels.get(serverData.announcements);
+  //       //   channel.send('placeholder message');
+  //       // }
+  //     }
+  //   }
+  // }
 }, 1000);
 
 client.on('ready', () => {
