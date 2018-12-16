@@ -190,12 +190,16 @@ class Challenge {
           }
         }
         const channelObject = client.channels.get(this.hookedChannels[i]);
+        let prefix = config.cmd_prefix['default'];
+        if (config.cmd_prefix[channelObject.guild.id]) {
+          prefix = config.cmd_prefix[channelObject.guild.id];
+        }
         channelObject.send(
             this.displayName +
             ' (ID ' +
             this.objectID +
             ') has ended! Post your total using `' +
-            config.cmd_prefix +
+            prefix +
             'total ' +
             this.objectID +
             ' <total>` to be included in the summary.' +

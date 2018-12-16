@@ -4,7 +4,6 @@ const ChainWar = require('./chainwar');
 const Sprint = require('./sprint');
 const War = require('./war');
 const challengelist = require('./challengelist.js');
-const config = require('../config.json');
 const logger = require('../logger.js');
 const conn = require('mongoose').connection;
 
@@ -24,19 +23,20 @@ class Challenges {
   /**
    * Add a user to the list of joined users for a challenge.
    * @param {Object} msg - The message that ran this function.
+   * @param {String} prefix - The bot's prefix.
    * @param {String} suffix - Information after the bot command.
    * @return {String} - The message to send to the user.
    */
-  async joinChallenge(msg, suffix) {
+  async joinChallenge(msg, prefix, suffix) {
     let returnMsg = '';
     const challengeID = suffix;
     if (isNaN(challengeID)) {
       returnMsg = 'Error: Challenge ID must be an integer. Example: `' +
-          config.cmd_prefix +
+          prefix +
           'join 10793`.';
     } else if (challengeID < 1) {
       returnMsg = 'Error: Challenge ID must be an integer. Example: `' +
-          config.cmd_prefix +
+          prefix +
           'join 10793`.';
     } else if (challengeID in challengelist.challengeList) {
       if (
@@ -110,19 +110,20 @@ class Challenges {
   /**
    * Remove a user from the list of joined users for a challenge.
    * @param {Object} msg - The message that ran this function.
+   * @param {String} prefix - The bot's prefix.
    * @param {String} suffix - Information after the bot command.
    * @return {String} - The message to send to the user.
    */
-  async leaveChallenge(msg, suffix) {
+  async leaveChallenge(msg, prefix, suffix) {
     let returnMsg = '';
     const challengeID = suffix;
     if (isNaN(challengeID)) {
       returnMsg = 'Error: Challenge ID must be an integer. Example: `' +
-          config.cmd_prefix +
+          prefix +
           'leave 10793`.';
     } else if (challengeID < 1) {
       returnMsg = 'Error: Challenge ID must be an integer. Example: `' +
-          config.cmd_prefix +
+          prefix +
           'leave 10793`.';
     } else if (challengeID in challengelist.challengeList) {
       if (
@@ -156,10 +157,11 @@ class Challenges {
   /**
    * Creates a new sprint.
    * @param {Object} msg - The message that ran this function.
+   * @param {String} prefix - The bot's prefix.
    * @param {String} suffix - Information after the bot command.
    * @return {String} - The message to send to the user.
    */
-  async startSprint(msg, suffix) {
+  async startSprint(msg, prefix, suffix) {
     let returnMsg = '';
     let joinFlag = false;
     let crossServerHide = this.crossServerStatus[msg.guild.id];
@@ -198,15 +200,15 @@ class Challenges {
       returnMsg = 'Error: Sprint names may not mention users.';
     } else if (!Number.isInteger(Number(words))) {
       returnMsg = 'Error: Word goal must be a whole number. Example: `' +
-          config.cmd_prefix +
+          prefix +
           'sprint 200 10 1`.';
     } else if (isNaN(timeout)) {
       returnMsg = 'Error: Sprint duration must be a number. Example: `' +
-          config.cmd_prefix +
+          prefix +
           'sprint 200 10 1`.';
     } else if (isNaN(start)) {
       returnMsg = 'Error: Time to start must be a number. Example: `' +
-          config.cmd_prefix +
+          prefix +
           'sprint 200 10 1`.';
     } else if (start > 30) {
       returnMsg =
@@ -248,7 +250,7 @@ class Challenges {
             );
         this.timerID = this.timerID + 1;
         if (joinFlag) {
-          returnMsg += await this.joinChallenge(msg, challengeID);
+          returnMsg += await this.joinChallenge(msg, prefix, challengeID);
         }
       } catch (e) {
         returnMsg = 'Error: Sprint creation failed.';
@@ -260,10 +262,11 @@ class Challenges {
   /**
    * Creates a new war.
    * @param {Object} msg - The message that ran this function.
+   * @param {String} prefix - The bot's prefix.
    * @param {String} suffix - Information after the bot command.
    * @return {String} - The message to send to the user.
    */
-  async startWar(msg, suffix) {
+  async startWar(msg, prefix, suffix) {
     let returnMsg = '';
     let joinFlag = false;
     let crossServerHide = this.crossServerStatus[msg.guild.id];
@@ -301,11 +304,11 @@ class Challenges {
       returnMsg = 'Error: War names may not mention users.';
     } else if (isNaN(start)) {
       returnMsg = 'Error: Time to start must be a number. Example: `' +
-          config.cmd_prefix +
+          prefix +
           'war 10 1`.';
     } else if (isNaN(duration)) {
       returnMsg = 'Error: War duration must be a number. Example: `' +
-          config.cmd_prefix +
+          prefix +
           'war 10 1`.';
     } else if (start > 30) {
       returnMsg =
@@ -344,7 +347,7 @@ class Challenges {
             );
         this.timerID = this.timerID + 1;
         if (joinFlag) {
-          returnMsg += await this.joinChallenge(msg, challengeID);
+          returnMsg += await this.joinChallenge(msg, prefix, challengeID);
         }
       } catch (e) {
         returnMsg = 'Error: War creation failed.';
@@ -356,10 +359,11 @@ class Challenges {
   /**
    * Creates a new chain war.
    * @param {Object} msg - The message that ran this function.
+   * @param {String} prefix - The bot's prefix.
    * @param {String} suffix - Information after the bot command.
    * @return {String} - The message to send to the user.
    */
-  async startChainWar(msg, suffix) {
+  async startChainWar(msg, prefix, suffix) {
     let returnMsg = '';
     let joinFlag = false;
     let crossServerHide = this.crossServerStatus[msg.guild.id];
@@ -398,18 +402,18 @@ class Challenges {
       returnMsg = 'Error: War names may not mention users.';
     } else if (isNaN(chainWarCount)) {
       returnMsg = 'Error: War count must be a number. Example: `' +
-          config.cmd_prefix +
+          prefix +
           'chainwar 2 10 1`.';
     } else if (isNaN(timeBetween)) {
       returnMsg = 'Error: Time between wars must be a number. Example: `' +
-          config.cmd_prefix +
+          prefix +
           'chainwar 2 10 1`.';
     } else if (timeBetween > 30) {
       returnMsg = 'Error: There cannot be more than 30 minutes' +
           ' between wars in a chain.';
     } else if (isNaN(duration)) {
       returnMsg = 'Error: War duration must be a number. Example: `' +
-          config.cmd_prefix +
+          prefix +
           'chainwar 2 10 1`.';
     } else if (chainWarCount < 2 || chainWarCount > 10) {
       returnMsg = 'Error: Chain wars must be between two and ten wars long.';
@@ -450,7 +454,7 @@ class Challenges {
             );
         this.timerID = this.timerID + 1;
         if (joinFlag) {
-          returnMsg += await this.joinChallenge(msg, challengeID);
+          returnMsg += await this.joinChallenge(msg, prefix, challengeID);
         }
       } catch (e) {
         returnMsg = 'Error: Chain war creation failed.';
@@ -462,17 +466,18 @@ class Challenges {
   /**
    * Terminates a challenge early.
    * @param {Object} msg - The message that ran this function.
+   * @param {String} prefix - The bot's prefix.
    * @param {String} suffix - Information after the bot command.
    * @return {Object} - Channels to send message to, and message to send.
    */
-  async stopChallenge(msg, suffix) {
+  async stopChallenge(msg, prefix, suffix) {
     let returnMsg = '';
     let channelList = [msg.channel.id];
     const challengeID = suffix;
     if (isNaN(challengeID) || challengeID < 1) {
       returnMsg =
           'Error: Challenge ID must be an integer. Example: `' +
-          config.cmd_prefix +
+          prefix +
           'cancel 10793`.';
     } else if (challengeID in challengelist.challengeList) {
       const stopName = challengelist.challengeList[challengeID].displayName;

@@ -13,10 +13,11 @@ class Tools {
   /**
    * Gives the user a target for a number of minutes.
    * @param {Object} msg - The message that ran this function.
+   * @param {String} prefix - The bot's prefix.
    * @param {String} suffix - Information after the bot command.
    * @return {String} - The message to send to the user.
    */
-  calcTarget(msg, suffix) {
+  calcTarget(msg, prefix, suffix) {
     let returnMsg = '';
     const args = suffix.split(' ');
     const difficulty = args.shift();
@@ -24,7 +25,7 @@ class Tools {
     let base = null;
     if (!Number.isInteger(Number(time))) {
       returnMsg = 'Error: Duration must be a whole number. Example: `' +
-          config.cmd_prefix +
+          prefix +
           'target medium 15`.';
     } else {
       switch (difficulty) {
@@ -47,7 +48,7 @@ class Tools {
       if (base === null) {
         returnMsg =
             'Error: Targets must be easy, medium, hard, or insane. Example: `' +
-            config.cmd_prefix +
+            prefix +
             'target medium 15`.';
       } else {
         const goalPerMinute = Math.ceil(Math.random() * 11) + base;
@@ -401,10 +402,11 @@ class Tools {
   /**
    * Roll dice according to the user's specifications.
    * @param {Object} msg - The message that ran this function.
+   * @param {String} prefix - The bot's prefix.
    * @param {String} suffix - Information after the bot command.
    * @return {String} - The message to send to the user.
    */
-  rollDice(msg, suffix) {
+  rollDice(msg, prefix, suffix) {
     let diceString = '';
     let diceSum = 0;
     const faces = suffix.split('+');
@@ -434,7 +436,7 @@ class Tools {
           diceString =
             'Error: Both values in an RPG-style roll must be integers.' +
             ' Example: `' +
-            config.cmd_prefix +
+            prefix +
             'roll 2d6`.';
           diceSum = 0;
           break;
@@ -463,7 +465,7 @@ class Tools {
         ) {
           diceString = 'Error: Both values in a range roll must be integers.' +
             ' Example: `' +
-            config.cmd_prefix +
+            prefix +
             'roll 1 100`.';
           diceSum = 0;
           break;
@@ -488,7 +490,7 @@ class Tools {
       } else {
         diceString = 'Error: ' + faces[i] + ' is not a valid roll.' +
           ' Example: `' +
-          config.cmd_prefix +
+          prefix +
           'roll 2d6 + 5`.';
         diceSum = 0;
         break;
@@ -535,10 +537,11 @@ class Tools {
             );
         returnMsg = msg.author +
             ', you have reset my prefix to the default `' +
-            config.cmd_prefix +
+            config.cmd_prefix['default'] +
             '`.';
       } else { // change prefix (admins only)
         if (suffix.length > 0 && suffix.length < 3) {
+          config.cmd_prefix[msg.guild.id] = suffix;
           await conn
               .collection('configDB')
               .update(
