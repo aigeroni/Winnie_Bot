@@ -13,10 +13,11 @@ class Tools {
   /**
    * Gives the user a target for a number of minutes.
    * @param {Object} msg - The message that ran this function.
+   * @param {String} prefix - The bot's prefix.
    * @param {String} suffix - Information after the bot command.
    * @return {String} - The message to send to the user.
    */
-  calcTarget(msg, suffix) {
+  calcTarget(msg, prefix, suffix) {
     let returnMsg = '';
     const args = suffix.split(' ');
     const difficulty = args.shift();
@@ -24,7 +25,7 @@ class Tools {
     let base = null;
     if (!Number.isInteger(Number(time))) {
       returnMsg = 'Error: Duration must be a whole number. Example: `' +
-          config.cmd_prefix +
+          prefix +
           'target medium 15`.';
     } else {
       switch (difficulty) {
@@ -47,7 +48,7 @@ class Tools {
       if (base === null) {
         returnMsg =
             'Error: Targets must be easy, medium, hard, or insane. Example: `' +
-            config.cmd_prefix +
+            prefix +
             'target medium 15`.';
       } else {
         const goalPerMinute = Math.ceil(Math.random() * 11) + base;
@@ -337,7 +338,11 @@ class Tools {
       statsTable += '***User Statistics for ' +
       msg.author.username +
       ':***\n';
-      statsTable += '*Raptors:* **0**\n';
+      statsTable += '*Raptors:* **0** (Global Rank **' +
+          usersWithRaptors.rank +
+          '** of **' +
+          (usersWithRaptors.rank - 1) +
+          '**)\n';
       statsTable += '*NaNo Site Username:* unknown\n';
       statsTable += '*Timezone:* unknown\n';
     }
@@ -397,10 +402,11 @@ class Tools {
   /**
    * Roll dice according to the user's specifications.
    * @param {Object} msg - The message that ran this function.
+   * @param {String} prefix - The bot's prefix.
    * @param {String} suffix - Information after the bot command.
    * @return {String} - The message to send to the user.
    */
-  rollDice(msg, suffix) {
+  rollDice(msg, prefix, suffix) {
     let diceString = '';
     let diceSum = 0;
     const faces = suffix.split('+');
@@ -430,7 +436,7 @@ class Tools {
           diceString =
             'Error: Both values in an RPG-style roll must be integers.' +
             ' Example: `' +
-            config.cmd_prefix +
+            prefix +
             'roll 2d6`.';
           diceSum = 0;
           break;
@@ -459,7 +465,7 @@ class Tools {
         ) {
           diceString = 'Error: Both values in a range roll must be integers.' +
             ' Example: `' +
-            config.cmd_prefix +
+            prefix +
             'roll 1 100`.';
           diceSum = 0;
           break;
@@ -484,7 +490,7 @@ class Tools {
       } else {
         diceString = 'Error: ' + faces[i] + ' is not a valid roll.' +
           ' Example: `' +
-          config.cmd_prefix +
+          prefix +
           'roll 2d6 + 5`.';
         diceSum = 0;
         break;
@@ -497,6 +503,121 @@ class Tools {
       diceString += '\nTotal = ' + diceSum;
     }
     return diceString;
+  }
+  /**
+   * Allows server admins to set a custom prefix for Winnie.
+   * @param {Object} msg - The message that ran this function.
+   * @param {String} suffix - Information after the bot command.
+   * @return {String} - The message to send to the user.
+   */
+  async customPrefix(msg, suffix) {
+    let returnMsg = '';
+    // display Winnie's current prefix (all users)
+    if (suffix == '') {
+      const data = await conn.collection('configDB').findOne(
+          {_id: msg.guild.id}
+      );
+      if (data.prefix == undefined) {
+        returnMsg = msg.author +
+            ', this server does not have a custom prefix configured.';
+      } else {
+        returnMsg = msg.author +
+            ', my current prefix is `' +
+            data.prefix +
+            '`.';
+      }
+    } else if (msg.member.permissions.has('ADMINISTRATOR')) {
+      if (suffix == 'clear') {
+        await conn
+            .collection('configDB')
+            .update(
+                {_id: msg.guild.id},
+                {$set: {prefix: undefined}},
+                {upsert: true}
+            );
+        returnMsg = msg.author +
+            ', you have reset my prefix to the default `' +
+            config.cmd_prefix['default'] +
+            '`.';
+      } else { // change prefix (admins only)
+        if (suffix.length > 0 && suffix.length < 3) {
+          config.cmd_prefix[msg.guild.id] = suffix;
+          await conn
+              .collection('configDB')
+              .update(
+                  {_id: msg.guild.id},
+                  {$set: {prefix: suffix}},
+                  {upsert: true}
+              );
+          returnMsg = msg.author +
+              ', you have changed my prefix to `' +
+              suffix +
+              '`.';
+        } else {
+          returnMsg = 'Error: My prefix must be less than three characters.';
+        }
+      }
+    } else {
+      returnMsg = 'Error: Only server administrators are permitted to' +
+          ' configure the prefix.';
+    }
+    return returnMsg;
+  }
+  /**
+   * Allows server admins to configure a channel for word count reminders.
+   * @param {Object} msg - The message that ran this function.
+   * @param {String} suffix - Information after the bot command.
+   * @return {String} - The message to send to the user.
+   */
+  async announcementChannel(msg, suffix) {
+    let returnMsg = '';
+    returnMsg = suffix;
+    // display the current announcements channel (all users)
+    if (suffix == '') {
+      const data = await conn.collection('configDB').findOne(
+          {_id: msg.guild.id}
+      );
+      if (data.announcements == undefined) {
+        returnMsg = msg.author +
+            ', announcements are not yet configured for this server.';
+      } else {
+        returnMsg = msg.author +
+          ', announcements are posted in ' +
+          client.channels.get(data.announcements) +
+          '.';
+      }
+    } else { // change announcements channel (admins only)
+      if (msg.member.permissions.has('ADMINISTRATOR')) {
+        const channelObject = client.channels.get(suffix.slice(2, -1));
+        if (channelObject != undefined) {
+          const perms = (channelObject.guild.me.permissionsIn(channelObject));
+          if (perms.hasPermission('SEND_MESSAGES')) {
+            await conn
+                .collection('configDB')
+                .update(
+                    {_id: msg.guild.id},
+                    {$set: {announcements: channelObject.id}},
+                    {upsert: true}
+                );
+            returnMsg = msg.author +
+                ', you have changed the announcements channel to ' +
+                channelObject +
+                '.';
+          } else {
+            returnMsg = 'Error: I need permission to send messages in the' +
+                ' announcements channel.';
+          }
+        } else {
+          returnMsg = 'Error: ' +
+              suffix +
+              ' is not a valid channel.';
+        }
+      } else {
+        returnMsg = 'Error: Only server administrators are permitted to' +
+            ' configure the announcements channel.';
+      }
+    }
+    return returnMsg;
   }
 }
 

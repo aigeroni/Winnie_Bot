@@ -1,4 +1,3 @@
-const config = require('./config.json');
 /** Class containing help functions. */
 class Help {
   /** Initialise variables for help functions.
@@ -10,10 +9,11 @@ class Help {
   /**
    * Provides help messages for a command or list of commands.
    * @param {Object} cmdList - A list of Winnie's commands.
+   * @param {String} prefix - The bot's prefix.
    * @param {String} suffix - The suffix of the calling message.
    * @return {String} - the help message.
    */
-  buildHelpMsg(cmdList, suffix) {
+  buildHelpMsg(cmdList, prefix, suffix) {
     if (suffix) {
       let helpMsg = '';
       if (suffix == 'all') {
@@ -39,18 +39,20 @@ class Help {
       }
       const cmd = cmdList[suffix];
       try {
-        helpMsg += '**' + config.cmd_prefix + cmd.name;
+        helpMsg += '**' + prefix + cmd.name;
       } catch (e) {
-        helpMsg += 'That command does not exist.';
+        helpMsg += 'Error: That command does not exist.';
         return helpMsg;
       }
       if (cmd.usage) {
         helpMsg += ' ' + cmd.usage;
       }
-      helpMsg += ':**\n' + cmd.description + '\n';
+      helpMsg += ':**\n' +
+          cmd.description.replace(/%prefix/g, prefix) +
+          '\n';
       if (cmd.example) {
         helpMsg += '**Example:** `' +
-        config.cmd_prefix +
+        prefix +
         cmd.example +
         '`\n';
       }
@@ -74,7 +76,7 @@ class Help {
                 if (first == false) {
                   helpMsg += ', ';
                 }
-                helpMsg += config.cmd_prefix + cmdList[j].name;
+                helpMsg += prefix + cmdList[j].name;
                 if (cmdList[j].aliases) {
                   helpMsg += ' (aliases: ' +
                   cmdList[j].aliases +
@@ -87,12 +89,12 @@ class Help {
         }
       }
       helpMsg += '\n\nUse `' +
-        config.cmd_prefix +
+        prefix +
         'help <command>` to get help for a specific command, `' +
-        config.cmd_prefix +
+        prefix +
         'help <challenges|goals|tools|config>` to get help' +
         ' for a command type, or `' +
-        config.cmd_prefix +
+        prefix +
         'help all` to have Winnie DM you help for all commands.';
       return helpMsg;
     }
@@ -110,14 +112,14 @@ class Help {
       if (cmdList.hasOwnProperty(i)) {
         if (!(cmdList[i].alias)) {
           if (cmdList[i].type == cmdType) {
-            helpMsg += '**' + config.cmd_prefix + cmdList[i].name;
+            helpMsg += '**' + prefix + cmdList[i].name;
             if (cmdList[i].usage) {
               helpMsg += ' ' + cmdList[i].usage;
             }
             helpMsg += ':**\n' + cmdList[i].description + '\n';
             if (cmdList[i].example) {
               helpMsg += '**Example:** `' +
-              config.cmd_prefix +
+              prefix +
               cmdList[i].example +
               '`\n';
             }

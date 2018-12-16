@@ -22,10 +22,11 @@ class Goals {
   /**
    * Set a user's timezone.
    * @param {Object} msg - The message that ran this function.
+   * @param {String} prefix - The bot's prefix.
    * @param {String} suffix - Information after the bot command.
    * @return {Boolean} - False in the event of an error.
    */
-  async setTimezone(msg, suffix) {
+  async setTimezone(msg, prefix, suffix) {
     let returnMsg = '';
     const timezone = suffix.replace(/[a-zA-Z0-9]*/g,
         function(txt) {
@@ -53,11 +54,11 @@ class Goals {
               ' These generally take the format of' +
               ' Continent/Your_Areas_Largest_City.\n' +
               '**For example:** `' +
-              config.cmd_prefix +
+              prefix +
               'timezone America/New_York`, `' +
-              config.cmd_prefix +
+              prefix +
               'timezone Australia/Sydney`, `' +
-              config.cmd_prefix +
+              prefix +
               'timezone Europe/London`';
         }
         return returnMsg;
@@ -69,11 +70,11 @@ class Goals {
             ' These generally take the format of' +
             ' Continent/Your_Areas_Largest_City.\n' +
             '**For example:** `' +
-            config.cmd_prefix +
+            prefix +
             'timezone America/New_York`, `' +
-            config.cmd_prefix +
+            prefix +
             'timezone Australia/Sydney`, `' +
-            config.cmd_prefix +
+            prefix +
             'timezone Europe/London`';
         return returnMsg;
       }
@@ -96,10 +97,11 @@ class Goals {
   /**
    * Set a goal for a user.
    * @param {Object} msg - The message that ran this function.
+   * @param {String} prefix - The bot's prefix.
    * @param {String} suffix - Information after the bot command.
    * @return {String} - The message to send to the user.
    */
-  async setGoal(msg, suffix) {
+  async setGoal(msg, prefix, suffix) {
     let returnMsg = '';
     const args = suffix.split(' ');
     const goal = args.shift();
@@ -108,7 +110,7 @@ class Goals {
       returnMsg = msg.author + ', I need a goal to set!';
     } else if (!Number.isInteger(Number(goal))) {
       returnMsg = 'Error: Your goal must be a whole number. Example: `' +
-          config.cmd_prefix +
+          prefix +
           'set 1667`.';
     } else if (msg.author.id in goallist.goalList) {
       returnMsg = msg.author +
@@ -134,7 +136,7 @@ class Goals {
       ) {
         returnMsg = 'Error: Goal type must be words, lines, pages,' +
             ' or minutes. Example: `' +
-            config.cmd_prefix +
+            prefix +
             'set 50 lines`.';
       } else {
         if (goalType === undefined) {
@@ -189,12 +191,13 @@ class Goals {
   /**
    * Update a user's goal.
    * @param {Object} msg - The message that ran this function.
+   * @param {String} prefix - The bot's prefix.
    * @param {String} suffix - Information after the bot command.
    * @param {Boolean} overwrite - Whether the progress is being added to (false)
    * or overwritten (true).
    * @return {String} - The message to send to the user.
    */
-  updateGoal(msg, suffix, overwrite) {
+  updateGoal(msg, prefix, suffix, overwrite) {
     let returnMsg = '';
     if (suffix == '') {
       returnMsg = msg.author + ', I need some progress to update!';
@@ -203,12 +206,13 @@ class Goals {
       const goal = args.shift();
       if (!Number.isInteger(parseInt(goal))) {
         returnMsg = 'Error: Your progress must be a whole number. Example: `' +
-            config.cmd_prefix +
+            prefix +
             'update 256`.';
       } else if (!(msg.author.id in goallist.goalList)) {
         returnMsg = msg.author +
-            ', you have not yet set a goal for today.' +
-            ' Use `!set <goal>` to do so.';
+            ', you have not yet set a goal for today. Use `' +
+            prefix +
+            'set <goal>` to do so.';
       } else {
         goallist.goalList[msg.author.id].addWords(goal, overwrite);
         returnMsg = msg.author +
@@ -228,15 +232,17 @@ class Goals {
   /**
    * Resets a user's goal.
    * @param {Object} msg - The message that ran this function.
+   * @param {String} prefix - The bot's prefix.
    * @param {String} suffix - Information after the bot command.
    * @return {String} - The message to send to the user.
    */
-  async resetGoal(msg, suffix) {
+  async resetGoal(msg, prefix, suffix) {
     let returnMsg = '';
     if (!(msg.author.id in goallist.goalList)) {
       returnMsg = msg.author +
-          ', you have not yet set a goal for today.' +
-          ' Use `!set <goal>` to do so.';
+          ', you have not yet set a goal for today. Use `' +
+          prefix +
+          'set <goal>` to do so.';
     } else {
       const args = suffix.split(' ');
       const newGoal = args.shift();
@@ -266,7 +272,7 @@ class Goals {
         } else {
           conn.collection('goalDB').remove({authorID: msg.author.id});
           delete goallist.goalList[msg.author.id];
-          returnMsg = await this.setGoal(msg, suffix);
+          returnMsg = await this.setGoal(msg, prefix, suffix);
         }
       }
     }
@@ -275,14 +281,16 @@ class Goals {
   /**
    * Allows a user to view their progress towards their goal.
    * @param {Object} msg - The message that ran this function.
+   * @param {String} prefix - The bot's prefix.
    * @return {String} - The message to send to the user.
    */
-  viewGoal(msg) {
+  viewGoal(msg, prefix) {
     let returnMsg = '';
     if (!(msg.author.id in goallist.goalList)) {
       returnMsg = msg.author +
-          ', you have not yet set a goal for today.' +
-          ' Use `!set <goal>` to do so.';
+          ', you have not yet set a goal for today. Use `' +
+          prefix +
+          'set <goal>` to do so.';
     } else {
       returnMsg = msg.author +
           ', you have written **' +
