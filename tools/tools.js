@@ -102,13 +102,6 @@ class Tools {
   async raptor(server, channel, author, raptorChance) {
     if (!(server in this.raptorCount)) {
       this.raptorCount[server] = 0;
-      conn
-          .collection('raptorDB')
-          .update(
-              {server: server},
-              {server: server, count: this.raptorCount[server]},
-              {upsert: true}
-          );
     }
     if (!(server in this.userRaptors)) {
       this.userRaptors[server] = {};
@@ -123,7 +116,7 @@ class Tools {
       conn
           .collection('raptorDB')
           .update(
-              {server: server},
+              {_id: server},
               {$inc: {
                 count: 1,
               },

@@ -179,7 +179,7 @@ client.on('ready', () => {
         });
         conn.collection('raptorDB').find({}, function(e, guilds) {
           guilds.forEach(function(guild) {
-            tools.raptorCount[guild.server] = guild.count;
+            tools.raptorCount[guild._id] = guild.count;
           });
         });
         conn.collection('raptorUserDB').find({}, function(e, authors) {
