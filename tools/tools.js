@@ -124,7 +124,7 @@ class Tools {
               {upsert: true}
           );
       conn.collection('raptorUserDB').update(
-          {server: server, user: author.id},
+          {_id: {server: server, user: author.id}},
           {$inc: {
             count: 1,
           },

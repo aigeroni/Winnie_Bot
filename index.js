@@ -184,10 +184,11 @@ client.on('ready', () => {
         });
         conn.collection('raptorUserDB').find({}, function(e, authors) {
           authors.forEach(function(author) {
-            if (!(author.server in tools.userRaptors)) {
-              tools.userRaptors[author.server] = {};
+            if (!(author._id.server in tools.userRaptors)) {
+              tools.userRaptors[author._id.server] = {};
             }
-            tools.userRaptors[author.server][author.user] = author.count;
+            tools.userRaptors[author._id.server][author._id.user]
+                = author.count;
           });
         });
         conn.collection('configDB').find({}, function(e, guilds) {
