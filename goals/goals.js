@@ -2,7 +2,6 @@ const goallist = require('./goallist.js');
 const Goal = require('./goal');
 const timezoneJS = require('timezone-js');
 const logger = require('../logger.js');
-const config = require('../config.json');
 const conn = require('mongoose').connection;
 
 /** Class containing functions for goal management. */

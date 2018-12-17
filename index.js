@@ -32,6 +32,10 @@ const tickTimer = gameloop.setGameLoop(async function(delta) {
             challengelist.challengeList[item].current <
             challengelist.challengeList[item].total
           ) {
+            const hookedChannels =
+                challengelist.challengeList[item].hookedChannels.slice();
+            const joinedUsers = JSON.parse(JSON.stringify(
+                challengelist.challengeList[item].joinedUsers));
             const startTime = new Date().getTime();
             challengelist.challengeList[challenges.timerID] = new ChainWar(
                 challenges.timerID,
@@ -44,8 +48,8 @@ const tickTimer = gameloop.setGameLoop(async function(delta) {
                 challengelist.challengeList[item].duration,
                 challengelist.challengeList[item].channelID,
                 challengelist.challengeList[item].hidden,
-                challengelist.challengeList[item].hookedChannels,
-                {}
+                hookedChannels,
+                joinedUsers
             );
             conn
                 .collection('timer')
