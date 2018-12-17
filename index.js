@@ -343,7 +343,8 @@ const cmdList = {
           authorGoalType = goallist.goalList[msg.author.id].goalType;
           updateWords = challengelist.challengeList[challengeID].goal;
           if (authorGoalType == 'words') {
-            msgToSend += '\n' + await goals.updateGoal(msg, totalNumber, false);
+            msgToSend += '\n' +
+                await goals.updateGoal(msg, prefix, totalNumber, false);
           }
         }
         tools.raptor(
@@ -386,7 +387,8 @@ const cmdList = {
             totalType += 's';
           }
           if (totalType == authorGoalType) {
-            msgToSend += '\n' + await goals.updateGoal(msg, totalNumber, false);
+            msgToSend += '\n' +
+                await goals.updateGoal(msg, prefix, totalNumber, false);
           }
         }
         tools.raptor(
