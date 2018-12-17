@@ -132,6 +132,34 @@ class Challenges {
         delete challengelist.challengeList[challengeID].joinedUsers[
             msg.author.id
         ];
+        let hookDrop = true;
+        if (challengelist
+            .challengeList[challengeID]
+            .channelID == msg.channel.id) {
+          hookDrop = false;
+        }
+        for (const item in challengelist
+            .challengeList[challengeID]
+            .joinedUsers) {
+          if (challengelist
+              .challengeList[challengeID]
+              .joinedUsers.hasOwnProperty(item)) {
+            if (challengelist
+                .challengeList[challengeID]
+                .joinedUsers[item].channelID == msg.channel.id) {
+              hookDrop = false;
+            }
+          }
+        }
+        if (hookDrop == true) {
+          logger.info('entered drop');
+          const index = challengelist.challengeList[challengeID]
+              .hookedChannels.indexOf(msg.channel.id);
+          if (index != -1) {
+            challengelist.challengeList[challengeID]
+                .hookedChannels.splice(index, 1);
+          }
+        }
         returnMsg = msg.author +
             ', you have left ' +
             challengelist.challengeList[challengeID].displayName;
