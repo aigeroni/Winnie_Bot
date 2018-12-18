@@ -307,7 +307,7 @@ class ChallengeList {
               ':***\nNobody has posted a total for this war yet.';
           }
         } else {
-          msgToSend = 'Error: This war has not ended yet.';
+          msgToSend = '**Error:** This war has not ended yet.';
         }
       } else {
         if (this.challengeList[challengeID].state == 1) {
@@ -417,11 +417,11 @@ class ChallengeList {
               ':***\nNobody has finished this sprint yet.';
           }
         } else {
-          msgToSend = 'Error: This sprint has not started yet.';
+          msgToSend = '**Error:** This sprint has not started yet.';
         }
       }
     } else {
-      msgToSend = 'Error: This challenge does not exist.';
+      msgToSend = '**Error:** This challenge does not exist.';
     }
     return msgToSend;
   }

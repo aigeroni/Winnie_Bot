@@ -736,7 +736,8 @@ client.on('message', async (msg) => {
       try {
         sentMsg = await cmd.process(client, msg, prefix, suffix);
       } catch (e) {
-        msg.channel.send('Unknown error.  See log file for details.');
+        msg.channel.send('**Unknown Error:** I\'m sorry, I\'m afraid I' +
+          ' can\'t do that.  See log file for details.');
         logger.error('Error %s: %s.', e, e.stack);
       }
     }

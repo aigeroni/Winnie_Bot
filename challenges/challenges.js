@@ -31,11 +31,11 @@ class Challenges {
     let returnMsg = '';
     const challengeID = suffix;
     if (isNaN(challengeID)) {
-      returnMsg = 'Error: Challenge ID must be an integer. Example: `' +
+      returnMsg = '**Error:** Challenge ID must be an integer. Example: `' +
           prefix +
           'join 10793`.';
     } else if (challengeID < 1) {
-      returnMsg = 'Error: Challenge ID must be an integer. Example: `' +
+      returnMsg = '**Error:** Challenge ID must be an integer. Example: `' +
           prefix +
           'join 10793`.';
     } else if (challengeID in challengelist.challengeList) {
@@ -98,12 +98,12 @@ class Challenges {
                 {upsert: true}
             );
           } catch (e) {
-            logger.error('Error: ' + e);
+            logger.error('Error %s: %s.', e, e.stack);
           }
         }
       }
     } else {
-      returnMsg = 'Error: Challenge ' + challengeID + ' does not exist!';
+      returnMsg = '**Error:** Challenge ' + challengeID + ' does not exist!';
     }
     return returnMsg;
   }
@@ -118,11 +118,11 @@ class Challenges {
     let returnMsg = '';
     const challengeID = suffix;
     if (isNaN(challengeID)) {
-      returnMsg = 'Error: Challenge ID must be an integer. Example: `' +
+      returnMsg = '**Error:** Challenge ID must be an integer. Example: `' +
           prefix +
           'leave 10793`.';
     } else if (challengeID < 1) {
-      returnMsg = 'Error: Challenge ID must be an integer. Example: `' +
+      returnMsg = '**Error:** Challenge ID must be an integer. Example: `' +
           prefix +
           'leave 10793`.';
     } else if (challengeID in challengelist.challengeList) {
@@ -178,7 +178,7 @@ class Challenges {
             ', you have not yet joined this challenge.';
       }
     } else {
-      returnMsg = 'Error: Challenge ' + challengeID + ' does not exist!';
+      returnMsg = '**Error:** Challenge ' + challengeID + ' does not exist!';
     }
     return returnMsg;
   }
@@ -221,36 +221,36 @@ class Challenges {
       sprintName = msg.author.username + '\'s sprint';
     }
     if (profanity.check(sprintName).length > 0) {
-      returnMsg = 'Error: Sprint names may not contain profanity.';
+      returnMsg = '**Error:** Sprint names may not contain profanity.';
     } else if (this.regex.exec(sprintName)) {
-      returnMsg = 'Error: Sprint names may not contain emoji.';
+      returnMsg = '**Error:** Sprint names may not contain emoji.';
     } else if (msg.mentions.members.size > 0) {
-      returnMsg = 'Error: Sprint names may not mention users.';
+      returnMsg = '**Error:** Sprint names may not mention users.';
     } else if (!Number.isInteger(Number(words))) {
-      returnMsg = 'Error: Word goal must be a whole number. Example: `' +
+      returnMsg = '**Error:** Word goal must be a whole number. Example: `' +
           prefix +
           'sprint 200 10 1`.';
     } else if (isNaN(timeout)) {
-      returnMsg = 'Error: Sprint duration must be a number. Example: `' +
+      returnMsg = '**Error:** Sprint duration must be a number. Example: `' +
           prefix +
           'sprint 200 10 1`.';
     } else if (isNaN(start)) {
-      returnMsg = 'Error: Time to start must be a number. Example: `' +
+      returnMsg = '**Error:** Time to start must be a number. Example: `' +
           prefix +
           'sprint 200 10 1`.';
     } else if (start > 30) {
       returnMsg =
-          'Error: Sprints cannot start more than 30 minutes in the future.';
+          '**Error:** Sprints cannot start more than 30 minutes in the future.';
     } else if (timeout > 60) {
-      returnMsg = 'Error: Sprints cannot last for more than an hour.';
+      returnMsg = '**Error:** Sprints cannot last for more than an hour.';
     } else if (words < 1) {
-      returnMsg = 'Error: Word goal cannot be negative.';
+      returnMsg = '**Error:** Word goal cannot be negative.';
     } else if (start <= 0) {
-      returnMsg = 'Error: Sprints cannot start in the past.';
+      returnMsg = '**Error:** Sprints cannot start in the past.';
     } else if (timeout < 1) {
-      returnMsg = 'Error: Sprints must run for at least a minute.';
+      returnMsg = '**Error:** Sprints must run for at least a minute.';
     } else if (sprintName.length > 150) {
-      returnMsg = 'Error: Sprint names must be 150 characters or less.';
+      returnMsg = '**Error:** Sprint names must be 150 characters or less.';
     } else {
       try {
         const creatorID = msg.author.id;
@@ -281,7 +281,7 @@ class Challenges {
           returnMsg += await this.joinChallenge(msg, prefix, challengeID);
         }
       } catch (e) {
-        returnMsg = 'Error: Sprint creation failed.';
+        returnMsg = '**Error:** Sprint creation failed.';
         logger.error('Error %s: %s.', e, e.stack);
       }
     }
@@ -325,30 +325,30 @@ class Challenges {
       warName = msg.author.username + '\'s war';
     }
     if (profanity.check(warName).length > 0) {
-      returnMsg = 'Error: War names may not contain profanity.';
+      returnMsg = '**Error:** War names may not contain profanity.';
     } else if (this.regex.exec(warName)) {
-      returnMsg = 'Error: War names may not contain emoji.';
+      returnMsg = '**Error:** War names may not contain emoji.';
     } else if (msg.mentions.members.size > 0) {
-      returnMsg = 'Error: War names may not mention users.';
+      returnMsg = '**Error:** War names may not mention users.';
     } else if (isNaN(start)) {
-      returnMsg = 'Error: Time to start must be a number. Example: `' +
+      returnMsg = '**Error:** Time to start must be a number. Example: `' +
           prefix +
           'war 10 1`.';
     } else if (isNaN(duration)) {
-      returnMsg = 'Error: War duration must be a number. Example: `' +
+      returnMsg = '**Error:** War duration must be a number. Example: `' +
           prefix +
           'war 10 1`.';
     } else if (start > 30) {
       returnMsg =
-          'Error: Wars cannot start more than 30 minutes in the future.';
+          '**Error:** Wars cannot start more than 30 minutes in the future.';
     } else if (duration > 60) {
-      returnMsg = 'Error: Wars cannot last for more than an hour.';
+      returnMsg = '**Error:** Wars cannot last for more than an hour.';
     } else if (start <= 0) {
-      returnMsg = 'Error: Wars cannot start in the past.';
+      returnMsg = '**Error:** Wars cannot start in the past.';
     } else if (duration < 1) {
-      returnMsg = 'Error: Wars must run for at least a minute.';
+      returnMsg = '**Error:** Wars must run for at least a minute.';
     } else if (warName.length > 150) {
-      returnMsg = 'Error: War names must be 150 characters or less.';
+      returnMsg = '**Error:** War names must be 150 characters or less.';
     } else {
       try {
         const creatorID = msg.author.id;
@@ -378,7 +378,7 @@ class Challenges {
           returnMsg += await this.joinChallenge(msg, prefix, challengeID);
         }
       } catch (e) {
-        returnMsg = 'Error: War creation failed.';
+        returnMsg = '**Error:** War creation failed.';
         logger.error('Error %s: %s.', e, e.stack);
       }
     }
@@ -423,37 +423,37 @@ class Challenges {
       warName = msg.author.username + '\'s war';
     }
     if (profanity.check(warName).length > 0) {
-      returnMsg = 'Error: War names may not contain profanity.';
+      returnMsg = '**Error:** War names may not contain profanity.';
     } else if (this.regex.exec(warName)) {
-      returnMsg = 'Error: War names may not contain emoji.';
+      returnMsg = '**Error:** War names may not contain emoji.';
     } else if (msg.mentions.members.size > 0) {
-      returnMsg = 'Error: War names may not mention users.';
+      returnMsg = '**Error:** War names may not mention users.';
     } else if (isNaN(chainWarCount)) {
-      returnMsg = 'Error: War count must be a number. Example: `' +
+      returnMsg = '**Error:** War count must be a number. Example: `' +
           prefix +
           'chainwar 2 10 1`.';
     } else if (isNaN(timeBetween)) {
-      returnMsg = 'Error: Time between wars must be a number. Example: `' +
+      returnMsg = '**Error:** Time between wars must be a number. Example: `' +
           prefix +
           'chainwar 2 10 1`.';
     } else if (timeBetween > 30) {
-      returnMsg = 'Error: There cannot be more than 30 minutes' +
+      returnMsg = '**Error:** There cannot be more than 30 minutes' +
           ' between wars in a chain.';
     } else if (isNaN(duration)) {
-      returnMsg = 'Error: War duration must be a number. Example: `' +
+      returnMsg = '**Error:** War duration must be a number. Example: `' +
           prefix +
           'chainwar 2 10 1`.';
     } else if (chainWarCount < 2 || chainWarCount > 10) {
-      returnMsg = 'Error: Chain wars must be between two and ten wars long.';
+      returnMsg = '**Error:** Chain wars must be between two and ten wars long.';
     } else if (duration * chainWarCount > 120) {
       returnMsg =
-          'Error: Chain wars cannot run for more than two hours in total.';
+          '**Error:** Chain wars cannot run for more than two hours in total.';
     } else if (timeBetween <= 0) {
-      returnMsg = 'Error: Chain wars cannot overlap.';
+      returnMsg = '**Error:** Chain wars cannot overlap.';
     } else if (duration < 1) {
-      returnMsg = 'Error: Wars must run for at least a minute.';
+      returnMsg = '**Error:** Wars must run for at least a minute.';
     } else if (warName.length > 150) {
-      returnMsg = 'Error: War names must be 150 characters or less.';
+      returnMsg = '**Error:** War names must be 150 characters or less.';
     } else {
       try {
         const creatorID = msg.author.id;
@@ -485,7 +485,7 @@ class Challenges {
           returnMsg += await this.joinChallenge(msg, prefix, challengeID);
         }
       } catch (e) {
-        returnMsg = 'Error: Chain war creation failed.';
+        returnMsg = '**Error:** Chain war creation failed.';
         logger.error('Error %s: %s.', e, e.stack);
       }
     }
@@ -504,7 +504,7 @@ class Challenges {
     const challengeID = suffix;
     if (isNaN(challengeID) || challengeID < 1) {
       returnMsg =
-          'Error: Challenge ID must be an integer. Example: `' +
+          '**Error:** Challenge ID must be an integer. Example: `' +
           prefix +
           'cancel 10793`.';
     } else if (challengeID in challengelist.challengeList) {
@@ -523,7 +523,7 @@ class Challenges {
           returnMsg = stopName + ' has been ended by the creator.';
           delete challengelist.challengeList[challengeID];
         } else {
-          returnMsg = 'Error: Only the creator of ' +
+          returnMsg = '**Error:** Only the creator of ' +
               stopName +
               ' can end this challenge.';
         }
@@ -532,7 +532,7 @@ class Challenges {
             ', you do not have permission to end this challenge.';
       }
     } else {
-      returnMsg = 'Error: Challenge ' + challengeID + ' does not exist!';
+      returnMsg = '**Error:** Challenge ' + challengeID + ' does not exist!';
     }
     return {channelList: channelList, returnMsg: returnMsg};
   }
@@ -687,7 +687,7 @@ class Challenges {
                 {upsert: true}
             );
           } catch (e) {
-            logger.error('Error: ' + e);
+            logger.error('Error %s: %s.', e, e.stack);
           }
           returnMsg = msg.author +
               ', you completed the sprint in ' +
@@ -695,15 +695,15 @@ class Challenges {
               ' minutes.';
         } else {
           raptorCheck = false;
-          returnMsg = 'Error: This sprint has timed out.';
+          returnMsg = '**Error:** This sprint has timed out.';
         }
       } else {
         raptorCheck = false;
-        returnMsg = 'Error: You can only call time on a sprint.';
+        returnMsg = '**Error:** You can only call time on a sprint.';
       }
     } else {
       raptorCheck = false;
-      returnMsg = 'Error: This challenge does not exist.';
+      returnMsg = '**Error:** This challenge does not exist.';
     }
     return {returnMsg: returnMsg, raptorCheck: raptorCheck};
   }
@@ -738,7 +738,7 @@ class Challenges {
       )
     ) {
       raptorCheck = false;
-      returnMsg = 'Error: You must work in words, lines, or pages.';
+      returnMsg = '**Error:** You must work in words, lines, or pages.';
     } else {
       if (writtenType === undefined) {
         writtenType = 'words';
@@ -799,7 +799,7 @@ class Challenges {
                       {upsert: true}
                   );
                 } catch (e) {
-                  logger.error('Error: ' + e);
+                  logger.error('**Error:** ' + e);
                 }
                 returnMsg = msg.author +
                     ', your total of **' +
@@ -819,15 +819,15 @@ class Challenges {
             }
           } else {
             raptorCheck = false;
-            returnMsg = 'Error: This challenge has not ended yet!';
+            returnMsg = '**Error:** This challenge has not ended yet!';
           }
         } else {
           raptorCheck = false;
-          returnMsg = 'Error: You cannot post a total for sprints.';
+          returnMsg = '**Error:** You cannot post a total for sprints.';
         }
       } else {
         raptorCheck = false;
-        returnMsg = 'Error: This challenge does not exist!';
+        returnMsg = '**Error:** This challenge does not exist!';
       }
     }
     return {returnMsg: returnMsg, raptorCheck: raptorCheck};
@@ -891,7 +891,7 @@ class Challenges {
                 ', use **on|off** to toggle cross-server challenges.';
           }
         } else {
-          returnMsg = 'Error: Only server administrators are permitted' +
+          returnMsg = '**Error:** Only server administrators are permitted' +
               ' to configure challenges.';
         }
       } else {
@@ -980,7 +980,7 @@ class Challenges {
                 ', use **show|hide** to toggle automatic summaries.';
           }
         } else {
-          returnMsg = 'Error: Only server administrators are permitted' +
+          returnMsg = '**Error:** Only server administrators are permitted' +
               ' to configure automatic summaries.';
         }
       } else {

@@ -42,14 +42,18 @@ class Goals {
         dateCheck.setTimezone(timezone);
       } catch (e) {
         if (e.code == 'ENOENT') {
-          await logger.info(
-              'Fatal error: Winnie_Bot cannot locate' +
-              ' timezone information.\nWinnie_Bot will now terminate.'
+          await msg.channel.send(
+              '**Fatal Error:** Winnie cannot locate' +
+              ' timezone information.\nWinnie will now terminate.'
           );
+          await logger.info(
+            'Fatal error: Winnie_Bot cannot locate' +
+            ' timezone information.\nWinnie_Bot will now terminate.'
+        );
           process.exit(1);
         } else {
           returnMsg =
-              'Error: Winnie_Bot accepts IANA timezone identifiers only.' +
+              '**Error:** Winnie_Bot accepts IANA timezone identifiers only.' +
               ' These generally take the format of' +
               ' Continent/Your_Areas_Largest_City.\n' +
               '**For example:** `' +
@@ -65,7 +69,7 @@ class Goals {
       // check entered timezone against regex
       if (!this.regionRegex.test(timezone)) {
         returnMsg =
-            'Error: Winnie_Bot accepts IANA timezone identifiers only.' +
+            '**Error:** Winnie_Bot accepts IANA timezone identifiers only.' +
             ' These generally take the format of' +
             ' Continent/Your_Areas_Largest_City.\n' +
             '**For example:** `' +
@@ -108,7 +112,7 @@ class Goals {
     if (goal === undefined || goal == '') {
       returnMsg = msg.author + ', I need a goal to set!';
     } else if (!Number.isInteger(Number(goal))) {
-      returnMsg = 'Error: Your goal must be a whole number. Example: `' +
+      returnMsg = '**Error:** Your goal must be a whole number. Example: `' +
           prefix +
           'set 1667`.';
     } else if (msg.author.id in goallist.goalList) {
@@ -133,7 +137,7 @@ class Goals {
           goalType === undefined
         )
       ) {
-        returnMsg = 'Error: Goal type must be words, lines, pages,' +
+        returnMsg = '**Error:** Goal type must be words, lines, pages,' +
             ' or minutes. Example: `' +
             prefix +
             'set 50 lines`.';
@@ -204,7 +208,7 @@ class Goals {
       const args = suffix.split(' ');
       const goal = args.shift();
       if (!Number.isInteger(parseInt(goal))) {
-        returnMsg = 'Error: Your progress must be a whole number. Example: `' +
+        returnMsg = '**Error:** Your progress must be a whole number. Example: `' +
             prefix +
             'update 256`.';
       } else if (!(msg.author.id in goallist.goalList)) {

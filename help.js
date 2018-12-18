@@ -41,7 +41,7 @@ class Help {
       try {
         helpMsg += '**' + prefix + cmd.name;
       } catch (e) {
-        helpMsg += 'Error: That command does not exist.';
+        helpMsg += '**Error:** That command does not exist.';
         return helpMsg;
       }
       if (cmd.usage) {

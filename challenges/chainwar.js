@@ -89,7 +89,7 @@ class ChainWar extends Challenge {
         this.terminate();
         break;
       default:
-        this.channel.send('Error: Invalid state reached.');
+        this.channel.send('**Error:** Invalid state reached.');
         delete challengelist.challengeList[this.objectID];
         break;
     }

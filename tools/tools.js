@@ -24,7 +24,7 @@ class Tools {
     const time = args.shift();
     let base = null;
     if (!Number.isInteger(Number(time))) {
-      returnMsg = 'Error: Duration must be a whole number. Example: `' +
+      returnMsg = '**Error:**: Duration must be a whole number. Example: `' +
           prefix +
           'target medium 15`.';
     } else {
@@ -47,7 +47,7 @@ class Tools {
       }
       if (base === null) {
         returnMsg =
-            'Error: Targets must be easy, medium, hard, or insane. Example: `' +
+            '**Error:**: Targets must be easy, medium, hard, or insane. Example: `' +
             prefix +
             'target medium 15`.';
       } else {
@@ -427,7 +427,7 @@ class Tools {
           !Number.isInteger(Number(rpgRoll[1]))
         ) {
           diceString =
-            'Error: Both values in an RPG-style roll must be integers.' +
+            '**Error:**: Both values in an RPG-style roll must be integers.' +
             ' Example: `' +
             prefix +
             'roll 2d6`.';
@@ -435,7 +435,7 @@ class Tools {
           break;
         } else {
           if (rpgRoll[0] > 20) {
-            diceString = 'Error: I cannot roll more than 20 dice at once.';
+            diceString = '**Error:**: I cannot roll more than 20 dice at once.';
             diceSum = 0;
             break;
           } else {
@@ -456,7 +456,7 @@ class Tools {
           !Number.isInteger(Number(rangeRoll[0])) ||
           !Number.isInteger(Number(rangeRoll[1]))
         ) {
-          diceString = 'Error: Both values in a range roll must be integers.' +
+          diceString = '**Error:**: Both values in a range roll must be integers.' +
             ' Example: `' +
             prefix +
             'roll 1 100`.';
@@ -474,14 +474,14 @@ class Tools {
           } else {
             // First number is larger than second
             diceString =
-              'Error: The first number in a range' +
+              '**Error:**: The first number in a range' +
               ' roll must be smaller than the second.';
             diceSum = 0;
             break;
           }
         }
       } else {
-        diceString = 'Error: ' + faces[i] + ' is not a valid roll.' +
+        diceString = '**Error:**: ' + faces[i] + ' is not a valid roll.' +
           ' Example: `' +
           prefix +
           'roll 2d6 + 5`.';
@@ -510,7 +510,7 @@ class Tools {
       const data = await conn.collection('configDB').findOne(
           {_id: msg.guild.id}
       );
-      if (data.prefix == undefined) {
+      if (data.prefix == null) {
         returnMsg = msg.author +
             ', this server does not have a custom prefix configured.';
       } else {
@@ -547,11 +547,11 @@ class Tools {
               suffix +
               '`.';
         } else {
-          returnMsg = 'Error: My prefix must be less than three characters.';
+          returnMsg = '**Error:**: My prefix must be less than three characters.';
         }
       }
     } else {
-      returnMsg = 'Error: Only server administrators are permitted to' +
+      returnMsg = '**Error:**: Only server administrators are permitted to' +
           ' configure the prefix.';
     }
     return returnMsg;
@@ -570,7 +570,7 @@ class Tools {
       const data = await conn.collection('configDB').findOne(
           {_id: msg.guild.id}
       );
-      if (data.announcements == undefined) {
+      if (data.announcements == null) {
         returnMsg = msg.author +
             ', announcements are not yet configured for this server.';
       } else {
@@ -597,16 +597,16 @@ class Tools {
                 channelObject +
                 '.';
           } else {
-            returnMsg = 'Error: I need permission to send messages in the' +
+            returnMsg = '**Error:**: I need permission to send messages in the' +
                 ' announcements channel.';
           }
         } else {
-          returnMsg = 'Error: ' +
+          returnMsg = '**Error:**: ' +
               suffix +
               ' is not a valid channel.';
         }
       } else {
-        returnMsg = 'Error: Only server administrators are permitted to' +
+        returnMsg = '**Error:**: Only server administrators are permitted to' +
             ' configure the announcements channel.';
       }
     }
