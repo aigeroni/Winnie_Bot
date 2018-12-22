@@ -47,7 +47,8 @@ class Tools {
       }
       if (base === null) {
         returnMsg =
-            '**Error:**: Targets must be easy, medium, hard, or insane. Example: `' +
+            '**Error:**: Targets must be easy, medium, hard, or insane.' +
+            ' Example: `' +
             prefix +
             'target medium 15`.';
       } else {
@@ -456,8 +457,8 @@ class Tools {
           !Number.isInteger(Number(rangeRoll[0])) ||
           !Number.isInteger(Number(rangeRoll[1]))
         ) {
-          diceString = '**Error:**: Both values in a range roll must be integers.' +
-            ' Example: `' +
+          diceString = '**Error:**: Both values in a range roll must be' +
+            ' integers. Example: `' +
             prefix +
             'roll 1 100`.';
           diceSum = 0;
@@ -510,7 +511,7 @@ class Tools {
       const data = await conn.collection('configDB').findOne(
           {_id: msg.guild.id}
       );
-      if (data.prefix == null) {
+      if (data == null || data.prefix == undefined) {
         returnMsg = msg.author +
             ', this server does not have a custom prefix configured.';
       } else {
@@ -547,7 +548,8 @@ class Tools {
               suffix +
               '`.';
         } else {
-          returnMsg = '**Error:**: My prefix must be less than three characters.';
+          returnMsg = '**Error:**:' +
+            ' My prefix must be less than three characters.';
         }
       }
     } else {
@@ -570,7 +572,7 @@ class Tools {
       const data = await conn.collection('configDB').findOne(
           {_id: msg.guild.id}
       );
-      if (data.announcements == null) {
+      if (data == null || data.announcements == undefined) {
         returnMsg = msg.author +
             ', announcements are not yet configured for this server.';
       } else {
@@ -597,8 +599,8 @@ class Tools {
                 channelObject +
                 '.';
           } else {
-            returnMsg = '**Error:**: I need permission to send messages in the' +
-                ' announcements channel.';
+            returnMsg = '**Error:**: I need permission to send messages' +
+                ' in the announcements channel.';
           }
         } else {
           returnMsg = '**Error:**: ' +

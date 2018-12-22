@@ -47,9 +47,9 @@ class Goals {
               ' timezone information.\nWinnie will now terminate.'
           );
           await logger.info(
-            'Fatal error: Winnie_Bot cannot locate' +
-            ' timezone information.\nWinnie_Bot will now terminate.'
-        );
+              'Fatal error: Winnie_Bot cannot locate' +
+              ' timezone information.\nWinnie_Bot will now terminate.'
+          );
           process.exit(1);
         } else {
           returnMsg =
@@ -208,7 +208,8 @@ class Goals {
       const args = suffix.split(' ');
       const goal = args.shift();
       if (!Number.isInteger(parseInt(goal))) {
-        returnMsg = '**Error:** Your progress must be a whole number. Example: `' +
+        returnMsg = '**Error:** Your progress must be a whole number.' +
+            ' Example: `' +
             prefix +
             'update 256`.';
       } else if (!(msg.author.id in goallist.goalList)) {

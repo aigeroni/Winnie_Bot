@@ -444,7 +444,7 @@ class Challenges {
           prefix +
           'chainwar 2 10 1`.';
     } else if (chainWarCount < 2 || chainWarCount > 10) {
-      returnMsg = '**Error:** Chain wars must be between two and ten wars long.';
+      returnMsg = '**Error:** Chains must be between two and ten wars long.';
     } else if (duration * chainWarCount > 120) {
       returnMsg =
           '**Error:** Chain wars cannot run for more than two hours in total.';
