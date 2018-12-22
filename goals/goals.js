@@ -150,7 +150,7 @@ class Goals {
               {_id: msg.author.id}
           );
           logger.info(user);
-          if (user == null) {
+          if (user == null || user.timezone == undefined) {
             return msg.author +
                 ', you need to set your timezone before' +
                 ' setting a daily goal. Use the `!timezone`' +

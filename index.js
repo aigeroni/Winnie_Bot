@@ -349,7 +349,7 @@ const cmdList = {
           updateWords = challengelist.challengeList[challengeID].goal;
           if (authorGoalType == 'words') {
             msgToSend += '\n' +
-                await goals.updateGoal(msg, prefix, totalNumber, false);
+                await goals.updateGoal(msg, prefix, updateWords, false);
           }
         }
         tools.raptor(
