@@ -9,6 +9,7 @@ class Tools {
   constructor() {
     this.raptorCount = {};
     this.userRaptors = {};
+    this.announceChannel = {};
   }
   /**
    * Gives the user a target for a number of minutes.
@@ -136,7 +137,6 @@ class Tools {
           {_id: author.id}
       );
       const currentRaptors = userData.raptorTotal;
-      console.log(currentRaptors);
       if (currentRaptors == 0) {
         await conn.collection('raptorBuckets').update(
             {_id: 0},
@@ -587,6 +587,7 @@ class Tools {
         if (channelObject != undefined) {
           const perms = (channelObject.guild.me.permissionsIn(channelObject));
           if (perms.hasPermission('SEND_MESSAGES')) {
+            this.announceChannel[msg.guild.id] = channelObject.id;
             await conn
                 .collection('configDB')
                 .update(
