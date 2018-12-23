@@ -80,28 +80,23 @@ const tickTimer = gameloop.setGameLoop(async function(delta) {
     }
   }
   // post wordcount goal announcements
-  // logger.info(client.guilds);
-  // const guildList = client.guilds;
-  // for (const guild in guildList) {
-  //   if (guildList.hasOwnProperty(guild)) {
-  //     logger.info('entered check');
-  //     const serverData = await conn.collection('configDB').find(
-  //         {_id: guild.id} // **replace server placeholder**
-  //     );
-  //     if (serverData.announcements != undefined) {
-  //       logger.info(serverData.announcements);
-  //       // // calculate next midnight based on timezone
-  //       // const endTime = new timezoneJS.Date();
-  //       // endTime.setTimezone(userTZ);
-  //       // endTime.setHours(24, 0, 0, 0);
-  //       // if (new Date().getTime() >= this.terminationTime) {
-  //       //   // set up to handle timezones
-  //       //   const channel = client.channels.get(serverData.announcements);
-  //       //   channel.send('placeholder message');
-  //       // }
-  //     }
-  //   }
-  // }
+  date = new timezoneJS.Date();
+  if (date.month == 10) {
+    if (date.hours == 0 && date.minutes == 0 && date.seconds == 0) {
+      const wordGoal = ((50000/30) * (date.date)).toFixed(0);
+      for (item in tools.announceChannel) {
+        if (tools.announceChannel.hasOwnProperty(item)) {
+          const channel = client.channels.get(tools.announceChannel[item]);
+          channel.send(
+              '**Day ' +
+              date.date +
+              ':** Today\'s word goal is **' +
+              wordGoal +
+              '** words.');
+        }
+      }
+    }
+  }
 }, 1000);
 
 client.on('ready', () => {
@@ -201,6 +196,9 @@ client.on('ready', () => {
             challenges.autoSumStatus[guild._id] = guild.autoStatus;
             if (guild.prefix) {
               config.cmd_prefix[guild._id] = guild.prefix;
+            }
+            if (guild.announcements) {
+              tools.announceChannel[guild._id] = guild.announcements;
             }
           });
         });
@@ -349,7 +347,7 @@ const cmdList = {
           updateWords = challengelist.challengeList[challengeID].goal;
           if (authorGoalType == 'words') {
             msgToSend += '\n' +
-                await goals.updateGoal(msg, prefix, totalNumber, false);
+                await goals.updateGoal(msg, prefix, updateWords, false);
           }
         }
         tools.raptor(
