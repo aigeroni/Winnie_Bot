@@ -49,7 +49,8 @@ const tickTimer = gameloop.setGameLoop(async function(delta) {
                 challengelist.challengeList[item].channelID,
                 challengelist.challengeList[item].hidden,
                 hookedChannels,
-                joinedUsers
+                joinedUsers,
+                challengelist.challengeList[item].chainTotal
             );
             conn
                 .collection('timer')
@@ -158,7 +159,8 @@ client.on('ready', () => {
                   challenge.channel,
                   challenge.hidden,
                   challenge.hookedChannels,
-                  challenge.joinedUsers
+                  challenge.joinedUsers,
+                  challenge.chainTotal
               );
             }
           });
