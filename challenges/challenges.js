@@ -471,6 +471,7 @@ class Challenges {
             msg.channel.id,
             crossServerHide,
             [msg.channel.id],
+            {},
             {}
         );
         await conn
