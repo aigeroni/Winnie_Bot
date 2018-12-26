@@ -414,10 +414,13 @@ class Challenges {
     }
     const chainWarCount = args.shift();
     const duration = args.shift();
-    let timeBetween = args.shift();
+    let timeBetween = args.shift().split('|');
+    while (timeBetween.length < chainWarCount) {
+      timeBetween.push(timeBetween[timeBetween.length-1]);
+    }
     let warName = args.join(' ');
     if (timeBetween === undefined) {
-      timeBetween = 1;
+      timeBetween = [1];
     }
     if (warName == '') {
       warName = msg.author.username + '\'s war';
@@ -432,11 +435,13 @@ class Challenges {
       returnMsg = '**Error:** War count must be a number. Example: `' +
           prefix +
           'chainwar 2 10 1`.';
-    } else if (isNaN(timeBetween)) {
+    } else if (timeBetween.some(isNaN)) {
       returnMsg = '**Error:** Time between wars must be a number. Example: `' +
           prefix +
           'chainwar 2 10 1`.';
-    } else if (timeBetween > 30) {
+    } else if (timeBetween.some(function(currentValue) {
+      return currentValue > 30;
+    })) {
       returnMsg = '**Error:** There cannot be more than 30 minutes' +
           ' between wars in a chain.';
     } else if (isNaN(duration)) {

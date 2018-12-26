@@ -44,7 +44,7 @@ const tickTimer = gameloop.setGameLoop(async function(delta) {
                 startTime,
                 challengelist.challengeList[item].current + 1,
                 challengelist.challengeList[item].total,
-                challengelist.challengeList[item].countdown,
+                challengelist.challengeList[item].countdownList,
                 challengelist.challengeList[item].duration,
                 challengelist.challengeList[item].channelID,
                 challengelist.challengeList[item].hidden,
