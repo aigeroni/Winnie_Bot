@@ -43,7 +43,7 @@ class ChainWar extends Challenge {
         creator,
         warName + ' (' + current + '/' + total + ')',
         initStamp,
-        countdown,
+        countdown[current - 1],
         duration,
         channel,
         'chain war',
@@ -55,6 +55,7 @@ class ChainWar extends Challenge {
     this.current = current;
     this.total = total;
     this.chainTotal = chainTotal;
+    this.countdownList = countdown;
     if (this.state == 2) {
       this.state = 3;
     }
@@ -65,7 +66,7 @@ class ChainWar extends Challenge {
       startTime: this.initStamp,
       current: this.current,
       total: this.total,
-      countdown: this.countdown,
+      countdown: this.countdownList,
       duration: this.duration,
       channel: this.channelID,
       hookedChannels: this.hookedChannels,
