@@ -211,7 +211,9 @@ class ChainWar extends Challenge {
     const channels = [];
     for (const user in this.chainTotal) {
       if (this.chainTotal.hasOwnProperty(user)) {
-        channels.push(this.chainTotal[user].channelID);
+        if (channels.indexOf(this.chainTotal[user].channelID) == -1) {
+          channels.push(this.chainTotal[user].channelID);
+        }
       }
     }
     for (let i = 0; i < channels.length; i++) {
