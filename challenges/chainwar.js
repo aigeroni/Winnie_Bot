@@ -227,16 +227,16 @@ class ChainWar extends Challenge {
           if (
             summaryServer.id == userServer.id
           ) {
-            if (!(userServer in userTotals['words'])) {
+            if (!(userServer.id in userTotals['words'])) {
               userTotals['words'][userServer.id] = [0, 0];
             }
-            if (!(userServer in userTotals['lines'])) {
+            if (!(userServer.id in userTotals['lines'])) {
               userTotals['lines'][userServer.id] = [0, 0];
             }
-            if (!(userServer in userTotals['pages'])) {
+            if (!(userServer.id in userTotals['pages'])) {
               userTotals['pages'][userServer.id] = [0, 0];
             }
-            if (!(userServer in userTotals['minutes'])) {
+            if (!(userServer.id in userTotals['minutes'])) {
               userTotals['minutes'][userServer.id] = [0, 0];
             }
             let userTotal = client.users.get(user) + ': ';
@@ -330,36 +330,36 @@ class ChainWar extends Challenge {
               summaryData += userTotal + '\n';
             }
           } else {
-            if (!(userServer in userTotals['words'])) {
+            if (!(userServer.id in userTotals['words'])) {
               userTotals['words'][userServer.id] = [0, 0];
             }
-            if (!(userServer in userTotals['lines'])) {
+            if (!(userServer.id in userTotals['lines'])) {
               userTotals['lines'][userServer.id] = [0, 0];
             }
-            if (!(userServer in userTotals['pages'])) {
+            if (!(userServer.id in userTotals['pages'])) {
               userTotals['pages'][userServer.id] = [0, 0];
             }
-            if (!(userServer in userTotals['minutes'])) {
+            if (!(userServer.id in userTotals['minutes'])) {
               userTotals['minutes'][userServer.id] = [0, 0];
             }
-            if (this.chainTotal[user].words > 0) {
+            if (this.chainTotal[user].words[0] > 0) {
               userTotals['words'][userServer.id][0] +=
-                this.chainTotal[user].words;
+                this.chainTotal[user].words[0];
               userTotals['words'][userServer.id][1] += 1;
             }
-            if (this.chainTotal[user].lines > 0) {
+            if (this.chainTotal[user].lines[0] > 0) {
               userTotals['lines'][userServer.id][0] +=
-                this.chainTotal[user].lines;
+                this.chainTotal[user].lines[0];
               userTotals['lines'][userServer.id][1] += 1;
             }
-            if (this.chainTotal[user].pages > 0) {
+            if (this.chainTotal[user].pages[0] > 0) {
               userTotals['pages'][userServer.id][0] +=
-                this.chainTotal[user].pages;
+                this.chainTotal[user].pages[0];
               userTotals['pages'][userServer.id][1] += 1;
             }
-            if (this.chainTotal[user].minutes > 0) {
+            if (this.chainTotal[user].minutes[0] > 0) {
               userTotals['minutes'][userServer.id][0] +=
-                this.chainTotal[user].minutes;
+                this.chainTotal[user].minutes[0];
               userTotals['minutes'][userServer.id][1] += 1;
             }
           }
