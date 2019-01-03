@@ -383,7 +383,7 @@ class Tools {
               (i + 1) +
               '. *';
             if (client.users.get(userOrd[i]) === undefined) {
-              raptorMsg += '`Unknown User`';
+              raptorMsg += 'Unknown User';
             } else {
               raptorMsg += client.users.get(userOrd[i]).username;
             }

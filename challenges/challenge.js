@@ -76,29 +76,33 @@ class Challenge {
     }
     if (this.state == 0 && this.cStart == this.countdown * 60) {
       if (this.countdown == 1) {
-        this.channel.send(
-            'Your ' +
-            type +
-            ', ' +
-            this.displayName +
-            ' (ID ' +
-            this.objectID +
-            '), starts in ' +
-            this.countdown +
-            ' minute.'
-        );
+        for (let i = 0; i < this.hookedChannels.length; i++) {
+          client.channels.get(this.hookedChannels[i]).send(
+              'Your ' +
+              type +
+              ', ' +
+              this.displayName +
+              ' (ID ' +
+              this.objectID +
+              '), starts in ' +
+              this.countdown +
+              ' minute.'
+          );
+        }
       } else {
-        this.channel.send(
-            'Your ' +
-            type +
-            ', ' +
-            this.displayName +
-            ' (ID ' +
-            this.objectID +
-            '), starts in ' +
-            this.countdown +
-            ' minutes.'
-        );
+        for (let i = 0; i < this.hookedChannels.length; i++) {
+          client.channels.get(this.hookedChannels[i]).send(
+              'Your ' +
+              type +
+              ', ' +
+              this.displayName +
+              ' (ID ' +
+              this.objectID +
+              '), starts in ' +
+              this.countdown +
+              ' minutes.'
+          );
+        }
       }
     }
   }
