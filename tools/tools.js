@@ -381,9 +381,13 @@ class Tools {
             raptorMsg +=
               '\n' +
               (i + 1) +
-              '. *' +
-              client.users.get(userOrd[i]).username +
-              ':* ' +
+              '. *';
+            if (client.users.get(userOrd[i]) === undefined) {
+              raptorMsg += '`Unknown User`';
+            } else {
+              raptorMsg += client.users.get(userOrd[i]).username;
+            }
+            raptorMsg += ':* ' +
               this.userRaptors[msg.guild.id][userOrd[i]];
           }
         }
