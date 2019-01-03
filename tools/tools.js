@@ -145,6 +145,16 @@ class Tools {
             },
             }
         );
+        await conn.collection('raptorBuckets').update(
+            {_id: 1},
+            {$setOnInsert: {
+              rank: 1,
+            }, $push: {
+              users: author.id,
+            },
+            },
+            {upsert: true}
+        );
       } else {
         await conn.collection('raptorBuckets').update(
             {_id: currentRaptors},
@@ -155,17 +165,17 @@ class Tools {
             },
             }
         );
+        await conn.collection('raptorBuckets').update(
+            {_id: currentRaptors + 1},
+            {$setOnInsert: {
+              rank: 1,
+            }, $push: {
+              users: author.id,
+            },
+            },
+            {upsert: true}
+        );
       }
-      await conn.collection('raptorBuckets').update(
-          {_id: currentRaptors + 1},
-          {$setOnInsert: {
-            rank: 1,
-          }, $push: {
-            users: author.id,
-          },
-          },
-          {upsert: true}
-      );
       conn.collection('userDB').update(
           {_id: author.id},
           {$inc: {
