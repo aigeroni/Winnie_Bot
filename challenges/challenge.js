@@ -150,12 +150,7 @@ class Challenge {
   /** Construct the message displayed to users when a challenge begins. */
   startMsg() {
     for (let i = 0; i < this.hookedChannels.length; i++) {
-      let userList = '';
-      for (const user in this.joinedUsers) {
-        if (this.joinedUsers[user].channelID == this.hookedChannels[i]) {
-          userList += ' ' + client.users.get(user);
-        }
-      }
+      const userList = this.getUsers(this.hookedChannels[i]);
       const channelObject = client.channels.get(this.hookedChannels[i]);
       let timeString = 'minutes';
       if (this.duration == 1) {
@@ -180,12 +175,7 @@ class Challenge {
     this.cDur--;
     if (this.cDur <= 0) {
       for (let i = 0; i < this.hookedChannels.length; i++) {
-        let userList = '';
-        for (const user in this.joinedUsers) {
-          if (this.joinedUsers[user].channelID == this.hookedChannels[i]) {
-            userList += ' ' + client.users.get(user);
-          }
-        }
+        const userList = this.getUsers(this.hookedChannels[i]);
         const channelObject = client.channels.get(this.hookedChannels[i]);
         let prefix = config.cmd_prefix['default'];
         if (config.cmd_prefix[channelObject.guild.id]) {
@@ -231,6 +221,19 @@ class Challenge {
       conn.collection('challengeDB').remove({_id: this.objectID});
       delete challengelist.challengeList[this.objectID];
     }
+  }
+  /** Get all users hooked from a channel.
+   * @param {String} channel - The Discord ID of the channel.
+   * @return {String} - A list of user snowflakes.
+   */
+  getUsers(channel) {
+    let userList = '';
+    for (const user in this.joinedUsers) {
+      if (this.joinedUsers[user].channelID == channel) {
+        userList += ' ' + client.users.get(user);
+      }
+    }
+    return userList;
   }
   /** Send a message to all hooked channels.
    * @param {String} msg - The message to send.

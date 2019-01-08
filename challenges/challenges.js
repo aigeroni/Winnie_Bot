@@ -269,14 +269,7 @@ class Challenges {
             [msg.channel.id],
             {}
         );
-        await conn
-            .collection('timer')
-            .update(
-                {data: this.timerID},
-                {data: this.timerID + 1},
-                {upsert: true}
-            );
-        this.timerID = this.timerID + 1;
+        this.incrementID();
         if (joinFlag) {
           returnMsg += await this.joinChallenge(msg, prefix, challengeID);
         }
@@ -366,14 +359,7 @@ class Challenges {
             [msg.channel.id],
             {}
         );
-        await conn
-            .collection('timer')
-            .update(
-                {data: this.timerID},
-                {data: this.timerID + 1},
-                {upsert: true}
-            );
-        this.timerID = this.timerID + 1;
+        this.incrementID();
         if (joinFlag) {
           returnMsg += await this.joinChallenge(msg, prefix, challengeID);
         }
@@ -479,14 +465,7 @@ class Challenges {
             {},
             {}
         );
-        await conn
-            .collection('timer')
-            .update(
-                {data: this.timerID},
-                {data: this.timerID + 1},
-                {upsert: true}
-            );
-        this.timerID = this.timerID + 1;
+        await this.incrementID();
         if (joinFlag) {
           returnMsg += await this.joinChallenge(msg, prefix, challengeID);
         }
@@ -1015,6 +994,20 @@ class Challenges {
       }
     }
     return returnMsg;
+  }
+  /**
+   * Increment the challenge ID.
+   * @return {Promise} - Promise object.
+   */
+  async incrementID() {
+    await conn
+        .collection('timer')
+        .update(
+            {data: this.timerID},
+            {data: this.timerID + 1},
+            {upsert: true}
+        );
+    this.timerID = this.timerID + 1;
   }
 }
 

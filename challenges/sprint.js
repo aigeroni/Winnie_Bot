@@ -89,12 +89,7 @@ class Sprint extends Challenge {
   /** Construct the message displayed to users when a sprint begins. */
   startMsg() {
     for (let i = 0; i < this.hookedChannels.length; i++) {
-      let userList = '';
-      for (const user in this.joinedUsers) {
-        if (this.joinedUsers[user].channelID == this.hookedChannels[i]) {
-          userList += ' ' + client.users.get(user);
-        }
-      }
+      const userList = super.getUsers(this.hookedChannels[i]);
       const channelObject = client.channels.get(this.hookedChannels[i]);
       let timeString = 'minutes';
       if (this.duration == 1) {
@@ -136,44 +131,19 @@ class Sprint extends Challenge {
           );
         }
       }
-      for (let i = 0; i < this.hookedChannels.length; i++) {
-        const channelToSend = client.channels.get(this.hookedChannels[i]);
-        channelToSend.send(challengelist.generateSummary(
-            channelToSend,
-            this.objectID
-        ));
-      }
-      conn.collection('challengeDB').remove({_id: this.objectID});
-      delete challengelist.challengeList[this.objectID];
+      super.terminate();
     } else if (this.cDur == 60) {
-      for (let i = 0; i < this.hookedChannels.length; i++) {
-        const channelObject = client.channels.get(this.hookedChannels[i]);
-        channelObject.send(
-            'There is 1 minute remaining in ' + this.displayName + '.'
-        );
-      }
+      super.sendMsg('There is 1 minute remaining in ' + this.displayName + '.');
     } else if (this.cDur % 300 == 0) {
-      for (let i = 0; i < this.hookedChannels.length; i++) {
-        const channelObject = client.channels.get(this.hookedChannels[i]);
-        channelObject.send(
-            'There are ' +
-            this.cDur / 60 +
-            ' minutes remaining in ' +
-            this.displayName +
-            '.'
-        );
-      }
+      super.sendMsg(
+          'There are ' + this.cDur / 60 + ' minutes remaining in ' +
+          this.displayName + '.'
+      );
     } else if ([30, 10, 5].includes(this.cDur)) {
-      for (let i = 0; i < this.hookedChannels.length; i++) {
-        const channelObject = client.channels.get(this.hookedChannels[i]);
-        channelObject.send(
-            'There are ' +
-            this.cDur +
-            ' seconds remaining in ' +
-            this.displayName +
-            '.'
-        );
-      }
+      super.sendMsg(
+          'There are ' + this.cDur + ' seconds remaining in ' +
+          this.displayName + '.'
+      );
     }
   }
 }

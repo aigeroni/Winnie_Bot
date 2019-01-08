@@ -1,5 +1,4 @@
 const Challenge = require('./challenge.js');
-const challengelist = require('./challengelist.js');
 const conn = require('mongoose').connection;
 
 /** Represents a war. */
@@ -136,15 +135,7 @@ class War extends Challenge {
           );
         }
       }
-      for (let i = 0; i < this.hookedChannels.length; i++) {
-        const channelToSend = client.channels.get(this.hookedChannels[i]);
-        channelToSend.send(challengelist.generateSummary(
-            channelToSend,
-            this.objectID
-        ));
-      }
-      conn.collection('challengeDB').remove({_id: this.objectID});
-      delete challengelist.challengeList[this.objectID];
+      super.terminate();
     }
   }
 }
