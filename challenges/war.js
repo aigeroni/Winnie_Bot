@@ -28,8 +28,12 @@ class War extends Challenge {
       channel,
       hidden,
       hookedChannels,
-      joinedUsers
+      joinedUsers,
+      type
   ) {
+    if (type == undefined) {
+      type = 'war';
+    }
     super(
         objectID,
         creator,
@@ -38,7 +42,7 @@ class War extends Challenge {
         countdown,
         duration,
         channel,
-        'war',
+        type,
         hidden,
         hookedChannels,
         joinedUsers

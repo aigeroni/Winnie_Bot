@@ -1,5 +1,5 @@
 const Challenge = require('./challenge');
-const challengelist = require('./challengelist.js');
+const clist = require('./clist.js');
 const conn = require('mongoose').connection;
 
 /** Represents a sprint. */
@@ -78,7 +78,7 @@ class Sprint extends Challenge {
         break;
       default:
         this.channel.send('**Error:** Invalid state reached.');
-        delete challengelist.challengeList[this.objectID];
+        delete clist.running[this.objectID];
         break;
     }
   }

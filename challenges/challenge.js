@@ -1,4 +1,4 @@
-const challengelist = require('./challengelist.js');
+const clist = require('./clist.js');
 const config = require('../config.json');
 const conn = require('mongoose').connection;
 
@@ -50,7 +50,7 @@ class Challenge {
 
     this.cStart = this.countdown * 60;
     this.cDur = this.duration * 60;
-    this.cPost = challengelist.DUR_AFTER;
+    this.cPost = clist.DUR_AFTER;
 
     this.startStamp = this.initStamp + this.cStart * 1000;
     this.endStamp = this.startStamp + this.cDur * 1000;
@@ -120,7 +120,7 @@ class Challenge {
         break;
       default:
         this.channel.send('**Error:** Invalid state reached.');
-        delete challengelist.challengeList[this.objectID];
+        delete clist.running[this.objectID];
         break;
     }
   }
@@ -215,11 +215,11 @@ class Challenge {
       for (let i = 0; i < this.hookedChannels.length; i++) {
         client.channels
             .get(this.hookedChannels[i])
-            .send(challengelist
+            .send(clist
                 .generateSummary(channelToSend, this.objectID));
       }
       conn.collection('challengeDB').remove({_id: this.objectID});
-      delete challengelist.challengeList[this.objectID];
+      delete clist.running[this.objectID];
     }
   }
   /** Get all users hooked from a channel.

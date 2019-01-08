@@ -3,7 +3,7 @@ const emojiRegex = require('emoji-regex/es2015/index.js');
 const ChainWar = require('./chainwar');
 const Sprint = require('./sprint');
 const War = require('./war');
-const challengelist = require('./challengelist.js');
+const clist = require('./clist.js');
 const logger = require('../logger.js');
 const conn = require('mongoose').connection;
 
@@ -38,10 +38,10 @@ class Challenges {
       returnMsg = '**Error:** Challenge ID must be an integer. Example: `' +
           prefix +
           'join 10793`.';
-    } else if (challengeID in challengelist.challengeList) {
+    } else if (challengeID in clist.running) {
       if (
-        challengelist.challengeList[challengeID].hidden &&
-        client.channels.get(challengelist.challengeList[challengeID].channelID)
+        clist.running[challengeID].hidden &&
+        client.channels.get(clist.running[challengeID].channelID)
             .guild.id != msg.guild.id
       ) {
         returnMsg = msg.author +
@@ -49,14 +49,14 @@ class Challenges {
             ' this challenge.';
       } else {
         if (
-          msg.author.id in challengelist.challengeList[challengeID].joinedUsers
+          msg.author.id in clist.running[challengeID].joinedUsers
         ) {
           returnMsg = msg.author +
               ', you already have notifications' +
               ' enabled for this challenge.';
         } else {
-          if (challengelist.challengeList[challengeID].type == 'sprint') {
-            challengelist.challengeList[challengeID].joinedUsers[
+          if (clist.running[challengeID].type == 'sprint') {
+            clist.running[challengeID].joinedUsers[
                 msg.author.id
             ] = {
               timestampCalled: undefined,
@@ -64,7 +64,7 @@ class Challenges {
               channelID: msg.channel.id,
             };
           } else {
-            challengelist.challengeList[challengeID].joinedUsers[
+            clist.running[challengeID].joinedUsers[
                 msg.author.id
             ] = {
               countData: undefined,
@@ -73,26 +73,26 @@ class Challenges {
             };
           }
           const pushID = msg.channel.id;
-          const searchIndex = challengelist.challengeList[
+          const searchIndex = clist.running[
               challengeID
           ].hookedChannels.indexOf(pushID);
           if (searchIndex == -1) {
-            challengelist.challengeList[challengeID].hookedChannels.push(
+            clist.running[challengeID].hookedChannels.push(
                 pushID
             );
           }
           returnMsg = msg.author +
               ', you have joined ' +
-              challengelist.challengeList[challengeID].displayName;
+              clist.running[challengeID].displayName;
           try {
             await conn.collection('challengeDB').update(
                 {_id: parseInt(challengeID)},
                 {
                   $set: {
                     hookedChannels:
-                    challengelist.challengeList[challengeID].hookedChannels,
+                    clist.running[challengeID].hookedChannels,
                     joinedUsers:
-                    challengelist.challengeList[challengeID].joinedUsers,
+                    clist.running[challengeID].joinedUsers,
                   },
                 },
                 {upsert: true}
@@ -125,27 +125,27 @@ class Challenges {
       returnMsg = '**Error:** Challenge ID must be an integer. Example: `' +
           prefix +
           'leave 10793`.';
-    } else if (challengeID in challengelist.challengeList) {
+    } else if (challengeID in clist.running) {
       if (
-        msg.author.id in challengelist.challengeList[challengeID].joinedUsers
+        msg.author.id in clist.running[challengeID].joinedUsers
       ) {
-        delete challengelist.challengeList[challengeID].joinedUsers[
+        delete clist.running[challengeID].joinedUsers[
             msg.author.id
         ];
         let hookDrop = true;
-        if (challengelist
-            .challengeList[challengeID]
+        if (clist
+            .running[challengeID]
             .channelID == msg.channel.id) {
           hookDrop = false;
         }
-        for (const item in challengelist
-            .challengeList[challengeID]
+        for (const item in clist
+            .running[challengeID]
             .joinedUsers) {
-          if (challengelist
-              .challengeList[challengeID]
+          if (clist
+              .running[challengeID]
               .joinedUsers.hasOwnProperty(item)) {
-            if (challengelist
-                .challengeList[challengeID]
+            if (clist
+                .running[challengeID]
                 .joinedUsers[item].channelID == msg.channel.id) {
               hookDrop = false;
             }
@@ -153,21 +153,21 @@ class Challenges {
         }
         if (hookDrop == true) {
           logger.info('entered drop');
-          const index = challengelist.challengeList[challengeID]
+          const index = clist.running[challengeID]
               .hookedChannels.indexOf(msg.channel.id);
           if (index != -1) {
-            challengelist.challengeList[challengeID]
+            clist.running[challengeID]
                 .hookedChannels.splice(index, 1);
           }
         }
         returnMsg = msg.author +
             ', you have left ' +
-            challengelist.challengeList[challengeID].displayName;
+            clist.running[challengeID].displayName;
         await conn.collection('challengeDB').update(
             {_id: parseInt(challengeID)},
             {
               $set: {
-                joinedUsers: challengelist.challengeList[challengeID]
+                joinedUsers: clist.running[challengeID]
                     .joinedUsers,
               },
             },
@@ -256,7 +256,7 @@ class Challenges {
         const creatorID = msg.author.id;
         const challengeID = this.timerID;
         const startTime = new Date().getTime();
-        challengelist.challengeList[challengeID] = new Sprint(
+        clist.running[challengeID] = new Sprint(
             challengeID,
             creatorID,
             sprintName,
@@ -347,7 +347,7 @@ class Challenges {
         const creatorID = msg.author.id;
         const challengeID = this.timerID;
         const startTime = new Date().getTime();
-        challengelist.challengeList[challengeID] = new War(
+        clist.running[challengeID] = new War(
             challengeID,
             creatorID,
             warName,
@@ -450,7 +450,7 @@ class Challenges {
         const creatorID = msg.author.id;
         const challengeID = this.timerID;
         const startTime = new Date().getTime();
-        challengelist.challengeList[challengeID] = new ChainWar(
+        clist.running[challengeID] = new ChainWar(
             challengeID,
             creatorID,
             warName,
@@ -492,21 +492,21 @@ class Challenges {
           '**Error:** Challenge ID must be an integer. Example: `' +
           prefix +
           'cancel 10793`.';
-    } else if (challengeID in challengelist.challengeList) {
-      const stopName = challengelist.challengeList[challengeID].displayName;
+    } else if (challengeID in clist.running) {
+      const stopName = clist.running[challengeID].displayName;
       if (
         !(
-          challengelist.challengeList[challengeID].hidden &&
-          challengelist.challengeList[challengeID].channelID != msg.channel.id
+          clist.running[challengeID].hidden &&
+          clist.running[challengeID].channelID != msg.channel.id
         )
       ) {
-        if (challengelist.challengeList[challengeID].creator == msg.author.id) {
+        if (clist.running[challengeID].creator == msg.author.id) {
           await conn.collection('challengeDB').remove(
               {_id: Number(challengeID)}
           );
-          channelList = challengelist.challengeList[challengeID].hookedChannels;
+          channelList = clist.running[challengeID].hookedChannels;
           returnMsg = stopName + ' has been ended by the creator.';
-          delete challengelist.challengeList[challengeID];
+          delete clist.running[challengeID];
         } else {
           returnMsg = '**Error:** Only the creator of ' +
               stopName +
@@ -530,16 +530,16 @@ class Challenges {
   listChallenges(client, msg) {
     let nonHiddenTotal = 0;
     let timerInfo = '';
-    for (const i in challengelist.challengeList) {
-      if (challengelist.challengeList.hasOwnProperty(i)) {
+    for (const i in clist.running) {
+      if (clist.running.hasOwnProperty(i)) {
         const parentChannel = client.channels.get(
-            challengelist.challengeList[i].channelID
+            clist.running[i].channelID
         );
         const parentGuild = parentChannel.guild;
         // check whether a challenge is hidden
         if (
           !(
-            challengelist.challengeList[i].hidden &&
+            clist.running[i].hidden &&
             parentGuild.id != msg.guild.id
           )
         ) {
@@ -547,23 +547,23 @@ class Challenges {
           // find originating server name
           const parentGuildName = parentGuild.name;
           let timeout = '';
-          switch (challengelist.challengeList[i].state) {
+          switch (clist.running[i].state) {
             case 0:
-              if (challengelist.challengeList[i].cStart % 60 < 10) {
+              if (clist.running[i].cStart % 60 < 10) {
                 timeout =
-                  '0' + (challengelist.challengeList[i].cStart % 60).toString();
+                  '0' + (clist.running[i].cStart % 60).toString();
               } else {
-                timeout = challengelist.challengeList[i].cStart % 60;
+                timeout = clist.running[i].cStart % 60;
               }
               timerInfo +=
-                i + ': ' + challengelist.challengeList[i].displayName + ' (';
-              if (challengelist.challengeList[i].type == 'sprint') {
-                timerInfo += challengelist.challengeList[i].goal + ' words, ';
+                i + ': ' + clist.running[i].displayName + ' (';
+              if (clist.running[i].type == 'sprint') {
+                timerInfo += clist.running[i].goal + ' words, ';
               }
               timerInfo +=
-                challengelist.challengeList[i].duration +
+                clist.running[i].duration +
                 ' minutes, starts in ' +
-                Math.floor(challengelist.challengeList[i].cStart / 60) +
+                Math.floor(clist.running[i].cStart / 60) +
                 ':' +
                 timeout +
                 '), ' +
@@ -571,21 +571,21 @@ class Challenges {
                 '\n';
               break;
             case 1:
-              if (challengelist.challengeList[i].cDur % 60 < 10) {
+              if (clist.running[i].cDur % 60 < 10) {
                 timeout =
-                  '0' + (challengelist.challengeList[i].cDur % 60).toString();
+                  '0' + (clist.running[i].cDur % 60).toString();
               } else {
-                timeout = challengelist.challengeList[i].cDur % 60;
+                timeout = clist.running[i].cDur % 60;
               }
               timerInfo +=
-                i + ': ' + challengelist.challengeList[i].displayName + ' (';
-              if (challengelist.challengeList[i].type == 'sprint') {
-                timerInfo += challengelist.challengeList[i].goal + ' words, ';
+                i + ': ' + clist.running[i].displayName + ' (';
+              if (clist.running[i].type == 'sprint') {
+                timerInfo += clist.running[i].goal + ' words, ';
               }
               timerInfo +=
-                challengelist.challengeList[i].duration +
+                clist.running[i].duration +
                 ' minutes, ' +
-                Math.floor(challengelist.challengeList[i].cDur / 60) +
+                Math.floor(clist.running[i].cDur / 60) +
                 ':' +
                 timeout +
                 ' remaining), ' +
@@ -595,12 +595,12 @@ class Challenges {
             case 2:
             case 3:
               timerInfo +=
-                i + ': ' + challengelist.challengeList[i].displayName + ' (';
-              if (challengelist.challengeList[i].type == 'sprint') {
-                timerInfo += challengelist.challengeList[i].goal + ' words, ';
+                i + ': ' + clist.running[i].displayName + ' (';
+              if (clist.running[i].type == 'sprint') {
+                timerInfo += clist.running[i].goal + ' words, ';
               }
               timerInfo +=
-                challengelist.challengeList[i].duration +
+                clist.running[i].duration +
                 ' minutes, ended), ' +
                 parentGuildName +
                 '\n';
@@ -636,15 +636,15 @@ class Challenges {
     const args = suffix.split(' ');
     const challengeID = args.shift();
     let raptorCheck = true;
-    if (challengeID in challengelist.challengeList) {
-      if (challengelist.challengeList[challengeID].type == 'sprint') {
-        if (challengelist.challengeList[challengeID].state < 2) {
+    if (challengeID in clist.running) {
+      if (clist.running[challengeID].type == 'sprint') {
+        if (clist.running[challengeID].state < 2) {
           const doneStamp = new Date().getTime();
           const timeTaken = (
             doneStamp -
-            challengelist.challengeList[challengeID].startStamp
+            clist.running[challengeID].startStamp
           ) / 60000;
-          challengelist.challengeList[challengeID].joinedUsers[
+          clist.running[challengeID].joinedUsers[
               msg.author.id
           ] = {
             timestampCalled: doneStamp,
@@ -652,11 +652,11 @@ class Challenges {
             channelID: msg.channel.id,
           };
           const pushID = msg.channel.id;
-          const searchIndex = challengelist.challengeList[
+          const searchIndex = clist.running[
               challengeID
           ].hookedChannels.indexOf(pushID);
           if (searchIndex == -1) {
-            challengelist.challengeList[challengeID].hookedChannels.push(
+            clist.running[challengeID].hookedChannels.push(
                 pushID
             );
           }
@@ -666,7 +666,7 @@ class Challenges {
                 {
                   $set: {
                     joinedUsers:
-                  challengelist.challengeList[challengeID].joinedUsers,
+                  clist.running[challengeID].joinedUsers,
                   },
                 },
                 {upsert: true}
@@ -719,24 +719,24 @@ class Challenges {
       returnMsg = '**Error:** You must work in words, lines, or pages.';
     } else {
       
-      if (challengeID in challengelist.challengeList) {
-        if (challengelist.challengeList[challengeID].type != 'sprint') {
-          if (challengelist.challengeList[challengeID].state >= 2) {
+      if (challengeID in clist.running) {
+        if (clist.running[challengeID].type != 'sprint') {
+          if (clist.running[challengeID].state >= 2) {
             if (
               !(
-                challengelist.challengeList[challengeID].hidden &&
+                clist.running[challengeID].hidden &&
                 client.channels.get(
-                    challengelist.challengeList[challengeID].channelID
+                    clist.running[challengeID].channelID
                 ).guild.id != msg.guild.id
               )
             ) {
               if (Number.isInteger(Number(wordsWritten))) {
-                for (const user in challengelist.challengeList[challengeID]
+                for (const user in clist.running[challengeID]
                     .joinedUsers) {
                   if (user == msg.author.id) {
                     if (
                       !(
-                        challengelist.challengeList[challengeID]
+                        clist.running[challengeID]
                             .joinedUsers[user].countData === undefined
                       )
                     ) {
@@ -747,7 +747,7 @@ class Challenges {
                 if (Number(wordsWritten) < 1) {
                   raptorCheck = false;
                 }
-                challengelist.challengeList[challengeID].joinedUsers[
+                clist.running[challengeID].joinedUsers[
                     msg.author.id
                 ] = {
                   countData: wordsWritten,
@@ -755,11 +755,11 @@ class Challenges {
                   channelID: msg.channel.id,
                 };
                 const pushID = msg.channel.id;
-                const searchIndex = challengelist.challengeList[
+                const searchIndex = clist.running[
                     challengeID
                 ].hookedChannels.indexOf(pushID);
                 if (searchIndex == -1) {
-                  challengelist.challengeList[challengeID].hookedChannels.push(
+                  clist.running[challengeID].hookedChannels.push(
                       pushID
                   );
                 }
@@ -769,7 +769,7 @@ class Challenges {
                       {
                         $set: {
                           joinedUsers:
-                          challengelist.challengeList[challengeID].joinedUsers,
+                          clist.running[challengeID].joinedUsers,
                         },
                       },
                       {upsert: true}
