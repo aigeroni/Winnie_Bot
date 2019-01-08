@@ -11,15 +11,14 @@ class ChallengeList {
    * @return {String} - The relevant server.
    */
   getServerFromID(channel) {
-    return client.channels.get(channel).guild.id;
+    return client.channels.get(channel).guild;
   }
   /**
    * Produces a per-server breakdown of user-entered totals.
    * @param {String} challengeID - Unique ID of the challenge being summarised.
-   * @param {String} homeServer - Unique ID of the server being summarised.
    * @return {String} - The message to send to the user.
    */
-  serverTotals(challengeID, homeServer) {
+  serverTotals(challengeID) {
     const serverTotals = {};
     for (const user in this.challengeList[challengeID].joinedUsers) {
       const homeServer = this.getServerFromID(
@@ -55,7 +54,7 @@ class ChallengeList {
       const homeServer = this.getServerFromID(
         this.challengeList[challengeID].joinedUsers[user].channelID);
       if (this.challengeList[challengeID].joinedUsers[user].countType !=
-          undefined && homeServer == summaryServer.id) {
+          undefined && homeServer == summaryServer) {
         userTotals +=
           client.users.get(user) +
           ': **' +
@@ -100,29 +99,27 @@ class ChallengeList {
    */
   serverText(summaryServer, serverTotals) {
     let serverText = '';
-    // for (const server in serverTotals) {
-      serverText += summaryServer.name + ' Total:';
-      if ((summaryServer.id in serverTotals)) {
-        let firstType = true;
-        for (const item in serverTotals[summaryServer.id]) {
-          if (serverTotals[summaryServer.id][item][0] > 0) {
-            if (!firstType) {
-              serverText = ", ";
-            }
-            serverText += ' **' + serverTotals[summaryServer.id][item][0];
-            if (serverTotals[summaryServer.id][item][0] == 1) {
-              serverText += '** ' + item.slice(0, -1);
-            } else {
-              serverText += '** ' + item;
-            }
-            serverText += ' (**' + (
-              serverTotals[summaryServer.id][item][0]/
-              serverTotals[summaryServer.id][item][1]).toFixed(0)
-              + '** avg)';
-            firstType = false;
+    if ((summaryServer in serverTotals)) {
+      serverText += '__' + summaryServer.name + '__:';
+      let firstType = true;
+      for (const item in serverTotals[summaryServer]) {
+        if (serverTotals[summaryServer][item][0] > 0) {
+          if (!firstType) {
+            serverText = ", ";
           }
+          serverText += ' **' + serverTotals[summaryServer][item][0];
+          if (serverTotals[summaryServer][item][0] == 1) {
+            serverText += '** ' + item.slice(0, -1);
+          } else {
+            serverText += '** ' + item;
+          }
+          serverText += ' (**' + (
+            serverTotals[summaryServer][item][0]/
+            serverTotals[summaryServer][item][1]).toFixed(0)
+            + '** avg)';
+          firstType = false;
         }
-      // }
+      }
     }
     return serverText;
   }
@@ -139,6 +136,12 @@ class ChallengeList {
       const summaryServer = channel.guild;
       returnMsg += this.userTotals(summaryServer, challengeID);
       returnMsg += this.serverText(summaryServer, serverTotals);
+      returnMsg += '\n';
+      for (const server in serverTotals) {
+        if (server != summaryServer) {
+          returnMsg += this.serverText(server, serverTotals);
+        }
+      }
       if (returnMsg == '') {
         returnMsg = '\nNobody has posted a total for this war yet.';
       }
