@@ -580,7 +580,7 @@ const cmdList = {
     usage: '<x, x y, xdy>',
     type: 'tools',
     process: function(client, msg, prefix, suffix) {
-      const msgToSend = tools.rollDice(msg, prefix, suffix);
+      const msgToSend = tools.rollDice(prefix, suffix);
       msg.channel.send(msgToSend);
       return msgToSend;
     },

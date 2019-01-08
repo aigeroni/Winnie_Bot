@@ -23,40 +23,30 @@ class Tools {
     const args = suffix.split(' ');
     const difficulty = args.shift();
     const time = args.shift();
-    let base = null;
-    if (!Number.isInteger(Number(time))) {
+    let base = undefined;
+    switch (difficulty) {
+      case 'easy':
+        base = 6;
+        break;
+      case 'medium':
+        base = 17;
+        break;
+      case 'hard':
+        base = 28;
+        break;
+      case 'insane':
+        base = 39;
+        break;
+    }
+    if (base === undefined) {
+      returnMsg = '**Error:**: Targets must be easy, medium, hard, or insane.' +
+        ' Example: `' + prefix + 'target medium 15`.';
+    } else if (!Number.isInteger(Number(time))) {
       returnMsg = '**Error:**: Duration must be a whole number. Example: `' +
-          prefix +
-          'target medium 15`.';
+        prefix + 'target medium 15`.';
     } else {
-      switch (difficulty) {
-        case 'easy':
-          base = 6;
-          break;
-        case 'medium':
-          base = 17;
-          break;
-        case 'hard':
-          base = 28;
-          break;
-        case 'insane':
-          base = 39;
-          break;
-        default:
-          base = null;
-          break;
-      }
-      if (base === null) {
-        returnMsg =
-            '**Error:**: Targets must be easy, medium, hard, or insane.' +
-            ' Example: `' +
-            prefix +
-            'target medium 15`.';
-      } else {
-        const goalPerMinute = Math.ceil(Math.random() * 11) + base;
-        const goalTotal = goalPerMinute * time;
-        returnMsg = msg.author + ', your target is **' + goalTotal + '**.';
-      }
+      const goalTotal = (Math.ceil(Math.random() * 11) + base) * time;
+      returnMsg = msg.author + ', your target is **' + goalTotal + '**.';
     }
     return returnMsg;
   }
@@ -409,12 +399,11 @@ class Tools {
   }
   /**
    * Roll dice according to the user's specifications.
-   * @param {Object} msg - The message that ran this function.
    * @param {String} prefix - The bot's prefix.
    * @param {String} suffix - Information after the bot command.
    * @return {String} - The message to send to the user.
    */
-  rollDice(msg, prefix, suffix) {
+  rollDice(prefix, suffix) {
     let diceString = '';
     let diceSum = 0;
     const faces = suffix.split('+');
