@@ -24,31 +24,32 @@ timezoneJS.timezone.init();
 const tickTimer = gameloop.setGameLoop(async function(delta) {
   // check challenges
   for (const item in challengelist.challengeList) {
-    if (challengelist.challengeList.hasOwnProperty(item) &&
-      challengelist.challengeList[item].type == 'chain war' &&
-      challengelist.challengeList[item].state == 2) {
-      challengelist.challengeList[item].state = 3;
-      if (
-        challengelist.challengeList[item].current <
-        challengelist.challengeList[item].total
-      ) {
-        challengelist.challengeList[challenges.timerID] = new ChainWar(
-            challenges.timerID,
-            challengelist.challengeList[item].creator,
-            challengelist.challengeList[item].warName,
-            new Date().getTime(),
-            challengelist.challengeList[item].current + 1,
-            challengelist.challengeList[item].total,
-            challengelist.challengeList[item].countdownList,
-            challengelist.challengeList[item].duration,
-            challengelist.challengeList[item].channelID,
-            challengelist.challengeList[item].hidden,
-            challengelist.challengeList[item].hookedChannels.slice(),
-            JSON.parse(JSON.stringify(
-                challengelist.challengeList[item].joinedUsers)),
-            challengelist.challengeList[item].chainTotal
-        );
-        challenges.incrementID();
+    if (challengelist.challengeList.hasOwnProperty(item)) {
+      if (challengelist.challengeList[item].type == 'chain war' &&
+        challengelist.challengeList[item].state == 2) {
+        challengelist.challengeList[item].state = 3;
+        if (
+          challengelist.challengeList[item].current <
+          challengelist.challengeList[item].total
+        ) {
+          challengelist.challengeList[challenges.timerID] = new ChainWar(
+              challenges.timerID,
+              challengelist.challengeList[item].creator,
+              challengelist.challengeList[item].warName,
+              new Date().getTime(),
+              challengelist.challengeList[item].current + 1,
+              challengelist.challengeList[item].total,
+              challengelist.challengeList[item].countdownList,
+              challengelist.challengeList[item].duration,
+              challengelist.challengeList[item].channelID,
+              challengelist.challengeList[item].hidden,
+              challengelist.challengeList[item].hookedChannels.slice(),
+              JSON.parse(JSON.stringify(
+                  challengelist.challengeList[item].joinedUsers)),
+              challengelist.challengeList[item].chainTotal
+          );
+          challenges.incrementID();
+        }
       }
       challengelist.challengeList[item].update();
     }
@@ -366,7 +367,7 @@ const cmdList = {
         if (totalType === undefined) {
           totalType = 'words';
         }
-        if (totalType.charAt(totalType.length-1)) {
+        if (totalType.charAt(totalType.length-1) != 's') {
           totalType += 's';
         }
         if (totalType == goallist.goalList[msg.author.id].goalType) {

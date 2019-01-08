@@ -69,7 +69,7 @@ class Goals {
     if (goalType === undefined) {
       goalType = 'words';
     }
-    if (goalType.charAt(goalType.length-1)) {
+    if (goalType.charAt(goalType.length-1) != 's') {
       goalType += 's';
     }
     const user = await conn.collection('userDB').findOne(

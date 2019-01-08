@@ -6,19 +6,27 @@ class ChallengeList {
     this.challengeList = {};
   }
   /**
+   * Gets a server from a channel ID.
+   * @param {String} channel - The channel to get the parent server of.
+   * @return {String} - The relevant server.
+   */
+  getServerFromID(channel) {
+    return client.channels.get(channel).guild.id;
+  }
+  /**
    * Produces a per-server breakdown of user-entered totals.
-   * @param {Number} challengeID - Unique ID of the challenge being summarised.
+   * @param {String} challengeID - Unique ID of the challenge being summarised.
+   * @param {String} homeServer - Unique ID of the server being summarised.
    * @return {String} - The message to send to the user.
    */
-  serverTotals(challengeID) {
+  serverTotals(challengeID, homeServer) {
     const serverTotals = {};
     for (const user in this.challengeList[challengeID].joinedUsers) {
+      const homeServer = this.getServerFromID(
+        this.challengeList[challengeID].joinedUsers[user].channelID);
       if (
         this.challengeList[challengeID].joinedUsers[user].countType != undefined
       ) {
-        const homeServer = client.channels.get(
-          this.challengeList[challengeID].joinedUsers[user].channelID
-        ).guild.id;
         if (serverTotals[homeServer] === undefined) {
           serverTotals[homeServer] = {
             words: [0, 0],
@@ -37,132 +45,84 @@ class ChallengeList {
   }
   /**
    * Produces a per-user breakdown of user-entered totals.
-   * @param {String} channel - Unique ID of the channel being posted to.
+   * @param {String} summaryServer - The server being summarised.
    * @param {Number} challengeID - Unique ID of the challenge being summarised.
    * @return {String} - The message to send to the user.
    */
-  userTotals(channel, challengeID) {
+  userTotals(summaryServer, challengeID) {
     let userTotals = '';
     for (const user in this.challengeList[challengeID].joinedUsers) {
+      const homeServer = this.getServerFromID(
+        this.challengeList[challengeID].joinedUsers[user].channelID);
       if (this.challengeList[challengeID].joinedUsers[user].countType !=
-          undefined) {
-        const homeServer = client.channels.get(
-            this.challengeList[challengeID].joinedUsers[user].channelID
-        ).guild.id;
-        if (homeServer == summaryServer.id) {
+          undefined && homeServer == summaryServer.id) {
+        userTotals +=
+          client.users.get(user) +
+          ': **' +
+          this.challengeList[challengeID].joinedUsers[user].countData +
+          '** ';
+        if (
+          this.challengeList[challengeID].joinedUsers[user]
+                .countData == 1
+          ) {
           userTotals +=
-            client.users.get(user) +
-            ': **' +
-            this.challengeList[challengeID].joinedUsers[user].countData +
-            '** ';
-          if (
-            this.challengeList[challengeID].joinedUsers[user]
-                  .countData == 1
-            ) {
-            userTotals +=
-              this.challengeList[challengeID].joinedUsers[
-                  user
-              ].countType.slice(0, -1);
-          } else {
-            userTotals +=
-              this.challengeList[challengeID].joinedUsers[user]
-                  .countType;
-          }
-          if (this.challengeList[challengeID].joinedUsers[user]
-              .countType != 'minutes') {
-              userTotals +=
-              ' (**' +
-              (this.challengeList[challengeID]
-                .joinedUsers[user].countData /
-            this.challengeList[challengeID].duration).toFixed(2) +
-            '** ' +
             this.challengeList[challengeID].joinedUsers[
                 user
-            ].countType.slice(0, 1) +
-            'pm)\n';
-          } else {
-            userTotal += '\n';
-          }
+            ].countType.slice(0, -1);
+        } else {
+          userTotals +=
+            this.challengeList[challengeID].joinedUsers[user]
+                .countType;
         }
+        if (this.challengeList[challengeID].joinedUsers[user]
+            .countType != 'minutes') {
+            userTotals +=
+            ' (**' +
+            (this.challengeList[challengeID]
+              .joinedUsers[user].countData /
+          this.challengeList[challengeID].duration).toFixed(2) +
+          '** ' +
+          this.challengeList[challengeID].joinedUsers[
+              user
+          ].countType.slice(0, 1) +
+          'pm)';
+        }
+        userTotals += '\n';
       }
     }
     return userTotals;
   }
   /**
    * Produces a per-user breakdown of user-entered totals.
-   * @param {String} channel - Unique ID of the channel being posted to.
-   * @param {Number} challengeID - Unique ID of the challenge being summarised.
+   * @param {String} summaryServer - Snowflake of the server being posted to.
    * @param {Object} serverTotals - Summary of user-entered totals by server.
    * @return {String} - The message to send to the user.
    */
-  serverText(summaryServer, challengeID) {
+  serverText(summaryServer, serverTotals) {
     let serverText = '';
-    for (const server in serverTotals) {
-      let firstType = true;
+    // for (const server in serverTotals) {
       serverText += summaryServer.name + ' Total:';
-      if ((summaryServer.id in challengeData)) {
-        if (challengeData[summaryServer.id][words][0] > 0) {
-          summaryData += ' **' + challengeData[summaryServer.id][words][0];
-          if (challengeData[summaryServer.id][words][0] == 1) {
-            summaryData += '** word';
-          } else {
-            summaryData += '** words';
+      if ((summaryServer.id in serverTotals)) {
+        let firstType = true;
+        for (const item in serverTotals[summaryServer.id]) {
+          if (serverTotals[summaryServer.id][item][0] > 0) {
+            if (!firstType) {
+              serverText = ", ";
+            }
+            serverText += ' **' + serverTotals[summaryServer.id][item][0];
+            if (serverTotals[summaryServer.id][item][0] == 1) {
+              serverText += '** ' + item.slice(0, -1);
+            } else {
+              serverText += '** ' + item;
+            }
+            serverText += ' (**' + (
+              serverTotals[summaryServer.id][item][0]/
+              serverTotals[summaryServer.id][item][1]).toFixed(0)
+              + '** avg)';
+            firstType = false;
           }
-          summaryData += ' (**' + (
-            challengeData[summaryServer.id][words][0]/
-            challengeData[summaryServer.id][words][1]).toFixed(0)
-            + '** avg)';
-          firstType = false;
         }
-        if (challengeData[summaryServer.id][lines][0] > 0) {
-          if (!firstType) {
-            summaryData += ',';
-          }
-          summaryData += ' **' + challengeData[summaryServer.id][lines][0];
-          if (challengeData[summaryServer.id][lines][0] == 1) {
-            summaryData += '** line';
-          } else {
-            summaryData += '** lines';
-          }
-          summaryData += ' (**' + (
-            challengeData[summaryServer.id][lines][0]/
-            challengeData[summaryServer.id][lines][1]).toFixed(0)
-            + '** avg)';
-          firstType = false;
-        }
-        if (challengeData[summaryServer.id][pages][0] > 0) {
-          if (!firstType) {
-            summaryData += ',';
-          }
-          summaryData += ' **' + challengeData[summaryServer.id][pages][0];
-          if (challengeData[summaryServer.id][pages][0] == 1) {
-            summaryData += '** page';
-          } else {
-            summaryData += '** pages';
-          }
-          summaryData += ' (**' + (
-            challengeData[summaryServer.id][pages][0]/
-            challengeData[summaryServer.id][pages][1]).toFixed(0)
-            + '** avg)';
-          firstType = false;
-        }
-        if (challengeData[summaryServer.id][minutes][0] > 0) {
-          if (!firstType) {
-            summaryData += ',';
-          }
-          summaryData += ' **' + challengeData[summaryServer.id][minutes][0];
-          if (challengeData[summaryServer.id][minutes][0] == 1) {
-            summaryData += '** minute';
-          } else {
-            summaryData += '** minutes';
-          }
-          summaryData += ' (**' + (
-            challengeData[summaryServer.id][minutes][0]/
-            challengeData[summaryServer.id][minutes][1]).toFixed(0)
-            + '** avg)';
-          firstType = false;
-        }
-      }
+      // }
     }
     return serverText;
   }
@@ -175,10 +135,10 @@ class ChallengeList {
   warSummary(channel, challengeID) {
     let returnMsg = '';
     if (this.challengeList[challengeID].state >= 2) {
-      const serverTotals = serverTotals(challengeID);
+      const serverTotals = this.serverTotals(challengeID);
       const summaryServer = channel.guild;
-      returnMsg += userTotals(summaryServer, challengeID);
-      returnMsg += serverText(summaryServer, challengeID, serverTotals);
+      returnMsg += this.userTotals(summaryServer, challengeID);
+      returnMsg += this.serverText(summaryServer, serverTotals);
       if (returnMsg == '') {
         returnMsg = '\nNobody has posted a total for this war yet.';
       }
@@ -312,7 +272,7 @@ class ChallengeList {
         this.challengeList[challengeID].displayName +
         ':***\n\n';
       if (this.challengeList[challengeID].type == 'sprint') {
-        msgToSend += this.sprintSummary(channel,challengeID);
+        msgToSend += this.sprintSummary(channel, challengeID);
       } else {
         msgToSend += this.warSummary(channel, challengeID);
       }

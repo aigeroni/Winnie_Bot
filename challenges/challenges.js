@@ -708,7 +708,7 @@ class Challenges {
     if (writtenType === undefined) {
       writtenType = 'words';
     }
-    if (writtenType.charAt(writtenType.length-1)) {
+    if (writtenType.charAt(writtenType.length-1) != 's') {
       writtenType += 's';
     }
     if (!(

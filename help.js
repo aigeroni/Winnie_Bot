@@ -15,7 +15,6 @@ class Help {
    */
   buildHelpMsg(cmdList, prefix, suffix) {
     let helpMsg = '';
-    console.log(suffix);
     if (!suffix) {
       helpMsg = this.buildMainHelp(cmdList, prefix);
     } else if (suffix == 'all') {
