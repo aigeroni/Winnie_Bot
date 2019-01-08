@@ -202,34 +202,23 @@ class Goals {
    */
   updateGoal(msg, prefix, suffix, overwrite) {
     let returnMsg = '';
+    const args = suffix.split(' ');
+    const goal = args.shift();
     if (suffix == '') {
       returnMsg = msg.author + ', I need some progress to update!';
+    } else if (!Number.isInteger(parseInt(goal))) {
+      returnMsg = '**Error:** Your progress must be a whole number.' +
+          ' Example: `' +
+          prefix +
+          'update 256`.';
+    } else if (!(msg.author.id in goallist.goalList)) {
+      returnMsg = msg.author +
+          ', you have not yet set a goal for today. Use `' +
+          prefix +
+          'set <goal>` to do so.';
     } else {
-      const args = suffix.split(' ');
-      const goal = args.shift();
-      if (!Number.isInteger(parseInt(goal))) {
-        returnMsg = '**Error:** Your progress must be a whole number.' +
-            ' Example: `' +
-            prefix +
-            'update 256`.';
-      } else if (!(msg.author.id in goallist.goalList)) {
-        returnMsg = msg.author +
-            ', you have not yet set a goal for today. Use `' +
-            prefix +
-            'set <goal>` to do so.';
-      } else {
-        goallist.goalList[msg.author.id].addWords(goal, overwrite);
-        returnMsg = msg.author +
-            ', you have written **' +
-            goallist.goalList[msg.author.id].written +
-            '** ' +
-            goallist.goalList[msg.author.id].goalType +
-            ' of your **' +
-            goallist.goalList[msg.author.id].goal +
-            '**-' +
-            goallist.goalList[msg.author.id].goalType.slice(0, -1) +
-            ' goal.';
-      }
+      goallist.goalList[msg.author.id].addWords(goal, overwrite);
+      returnMsg = this.goalData(msg.author);
     }
     return returnMsg;
   }
@@ -242,43 +231,29 @@ class Goals {
    */
   async resetGoal(msg, prefix, suffix) {
     let returnMsg = '';
+    const args = suffix.split(' ');
+    const newGoal = args.shift();
+    let newType = args.join(' ');
+    if (newType == '') {
+      newType = 'words';
+    }
     if (!(msg.author.id in goallist.goalList)) {
       returnMsg = msg.author +
           ', you have not yet set a goal for today. Use `' +
           prefix +
           'set <goal>` to do so.';
+    } else if (suffix === undefined || !(Number.isInteger(parseInt(newGoal)))) {
+      conn.collection('goalDB').remove({authorID: msg.author.id});
+      delete goallist.goalList[msg.author.id];
+      returnMsg = msg.author +
+          ', you have successfully reset your daily goal.';
+    } else if (newType == goallist.goalList[msg.author.id].goalType) {
+      goallist.goalList[msg.author.id].goal = newGoal;
+      returnMsg = this.goalData(msg.author);
     } else {
-      const args = suffix.split(' ');
-      const newGoal = args.shift();
-      logger.info(newGoal);
-      let newType = args.join(' ');
-      if (newType == '') {
-        newType = 'words';
-      }
-      if (suffix === undefined || !(Number.isInteger(parseInt(newGoal)))) {
-        conn.collection('goalDB').remove({authorID: msg.author.id});
-        delete goallist.goalList[msg.author.id];
-        returnMsg = msg.author +
-            ', you have successfully reset your daily goal.';
-      } else {
-        if (newType == goallist.goalList[msg.author.id].goalType) {
-          goallist.goalList[msg.author.id].goal = newGoal;
-          returnMsg = msg.author +
-              ', you have written **' +
-              goallist.goalList[msg.author.id].written +
-              '** ' +
-              goallist.goalList[msg.author.id].goalType +
-              ' of your **' +
-              goallist.goalList[msg.author.id].goal +
-              '**-' +
-              goallist.goalList[msg.author.id].goalType.slice(0, -1) +
-              ' goal.';
-        } else {
-          conn.collection('goalDB').remove({authorID: msg.author.id});
-          delete goallist.goalList[msg.author.id];
-          returnMsg = await this.setGoal(msg, prefix, suffix);
-        }
-      }
+      conn.collection('goalDB').remove({authorID: msg.author.id});
+      delete goallist.goalList[msg.author.id];
+      returnMsg = await this.setGoal(msg, prefix, suffix);
     }
     return returnMsg;
   }
@@ -296,18 +271,26 @@ class Goals {
           prefix +
           'set <goal>` to do so.';
     } else {
-      returnMsg = msg.author +
-          ', you have written **' +
-          goallist.goalList[msg.author.id].written +
-          '** ' +
-          goallist.goalList[msg.author.id].goalType +
-          ' of your **' +
-          goallist.goalList[msg.author.id].goal +
-          '**-' +
-          goallist.goalList[msg.author.id].goalType.slice(0, -1) +
-          ' goal.';
+      returnMsg = this.goalData(msg.author);
     }
     return returnMsg;
+  }
+  /**
+   * Compiles a user's progress towards their goal.
+   * @param {Object} author - The goal setter's Discord account.
+   * @return {String} - The message to send to the user.
+   */
+  goalData(author) {
+    return author +
+      ', you have written **' +
+      goallist.goalList[author.id].written +
+      '** ' +
+      goallist.goalList[author.id].goalType +
+      ' of your **' +
+      goallist.goalList[author.id].goal +
+      '**-' +
+      goallist.goalList[author.id].goalType.slice(0, -1) +
+      ' goal.';
   }
 }
 
