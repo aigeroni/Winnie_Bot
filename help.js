@@ -34,28 +34,7 @@ class Help {
     } else {
       helpMsg = '**Winnie_Bot Commands:**';
       for (let i = 0; i < this.commandTypes.length; i++) {
-        const typeTitle = this.commandTypes[i].charAt(0).toUpperCase()
-          + this.commandTypes[i].substr(1).toLowerCase();
-        helpMsg += '\n__*' + typeTitle + ':*__\n';
-        let first = true;
-        for (const j in cmdList) {
-          if (cmdList.hasOwnProperty(j)) {
-            if (cmdList[j].type == this.commandTypes[i]) {
-              if (!(cmdList[j].alias)) {
-                if (first == false) {
-                  helpMsg += ', ';
-                }
-                helpMsg += prefix + cmdList[j].name;
-                if (cmdList[j].aliases) {
-                  helpMsg += ' (aliases: ' +
-                  cmdList[j].aliases +
-                  ')';
-                }
-                first = false;
-              }
-            }
-          }
-        }
+        helpMsg += this.buildMainHelp(cmdList, prefix, this.commandTypes[i]);
       }
       helpMsg += '\n\nUse `' +
         prefix +
@@ -98,14 +77,14 @@ class Help {
    * @return {String} - the help message.
    */
   buildHelpSection(cmdList, prefix, cmdType) {
-    const title = cmdType.charAt(0).toUpperCase() + cmdType.substr(1);
-    let helpMsg = '__*' + title + ':*__\n';
+    let helpMsg = '__*' +
+      cmdType.charAt(0).toUpperCase() +
+      cmdType.substr(1) +
+      ':*__\n';
     for (const i in cmdList) {
       if (cmdList.hasOwnProperty(i)) {
-        if (!(cmdList[i].alias)) {
-          if (cmdList[i].type == cmdType) {
-            helpMsg += this.buildHelpItem(cmdList[i], prefix);
-          }
+        if (!(cmdList[i].alias) && cmdList[i].type == cmdType) {
+          helpMsg += this.buildHelpItem(cmdList[i], prefix);
         }
       }
     }
@@ -137,6 +116,37 @@ class Help {
       '\n';
     }
     helpMsg += '\n';
+    return helpMsg;
+  }
+   /**
+   * Builds each section of the main help message.
+   * @param {Object} cmdList - A list of Winnie's commands.
+   * @param {String} prefix - The bot's prefix.
+   * @param {String} cmdType - The type of command to provide help for.
+   * @return {String} - the help message.
+   */
+  buildMainHelp(cmdList, prefix, cmdType) {
+    let helpMsg = '\n__*' +
+      this.commandTypes[i].charAt(0).toUpperCase() +
+      this.commandTypes[i].substr(1).toLowerCase() +
+      ':*__\n';
+    let first = true;
+    for (const j in cmdList) {
+      if (cmdList.hasOwnProperty(j)) {
+        if (!(cmdList[j].alias) && cmdList[j].type == cmdType) {
+          if (first == false) {
+            helpMsg += ', ';
+          }
+          helpMsg += prefix + cmdList[j].name;
+          if (cmdList[j].aliases) {
+            helpMsg += ' (aliases: ' +
+            cmdList[j].aliases +
+            ')';
+          }
+          first = false;
+        }
+      }
+    }
     return helpMsg;
   }
 }
