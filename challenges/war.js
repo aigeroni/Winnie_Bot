@@ -83,53 +83,28 @@ class War extends Challenge {
     this.cPost--;
     if (this.cPost == 0) {
       for (const user in this.joinedUsers) {
-        if (this.joinedUsers[user].countType == 'words') {
+        if (this.joinedUsers.hasOwnProperty(user)) {
+          let dataToChange = '$inc: {';
+          if (this.joinedUsers[user].countType == 'words') {
+            dataToChange +=
+              'lifetimeWarWords: parseInt(this.joinedUsers[user].countData),' +
+              'lifetimeWordMinutes: parseFloat(this.duration),},';
+          } else if (this.joinedUsers[user].countType == 'lines') {
+            dataToChange +=
+              'lifetimeWarLines: parseInt(this.joinedUsers[user].countData),' +
+              'lifetimeLineMinutes: parseFloat(this.duration),},';
+          } else if (this.joinedUsers[user].countType == 'pages') {
+            dataToChange +=
+              'lifetimeWarPages: parseInt(this.joinedUsers[user].countData),' +
+              'lifetimePageMinutes: parseFloat(this.duration),},';
+          } else if (this.joinedUsers[user].countType == 'minutes') {
+            dataToChange += 'lifetimeWarMinutes: ' +
+              'parseInt(this.joinedUsers[user].countData),},';
+          }
           conn.collection('userDB').update(
               {_id: user},
               {
-                $inc: {
-                  lifetimeWarWords:
-                  parseInt(this.joinedUsers[user].countData),
-                  lifetimeWordMinutes:
-                  parseFloat(this.duration),
-                },
-              },
-              {upsert: true}
-          );
-        } else if (this.joinedUsers[user].countType == 'lines') {
-          conn.collection('userDB').update(
-              {_id: user},
-              {
-                $inc: {
-                  lifetimeWarLines:
-                  parseInt(this.joinedUsers[user].countData),
-                  lifetimeLineMinutes:
-                  parseFloat(this.duration),
-                },
-              },
-              {upsert: true}
-          );
-        } else if (this.joinedUsers[user].countType == 'pages') {
-          conn.collection('userDB').update(
-              {_id: user},
-              {
-                $inc: {
-                  lifetimeWarPages:
-                  parseInt(this.joinedUsers[user].countData),
-                  lifetimePageMinutes:
-                  parseFloat(this.duration),
-                },
-              },
-              {upsert: true}
-          );
-        } else if (this.joinedUsers[user].countType == 'minutes') {
-          conn.collection('userDB').update(
-              {_id: user},
-              {
-                $inc: {
-                  lifetimeWarMinutes:
-                  parseInt(this.joinedUsers[user].countData),
-                },
+                dataToChange,
               },
               {upsert: true}
           );
