@@ -1,6 +1,7 @@
 const goallist = require('./goallist.js');
 const Goal = require('./goal');
 const timezoneJS = require('timezone-js');
+const mtz = require('moment-timezone');
 const conn = require('mongoose').connection;
 
 /** Class containing functions for goal management. */
@@ -31,35 +32,16 @@ class Goals {
           return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
         }
     );
-    const dateCheck = new timezoneJS.Date();
     if (suffix == '') {
       returnMsg = msg.author + ', I need a timezone to set!';
-    } else if (!this.regionRegex.test(timezone)) {
-      // check entered timezone against regex
-      returnMsg =
-          '**Error:** Winnie_Bot accepts IANA timezone identifiers only.' +
-          ' These generally take the format of' +
-          ' Continent/Your_Areas_Largest_City.\n' +
-          '**For example:** `' +
-          prefix +
-          'timezone America/New_York`, `' +
-          prefix +
-          'timezone Australia/Sydney`, `' +
-          prefix +
-          'timezone Europe/London`';
+    } else if (!this.regionRegex.test(timezone) || !mtz.tz.zone(timezone)) {
+      returnMsg = '**Error:** Winnie_Bot accepts IANA timezone identifiers' +
+        ' only. These generally take the format of' +
+        ' Continent/Your_Areas_Largest_City.\n**For example:** `' +
+        prefix + 'timezone America/New_York`, `' +
+        prefix + 'timezone Australia/Sydney`, `' +
+        prefix + 'timezone Europe/London`';
     } else {
-      // check to see if timezone is in IANA library
-      try {
-        dateCheck.setTimezone(timezone);
-      } catch (e) {
-        if (e.code == 'ENOENT') {
-          await msg.channel.send(
-              '**Fatal Error:** Winnie cannot locate' +
-              ' timezone information.\nWinnie will now terminate.'
-          );
-          process.exit(1);
-        }
-      }
       // add timezone to database, confirm
       conn.collection('userDB').update(
           {_id: msg.author.id},
@@ -69,10 +51,8 @@ class Goals {
           },
           {upsert: true}
       );
-      returnMsg = msg.author +
-        ', you have set your timezone to **' +
-        timezone +
-        '**.';
+      returnMsg =
+        msg.author + ', you have set your timezone to **' + timezone + '**.';
     }
     return returnMsg;
   }
@@ -88,73 +68,49 @@ class Goals {
     const args = suffix.split(' ');
     const goal = args.shift();
     let goalType = args.shift();
+    if (goalType === undefined) {
+      goalType = 'words';
+    }
+    if (goalType.charAt(goalType.length-1)) {
+      goalType += 's';
+    }
+    const user = await conn.collection('userDB').findOne(
+        {_id: msg.author.id}
+    );
     if (goal === undefined || goal == '') {
       returnMsg = msg.author + ', I need a goal to set!';
     } else if (!Number.isInteger(Number(goal))) {
       returnMsg = '**Error:** Your goal must be a whole number. Example: `' +
-          prefix +
-          'set 1667`.';
+          prefix + 'set 1667`.';
     } else if (msg.author.id in goallist.goalList) {
-      returnMsg = msg.author +
-          ', you have already set a goal today. Use' +
+      returnMsg = msg.author + ', you have already set a goal today. Use' +
           ' the update commands to record your progress.';
+    } else if (!(
+      goalType == 'lines' || goalType == 'pages' ||
+      goalType == 'minutes' || goalType == 'words'
+    )) {
+      returnMsg = '**Error:** Goal type must be words, lines, pages,' +
+          ' or minutes. Example: `' + prefix + 'set 50 lines`.';
+    } else if (user == null || user.timezone == undefined) {
+      returnMsg = msg.author + ', you need to set your timezone before' +
+          ' setting a daily goal. Use the `!timezone` command to do so.';
     } else {
-      if (
-        goalType == 'line' ||
-        goalType == 'page' ||
-        goalType == 'word' ||
-        goalType == 'minute'
-      ) {
-        goalType += 's';
-      }
-      if (
-        !(
-          goalType == 'lines' ||
-          goalType == 'pages' ||
-          goalType == 'minutes' ||
-          goalType == 'words' ||
-          goalType === undefined
-        )
-      ) {
-        returnMsg = '**Error:** Goal type must be words, lines, pages,' +
-            ' or minutes. Example: `' +
-            prefix +
-            'set 50 lines`.';
-      } else {
-        if (goalType === undefined) {
-          goalType = 'words';
-        }
-        const user = await conn.collection('userDB').findOne(
-            {_id: msg.author.id}
-        );
-        if (user == null || user.timezone == undefined) {
-          return msg.author +
-              ', you need to set your timezone before' +
-              ' setting a daily goal. Use the `!timezone`' +
-              ' command to do so.';
-        } else {
-          // get current time
-          const startTime = new timezoneJS.Date(user.timezone);
-          // calculate next midnight based on timezone
-          const endTime = new timezoneJS.Date(user.timezone);
-          endTime.setHours(24, 0, 0, 0);
-          goallist.goalList[msg.author.id] = new Goal(
-              msg.author.id,
-              goal,
-              goalType,
-              0,
-              startTime.getTime(),
-              endTime.getTime(),
-              msg.channel.id
-          );
-          return msg.author +
-              ', your goal for today is **' +
-              goal +
-              '** ' +
-              goalType +
-              '.';
-        }
-      }
+      // get current time
+      const startTime = new timezoneJS.Date(user.timezone);
+      // calculate next midnight based on timezone
+      const endTime = new timezoneJS.Date(user.timezone);
+      endTime.setHours(24, 0, 0, 0);
+      goallist.goalList[msg.author.id] = new Goal(
+          msg.author.id,
+          goal,
+          goalType,
+          0,
+          startTime.getTime(),
+          endTime.getTime(),
+          msg.channel.id
+      );
+      returnMsg = msg.author +
+        ', your goal for today is **' + goal + '** ' + goalType + '.';
     }
     return returnMsg;
   }
@@ -210,16 +166,13 @@ class Goals {
           prefix +
           'set <goal>` to do so.';
     } else if (suffix === undefined || !(Number.isInteger(parseInt(newGoal)))) {
-      conn.collection('goalDB').remove({authorID: msg.author.id});
-      delete goallist.goalList[msg.author.id];
-      returnMsg = msg.author +
-          ', you have successfully reset your daily goal.';
+      goallist.goalList[msg.author.id].clearGoal();
+      returnMsg = msg.author + ', you have successfully reset your daily goal.';
     } else if (newType == goallist.goalList[msg.author.id].goalType) {
       goallist.goalList[msg.author.id].goal = newGoal;
       returnMsg = this.goalData(msg.author);
     } else {
-      conn.collection('goalDB').remove({authorID: msg.author.id});
-      delete goallist.goalList[msg.author.id];
+      goallist.goalList[msg.author.id].clearGoal();
       returnMsg = await this.setGoal(msg, prefix, suffix);
     }
     return returnMsg;

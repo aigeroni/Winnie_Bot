@@ -53,11 +53,17 @@ class Goal {
   update() {
     if (new Date().getTime() >= this.terminationTime) {
       const raptorRollData = [this.channel, (this.written / this.goal) * 100];
-      delete goallist.goalList[this.authorID];
-      conn.collection('goalDB').remove({authorID: this.authorID});
+      this.clearGoal(this.authorID);
       return raptorRollData;
     }
     return false;
+  }
+  /**
+   * Clears a goal from the database.
+   */
+  clearGoal() {
+    conn.collection('goalDB').remove({authorID: this.authorID});
+    delete goallist.goalList[this.authorID];
   }
   /** Update the goal with the user's current progress.
    * @param {Number} wordNumber - The user's progress towards their goal.
