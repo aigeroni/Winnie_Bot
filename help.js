@@ -15,21 +15,20 @@ class Help {
    */
   buildHelpMsg(cmdList, prefix, suffix) {
     let helpMsg = '';
-    if (suffix) {
-      if (suffix == 'all') {
-        helpMsg = this.buildAllHelp(cmdList, prefix);
-      } else if (this.commandTypes.indexOf(suffix) > -1) {
-        helpMsg = '**Winnie_Bot Commands:**\n' +
-          '*Replace the <angled brackets> with the relevant information. ' +
-          'Anything in [square brackets] is optional.*\n\n' +
-          this.buildHelpSection(cmdList, prefix, suffix);
-      } else if (cmdList[suffix] === undefined) {
-        helpMsg = '**Error:** That command does not exist.';
-      } else {
-        helpMsg = this.buildHelpItem(cmdList[suffix], prefix);
-      }
-    } else {
+    console.log(suffix);
+    if (!suffix) {
       helpMsg = this.buildMainHelp(cmdList, prefix);
+    } else if (suffix == 'all') {
+      helpMsg = this.buildAllHelp(cmdList, prefix);
+    } else if (this.commandTypes.indexOf(suffix) > -1) {
+      helpMsg = '**Winnie_Bot Commands:**\n' +
+        '*Replace the <angled brackets> with the relevant information. ' +
+        'Anything in [square brackets] is optional.*\n\n' +
+        this.buildHelpSection(cmdList, prefix, suffix);
+    } else if (cmdList[suffix] === undefined) {
+      helpMsg = '**Error:** That command does not exist.';
+    } else {
+      helpMsg = this.buildHelpItem(cmdList[suffix], prefix);
     }
     return helpMsg;
   }
@@ -111,7 +110,7 @@ class Help {
    * @return {String} - the help message.
    */
   buildMainHelp(cmdList, prefix) {
-    helpMsg = '**Winnie_Bot Commands:**';
+    let helpMsg = '**Winnie_Bot Commands:**';
     for (let i = 0; i < this.commandTypes.length; i++) {
       helpMsg += this.buildMainSections(cmdList, prefix, this.commandTypes[i]);
     }
@@ -134,8 +133,8 @@ class Help {
    */
   buildMainSections(cmdList, prefix, cmdType) {
     let helpMsg = '\n__*' +
-      this.commandTypes[i].charAt(0).toUpperCase() +
-      this.commandTypes[i].substr(1).toLowerCase() +
+      cmdType.charAt(0).toUpperCase() +
+      cmdType.substr(1).toLowerCase() +
       ':*__\n';
     let first = true;
     for (const j in cmdList) {

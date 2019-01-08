@@ -1,7 +1,6 @@
 const goallist = require('./goallist.js');
 const Goal = require('./goal');
 const timezoneJS = require('timezone-js');
-const logger = require('../logger.js');
 const conn = require('mongoose').connection;
 
 /** Class containing functions for goal management. */
@@ -32,13 +31,25 @@ class Goals {
           return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
         }
     );
-    logger.info(timezone);
     const dateCheck = new timezoneJS.Date();
     if (suffix == '') {
       returnMsg = msg.author + ', I need a timezone to set!';
+    } else if (!this.regionRegex.test(timezone)) {
+      // check entered timezone against regex
+      returnMsg =
+          '**Error:** Winnie_Bot accepts IANA timezone identifiers only.' +
+          ' These generally take the format of' +
+          ' Continent/Your_Areas_Largest_City.\n' +
+          '**For example:** `' +
+          prefix +
+          'timezone America/New_York`, `' +
+          prefix +
+          'timezone Australia/Sydney`, `' +
+          prefix +
+          'timezone Europe/London`';
     } else {
+      // check to see if timezone is in IANA library
       try {
-        // check to see if timezone is in IANA library
         dateCheck.setTimezone(timezone);
       } catch (e) {
         if (e.code == 'ENOENT') {
@@ -46,42 +57,10 @@ class Goals {
               '**Fatal Error:** Winnie cannot locate' +
               ' timezone information.\nWinnie will now terminate.'
           );
-          await logger.info(
-              'Fatal error: Winnie_Bot cannot locate' +
-              ' timezone information.\nWinnie_Bot will now terminate.'
-          );
           process.exit(1);
-        } else {
-          returnMsg =
-              '**Error:** Winnie_Bot accepts IANA timezone identifiers only.' +
-              ' These generally take the format of' +
-              ' Continent/Your_Areas_Largest_City.\n' +
-              '**For example:** `' +
-              prefix +
-              'timezone America/New_York`, `' +
-              prefix +
-              'timezone Australia/Sydney`, `' +
-              prefix +
-              'timezone Europe/London`';
         }
-        return returnMsg;
       }
-      // check entered timezone against regex
-      if (!this.regionRegex.test(timezone)) {
-        returnMsg =
-            '**Error:** Winnie_Bot accepts IANA timezone identifiers only.' +
-            ' These generally take the format of' +
-            ' Continent/Your_Areas_Largest_City.\n' +
-            '**For example:** `' +
-            prefix +
-            'timezone America/New_York`, `' +
-            prefix +
-            'timezone Australia/Sydney`, `' +
-            prefix +
-            'timezone Europe/London`';
-        return returnMsg;
-      }
-      // add user to role, confirm
+      // add timezone to database, confirm
       conn.collection('userDB').update(
           {_id: msg.author.id},
           {$set: {
@@ -91,9 +70,9 @@ class Goals {
           {upsert: true}
       );
       returnMsg = msg.author +
-          ', you have set your timezone to **' +
-          timezone +
-          '**.';
+        ', you have set your timezone to **' +
+        timezone +
+        '**.';
     }
     return returnMsg;
   }
@@ -145,47 +124,35 @@ class Goals {
         if (goalType === undefined) {
           goalType = 'words';
         }
-        try {
-          const user = await conn.collection('userDB').findOne(
-              {_id: msg.author.id}
-          );
-          logger.info(user);
-          if (user == null || user.timezone == undefined) {
-            return msg.author +
-                ', you need to set your timezone before' +
-                ' setting a daily goal. Use the `!timezone`' +
-                ' command to do so.';
-          } else {
-            // get timezone
-            const userTZ = user.timezone;
-            // get current time
-            const startTime = new timezoneJS.Date();
-            startTime.setTimezone(userTZ);
-            // calculate next midnight based on timezone
-            const endTime = new timezoneJS.Date();
-            endTime.setTimezone(userTZ);
-            endTime.setHours(24, 0, 0, 0);
-            goallist.goalList[msg.author.id] = new Goal(
-                msg.author.id,
-                goal,
-                goalType,
-                0,
-                startTime.getTime(),
-                endTime.getTime(),
-                msg.channel.id
-            );
-            return msg.author +
-                ', your goal for today is **' +
-                goal +
-                '** ' +
-                goalType +
-                '.';
-          }
-        } catch (e) {
-          logger.info(e, e.stack);
-          returnMsg = msg.author +
+        const user = await conn.collection('userDB').findOne(
+            {_id: msg.author.id}
+        );
+        if (user == null || user.timezone == undefined) {
+          return msg.author +
               ', you need to set your timezone before' +
-              ' setting a daily goal. Use the `!timezone` command to do so.';
+              ' setting a daily goal. Use the `!timezone`' +
+              ' command to do so.';
+        } else {
+          // get current time
+          const startTime = new timezoneJS.Date(user.timezone);
+          // calculate next midnight based on timezone
+          const endTime = new timezoneJS.Date(user.timezone);
+          endTime.setHours(24, 0, 0, 0);
+          goallist.goalList[msg.author.id] = new Goal(
+              msg.author.id,
+              goal,
+              goalType,
+              0,
+              startTime.getTime(),
+              endTime.getTime(),
+              msg.channel.id
+          );
+          return msg.author +
+              ', your goal for today is **' +
+              goal +
+              '** ' +
+              goalType +
+              '.';
         }
       }
     }
