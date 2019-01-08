@@ -705,29 +705,20 @@ class Challenges {
     const wordsWritten = args.shift();
     let writtenType = args.shift();
     let raptorCheck = true;
-    if (
-      writtenType == 'line' ||
-      writtenType == 'page' ||
-      writtenType == 'word' ||
-      writtenType == 'minute'
-    ) {
+    if (writtenType === undefined) {
+      writtenType = 'words';
+    }
+    if (writtenType.charAt(writtenType.length-1)) {
       writtenType += 's';
     }
-    if (
-      !(
-        writtenType == 'lines' ||
-        writtenType == 'pages' ||
-        writtenType == 'words' ||
-        writtenType == 'minutes' ||
-        writtenType === undefined
-      )
-    ) {
+    if (!(
+      writtenType == 'lines' || writtenType == 'pages' ||
+      writtenType == 'words' || writtenType == 'minutes'
+    )) {
       raptorCheck = false;
       returnMsg = '**Error:** You must work in words, lines, or pages.';
     } else {
-      if (writtenType === undefined) {
-        writtenType = 'words';
-      }
+      
       if (challengeID in challengelist.challengeList) {
         if (challengelist.challengeList[challengeID].type != 'sprint') {
           if (challengelist.challengeList[challengeID].state >= 2) {

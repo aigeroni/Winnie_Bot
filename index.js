@@ -24,60 +24,45 @@ timezoneJS.timezone.init();
 const tickTimer = gameloop.setGameLoop(async function(delta) {
   // check challenges
   for (const item in challengelist.challengeList) {
-    if (challengelist.challengeList.hasOwnProperty(item)) {
-      if (challengelist.challengeList[item].type == 'chain war') {
-        if (challengelist.challengeList[item].state == 2) {
-          challengelist.challengeList[item].state = 3;
-          if (
-            challengelist.challengeList[item].current <
-            challengelist.challengeList[item].total
-          ) {
-            const hookedChannels =
-                challengelist.challengeList[item].hookedChannels.slice();
-            const joinedUsers = JSON.parse(JSON.stringify(
-                challengelist.challengeList[item].joinedUsers));
-            const startTime = new Date().getTime();
-            challengelist.challengeList[challenges.timerID] = new ChainWar(
-                challenges.timerID,
-                challengelist.challengeList[item].creator,
-                challengelist.challengeList[item].warName,
-                startTime,
-                challengelist.challengeList[item].current + 1,
-                challengelist.challengeList[item].total,
-                challengelist.challengeList[item].countdownList,
-                challengelist.challengeList[item].duration,
-                challengelist.challengeList[item].channelID,
-                challengelist.challengeList[item].hidden,
-                hookedChannels,
-                joinedUsers,
-                challengelist.challengeList[item].chainTotal
-            );
-            conn
-                .collection('timer')
-                .update(
-                    {data: challenges.timerID},
-                    {data: challenges.timerID + 1},
-                    {upsert: true}
-                );
-            challenges.timerID = challenges.timerID + 1;
-          }
-        }
+    if (challengelist.challengeList.hasOwnProperty(item) &&
+      challengelist.challengeList[item].type == 'chain war' &&
+      challengelist.challengeList[item].state == 2) {
+      challengelist.challengeList[item].state = 3;
+      if (
+        challengelist.challengeList[item].current <
+        challengelist.challengeList[item].total
+      ) {
+        challengelist.challengeList[challenges.timerID] = new ChainWar(
+            challenges.timerID,
+            challengelist.challengeList[item].creator,
+            challengelist.challengeList[item].warName,
+            new Date().getTime(),
+            challengelist.challengeList[item].current + 1,
+            challengelist.challengeList[item].total,
+            challengelist.challengeList[item].countdownList,
+            challengelist.challengeList[item].duration,
+            challengelist.challengeList[item].channelID,
+            challengelist.challengeList[item].hidden,
+            challengelist.challengeList[item].hookedChannels.slice(),
+            JSON.parse(JSON.stringify(
+                challengelist.challengeList[item].joinedUsers)),
+            challengelist.challengeList[item].chainTotal
+        );
+        challenges.incrementID();
       }
       challengelist.challengeList[item].update();
     }
   }
   // check goals
   for (const item in goallist.goalList) {
-    if (goallist.goalList.hasOwnProperty(item)) {
-      const raptorRoll = goallist.goalList[item].update();
-      if (raptorRoll != false) {
-        await tools.raptor(
-            raptorRoll[0].guild.id,
-            raptorRoll[0],
-            client.users.get(item),
-            raptorRoll[1]
-        );
-      }
+    if (goallist.goalList.hasOwnProperty(item) &&
+      goallist.goalList[item].update()) {
+      await tools.raptor(
+          raptorRoll[0].guild.id,
+          raptorRoll[0],
+          client.users.get(item),
+          raptorRoll[1]
+      );
     }
   }
   // post wordcount goal announcements
@@ -341,17 +326,15 @@ const cmdList = {
     process: async function(client, msg, prefix, suffix) {
       const returnData = await challenges.callTime(msg, suffix);
       let msgToSend = returnData.returnMsg;
-      if (returnData.raptorCheck) {
+      if (returnData.raptorCheck &&
+        msg.author.id in goallist.goalList &&
+        goallist.goalList[msg.author.id].goalType == 'words'
+      ) {
         const args = suffix.split(' ');
         const challengeID = args.shift();
-        if (msg.author.id in goallist.goalList) {
-          authorGoalType = goallist.goalList[msg.author.id].goalType;
-          updateWords = challengelist.challengeList[challengeID].goal;
-          if (authorGoalType == 'words') {
-            msgToSend += '\n' +
-                await goals.updateGoal(msg, prefix, updateWords, false);
-          }
-        }
+        const updateWords = challengelist.challengeList[challengeID].goal;
+        msgToSend += '\n' +
+            await goals.updateGoal(msg, prefix, updateWords, false);
         tools.raptor(
             msg.guild.id,
             msg.channel,
@@ -374,27 +357,21 @@ const cmdList = {
     process: async function(client, msg, prefix, suffix) {
       const returnData = await challenges.addTotal(msg, suffix);
       let msgToSend = returnData.returnMsg;
-      if (returnData.raptorCheck) {
+      if (returnData.raptorCheck &&
+        msg.author.id in goallist.goalList
+      ) {
         slice = suffix.split(' ');
         totalNumber = slice[1];
         totalType = slice[2];
-        if (msg.author.id in goallist.goalList) {
-          authorGoalType = goallist.goalList[msg.author.id].goalType;
-          if (totalType === undefined) {
-            totalType = 'words';
-          }
-          if (
-            totalType == 'line' ||
-            totalType == 'page' ||
-            totalType == 'word' ||
-            totalType == 'minute'
-          ) {
-            totalType += 's';
-          }
-          if (totalType == authorGoalType) {
-            msgToSend += '\n' +
-                await goals.updateGoal(msg, prefix, totalNumber, false);
-          }
+        if (totalType === undefined) {
+          totalType = 'words';
+        }
+        if (totalType.charAt(totalType.length-1)) {
+          totalType += 's';
+        }
+        if (totalType == goallist.goalList[msg.author.id].goalType) {
+          msgToSend += '\n' +
+              await goals.updateGoal(msg, prefix, totalNumber, false);
         }
         tools.raptor(
             msg.guild.id,
