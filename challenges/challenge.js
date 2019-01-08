@@ -134,24 +134,17 @@ class Challenge {
     if (this.cStart == 0) {
       this.startMsg();
     } else if (this.cStart == 60) {
-      for (let i = 0; i < this.hookedChannels.length; i++) {
-        const channelObject = client.channels.get(this.hookedChannels[i]);
-        channelObject.send(this.displayName + ' starts in 1 minute.');
-      }
+      this.sendMsg(this.displayName + ' starts in 1 minute.');
     } else if (this.cStart % 300 == 0) {
-      for (let i = 0; i < this.hookedChannels.length; i++) {
-        const channelObject = client.channels.get(this.hookedChannels[i]);
-        channelObject.send(
-            this.displayName + ' starts in ' + this.cStart / 60 + ' minutes.'
-        );
-      }
+      this.sendMsg(
+          this.displayName + ' starts in ' +
+          this.cStart / 60 + ' minutes.'
+      );
     } else if ([30, 10, 5].includes(this.cStart)) {
-      for (let i = 0; i < this.hookedChannels.length; i++) {
-        const channelObject = client.channels.get(this.hookedChannels[i]);
-        channelObject.send(
-            this.displayName + ' starts in ' + this.cStart + ' seconds.'
-        );
-      }
+      this.sendMsg(
+          this.displayName + ' starts in ' +
+          this.cStart + ' seconds.'
+      );
     }
   }
   /** Construct the message displayed to users when a challenge begins. */
@@ -212,34 +205,17 @@ class Challenge {
       }
       this.state = 2;
     } else if (this.cDur == 60) {
-      for (let i = 0; i < this.hookedChannels.length; i++) {
-        const channelObject = client.channels.get(this.hookedChannels[i]);
-        channelObject.send(
-            'There is 1 minute remaining in ' + this.displayName + '.'
-        );
-      }
+      this.sendMsg('There is 1 minute remaining in ' + this.displayName + '.');
     } else if (this.cDur % 300 == 0) {
-      for (let i = 0; i < this.hookedChannels.length; i++) {
-        const channelObject = client.channels.get(this.hookedChannels[i]);
-        channelObject.send(
-            'There are ' +
-            this.cDur / 60 +
-            ' minutes remaining in ' +
-            this.displayName +
-            '.'
-        );
-      }
+      this.sendMsg(
+          'There are ' + this.cDur / 60 + ' minutes remaining in ' +
+          this.displayName + '.'
+      );
     } else if ([30, 10, 5].includes(this.cDur)) {
-      for (let i = 0; i < this.hookedChannels.length; i++) {
-        const channelObject = client.channels.get(this.hookedChannels[i]);
-        channelObject.send(
-            'There are ' +
-            this.cDur +
-            ' seconds remaining in ' +
-            this.displayName +
-            '.'
-        );
-      }
+      this.sendMsg(
+          'There are ' + this.cDur + ' seconds remaining in ' +
+          this.displayName + '.'
+      );
     }
   }
   /** Check to see whether the total period is over, and post the summary. */
@@ -247,14 +223,21 @@ class Challenge {
     this.cPost--;
     if (this.cPost == 0) {
       for (let i = 0; i < this.hookedChannels.length; i++) {
-        const channelToSend = client.channels.get(this.hookedChannels[i]);
-        channelToSend.send(challengelist.generateSummary(
-            channelToSend,
-            this.objectID
-        ));
+        client.channels
+            .get(this.hookedChannels[i])
+            .send(challengelist
+                .generateSummary(channelToSend, this.objectID));
       }
       conn.collection('challengeDB').remove({_id: this.objectID});
       delete challengelist.challengeList[this.objectID];
+    }
+  }
+  /** Send a message to all hooked channels.
+   * @param {String} msg - The message to send.
+   */
+  sendMsg(msg) {
+    for (let i = 0; i < this.hookedChannels.length; i++) {
+      client.channels.get(this.hookedChannels[i]).send(msg);
     }
   }
 }

@@ -27,11 +27,9 @@ class Goals {
    */
   async setTimezone(msg, prefix, suffix) {
     let returnMsg = '';
-    const timezone = suffix.replace(/[a-zA-Z0-9]*/g,
-        function(txt) {
-          return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
-        }
-    );
+    const timezone = suffix.replace(/[a-zA-Z0-9]*/g, function(txt) {
+      return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+    });
     if (suffix == '') {
       returnMsg = msg.author + ', I need a timezone to set!';
     } else if (!this.regionRegex.test(timezone) || !mtz.tz.zone(timezone)) {
