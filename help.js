@@ -14,56 +14,25 @@ class Help {
    * @return {String} - the help message.
    */
   buildHelpMsg(cmdList, prefix, suffix) {
+    let helpMsg = '';
     if (suffix) {
-      let helpMsg = '';
       if (suffix == 'all') {
-        helpMsg = [];
-        helpMsg.push(
-            '**Winnie_Bot Commands:**\n' +
-            '*Replace the <angled brackets> with the relevant information. ' +
-            'Anything in [square brackets] is optional.*\n\n'
-        );
-        for (let i = 0; i < this.commandTypes.length; i++) {
-          helpMsg.push(this.buildHelpSection(cmdList, this.commandTypes[i]));
-        }
-        return helpMsg;
-      }
-      for (let i = 0; i < this.commandTypes.length; i++) {
-        if (this.commandTypes[i] == suffix) {
-          helpMsg = '**Winnie_Bot Commands:**\n' +
+        helpMsg = this.buildAllHelp(cmdList, prefix);
+      } else if (this.commandTypes.indexOf(suffix) > -1) {
+        helpMsg = '**Winnie_Bot Commands:**\n' +
           '*Replace the <angled brackets> with the relevant information. ' +
           'Anything in [square brackets] is optional.*\n\n';
-          helpMsg += this.buildHelpSection(cmdList, this.commandTypes[i]);
-          return helpMsg;
+        helpMsg += this.buildHelpSection(cmdList, prefix, suffix);
+      } else {
+        const cmd = cmdList[suffix];
+        if (cmd === undefined) {
+          helpMsg = '**Error:** That command does not exist.';
+        } else {
+          helpMsg = this.buildHelpItem(cmd, prefix);
         }
       }
-      const cmd = cmdList[suffix];
-      try {
-        helpMsg += '**' + prefix + cmd.name;
-      } catch (e) {
-        helpMsg += '**Error:** That command does not exist.';
-        return helpMsg;
-      }
-      if (cmd.usage) {
-        helpMsg += ' ' + cmd.usage;
-      }
-      helpMsg += ':**\n' +
-          cmd.description.replace(/%prefix/g, prefix) +
-          '\n';
-      if (cmd.example) {
-        helpMsg += '**Example:** `' +
-        prefix +
-        cmd.example +
-        '`\n';
-      }
-      if (cmd.aliases) {
-        helpMsg += '**Aliases:** ' +
-        cmd.aliases +
-        '\n';
-      }
-      return helpMsg;
     } else {
-      let helpMsg = '**Winnie_Bot Commands:**';
+      helpMsg = '**Winnie_Bot Commands:**';
       for (let i = 0; i < this.commandTypes.length; i++) {
         const typeTitle = this.commandTypes[i].charAt(0).toUpperCase()
           + this.commandTypes[i].substr(1).toLowerCase();
@@ -96,43 +65,78 @@ class Help {
         ' for a command type, or `' +
         prefix +
         'help all` to have Winnie DM you help for all commands.';
-      return helpMsg;
     }
+    return helpMsg;
+  }
+  /**
+   * Builds help message for all commands.
+   * @param {Object} cmdList - A list of Winnie's commands.
+   * @param {String} prefix - The bot's prefix.
+   * @return {String} - the help message.
+   */
+  buildAllHelp(cmdList, prefix) {
+    const helpMsg = [];
+    helpMsg.push(
+        '**Winnie_Bot Commands:**\n' +
+        '*Replace the <angled brackets> with the relevant information. ' +
+        'Anything in [square brackets] is optional.*\n\n'
+    );
+    for (let i = 0; i < this.commandTypes.length; i++) {
+      helpMsg.push(this.buildHelpSection(
+          cmdList,
+          prefix,
+          this.commandTypes[i]
+      ));
+    }
+    return helpMsg;
   }
   /**
    * Builds a help message for a specific type of command.
    * @param {Object} cmdList - A list of Winnie's commands.
+   * @param {String} prefix - The bot's prefix.
    * @param {String} cmdType - The type of command to provide help for.
    * @return {String} - the help message.
    */
-  buildHelpSection(cmdList, cmdType) {
+  buildHelpSection(cmdList, prefix, cmdType) {
     const title = cmdType.charAt(0).toUpperCase() + cmdType.substr(1);
     let helpMsg = '__*' + title + ':*__\n';
     for (const i in cmdList) {
       if (cmdList.hasOwnProperty(i)) {
         if (!(cmdList[i].alias)) {
           if (cmdList[i].type == cmdType) {
-            helpMsg += '**' + prefix + cmdList[i].name;
-            if (cmdList[i].usage) {
-              helpMsg += ' ' + cmdList[i].usage;
-            }
-            helpMsg += ':**\n' + cmdList[i].description + '\n';
-            if (cmdList[i].example) {
-              helpMsg += '**Example:** `' +
-              prefix +
-              cmdList[i].example +
-              '`\n';
-            }
-            if (cmdList[i].aliases) {
-              helpMsg += '**Aliases:** ' +
-              cmdList[i].aliases +
-              '\n';
-            }
-            helpMsg += '\n';
+            helpMsg += this.buildHelpItem(cmdList[i], prefix);
           }
         }
       }
     }
+    return helpMsg;
+  }
+  /**
+   * Builds a help message for a specific command.
+   * @param {Object} cmd - The command to provide help for.
+   * @param {String} prefix - The bot's prefix.
+   * @return {String} - the help message.
+   */
+  buildHelpItem(cmd, prefix) {
+    let helpMsg = '**' + prefix + cmd.name;
+    if (cmd.usage) {
+      helpMsg += ' ' + cmd.usage;
+    }
+    helpMsg += ':**\n' +
+        cmd.description.replace(/%prefix/g, prefix) +
+        '\n';
+    if (cmd.example) {
+      helpMsg += '**Example:** `' +
+      prefix +
+      cmd.example +
+      '`\n';
+    }
+    if (cmd.aliases) {
+      helpMsg += '**Aliases:** ' +
+      cmd.aliases +
+      '\n';
+    }
+    helpMsg += '\n';
     return helpMsg;
   }
 }
