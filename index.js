@@ -56,14 +56,16 @@ const tickTimer = gameloop.setGameLoop(async function(delta) {
   }
   // check goals
   for (const item in goallist.goalList) {
-    if (goallist.goalList.hasOwnProperty(item) &&
-      goallist.goalList[item].update()) {
-      await tools.raptor(
-          raptorRoll[0].guild.id,
-          raptorRoll[0],
-          client.users.get(item),
-          raptorRoll[1]
-      );
+    if (goallist.goalList.hasOwnProperty(item)) {
+      const raptorRoll = goallist.goalList[item].update();
+      if (raptorRoll) {
+        await tools.raptor(
+            raptorRoll[0].guild.id,
+            raptorRoll[0],
+            client.users.get(item),
+            raptorRoll[1]
+        );
+      }
     }
   }
   // post wordcount goal announcements

@@ -718,7 +718,6 @@ class Challenges {
       raptorCheck = false;
       returnMsg = '**Error:** You must work in words, lines, or pages.';
     } else {
-      
       if (challengeID in clist.running) {
         if (clist.running[challengeID].type != 'sprint') {
           if (clist.running[challengeID].state >= 2) {

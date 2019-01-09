@@ -211,12 +211,12 @@ class Challenge {
   /** Check to see whether the total period is over, and post the summary. */
   terminate() {
     this.cPost--;
-    if (this.cPost == 0) {
+    if (this.cPost <= 0) {
       for (let i = 0; i < this.hookedChannels.length; i++) {
         client.channels
             .get(this.hookedChannels[i])
             .send(clist
-                .generateSummary(channelToSend, this.objectID));
+                .generateSummary(this.hookedChannels[i], this.objectID));
       }
       conn.collection('challengeDB').remove({_id: this.objectID});
       delete clist.running[this.objectID];

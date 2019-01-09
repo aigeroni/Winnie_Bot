@@ -115,7 +115,7 @@ class ChainWar extends War {
   /** Check to see whether the total period is over, and post the summary. */
   terminate() {
     this.cPost--;
-    if (this.cPost == 0) {
+    if (this.cPost <= 0) {
       for (const user in this.joinedUsers) {
         if (this.joinedUsers.hasOwnProperty(user)) {
           const type = this.joinedUsers[user].countType;

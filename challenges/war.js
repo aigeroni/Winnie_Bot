@@ -17,6 +17,7 @@ class War extends Challenge {
    * @param {Array} hookedChannels - A list of channels that have joined the
    *  war.
    * @param {Object} joinedUsers - A list of users who have joined the war.
+   * @param {String} type - The type of the war.
    */
   constructor(
       objectID,
@@ -85,7 +86,7 @@ class War extends Challenge {
   /** Check to see whether the total period is over, and post the summary. */
   terminate() {
     this.cPost--;
-    if (this.cPost == 0) {
+    if (this.cPost <= 0) {
       for (const user in this.joinedUsers) {
         if (this.joinedUsers.hasOwnProperty(user)) {
           let dataToChange = '$inc: {';
