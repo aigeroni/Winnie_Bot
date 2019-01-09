@@ -30,78 +30,51 @@ class Challenges {
   async joinChallenge(msg, prefix, suffix) {
     let returnMsg = '';
     const challengeID = suffix;
-    if (isNaN(challengeID)) {
-      returnMsg = '**Error:** Challenge ID must be an integer. Example: `' +
-          prefix +
-          'join 10793`.';
-    } else if (challengeID < 1) {
-      returnMsg = '**Error:** Challenge ID must be an integer. Example: `' +
-          prefix +
-          'join 10793`.';
-    } else if (challengeID in clist.running) {
-      if (
-        clist.running[challengeID].hidden &&
-        client.channels.get(clist.running[challengeID].channelID)
-            .guild.id != msg.guild.id
-      ) {
-        returnMsg = msg.author +
-            ', you do not have permission to join' +
-            ' this challenge.';
-      } else {
-        if (
-          msg.author.id in clist.running[challengeID].joinedUsers
-        ) {
-          returnMsg = msg.author +
-              ', you already have notifications' +
-              ' enabled for this challenge.';
-        } else {
-          let data = '';
-          if (clist.running[challengeID].type == 'sprint') {
-            data = {
-              timestampCalled: undefined,
-              timeTaken: undefined,
-              channelID: msg.channel.id,
-            };
-          } else {
-            data = {
-              countData: undefined,
-              countType: undefined,
-              channelID: msg.channel.id,
-            };
-          }
-          clist.running[challengeID].joinedUsers[msg.author.id] = data;
-          const pushID = msg.channel.id;
-          const searchIndex = clist.running[
-              challengeID
-          ].hookedChannels.indexOf(pushID);
-          if (searchIndex == -1) {
-            clist.running[challengeID].hookedChannels.push(
-                pushID
-            );
-          }
-          returnMsg = msg.author +
-              ', you have joined ' +
-              clist.running[challengeID].displayName;
-          try {
-            await conn.collection('challengeDB').update(
-                {_id: parseInt(challengeID)},
-                {
-                  $set: {
-                    hookedChannels:
-                    clist.running[challengeID].hookedChannels,
-                    joinedUsers:
-                    clist.running[challengeID].joinedUsers,
-                  },
-                },
-                {upsert: true}
-            );
-          } catch (e) {
-            logger.error('Error %s: %s.', e, e.stack);
-          }
-        }
-      }
+    const returnInfo = checkIDError(challengeID, 'join');
+    if (returnInfo) {
+      returnMsg = returnInfo;
+    } else if (msg.author.id in clist.running[challengeID].joinedUsers) {
+      returnMsg = msg.author +
+        ', you already have notifications enabled for this challenge.';
     } else {
-      returnMsg = '**Error:** Challenge ' + challengeID + ' does not exist!';
+      let data = '';
+      if (clist.running[challengeID].type == 'sprint') {
+        data = {
+          timestampCalled: undefined,
+          timeTaken: undefined,
+          channelID: msg.channel.id,
+        };
+      } else {
+        data = {
+          countData: undefined,
+          countType: undefined,
+          channelID: msg.channel.id,
+        };
+      }
+      clist.running[challengeID].joinedUsers[msg.author.id] = data;
+      const pushID = msg.channel.id;
+      const searchIndex = clist.running[
+          challengeID
+      ].hookedChannels.indexOf(pushID);
+      if (searchIndex == -1) {
+        clist.running[challengeID].hookedChannels.push(
+            pushID
+        );
+      }
+      returnMsg = msg.author + ', you have joined ' +
+        clist.running[challengeID].displayName;
+      await conn.collection('challengeDB').update(
+          {_id: parseInt(challengeID)},
+          {
+            $set: {
+              hookedChannels:
+              clist.running[challengeID].hookedChannels,
+              joinedUsers:
+              clist.running[challengeID].joinedUsers,
+            },
+          },
+          {upsert: true}
+      );
     }
     return returnMsg;
   }
@@ -115,68 +88,45 @@ class Challenges {
   async leaveChallenge(msg, prefix, suffix) {
     let returnMsg = '';
     const challengeID = suffix;
-    if (isNaN(challengeID)) {
-      returnMsg = '**Error:** Challenge ID must be an integer. Example: `' +
-          prefix +
-          'leave 10793`.';
-    } else if (challengeID < 1) {
-      returnMsg = '**Error:** Challenge ID must be an integer. Example: `' +
-          prefix +
-          'leave 10793`.';
-    } else if (challengeID in clist.running) {
-      if (
-        msg.author.id in clist.running[challengeID].joinedUsers
-      ) {
-        delete clist.running[challengeID].joinedUsers[
-            msg.author.id
-        ];
-        let hookDrop = true;
-        if (clist
-            .running[challengeID]
-            .channelID == msg.channel.id) {
-          hookDrop = false;
-        }
-        for (const item in clist
-            .running[challengeID]
-            .joinedUsers) {
-          if (clist
-              .running[challengeID]
-              .joinedUsers.hasOwnProperty(item)) {
-            if (clist
-                .running[challengeID]
-                .joinedUsers[item].channelID == msg.channel.id) {
-              hookDrop = false;
-            }
-          }
-        }
-        if (hookDrop == true) {
-          logger.info('entered drop');
-          const index = clist.running[challengeID]
-              .hookedChannels.indexOf(msg.channel.id);
-          if (index != -1) {
-            clist.running[challengeID]
-                .hookedChannels.splice(index, 1);
-          }
-        }
-        returnMsg = msg.author +
-            ', you have left ' +
-            clist.running[challengeID].displayName;
-        await conn.collection('challengeDB').update(
-            {_id: parseInt(challengeID)},
-            {
-              $set: {
-                joinedUsers: clist.running[challengeID]
-                    .joinedUsers,
-              },
-            },
-            {upsert: true}
-        );
-      } else {
-        returnMsg = msg.author +
-            ', you have not yet joined this challenge.';
-      }
+    const returnInfo = checkIDError(challengeID, 'join');
+    if (returnInfo) {
+      returnMsg = returnInfo;
+    } else if (!(msg.author.id in clist.running[challengeID].joinedUsers)) {
+      returnMsg = msg.author + ', you have not yet joined this challenge.';
     } else {
-      returnMsg = '**Error:** Challenge ' + challengeID + ' does not exist!';
+      delete clist.running[challengeID].joinedUsers[msg.author.id];
+      let hookDrop = true;
+      if (clist.running[challengeID].channelID == msg.channel.id) {
+        hookDrop = false;
+      }
+      for (const item in clist.running[challengeID].joinedUsers) {
+        if (clist.running[challengeID].joinedUsers.hasOwnProperty(item)) {
+          if (clist.running[challengeID].joinedUsers[item].channelID ==
+            msg.channel.id) {
+            hookDrop = false;
+          }
+        }
+      }
+      if (hookDrop == true) {
+        const index = clist.running[challengeID]
+            .hookedChannels.indexOf(msg.channel.id);
+        if (index != -1) {
+          clist.running[challengeID]
+              .hookedChannels.splice(index, 1);
+        }
+      }
+      returnMsg = msg.author + ', you have left ' +
+        clist.running[challengeID].displayName;
+      await conn.collection('challengeDB').update(
+          {_id: parseInt(challengeID)},
+          {
+            $set: {
+              joinedUsers: clist.running[challengeID]
+                  .joinedUsers,
+            },
+          },
+          {upsert: true}
+      );
     }
     return returnMsg;
   }
@@ -483,39 +433,23 @@ class Challenges {
    */
   async stopChallenge(msg, prefix, suffix) {
     let returnMsg = '';
-    let channelList = [msg.channel.id];
     const challengeID = suffix;
-    if (isNaN(challengeID) || challengeID < 1) {
+    let channelList = [msg.channel.id];
+    const returnInfo = checkIDError(challengeID, 'join');
+    if (returnInfo) {
+      returnMsg = returnInfo;
+    } else if (clist.running[challengeID].creator == msg.author.id) {
+      await conn.collection('challengeDB').remove(
+          {_id: Number(challengeID)}
+      );
+      channelList = clist.running[challengeID].hookedChannels;
       returnMsg =
-          '**Error:** Challenge ID must be an integer. Example: `' +
-          prefix +
-          'cancel 10793`.';
-    } else if (challengeID in clist.running) {
-      const stopName = clist.running[challengeID].displayName;
-      if (
-        !(
-          clist.running[challengeID].hidden &&
-          clist.running[challengeID].channelID != msg.channel.id
-        )
-      ) {
-        if (clist.running[challengeID].creator == msg.author.id) {
-          await conn.collection('challengeDB').remove(
-              {_id: Number(challengeID)}
-          );
-          channelList = clist.running[challengeID].hookedChannels;
-          returnMsg = stopName + ' has been ended by the creator.';
-          delete clist.running[challengeID];
-        } else {
-          returnMsg = '**Error:** Only the creator of ' +
-              stopName +
-              ' can end this challenge.';
-        }
-      } else {
-        returnMsg = msg.author +
-            ', you do not have permission to end this challenge.';
-      }
+        clist.running[challengeID] + ' has been ended by the creator.';
+      delete clist.running[challengeID];
     } else {
-      returnMsg = '**Error:** Challenge ' + challengeID + ' does not exist!';
+      returnMsg = '**Error:** Only the creator of ' +
+        clist.running[challengeID] +
+        ' can end this challenge.';
     }
     return {channelList: channelList, returnMsg: returnMsg};
   }
@@ -996,6 +930,27 @@ class Challenges {
             {upsert: true}
         );
     this.timerID = this.timerID + 1;
+  }
+  /**
+   * Checks for a valid challenge ID.
+   * @param {String} challengeID - The ID to test for validity.
+   * @param {String} command - The command that resulted in this error.
+   * @return {String} - Error message.
+   */
+  checkIDError(challengeID, command) {
+    if (isNaN(challengeID) || challengeID < 1) {
+      returnData = '**Error:** Challenge ID must be an integer. Example: `' +
+        prefix + command + '10793`.';
+    } else if (!(challengeID in clist.running)) {
+      returnData = '**Error:** Challenge ' + challengeID + ' does not exist!';
+    } else if (clist.running[challengeID].hidden && client.channels.get(
+        clist.running[challengeID].channelID).guild.id != msg.guild.id) {
+      returnData = msg.author + ', you do not have permission to ' +
+        command + ' this challenge.';
+    } else {
+      returnData = false;
+    }
+    return returnData;
   }
 }
 
