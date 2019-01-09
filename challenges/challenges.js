@@ -159,10 +159,10 @@ class Challenges {
     } else {
       try {
         const creatorID = msg.author.id;
-        const challengeID = this.timerID;
+        const chalID = this.timerID;
         const startTime = new Date().getTime();
-        clist.running[challengeID] = new Sprint(
-            challengeID,
+        clist.running[chalID] = new Sprint(
+            chalID,
             creatorID,
             sprintName,
             startTime,
@@ -176,7 +176,7 @@ class Challenges {
         );
         this.incrementID();
         if (joinFlag) {
-          returnMsg += await this.joinChallenge(msg, prefix, challengeID);
+          returnMsg += await this.joinChallenge(msg, prefix, chalID);
         }
       } catch (e) {
         returnMsg = '**Error:** Sprint creation failed.';
@@ -250,10 +250,10 @@ class Challenges {
     } else {
       try {
         const creatorID = msg.author.id;
-        const challengeID = this.timerID;
+        const chalID = this.timerID;
         const startTime = new Date().getTime();
-        clist.running[challengeID] = new War(
-            challengeID,
+        clist.running[chalID] = new War(
+            chalID,
             creatorID,
             warName,
             startTime,
@@ -266,7 +266,7 @@ class Challenges {
         );
         this.incrementID();
         if (joinFlag) {
-          returnMsg += await this.joinChallenge(msg, prefix, challengeID);
+          returnMsg += await this.joinChallenge(msg, prefix, chalID);
         }
       } catch (e) {
         returnMsg = '**Error:** War creation failed.';
@@ -353,10 +353,10 @@ class Challenges {
     } else {
       try {
         const creatorID = msg.author.id;
-        const challengeID = this.timerID;
+        const chalID = this.timerID;
         const startTime = new Date().getTime();
-        clist.running[challengeID] = new ChainWar(
-            challengeID,
+        clist.running[chalID] = new ChainWar(
+            chalID,
             creatorID,
             warName,
             startTime,
@@ -372,7 +372,7 @@ class Challenges {
         );
         await this.incrementID();
         if (joinFlag) {
-          returnMsg += await this.joinChallenge(msg, prefix, challengeID);
+          returnMsg += await this.joinChallenge(msg, prefix, chalID);
         }
       } catch (e) {
         returnMsg = '**Error:** Chain war creation failed.';
@@ -390,22 +390,22 @@ class Challenges {
    */
   async stopChallenge(msg, prefix, suffix) {
     let returnMsg = '';
-    const challengeID = suffix;
+    const chalID = suffix;
     let channelList = [msg.channel.id];
-    const returnInfo = checkIDError(challengeID, 'join');
+    const returnInfo = checkIDError(chalID, 'join');
     if (returnInfo) {
       returnMsg = returnInfo;
-    } else if (clist.running[challengeID].creator == msg.author.id) {
+    } else if (clist.running[chalID].creator == msg.author.id) {
       await conn.collection('challengeDB').remove(
-          {_id: Number(challengeID)}
+          {_id: Number(chalID)}
       );
-      channelList = clist.running[challengeID].hookedChannels;
+      channelList = clist.running[chalID].hookedChannels;
       returnMsg =
-        clist.running[challengeID] + ' has been ended by the creator.';
-      delete clist.running[challengeID];
+        clist.running[chalID] + ' has been ended by the creator.';
+      delete clist.running[chalID];
     } else {
       returnMsg = '**Error:** Only the creator of ' +
-        clist.running[challengeID] +
+        clist.running[chalID] +
         ' can end this challenge.';
     }
     return {channelList: channelList, returnMsg: returnMsg};
@@ -555,7 +555,7 @@ class Challenges {
   async addTotal(msg, suffix) {
     let returnMsg = '';
     const args = suffix.split(' ');
-    const challengeID = args.shift();
+    const chalID = args.shift();
     const wordsWritten = args.shift();
     let writtenType = args.shift();
     let raptorCheck = true;
@@ -571,93 +571,43 @@ class Challenges {
     )) {
       raptorCheck = false;
       returnMsg = '**Error:** You must work in words, lines, or pages.';
+    } else if (!(chalID in clist.running)) {
+      raptorCheck = false;
+      returnMsg = '**Error:** This challenge does not exist!';
+    } else if (clist.running[chalID].type == 'sprint') {
+      raptorCheck = false;
+      returnMsg = '**Error:** You cannot post a total for sprints.';
+    } else if (clist.running[chalID].state < 2) {
+      raptorCheck = false;
+      returnMsg = '**Error:** This challenge has not ended yet!';
+    } else if (clist.running[chalID].hidden && client.channels.get(
+        clist.running[chalID].channelID).guild.id != msg.guild.id) {
+      raptorCheck = false;
+      returnMsg = msg.author +
+          ', you do not have permission to join this challenge.';
+    } else if (!Number.isInteger(Number(wordsWritten))) {
+      raptorCheck = false;
+      returnMsg = msg.author +
+          ', I need a whole number to include in the summary!';
     } else {
-      if (challengeID in clist.running) {
-        if (clist.running[challengeID].type != 'sprint') {
-          if (clist.running[challengeID].state >= 2) {
-            if (
-              !(
-                clist.running[challengeID].hidden &&
-                client.channels.get(
-                    clist.running[challengeID].channelID
-                ).guild.id != msg.guild.id
-              )
-            ) {
-              if (Number.isInteger(Number(wordsWritten))) {
-                for (const user in clist.running[challengeID]
-                    .joined) {
-                  if (user == msg.author.id) {
-                    if (
-                      !(
-                        clist.running[challengeID]
-                            .joined[user].countData === undefined
-                      )
-                    ) {
-                      raptorCheck = false;
-                    }
-                  }
-                }
-                if (Number(wordsWritten) < 1) {
-                  raptorCheck = false;
-                }
-                clist.running[challengeID].joined[
-                    msg.author.id
-                ] = {
-                  countData: wordsWritten,
-                  countType: writtenType,
-                  channelID: msg.channel.id,
-                };
-                const pushID = msg.channel.id;
-                const searchIndex = clist.running[
-                    challengeID
-                ].hookedChannels.indexOf(pushID);
-                if (searchIndex == -1) {
-                  clist.running[challengeID].hookedChannels.push(
-                      pushID
-                  );
-                }
-                try {
-                  await conn.collection('challengeDB').update(
-                      {_id: parseInt(challengeID)},
-                      {
-                        $set: {
-                          joined:
-                          clist.running[challengeID].joined,
-                        },
-                      },
-                      {upsert: true}
-                  );
-                } catch (e) {
-                  logger.error('**Error:** ' + e);
-                }
-                returnMsg = msg.author +
-                    ', your total of **' +
-                    wordsWritten +
-                    '** ' +
-                    writtenType +
-                    ' has been added to the summary.';
-              } else {
-                raptorCheck = false;
-                returnMsg = msg.author +
-                    ', I need a whole number to include in the summary!';
-              }
-            } else {
-              raptorCheck = false;
-              returnMsg = msg.author +
-                  ', you do not have permission to join this challenge.';
-            }
-          } else {
-            raptorCheck = false;
-            returnMsg = '**Error:** This challenge has not ended yet!';
-          }
-        } else {
+      for (const user in clist.running[chalID].joined) {
+        if (user == msg.author.id && !(clist.running[chalID].joined[user]
+            .countData === undefined)) {
           raptorCheck = false;
-          returnMsg = '**Error:** You cannot post a total for sprints.';
         }
-      } else {
-        raptorCheck = false;
-        returnMsg = '**Error:** This challenge does not exist!';
       }
+      if (Number(wordsWritten) < 1) {
+        raptorCheck = false;
+      }
+      clist.running[chalID].joined[msg.author.id] = buildUserData(msg,
+          clist.running[chalID].type, wordsWritten, writtenType);
+      if (clist.running[chalID].hookedChannels.indexOf(msg.channel.id) == -1) {
+        clist.running[chalID].hookedChannels.push(msg.channel.id);
+      }
+      const dbData = '$set: {joined: clist.running[chalID].joined,}';
+      await dbUpdate(parseInt(chalID), dbData);
+      returnMsg = msg.author + ', your total of **' + wordsWritten +
+        '** ' + writtenType + ' has been added to the summary.';
     }
     return {returnMsg: returnMsg, raptorCheck: raptorCheck};
   }
@@ -855,19 +805,19 @@ class Challenges {
   }
   /**
    * Checks for a valid challenge ID.
-   * @param {String} challengeID - The ID to test for validity.
+   * @param {String} chalID - The ID to test for validity.
    * @param {String} command - The command that resulted in this error.
    * @return {String} - Error message.
    */
-  checkIDError(challengeID, command) {
+  checkIDError(chalID, command) {
     let returnData = '';
-    if (isNaN(challengeID) || challengeID < 1) {
+    if (isNaN(chalID) || chalID < 1) {
       returnData = '**Error:** Challenge ID must be an integer. Example: `' +
         prefix + command + '10793`.';
-    } else if (!(challengeID in clist.running)) {
-      returnData = '**Error:** Challenge ' + challengeID + ' does not exist!';
-    } else if (clist.running[challengeID].hidden && client.channels.get(
-        clist.running[challengeID].channelID).guild.id != msg.guild.id) {
+    } else if (!(chalID in clist.running)) {
+      returnData = '**Error:** Challenge ' + chalID + ' does not exist!';
+    } else if (clist.running[chalID].hidden && client.channels.get(
+        clist.running[chalID].channelID).guild.id != msg.guild.id) {
       returnData = msg.author + ', you do not have permission to ' +
         command + ' this challenge.';
     } else {
@@ -906,6 +856,21 @@ class Challenges {
    * @return {Object} - User data.
    */
   async dbUpdate(id, info) {
+    await conn.collection('challengeDB').update(
+        {_id: parseInt(chalID)},
+        {
+          info,
+        },
+        {upsert: true}
+    );
+  }
+  /**
+   * Find information in the challenge database
+   * @param {String} id - The ID of the challenge to update.
+   * @param {String} info - The data to update with.
+   * @return {Object} - User data.
+   */
+  async dbFind(id, info) {
     await conn.collection('challengeDB').update(
         {_id: parseInt(chalID)},
         {
