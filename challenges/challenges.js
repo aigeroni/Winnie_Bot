@@ -29,52 +29,24 @@ class Challenges {
    */
   async joinChallenge(msg, prefix, suffix) {
     let returnMsg = '';
-    const challengeID = suffix;
-    const returnInfo = checkIDError(challengeID, 'join');
+    const chalID = suffix;
+    const returnInfo = checkIDError(chalID, 'join');
     if (returnInfo) {
       returnMsg = returnInfo;
-    } else if (msg.author.id in clist.running[challengeID].joinedUsers) {
+    } else if (msg.author.id in clist.running[chalID].joined) {
       returnMsg = msg.author +
         ', you already have notifications enabled for this challenge.';
     } else {
-      let data = '';
-      if (clist.running[challengeID].type == 'sprint') {
-        data = {
-          timestampCalled: undefined,
-          timeTaken: undefined,
-          channelID: msg.channel.id,
-        };
-      } else {
-        data = {
-          countData: undefined,
-          countType: undefined,
-          channelID: msg.channel.id,
-        };
-      }
-      clist.running[challengeID].joinedUsers[msg.author.id] = data;
-      const pushID = msg.channel.id;
-      const searchIndex = clist.running[
-          challengeID
-      ].hookedChannels.indexOf(pushID);
-      if (searchIndex == -1) {
-        clist.running[challengeID].hookedChannels.push(
-            pushID
-        );
+      clist.running[chalID].joined[msg.author.id] =
+        buildUserData(clist.running[chalID].type, undefined, undefined);
+      if (clist.running[chalID].hookedChannels.indexOf(msg.channel.id) == -1) {
+        clist.running[chalID].hookedChannels.push(msg.channel.id);
       }
       returnMsg = msg.author + ', you have joined ' +
-        clist.running[challengeID].displayName;
-      await conn.collection('challengeDB').update(
-          {_id: parseInt(challengeID)},
-          {
-            $set: {
-              hookedChannels:
-              clist.running[challengeID].hookedChannels,
-              joinedUsers:
-              clist.running[challengeID].joinedUsers,
-            },
-          },
-          {upsert: true}
-      );
+        clist.running[chalID].displayName;
+      const dbData = '$set: {hookedChannels: clist.running[chalID]' +
+        '.hookedChannels, joined: clist.running[chalID].joined,}';
+      await dbUpdate(parseInt(chalID), dbData);
     }
     return returnMsg;
   }
@@ -87,46 +59,38 @@ class Challenges {
    */
   async leaveChallenge(msg, prefix, suffix) {
     let returnMsg = '';
-    const challengeID = suffix;
-    const returnInfo = checkIDError(challengeID, 'join');
+    const chalID = suffix;
+    const returnInfo = checkIDError(chalID, 'join');
     if (returnInfo) {
       returnMsg = returnInfo;
-    } else if (!(msg.author.id in clist.running[challengeID].joinedUsers)) {
+    } else if (!(msg.author.id in clist.running[chalID].joined)) {
       returnMsg = msg.author + ', you have not yet joined this challenge.';
     } else {
-      delete clist.running[challengeID].joinedUsers[msg.author.id];
+      delete clist.running[chalID].joined[msg.author.id];
       let hookDrop = true;
-      if (clist.running[challengeID].channelID == msg.channel.id) {
+      if (clist.running[chalID].channelID == msg.channel.id) {
         hookDrop = false;
       }
-      for (const item in clist.running[challengeID].joinedUsers) {
-        if (clist.running[challengeID].joinedUsers.hasOwnProperty(item)) {
-          if (clist.running[challengeID].joinedUsers[item].channelID ==
+      for (const item in clist.running[chalID].joined) {
+        if (clist.running[chalID].joined.hasOwnProperty(item)) {
+          if (clist.running[chalID].joined[item].channelID ==
             msg.channel.id) {
             hookDrop = false;
           }
         }
       }
       if (hookDrop == true) {
-        const index = clist.running[challengeID]
+        const index = clist.running[chalID]
             .hookedChannels.indexOf(msg.channel.id);
         if (index != -1) {
-          clist.running[challengeID]
+          clist.running[chalID]
               .hookedChannels.splice(index, 1);
         }
       }
       returnMsg = msg.author + ', you have left ' +
-        clist.running[challengeID].displayName;
-      await conn.collection('challengeDB').update(
-          {_id: parseInt(challengeID)},
-          {
-            $set: {
-              joinedUsers: clist.running[challengeID]
-                  .joinedUsers,
-            },
-          },
-          {upsert: true}
-      );
+        clist.running[chalID].displayName;
+      const dbData = '$set: {joined: clist.running[chalID].joined,}';
+      await dbUpdate(parseInt(chalID), dbData);
     }
     return returnMsg;
   }
@@ -576,7 +540,7 @@ class Challenges {
             doneStamp -
             clist.running[challengeID].startStamp
           ) / 60000;
-          clist.running[challengeID].joinedUsers[
+          clist.running[challengeID].joined[
               msg.author.id
           ] = {
             timestampCalled: doneStamp,
@@ -597,8 +561,8 @@ class Challenges {
                 {_id: parseInt(challengeID)},
                 {
                   $set: {
-                    joinedUsers:
-                  clist.running[challengeID].joinedUsers,
+                    joined:
+                  clist.running[challengeID].joined,
                   },
                 },
                 {upsert: true}
@@ -663,12 +627,12 @@ class Challenges {
             ) {
               if (Number.isInteger(Number(wordsWritten))) {
                 for (const user in clist.running[challengeID]
-                    .joinedUsers) {
+                    .joined) {
                   if (user == msg.author.id) {
                     if (
                       !(
                         clist.running[challengeID]
-                            .joinedUsers[user].countData === undefined
+                            .joined[user].countData === undefined
                       )
                     ) {
                       raptorCheck = false;
@@ -678,7 +642,7 @@ class Challenges {
                 if (Number(wordsWritten) < 1) {
                   raptorCheck = false;
                 }
-                clist.running[challengeID].joinedUsers[
+                clist.running[challengeID].joined[
                     msg.author.id
                 ] = {
                   countData: wordsWritten,
@@ -699,8 +663,8 @@ class Challenges {
                       {_id: parseInt(challengeID)},
                       {
                         $set: {
-                          joinedUsers:
-                          clist.running[challengeID].joinedUsers,
+                          joined:
+                          clist.running[challengeID].joined,
                         },
                       },
                       {upsert: true}
@@ -938,6 +902,7 @@ class Challenges {
    * @return {String} - Error message.
    */
   checkIDError(challengeID, command) {
+    let returnData = '';
     if (isNaN(challengeID) || challengeID < 1) {
       returnData = '**Error:** Challenge ID must be an integer. Example: `' +
         prefix + command + '10793`.';
@@ -951,6 +916,45 @@ class Challenges {
       returnData = false;
     }
     return returnData;
+  }
+  /**
+   * Builds user data for the challenge database.
+   * @param {String} type - The type of the challenge.
+   * @param {String} data1 - The first datapoint.
+   * @param {String} data2 - The second datapoint.
+   * @return {Promise} - Promise object.
+   */
+  buildUserData(type, data1, data2) {
+    let data = {};
+    if (type == 'sprint') {
+      data = {
+        timestampCalled: data1,
+        timeTaken: data2,
+        channelID: msg.channel.id,
+      };
+    } else {
+      data = {
+        countData: data1,
+        countType: data2,
+        channelID: msg.channel.id,
+      };
+    }
+    return data;
+  }
+  /**
+   * Updates the challenge database
+   * @param {String} id - The ID of the challenge to update.
+   * @param {String} info - The data to update with.
+   * @return {Object} - User data.
+   */
+  async dbUpdate(id, info) {
+    await conn.collection('challengeDB').update(
+        {_id: parseInt(chalID)},
+        {
+          info,
+        },
+        {upsert: true}
+    );
   }
 }
 

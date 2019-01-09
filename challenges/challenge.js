@@ -18,7 +18,7 @@ class Challenge {
    *  on other servers.
    * @param {Array} hookedChannels - A list of channels that have joined the
    *  challenge.
-   * @param {Object} joinedUsers - A list of users who have joined the
+   * @param {Object} joined - A list of users who have joined the
    *  challenge.
    */
   constructor(
@@ -32,7 +32,7 @@ class Challenge {
       type,
       hidden,
       hookedChannels,
-      joinedUsers
+      joined
   ) {
     this.objectID = objectID;
     this.creator = creator;
@@ -43,7 +43,7 @@ class Challenge {
     this.channelID = channel;
     this.channel = client.channels.get(this.channelID);
     this.type = type;
-    this.joinedUsers = joinedUsers;
+    this.joined = joined;
     this.hookedChannels = hookedChannels;
     this.state = 0;
     this.hidden = hidden;
@@ -213,8 +213,8 @@ class Challenge {
    */
   getUsers(channel) {
     let userList = '';
-    for (const user in this.joinedUsers) {
-      if (this.joinedUsers[user].channelID == channel) {
+    for (const user in this.joined) {
+      if (this.joined[user].channelID == channel) {
         userList += ' ' + client.users.get(user);
       }
     }

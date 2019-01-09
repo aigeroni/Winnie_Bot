@@ -16,7 +16,7 @@ class War extends Challenge {
    *  on other servers.
    * @param {Array} hookedChannels - A list of channels that have joined the
    *  war.
-   * @param {Object} joinedUsers - A list of users who have joined the war.
+   * @param {Object} joined - A list of users who have joined the war.
    * @param {String} type - The type of the war.
    */
   constructor(
@@ -29,7 +29,7 @@ class War extends Challenge {
       channel,
       hidden,
       hookedChannels,
-      joinedUsers,
+      joined,
       type
   ) {
     if (type == undefined) {
@@ -46,7 +46,7 @@ class War extends Challenge {
         type,
         hidden,
         hookedChannels,
-        joinedUsers
+        joined
     );
 
     const challengeData = {
@@ -58,7 +58,7 @@ class War extends Challenge {
       duration: this.duration,
       channel: this.channelID,
       hookedChannels: this.hookedChannels,
-      joinedUsers: this.joinedUsers,
+      joined: this.joined,
       state: this.state,
       type: 'war',
       hidden: this.hidden,
@@ -87,24 +87,24 @@ class War extends Challenge {
   terminate() {
     this.cPost--;
     if (this.cPost <= 0) {
-      for (const user in this.joinedUsers) {
-        if (this.joinedUsers.hasOwnProperty(user)) {
+      for (const user in this.joined) {
+        if (this.joined.hasOwnProperty(user)) {
           let dataToChange = '$inc: {';
-          if (this.joinedUsers[user].countType == 'words') {
+          if (this.joined[user].countType == 'words') {
             dataToChange +=
-              'lifetimeWarWords: parseInt(this.joinedUsers[user].countData),' +
+              'lifetimeWarWords: parseInt(this.joined[user].countData),' +
               'lifetimeWordMinutes: parseFloat(this.duration),},';
-          } else if (this.joinedUsers[user].countType == 'lines') {
+          } else if (this.joined[user].countType == 'lines') {
             dataToChange +=
-              'lifetimeWarLines: parseInt(this.joinedUsers[user].countData),' +
+              'lifetimeWarLines: parseInt(this.joined[user].countData),' +
               'lifetimeLineMinutes: parseFloat(this.duration),},';
-          } else if (this.joinedUsers[user].countType == 'pages') {
+          } else if (this.joined[user].countType == 'pages') {
             dataToChange +=
-              'lifetimeWarPages: parseInt(this.joinedUsers[user].countData),' +
+              'lifetimeWarPages: parseInt(this.joined[user].countData),' +
               'lifetimePageMinutes: parseFloat(this.duration),},';
-          } else if (this.joinedUsers[user].countType == 'minutes') {
+          } else if (this.joined[user].countType == 'minutes') {
             dataToChange += 'lifetimeWarMinutes: ' +
-              'parseInt(this.joinedUsers[user].countData),},';
+              'parseInt(this.joined[user].countData),},';
           }
           conn.collection('userDB').update(
               {_id: user},

@@ -37,16 +37,16 @@ class ChallengeList {
    */
   serverTotals(challengeID) {
     let serverTotals = {};
-    for (const user in this.running[challengeID].joinedUsers) {
-      if (this.running[challengeID].joinedUsers[user].countType != undefined) {
+    for (const user in this.running[challengeID].joined) {
+      if (this.running[challengeID].joined[user].countType != undefined) {
         const homeServer = this.getServerFromID(
-            this.running[challengeID].joinedUsers[user].channelID);
+            this.running[challengeID].joined[user].channelID);
         serverTotals = this.addToAggregate(serverTotals, homeServer);
         serverTotals[homeServer][this.running[challengeID]
-            .joinedUsers[user].countType][0] +=
-            parseInt(this.running[challengeID].joinedUsers[user].countData);
+            .joined[user].countType][0] +=
+            parseInt(this.running[challengeID].joined[user].countData);
         serverTotals[homeServer][this.running[challengeID]
-            .joinedUsers[user].countType][1] += 1;
+            .joined[user].countType][1] += 1;
       }
     }
     return serverTotals;
@@ -86,14 +86,14 @@ class ChallengeList {
    */
   warByUser(summaryServer, challengeID) {
     let userTotals = '';
-    for (const user in this.running[challengeID].joinedUsers) {
-      if (this.running[challengeID].joinedUsers[user].countType != undefined &&
+    for (const user in this.running[challengeID].joined) {
+      if (this.running[challengeID].joined[user].countType != undefined &&
         (this.getServerFromID(this.running[challengeID]
-            .joinedUsers[user].channelID) == summaryServer.id)) {
+            .joined[user].channelID) == summaryServer.id)) {
         userTotals += this.userTotals(
             user,
-            this.running[challengeID].joinedUsers[user].countData,
-            this.running[challengeID].joinedUsers[user].countType,
+            this.running[challengeID].joined[user].countData,
+            this.running[challengeID].joined[user].countType,
             this.running[challengeID].duration
         );
       }
@@ -108,15 +108,15 @@ class ChallengeList {
    */
   sprintByUser(summaryServer, challengeID) {
     let userTotals = '';
-    for (const user in this.running[challengeID].joinedUsers) {
-      if (this.running[challengeID].joinedUsers[user].timeTaken != undefined &&
+    for (const user in this.running[challengeID].joined) {
+      if (this.running[challengeID].joined[user].timeTaken != undefined &&
         (this.getServerFromID(this.running[challengeID]
-            .joinedUsers[user].channelID) == summaryServer.id)) {
+            .joined[user].channelID) == summaryServer.id)) {
         userTotals += this.userTotals(
             user,
             this.running[challengeID].goal,
             'sprint',
-            this.running[challengeID].joinedUsers[user].timeTaken
+            this.running[challengeID].joined[user].timeTaken
         );
       }
     }

@@ -19,7 +19,7 @@ class ChainWar extends War {
    *  on other servers.
    * @param {Array} hookedChannels - A list of channels that have joined the
    *  war.
-   * @param {Object} joinedUsers - A list of users who have joined the war.
+   * @param {Object} joined - A list of users who have joined the war.
    * @param {Object} chainTotal - Totals for all users, for all wars in the
    *  chain.
    */
@@ -35,7 +35,7 @@ class ChainWar extends War {
       channel,
       hidden,
       hookedChannels,
-      joinedUsers,
+      joined,
       chainTotal
   ) {
     super(
@@ -48,7 +48,7 @@ class ChainWar extends War {
         channel,
         hidden,
         hookedChannels,
-        joinedUsers,
+        joined,
         'chain war'
     );
     this.warName = warName;
@@ -70,7 +70,7 @@ class ChainWar extends War {
       duration: this.duration,
       channel: this.channelID,
       hookedChannels: this.hookedChannels,
-      joinedUsers: this.joinedUsers,
+      joined: this.joined,
       chainTotal: this.chainTotal,
       state: this.state,
       type: 'chain war',
@@ -116,14 +116,14 @@ class ChainWar extends War {
   terminate() {
     this.cPost--;
     if (this.cPost <= 0) {
-      for (const user in this.joinedUsers) {
-        if (this.joinedUsers.hasOwnProperty(user)) {
-          const type = this.joinedUsers[user].countType;
+      for (const user in this.joined) {
+        if (this.joined.hasOwnProperty(user)) {
+          const type = this.joined[user].countType;
           this.chainTotal = clist.addToAggregate(this.chainTotal, user);
           this.chainTotal[user][type][0] +=
-              parseInt(this.joinedUsers[user].countData);
+              parseInt(this.joined[user].countData);
           this.chainTotal[user][type][1] += 1;
-          this.chainTotal[user].channelID = this.joinedUsers[user].channelID;
+          this.chainTotal[user].channelID = this.joined[user].channelID;
         }
       }
       for (const user in this.chainTotal) {

@@ -18,7 +18,7 @@ class Sprint extends Challenge {
    *  on other servers.
    * @param {Array} hookedChannels - A list of channels that have joined the
    *  sprint.
-   * @param {Object} joinedUsers - A list of users who have joined the sprint.
+   * @param {Object} joined - A list of users who have joined the sprint.
    */
   constructor(
       objectID,
@@ -31,7 +31,7 @@ class Sprint extends Challenge {
       channel,
       hidden,
       hookedChannels,
-      joinedUsers
+      joined
   ) {
     super(
         objectID,
@@ -44,7 +44,7 @@ class Sprint extends Challenge {
         'sprint',
         hidden,
         hookedChannels,
-        joinedUsers
+        joined
     );
     this.goal = goal;
 
@@ -58,7 +58,7 @@ class Sprint extends Challenge {
       duration: this.duration,
       channel: this.channelID,
       hookedChannels: this.hookedChannels,
-      joinedUsers: this.joinedUsers,
+      joined: this.joined,
       state: this.state,
       type: 'sprint',
       hidden: this.hidden,
@@ -115,8 +115,8 @@ class Sprint extends Challenge {
   end() {
     this.cDur--;
     if (this.cDur <= 0) {
-      for (const user in this.joinedUsers) {
-        if (this.joinedUsers[user].timeTaken != undefined) {
+      for (const user in this.joined) {
+        if (this.joined[user].timeTaken != undefined) {
           conn.collection('userDB').update(
               {_id: user},
               {
@@ -124,7 +124,7 @@ class Sprint extends Challenge {
                   lifetimeSprintWords:
                   parseInt(this.goal),
                   lifetimeSprintMinutes:
-                  this.joinedUsers[user].timeTaken,
+                  this.joined[user].timeTaken,
                 },
               },
               {upsert: true}

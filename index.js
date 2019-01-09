@@ -45,7 +45,7 @@ const tickTimer = gameloop.setGameLoop(async function(delta) {
               clist.running[item].hidden,
               clist.running[item].hookedChannels.slice(),
               JSON.parse(JSON.stringify(
-                  clist.running[item].joinedUsers)),
+                  clist.running[item].joined)),
               clist.running[item].chainTotal
           );
           challenges.incrementID();
@@ -119,7 +119,7 @@ client.on('ready', () => {
                   challenge.channel,
                   challenge.hidden,
                   challenge.hookedChannels,
-                  challenge.joinedUsers
+                  challenge.joined
               );
             } else if (challenge.type == 'war') {
               clist.running[challenge._id] = new War(
@@ -132,7 +132,7 @@ client.on('ready', () => {
                   challenge.channel,
                   challenge.hidden,
                   challenge.hookedChannels,
-                  challenge.joinedUsers
+                  challenge.joined
               );
             } else if (challenge.type == 'chain war') {
               clist.running[challenge._id] = new ChainWar(
@@ -147,7 +147,7 @@ client.on('ready', () => {
                   challenge.channel,
                   challenge.hidden,
                   challenge.hookedChannels,
-                  challenge.joinedUsers,
+                  challenge.joined,
                   challenge.chainTotal
               );
             }
