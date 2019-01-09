@@ -39,9 +39,7 @@ class Challenges {
     } else {
       clist.running[chalID].joined[msg.author.id] =
         buildUserData(msg, clist.running[chalID].type, undefined, undefined);
-      if (clist.running[chalID].hookedChannels.indexOf(msg.channel.id) == -1) {
-        clist.running[chalID].hookedChannels.push(msg.channel.id);
-      }
+      pushToHook(chalID, msg);
       returnMsg = msg.author + ', you have joined ' +
         clist.running[chalID].displayName;
       const dbData = '$set: {hookedChannels: clist.running[chalID]' +
@@ -67,19 +65,7 @@ class Challenges {
       returnMsg = msg.author + ', you have not yet joined this challenge.';
     } else {
       delete clist.running[chalID].joined[msg.author.id];
-      let hookDrop = true;
-      if (clist.running[chalID].channelID == msg.channel.id) {
-        hookDrop = false;
-      }
-      for (const item in clist.running[chalID].joined) {
-        if (clist.running[chalID].joined[item].channelID == msg.channel.id) {
-          hookDrop = false;
-        }
-      }
-      if (hookDrop == true && clist.running[chalID].hookedChannels.indexOf(
-          msg.channel.id) != -1) {
-        clist.running[chalID].hookedChannels.splice(index, 1);
-      }
+      dropFromHook(chalID);
       returnMsg = msg.author + ', you have left ' +
         clist.running[chalID].displayName;
       const dbData = '$set: {joined: clist.running[chalID].joined,}';
@@ -420,83 +406,71 @@ class Challenges {
     let nonHiddenTotal = 0;
     let timerInfo = '';
     for (const i in clist.running) {
-      if (clist.running.hasOwnProperty(i)) {
-        const parentChannel = client.channels.get(
-            clist.running[i].channelID
-        );
-        const parentGuild = parentChannel.guild;
-        // check whether a challenge is hidden
-        if (
-          !(
-            clist.running[i].hidden &&
-            parentGuild.id != msg.guild.id
-          )
-        ) {
-          nonHiddenTotal += 1;
-          // find originating server name
-          const parentGuildName = parentGuild.name;
-          let timeout = '';
-          switch (clist.running[i].state) {
-            case 0:
-              if (clist.running[i].cStart % 60 < 10) {
-                timeout =
-                  '0' + (clist.running[i].cStart % 60).toString();
-              } else {
-                timeout = clist.running[i].cStart % 60;
-              }
-              timerInfo +=
-                i + ': ' + clist.running[i].displayName + ' (';
-              if (clist.running[i].type == 'sprint') {
-                timerInfo += clist.running[i].goal + ' words, ';
-              }
-              timerInfo +=
-                clist.running[i].duration +
-                ' minutes, starts in ' +
-                Math.floor(clist.running[i].cStart / 60) +
-                ':' +
-                timeout +
-                '), ' +
-                parentGuildName +
-                '\n';
-              break;
-            case 1:
-              if (clist.running[i].cDur % 60 < 10) {
-                timeout =
-                  '0' + (clist.running[i].cDur % 60).toString();
-              } else {
-                timeout = clist.running[i].cDur % 60;
-              }
-              timerInfo +=
-                i + ': ' + clist.running[i].displayName + ' (';
-              if (clist.running[i].type == 'sprint') {
-                timerInfo += clist.running[i].goal + ' words, ';
-              }
-              timerInfo +=
-                clist.running[i].duration +
-                ' minutes, ' +
-                Math.floor(clist.running[i].cDur / 60) +
-                ':' +
-                timeout +
-                ' remaining), ' +
-                parentGuildName +
-                '\n';
-              break;
-            case 2:
-            case 3:
-              timerInfo +=
-                i + ': ' + clist.running[i].displayName + ' (';
-              if (clist.running[i].type == 'sprint') {
-                timerInfo += clist.running[i].goal + ' words, ';
-              }
-              timerInfo +=
-                clist.running[i].duration +
-                ' minutes, ended), ' +
-                parentGuildName +
-                '\n';
-              break;
-            default:
-              break;
-          }
+      if (clist.running.hasOwnProperty(i) && !(hiddenCheck(i, msg.guild.id))) {
+        nonHiddenTotal += 1;
+        // find originating server name
+        const parentGuildName = parentGuild.name;
+        let timeout = '';
+        switch (clist.running[i].state) {
+          case 0:
+            if (clist.running[i].cStart % 60 < 10) {
+              timeout =
+                '0' + (clist.running[i].cStart % 60).toString();
+            } else {
+              timeout = clist.running[i].cStart % 60;
+            }
+            timerInfo +=
+              i + ': ' + clist.running[i].displayName + ' (';
+            if (clist.running[i].type == 'sprint') {
+              timerInfo += clist.running[i].goal + ' words, ';
+            }
+            timerInfo +=
+              clist.running[i].duration +
+              ' minutes, starts in ' +
+              Math.floor(clist.running[i].cStart / 60) +
+              ':' +
+              timeout +
+              '), ' +
+              parentGuildName +
+              '\n';
+            break;
+          case 1:
+            if (clist.running[i].cDur % 60 < 10) {
+              timeout =
+                '0' + (clist.running[i].cDur % 60).toString();
+            } else {
+              timeout = clist.running[i].cDur % 60;
+            }
+            timerInfo +=
+              i + ': ' + clist.running[i].displayName + ' (';
+            if (clist.running[i].type == 'sprint') {
+              timerInfo += clist.running[i].goal + ' words, ';
+            }
+            timerInfo +=
+              clist.running[i].duration +
+              ' minutes, ' +
+              Math.floor(clist.running[i].cDur / 60) +
+              ':' +
+              timeout +
+              ' remaining), ' +
+              parentGuildName +
+              '\n';
+            break;
+          case 2:
+          case 3:
+            timerInfo +=
+              i + ': ' + clist.running[i].displayName + ' (';
+            if (clist.running[i].type == 'sprint') {
+              timerInfo += clist.running[i].goal + ' words, ';
+            }
+            timerInfo +=
+              clist.running[i].duration +
+              ' minutes, ended), ' +
+              parentGuildName +
+              '\n';
+            break;
+          default:
+            break;
         }
       }
     }
@@ -536,9 +510,7 @@ class Challenges {
       const timeTaken = (doneStamp - clist.running[chalID].startStamp) / 60000;
       clist.running[chalID].joined[msg.author.id] =
         buildUserData(msg, 'sprint', doneStamp, timeTaken);
-      if (clist.running[chalID].hookedChannels.indexOf(msg.channel.id) == -1) {
-        clist.running[chalID].hookedChannels.push(msg.channel.id);
-      }
+      pushToHook(chalID, msg);
       const dbData = '$set: {joined: clist.running[chalID].joined,}';
       await dbUpdate(parseInt(chalID), dbData);
       returnMsg = msg.author + ', you completed the sprint in ' +
@@ -580,8 +552,7 @@ class Challenges {
     } else if (clist.running[chalID].state < 2) {
       raptorCheck = false;
       returnMsg = '**Error:** This challenge has not ended yet!';
-    } else if (clist.running[chalID].hidden && client.channels.get(
-        clist.running[chalID].channelID).guild.id != msg.guild.id) {
+    } else if (hiddenCheck(chalID, msg.guild.id)) {
       raptorCheck = false;
       returnMsg = msg.author +
           ', you do not have permission to join this challenge.';
@@ -816,8 +787,7 @@ class Challenges {
         prefix + command + '10793`.';
     } else if (!(chalID in clist.running)) {
       returnData = '**Error:** Challenge ' + chalID + ' does not exist!';
-    } else if (clist.running[chalID].hidden && client.channels.get(
-        clist.running[chalID].channelID).guild.id != msg.guild.id) {
+    } else if (hiddenCheck(chalID, msg.guild.id)) {
       returnData = msg.author + ', you do not have permission to ' +
         command + ' this challenge.';
     } else {
@@ -827,6 +797,7 @@ class Challenges {
   }
   /**
    * Builds user data for the challenge database.
+   * @param {String} msg - The message that requested the build.
    * @param {String} type - The type of the challenge.
    * @param {String} data1 - The first datapoint.
    * @param {String} data2 - The second datapoint.
@@ -865,19 +836,48 @@ class Challenges {
     );
   }
   /**
-   * Find information in the challenge database
-   * @param {String} id - The ID of the challenge to update.
-   * @param {String} info - The data to update with.
+   * Check to see whether a challenge is hidden from a server.
+   * @param {String} chalID - The ID of the challenge to check.
+   * @param {String} guildID - The ID of the server to check against.
    * @return {Object} - User data.
    */
-  async dbFind(id, info) {
-    await conn.collection('challengeDB').update(
-        {_id: parseInt(chalID)},
-        {
-          info,
-        },
-        {upsert: true}
-    );
+  hiddenCheck(chalID, guildID) {
+    let check = false;
+    if (clist.running[chalID].hidden && client.channels.get(
+        clist.running[chalID].channelID).guild.id != guildID) {
+      check = true;
+    }
+    return check;
+  }
+  /**
+   * Push a channel to the hooked channels list.
+   * @param {String} chalID - The ID of the challenge to push to.
+   * @param {String} msg - The message that initiated the push.
+   */
+  pushToHook(chalID, msg) {
+    if (clist.running[chalID].hookedChannels.indexOf(msg.channel.id) == -1) {
+      clist.running[chalID].hookedChannels.push(msg.channel.id);
+    }
+  }
+  /**
+   * Drop a channel from the hooked channels list.
+   * @param {String} chalID - The ID of the challenge to drop from.
+   * @param {String} msg - The message that initiated the drop.
+   */
+  dropFromHook(chalID, msg) {
+    let hookDrop = true;
+    if (clist.running[chalID].channelID == msg.channel.id) {
+      hookDrop = false;
+    }
+    for (const item in clist.running[chalID].joined) {
+      if (clist.running[chalID].joined[item].channelID == msg.channel.id) {
+        hookDrop = false;
+      }
+    }
+    if (hookDrop == true && clist.running[chalID].hookedChannels.indexOf(
+        msg.channel.id) != -1) {
+      clist.running[chalID].hookedChannels.splice(index, 1);
+    }
   }
 }
 
