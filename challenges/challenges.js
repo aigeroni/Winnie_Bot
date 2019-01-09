@@ -55,23 +55,21 @@ class Challenges {
               ', you already have notifications' +
               ' enabled for this challenge.';
         } else {
+          let data = '';
           if (clist.running[challengeID].type == 'sprint') {
-            clist.running[challengeID].joinedUsers[
-                msg.author.id
-            ] = {
+            data = {
               timestampCalled: undefined,
               timeTaken: undefined,
               channelID: msg.channel.id,
             };
           } else {
-            clist.running[challengeID].joinedUsers[
-                msg.author.id
-            ] = {
+            data = {
               countData: undefined,
               countType: undefined,
               channelID: msg.channel.id,
             };
           }
+          clist.running[challengeID].joinedUsers[msg.author.id] = data;
           const pushID = msg.channel.id;
           const searchIndex = clist.running[
               challengeID

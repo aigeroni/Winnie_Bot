@@ -57,52 +57,37 @@ class Challenge {
     this.delStamp = this.endStamp + this.cPost * 1000;
 
     const dateCheck = new Date().getTime();
-    if (this.startStamp < dateCheck) {
-      if (this.endStamp < dateCheck) {
-        if (this.delStamp < dateCheck) {
-          this.state = 2;
-          this.cPost = 0;
-        } else {
-          this.state = 2;
-          this.cPost = Math.ceil((this.delStamp - dateCheck) / 1000);
-        }
-      } else {
-        this.state = 1;
-        this.cDur = Math.ceil((this.endStamp - dateCheck) / 1000);
-      }
-    } else {
+    if (!(this.startStamp < dateCheck)) {
       this.state = 0;
       this.cStart = Math.ceil((this.startStamp - dateCheck) / 1000);
+    } else if (!(this.endStamp < dateCheck)) {
+      this.state = 1;
+      this.cDur = Math.ceil((this.endStamp - dateCheck) / 1000);
+    } else if (!(this.delStamp < dateCheck)) {
+      this.state = 2;
+      this.cPost = Math.ceil((this.delStamp - dateCheck) / 1000);
+    } else {
+      this.state = 2;
+      this.cPost = 0;
     }
     if (this.state == 0 && this.cStart == this.countdown * 60) {
-      if (this.countdown == 1) {
-        for (let i = 0; i < this.hookedChannels.length; i++) {
-          client.channels.get(this.hookedChannels[i]).send(
-              'Your ' +
-              type +
-              ', ' +
-              this.displayName +
-              ' (ID ' +
-              this.objectID +
-              '), starts in ' +
-              this.countdown +
-              ' minute.'
-          );
-        }
-      } else {
-        for (let i = 0; i < this.hookedChannels.length; i++) {
-          client.channels.get(this.hookedChannels[i]).send(
-              'Your ' +
-              type +
-              ', ' +
-              this.displayName +
-              ' (ID ' +
-              this.objectID +
-              '), starts in ' +
-              this.countdown +
-              ' minutes.'
-          );
-        }
+      let time = 'minute';
+      if (this.countdown != 1) {
+        time += 's';
+      }
+      for (let i = 0; i < this.hookedChannels.length; i++) {
+        client.channels.get(this.hookedChannels[i]).send(
+            'Your ' +
+            type +
+            ', ' +
+            this.displayName +
+            ' (ID ' +
+            this.objectID +
+            '), starts in ' +
+            this.countdown +
+            time +
+            '.'
+        );
       }
     }
   }

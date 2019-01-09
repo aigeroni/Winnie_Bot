@@ -65,13 +65,11 @@ class ChallengeList {
       userTotal +=
         client.users.get(user) + ': **' + time.toFixed(2) + '** minutes';
       type = 'words';
+    } else if (total == 1) {
+      userTotal +=
+        client.users.get(user) + ': **' + total + '** ' + type.slice(0, -1);
     } else {
-      userTotal += client.users.get(user) + ': **' + total + '** ';
-      if (total == 1) {
-        userTotal += type.slice(0, -1);
-      } else {
-        userTotal += type;
-      }
+      userTotal += client.users.get(user) + ': **' + total + '** ' + type;
     }
     if (type != 'minutes') {
       userTotal +=
