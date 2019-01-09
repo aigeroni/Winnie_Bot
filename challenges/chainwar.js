@@ -119,18 +119,17 @@ class ChainWar extends War {
       for (const user in this.joinedUsers) {
         if (this.joinedUsers.hasOwnProperty(user)) {
           const type = this.joinedUsers[user].countType;
-          if (this.chainTotal[user] === undefined) {
-            this.chainTotal[user] = {
-              words: [0, 0],
-              lines: [0, 0],
-              pages: [0, 0],
-              minutes: [0, 0],
-              channelID: this.joinedUsers[user].channelID,
-            };
-          }
+          this.chainTotal = clist.addToAggregate(this.chainTotal, user);
           this.chainTotal[user][type][0] +=
               parseInt(this.joinedUsers[user].countData);
           this.chainTotal[user][type][1] += 1;
+          this.chainTotal[user].channelID = this.joinedUsers[user].channelID;
+        }
+      }
+      for (const user in this.chainTotal) {
+        if (this.chainTotal.hasOwnProperty(user) &&
+          this.hookedChannels.indexOf(this.chainTotal[user].channelID) == -1) {
+          this.hookedChannels.push(this.chainTotal[user].channelID);
         }
       }
       super.terminate();

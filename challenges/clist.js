@@ -14,6 +14,23 @@ class ChallengeList {
     return client.channels.get(channel).guild.id;
   }
   /**
+   * Adds an object to an aggregate list of totals.
+   * @param {Object} serverList - The object to add to.
+   * @param {String} server - The object to add.
+   * @return {String} - The relevant server.
+   */
+  addToAggregate(serverList, server) {
+    if (serverList[server] === undefined) {
+      serverList[server] = {
+        words: [0, 0],
+        lines: [0, 0],
+        pages: [0, 0],
+        minutes: [0, 0],
+      };
+    }
+    return serverList;
+  }
+  /**
    * Produces a per-server breakdown of user-entered totals.
    * @param {String} challengeID - Unique ID of the challenge being summarised.
    * @return {String} - The message to send to the user.
@@ -25,14 +42,7 @@ class ChallengeList {
         this.running[challengeID].joinedUsers[user].channelID);
       const type = this.running[challengeID].joinedUsers[user].countType;
       if (type != undefined) {
-        if (serverTotals[homeServer] === undefined) {
-          serverTotals[homeServer] = {
-            words: [0, 0],
-            lines: [0, 0],
-            pages: [0, 0],
-            minutes: [0, 0],
-          };
-        }
+        serverTotals = this.addToAggregate(serverTotals, homeServer);
         serverTotals[homeServer][type][0] += parseInt(
           this.running[challengeID].joinedUsers[user].countData);
         serverTotals[homeServer][type][1] += 1;
@@ -132,15 +142,15 @@ class ChallengeList {
     if (this.running[challengeID].state >= 2) {
       const serverTotals = this.serverTotals(challengeID);
       const summaryServer = channel.guild;
-      returnMsg += this.userTotals(summaryServer, challengeID); + '\n';
+      returnMsg += this.userTotals(summaryServer, challengeID) + '\n';
       for (const server in serverTotals) {
         returnMsg += this.serverText(server, serverTotals);
       }
-      if (returnMsg == '') {
-        returnMsg = '\nNobody has posted a total for this war yet.';
-      }
     } else {
-      returnMsg = '**Error:** This war has not ended yet.';
+      returnMsg = '\nThis war has not ended yet.';
+    }
+    if (returnMsg == '') {
+      returnMsg = '\nNobody has posted a total for this war yet.';
     }
     return returnMsg;
   }
@@ -276,7 +286,8 @@ class ChallengeList {
       if (this.running[challengeID].type == 'chain war' &&
         this.running[challengeID].current ==
         this.running[challengeID].total) {
-          msgToSend += '\n\n' + this.chainSummary(channel, challengeID);
+          msgToSend += '\n\n***Summary for ' + this.warName + ':***\n\n'
+          + this.chainSummary(channel, challengeID);
       }
     } else {
       msgToSend = '**Error:** This challenge does not exist.';
