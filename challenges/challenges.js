@@ -38,7 +38,7 @@ class Challenges {
         ', you already have notifications enabled for this challenge.';
     } else {
       clist.running[chalID].joined[msg.author.id] =
-        buildUserData(clist.running[chalID].type, undefined, undefined);
+        buildUserData(msg, clist.running[chalID].type, undefined, undefined);
       if (clist.running[chalID].hookedChannels.indexOf(msg.channel.id) == -1) {
         clist.running[chalID].hookedChannels.push(msg.channel.id);
       }
@@ -72,20 +72,13 @@ class Challenges {
         hookDrop = false;
       }
       for (const item in clist.running[chalID].joined) {
-        if (clist.running[chalID].joined.hasOwnProperty(item)) {
-          if (clist.running[chalID].joined[item].channelID ==
-            msg.channel.id) {
-            hookDrop = false;
-          }
+        if (clist.running[chalID].joined[item].channelID == msg.channel.id) {
+          hookDrop = false;
         }
       }
-      if (hookDrop == true) {
-        const index = clist.running[chalID]
-            .hookedChannels.indexOf(msg.channel.id);
-        if (index != -1) {
-          clist.running[chalID]
-              .hookedChannels.splice(index, 1);
-        }
+      if (hookDrop == true && clist.running[chalID].hookedChannels.indexOf(
+          msg.channel.id) != -1) {
+        clist.running[chalID].hookedChannels.splice(index, 1);
       }
       returnMsg = msg.author + ', you have left ' +
         clist.running[chalID].displayName;
@@ -530,61 +523,26 @@ class Challenges {
   async callTime(msg, suffix) {
     let returnMsg = '';
     const args = suffix.split(' ');
-    const challengeID = args.shift();
+    const chalID = args.shift();
     let raptorCheck = true;
-    if (challengeID in clist.running) {
-      if (clist.running[challengeID].type == 'sprint') {
-        if (clist.running[challengeID].state < 2) {
-          const doneStamp = new Date().getTime();
-          const timeTaken = (
-            doneStamp -
-            clist.running[challengeID].startStamp
-          ) / 60000;
-          clist.running[challengeID].joined[
-              msg.author.id
-          ] = {
-            timestampCalled: doneStamp,
-            timeTaken: timeTaken,
-            channelID: msg.channel.id,
-          };
-          const pushID = msg.channel.id;
-          const searchIndex = clist.running[
-              challengeID
-          ].hookedChannels.indexOf(pushID);
-          if (searchIndex == -1) {
-            clist.running[challengeID].hookedChannels.push(
-                pushID
-            );
-          }
-          try {
-            await conn.collection('challengeDB').update(
-                {_id: parseInt(challengeID)},
-                {
-                  $set: {
-                    joined:
-                  clist.running[challengeID].joined,
-                  },
-                },
-                {upsert: true}
-            );
-          } catch (e) {
-            logger.error('Error %s: %s.', e, e.stack);
-          }
-          returnMsg = msg.author +
-              ', you completed the sprint in ' +
-              timeTaken.toFixed(2) +
-              ' minutes.';
-        } else {
-          raptorCheck = false;
-          returnMsg = '**Error:** This sprint has timed out.';
-        }
-      } else {
-        raptorCheck = false;
-        returnMsg = '**Error:** You can only call time on a sprint.';
-      }
-    } else {
+    if (!(chalID in clist.running)) {
       raptorCheck = false;
       returnMsg = '**Error:** This challenge does not exist.';
+    } else if (!(clist.running[chalID].type == 'sprint')) {
+      raptorCheck = false;
+      returnMsg = '**Error:** You can only call time on a sprint.';
+    } else {
+      const doneStamp = new Date().getTime();
+      const timeTaken = (doneStamp - clist.running[chalID].startStamp) / 60000;
+      clist.running[chalID].joined[msg.author.id] =
+        buildUserData(msg, 'sprint', doneStamp, timeTaken);
+      if (clist.running[chalID].hookedChannels.indexOf(msg.channel.id) == -1) {
+        clist.running[chalID].hookedChannels.push(msg.channel.id);
+      }
+      const dbData = '$set: {joined: clist.running[chalID].joined,}';
+      await dbUpdate(parseInt(chalID), dbData);
+      returnMsg = msg.author + ', you completed the sprint in ' +
+        timeTaken.toFixed(2) + ' minutes.';
     }
     return {returnMsg: returnMsg, raptorCheck: raptorCheck};
   }
@@ -924,7 +882,7 @@ class Challenges {
    * @param {String} data2 - The second datapoint.
    * @return {Promise} - Promise object.
    */
-  buildUserData(type, data1, data2) {
+  buildUserData(msg, type, data1, data2) {
     let data = {};
     if (type == 'sprint') {
       data = {
