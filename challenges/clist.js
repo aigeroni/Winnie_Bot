@@ -82,42 +82,29 @@ class ChallengeList {
    * Produces a per-user breakdown of user-entered totals for a war.
    * @param {String} summaryServer - The server being summarised.
    * @param {Number} challengeID - Unique ID of the challenge being summarised.
+   * @param {String} type - The type of challenge to summarise.
    * @return {String} - The message to send to the user.
    */
-  warByUser(summaryServer, challengeID) {
-    let userTotals = '';
-    for (const user in this.running[challengeID].joined) {
-      if (this.running[challengeID].joined[user].countType != undefined &&
-        (this.getServerFromID(this.running[challengeID]
-            .joined[user].channelID) == summaryServer.id)) {
-        userTotals += this.userTotals(
-            user,
-            this.running[challengeID].joined[user].countData,
-            this.running[challengeID].joined[user].countType,
-            this.running[challengeID].duration
-        );
-      }
+  challengeByUser(summaryServer, challengeID, type) {
+    let count = '';
+    let cType = '';
+    let time = '';
+    let check = '';
+    if (type == 'sprint') {
+      count = this.running[challengeID].goal;
+      cType = 'sprint';
+      time = check = this.running[challengeID].joined[user].timeTaken;
+    } else {
+      count = this.running[challengeID].joined[user].countData;
+      cType = check = this.running[challengeID].joined[user].countType;
+      time = this.running[challengeID].duration;
     }
-    return userTotals;
-  }
-  /**
-   * Produces a per-user breakdown of user-entered totals for a sprint.
-   * @param {String} summaryServer - The server being summarised.
-   * @param {Number} challengeID - Unique ID of the challenge being summarised.
-   * @return {String} - The message to send to the user.
-   */
-  sprintByUser(summaryServer, challengeID) {
     let userTotals = '';
     for (const user in this.running[challengeID].joined) {
-      if (this.running[challengeID].joined[user].timeTaken != undefined &&
+      if (check != undefined &&
         (this.getServerFromID(this.running[challengeID]
             .joined[user].channelID) == summaryServer.id)) {
-        userTotals += this.userTotals(
-            user,
-            this.running[challengeID].goal,
-            'sprint',
-            this.running[challengeID].joined[user].timeTaken
-        );
+        userTotals += this.userTotals(user, count, cType, time);
       }
     }
     return userTotals;
@@ -129,27 +116,24 @@ class ChallengeList {
    * @return {String} - The message to send to the user.
    */
   serverText(server, serverTotals) {
-    let serverText = '';
-    if ((server in serverTotals)) {
-      serverText += '__' + client.guilds.get(server).name + '__:';
-      let firstType = true;
-      for (const item in serverTotals[server]) {
-        if (serverTotals[server][item][1] > 0) {
-          if (!firstType) {
-            serverText = ', ';
-          }
-          serverText += ' **' + serverTotals[server][item][0];
-          if (serverTotals[server][item][0] == 1) {
-            serverText += '** ' + item.slice(0, -1);
-          } else {
-            serverText += '** ' + item;
-          }
-          serverText += ' (**' + (
-            serverTotals[server][item][0]/
-            serverTotals[server][item][1]).toFixed(0)
-            + '** avg)\n';
-          firstType = false;
+    let serverText = '__' + client.guilds.get(server).name + '__:';
+    let firstType = true;
+    for (const item in serverTotals[server]) {
+      if (serverTotals[server][item][1] > 0) {
+        if (!firstType) {
+          serverText = ', ';
         }
+        serverText += ' **' + serverTotals[server][item][0];
+        if (serverTotals[server][item][0] == 1) {
+          serverText += '** ' + item.slice(0, -1);
+        } else {
+          serverText += '** ' + item;
+        }
+        serverText += ' (**' + (
+          serverTotals[server][item][0]/
+          serverTotals[server][item][1]).toFixed(0)
+          + '** avg)\n';
+        firstType = false;
       }
     }
     return serverText;
@@ -165,7 +149,7 @@ class ChallengeList {
     if (this.running[challengeID].state >= 2) {
       const serverTotals = this.serverTotals(challengeID);
       const summaryServer = client.channels.get(channel).guild;
-      returnMsg += this.warByUser(summaryServer, challengeID);
+      returnMsg += this.challengeByUser(summaryServer, challengeID, 'war');
       for (const server in serverTotals) {
         if (serverTotals.hasOwnProperty(server)) {
           returnMsg += this.serverText(server, serverTotals);
@@ -190,7 +174,8 @@ class ChallengeList {
     if (this.running[challengeID].state == 1) {
       // const serverTotals = this.serverTotals(challengeID);
       const summaryServer = client.channels.get(channel).guild;
-      returnMsg += this.sprintByUser(summaryServer, challengeID) + '\n';
+      returnMsg +=
+        this.challengeByUser(summaryServer, challengeID, 'sprint') + '\n';
       // for (const server in serverTotals) {
       //   if (serverTotals.hasOwnProperty(server)) {
       //     returnMsg += this.serverText(server, serverTotals);
