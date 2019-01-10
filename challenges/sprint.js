@@ -1,5 +1,6 @@
 const Challenge = require('./challenge');
 const clist = require('./clist.js');
+const dbc = require('../dbc.js');
 const conn = require('mongoose').connection;
 
 /** Represents a sprint. */
@@ -119,7 +120,7 @@ class Sprint extends Challenge {
         if (this.joined[user].timeTaken != undefined) {
           const data = '$inc: {lifetimeSprintWords:' + parseInt(this.goal) +
             ', lifetimeSprintMinutes:' + this.joined[user].timeTaken + ',}';
-          clist.dbUpdate('userDB', user, data);
+          dbc.dbUpdate('userDB', user, data);
         }
       }
       super.terminate();

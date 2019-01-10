@@ -1,5 +1,6 @@
 const clist = require('./clist.js');
 const challenges = require('./challenges.js');
+const dbc = require('../dbc.js');
 const conn = require('mongoose').connection;
 
 /** Class containing functions for challenge management. */
@@ -142,7 +143,7 @@ class Config {
     } else if (msg.member.permissions.has('ADMINISTRATOR')) {
       if (!(update == 'on' || update == 'off')) {
         const data = '$set: {' + field + ':' + update + ',}';
-        await clist.dbUpdate('configDB', msg.guild.id, data);
+        await dbc.dbUpdate('configDB', msg.guild.id, data);
         returnMsg = msg.author + ', you have turned ' + textType + ' **' +
           update + '**.';
       } else {
@@ -168,7 +169,7 @@ class Config {
       returnMsg = author + ', use **on|off** to toggle preferences.';
     } else {
       const data = '$set: {' + field + ':' + flag + '}';
-      await clist.dbUpdate('userDB', msg.author.id, data);
+      await dbc.dbUpdate('userDB', msg.author.id, data);
       returnMsg = author + ', you have turned ';
       if (field == 'autoStatus') {
         returnMsg += 'automatic summaries';
@@ -176,6 +177,123 @@ class Config {
         returnMsg += 'cross-server display';
       }
       returnMsg = ' for your challenges **' + flag + '**.';
+    }
+    return returnMsg;
+  }
+  /**
+   * Allows server admins to set a custom prefix for Winnie.
+   * @param {Object} msg - The message that ran this function.
+   * @param {String} suffix - Information after the bot command.
+   * @return {String} - The message to send to the user.
+   */
+  async customPrefix(msg, suffix) {
+    let returnMsg = '';
+    // display Winnie's current prefix (all users)
+    if (suffix == '') {
+      const data = await conn.collection('configDB').findOne(
+          {_id: msg.guild.id}
+      );
+      if (data == null || data.prefix == undefined) {
+        returnMsg = msg.author +
+            ', this server does not have a custom prefix configured.';
+      } else {
+        returnMsg = msg.author +
+            ', my current prefix is `' +
+            data.prefix +
+            '`.';
+      }
+    } else if (msg.member.permissions.has('ADMINISTRATOR')) {
+      if (suffix == 'clear') {
+        await conn
+            .collection('configDB')
+            .update(
+                {_id: msg.guild.id},
+                {$set: {prefix: undefined}},
+                {upsert: true}
+            );
+        returnMsg = msg.author +
+            ', you have reset my prefix to the default `' +
+            config.cmd_prefix['default'] +
+            '`.';
+      } else { // change prefix (admins only)
+        if (suffix.length > 0 && suffix.length < 3) {
+          config.cmd_prefix[msg.guild.id] = suffix;
+          await conn
+              .collection('configDB')
+              .update(
+                  {_id: msg.guild.id},
+                  {$set: {prefix: suffix}},
+                  {upsert: true}
+              );
+          returnMsg = msg.author +
+              ', you have changed my prefix to `' +
+              suffix +
+              '`.';
+        } else {
+          returnMsg = '**Error:**:' +
+            ' My prefix must be less than three characters.';
+        }
+      }
+    } else {
+      returnMsg = '**Error:**: Only server administrators are permitted to' +
+          ' configure the prefix.';
+    }
+    return returnMsg;
+  }
+  /**
+   * Allows server admins to configure a channel for word count reminders.
+   * @param {Object} msg - The message that ran this function.
+   * @param {String} suffix - Information after the bot command.
+   * @return {String} - The message to send to the user.
+   */
+  async announcementChannel(msg, suffix) {
+    let returnMsg = '';
+    returnMsg = suffix;
+    // display the current announcements channel (all users)
+    if (suffix == '') {
+      const data = await conn.collection('configDB').findOne(
+          {_id: msg.guild.id}
+      );
+      if (data == null || data.announcements == undefined) {
+        returnMsg = msg.author +
+            ', announcements are not yet configured for this server.';
+      } else {
+        returnMsg = msg.author +
+          ', announcements are posted in ' +
+          client.channels.get(data.announcements) +
+          '.';
+      }
+    } else { // change announcements channel (admins only)
+      if (msg.member.permissions.has('ADMINISTRATOR')) {
+        const channelObject = client.channels.get(suffix.slice(2, -1));
+        if (channelObject != undefined) {
+          const perms = (channelObject.guild.me.permissionsIn(channelObject));
+          if (perms.hasPermission('SEND_MESSAGES')) {
+            this.announceChannel[msg.guild.id] = channelObject.id;
+            await conn
+                .collection('configDB')
+                .update(
+                    {_id: msg.guild.id},
+                    {$set: {announcements: channelObject.id}},
+                    {upsert: true}
+                );
+            returnMsg = msg.author +
+                ', you have changed the announcements channel to ' +
+                channelObject +
+                '.';
+          } else {
+            returnMsg = '**Error:**: I need permission to send messages' +
+                ' in the announcements channel.';
+          }
+        } else {
+          returnMsg = '**Error:**: ' +
+              suffix +
+              ' is not a valid channel.';
+        }
+      } else {
+        returnMsg = '**Error:**: Only server administrators are permitted to' +
+            ' configure the announcements channel.';
+      }
     }
     return returnMsg;
   }

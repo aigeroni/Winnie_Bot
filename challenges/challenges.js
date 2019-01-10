@@ -4,6 +4,7 @@ const ChainWar = require('./chainwar');
 const Sprint = require('./sprint');
 const War = require('./war');
 const clist = require('./clist.js');
+const dbc = require('../dbc.js');
 const logger = require('../logger.js');
 const conn = require('mongoose').connection;
 
@@ -44,7 +45,7 @@ class Challenges {
         clist.running[chalID].displayName;
       const dbData = '$set: {hookedChannels: clist.running[chalID]' +
         '.hookedChannels, joined: clist.running[chalID].joined,}';
-      await clist.dbUpdate('challengeDB', parseInt(chalID), dbData);
+      await dbc.dbUpdate('challengeDB', parseInt(chalID), dbData);
     }
     return returnMsg;
   }
@@ -69,7 +70,7 @@ class Challenges {
       returnMsg = msg.author + ', you have left ' +
         clist.running[chalID].displayName;
       const dbData = '$set: {joined: clist.running[chalID].joined,}';
-      await clist.dbUpdate('challengeDB', parseInt(chalID), dbData);
+      await dbc.dbUpdate('challengeDB', parseInt(chalID), dbData);
     }
     return returnMsg;
   }
@@ -420,7 +421,7 @@ class Challenges {
         this.buildUserData(msg, 'sprint', doneStamp, timeTaken);
       this.pushToHook(chalID, msg);
       const dbData = '$set: {joined: clist.running[chalID].joined,}';
-      await clist.dbUpdate('challengeDB', parseInt(chalID), dbData);
+      await dbc.dbUpdate('challengeDB', parseInt(chalID), dbData);
       returnMsg = msg.author + ', you completed the sprint in ' +
         timeTaken.toFixed(2) + ' minutes.';
     }
@@ -481,7 +482,7 @@ class Challenges {
         clist.running[chalID].hookedChannels.push(msg.channel.id);
       }
       const dbData = '$set: {joined: clist.running[chalID].joined,}';
-      await clist.dbUpdate('challengeDB', parseInt(chalID), dbData);
+      await dbc.dbUpdate('challengeDB', parseInt(chalID), dbData);
       returnMsg = msg.author + ', your total of **' + wordsWritten +
         '** ' + writtenType + ' has been added to the summary.';
     }
@@ -492,13 +493,11 @@ class Challenges {
    * @return {Promise} - Promise object.
    */
   async incrementID() {
-    await conn
-        .collection('timer')
-        .update(
-            {data: this.timerID},
-            {data: this.timerID + 1},
-            {upsert: true}
-        );
+    await conn.collection().update(
+        {data: this.timerID},
+        {data: this.timerID + 1},
+        {upsert: true}
+    );
     this.timerID = this.timerID + 1;
   }
   /**

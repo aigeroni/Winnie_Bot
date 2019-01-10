@@ -220,7 +220,6 @@ class Tools {
    * @return {String} - The message to send to the user.
    */
   async userInfo(client, msg) {
-    let statsTable = '';
     const document = await conn.collection('userDB').findOne(
         {_id: msg.author.id}
     );
@@ -230,115 +229,90 @@ class Tools {
     const usersWithRaptors = await conn.collection('raptorBuckets').findOne(
         {_id: 0}
     );
-    if (!(document == null)) {
-      statsTable += '***User Statistics for ' +
-      client.users.get(document._id).username +
-      ':***';
-      let firstSeen = true;
-      if (!(document.lifetimeSprintMinutes === undefined)) {
-        statsTable += '\n*Sprint Statistics:* **' +
-        parseFloat(document.lifetimeSprintMinutes).toFixed(2) +
-        '** minutes to write **' +
-        document.lifetimeSprintWords +
-        '** words (**' +
-        (document.lifetimeSprintWords /
-          document.lifetimeSprintMinutes)
+    let statsTable = '***User Statistics for ' + msg.author.username + ':***\n';
+    if (!(document == null || document.lifetimeSprintMinutes === undefined)) {
+      statsTable += '\n*Sprint Statistics:* **' +
+      parseFloat(document.lifetimeSprintMinutes).toFixed(2) +
+      '** minutes to write **' +
+      document.lifetimeSprintWords +
+      '** words (**' +
+      (document.lifetimeSprintWords /
+        document.lifetimeSprintMinutes)
+          .toFixed(2) +
+      '** wpm)';
+    }
+    let firstSeen = true;
+    if (!(document.lifetimeWarWords === undefined)) {
+      firstSeen = false;
+      statsTable += '\n*War Statistics:* ' +
+        '**' +
+        document.lifetimeWarWords +
+        '** words in **' +
+        document.lifetimeWordMinutes.toFixed(0) +
+        '** minutes (**' +
+        (document.lifetimeWarWords / document.lifetimeWordMinutes)
             .toFixed(2) +
         '** wpm)';
-      }
-      if (!(document.lifetimeWarWords === undefined)) {
-        firstSeen = false;
-        statsTable += '\n*War Statistics:* ' +
-          '**' +
-          document.lifetimeWarWords +
-          '** words in **' +
-          document.lifetimeWordMinutes.toFixed(0) +
-          '** minutes (**' +
-          (document.lifetimeWarWords / document.lifetimeWordMinutes)
-              .toFixed(2) +
-          '** wpm)';
-      }
-      if (!(document.lifetimeWarLines === undefined)) {
-        if (firstSeen == true) {
-          statsTable += '\n*War Statistics:* ';
-        } else {
-          statsTable += ', ';
-        }
-        statsTable += '**' +
-          document.lifetimeWarLines +
-          '** lines in **' +
-          document.lifetimeLineMinutes.toFixed(0) +
-          '** minutes (**' +
-          (document.lifetimeWarLines / document.lifetimeLineMinutes)
-              .toFixed(2) +
-          '** lpm)';
-        firstSeen = false;
-      }
-      if (!(document.lifetimeWarPages === undefined)) {
-        if (firstSeen == true) {
-          statsTable += '\n*War Statistics:* ';
-        } else {
-          statsTable += ', ';
-        }
-        statsTable += '**' +
-          document.lifetimeWarPages +
-          '** pages in **' +
-          document.lifetimePageMinutes.toFixed(0) +
-          '** minutes (**' +
-          (document.lifetimeWarPages / document.lifetimePageMinutes)
-              .toFixed(2) +
-          '** ppm)';
-        firstSeen = false;
-      }
-      if (!(document.lifetimeWarMinutes === undefined)) {
-        if (firstSeen == true) {
-          statsTable += '\n*War Statistics:* ';
-        } else {
-          statsTable += ', ';
-        }
-        statsTable += '**' +
-          document.lifetimeWarMinutes +
-          '** minutes';
-        firstSeen = false;
-      }
-      if (!(document.raptorTotal === undefined)) {
-        statsTable += '\n*Raptors:* **' +
-            document.raptorTotal +
-            '** (Global Rank **' +
-            data.rank +
-            '** of **' +
-            (usersWithRaptors.rank - 1) +
-            '**)';
+    }
+    if (!(document.lifetimeWarLines === undefined)) {
+      if (firstSeen == true) {
+        statsTable += '\n*War Statistics:* ';
       } else {
-        statsTable += '\n*Raptors:* **0** (Global Rank **' +
-            usersWithRaptors.rank +
-            '** of **' +
-            (usersWithRaptors.rank - 1) +
-            '**)';
+        statsTable += ', ';
       }
-      if (!(document.siteName === undefined)) {
-        statsTable += '\n*NaNo Site Username:* `' +
-          document.siteName +
-          '`';
+      statsTable += '**' +
+        document.lifetimeWarLines +
+        '** lines in **' +
+        document.lifetimeLineMinutes.toFixed(0) +
+        '** minutes (**' +
+        (document.lifetimeWarLines / document.lifetimeLineMinutes)
+            .toFixed(2) +
+        '** lpm)';
+      firstSeen = false;
+    }
+    if (!(document.lifetimeWarPages === undefined)) {
+      if (firstSeen == true) {
+        statsTable += '\n*War Statistics:* ';
       } else {
-        statsTable += '\n*NaNo Site Username:* unknown';
+        statsTable += ', ';
       }
-      if (!(document.timezone === undefined)) {
-        statsTable += '\n*Timezone:* `' + document.timezone + '`';
+      statsTable += '**' +
+        document.lifetimeWarPages +
+        '** pages in **' +
+        document.lifetimePageMinutes.toFixed(0) +
+        '** minutes (**' +
+        (document.lifetimeWarPages / document.lifetimePageMinutes)
+            .toFixed(2) +
+        '** ppm)';
+      firstSeen = false;
+    }
+    if (!(document.lifetimeWarMinutes === undefined)) {
+      if (firstSeen == true) {
+        statsTable += '\n*War Statistics:* ';
       } else {
-        statsTable += '\n*Timezone:* unknown';
+        statsTable += ', ';
       }
+      statsTable += '**' +
+        document.lifetimeWarMinutes +
+        '** minutes';
+      firstSeen = false;
+    }
+    statsTable += '\n*Raptors:* **';
+    if (document == null || document.raptorTotal === undefined) {
+      statsTable += '**0** (Global Rank **' + usersWithRaptors.rank;
     } else {
-      statsTable += '***User Statistics for ' +
-      msg.author.username +
-      ':***\n';
-      statsTable += '*Raptors:* **0** (Global Rank **' +
-          usersWithRaptors.rank +
-          '** of **' +
-          (usersWithRaptors.rank - 1) +
-          '**)\n';
-      statsTable += '*NaNo Site Username:* unknown\n';
-      statsTable += '*Timezone:* unknown\n';
+      statsTable += document.raptorTotal +'** (Global Rank **' + data.rank;
+    }
+    statsTable += '** of **' + (usersWithRaptors.rank - 1) +'**)';
+    if (document == null || document.siteName === undefined) {
+      statsTable += '\n*NaNo Site Username:* unknown';
+    } else {
+      statsTable += '\n*NaNo Site Username:* `' + document.siteName + '`';
+    }
+    if (document == null || document.timezone === undefined) {
+      statsTable += '\n*Timezone:* unknown';
+    } else {
+      statsTable += '\n*Timezone:* `' + document.timezone + '`';
     }
     return statsTable;
   }

@@ -6,22 +6,6 @@ class ChallengeList {
     this.running = {};
   }
   /**
-   * Updates the database
-   * @param  {String} db - The database to update.
-   * @param {String} id - The ID of the field to update.
-   * @param {String} info - The data to update with.
-   * @return {Object} - User data.
-   */
-  async dbUpdate(db, id, info) {
-    await conn.collection(db).update(
-        {_id: id},
-        {
-          info,
-        },
-        {upsert: true}
-    );
-  }
-  /**
    * Gets a server from a channel ID.
    * @param {String} channel - The channel to get the parent server of.
    * @return {String} - The relevant server.
