@@ -4,6 +4,7 @@ const Sprint = require('./challenges/sprint');
 const War = require('./challenges/war');
 const clist = require('./challenges/clist.js');
 const challenges = require('./challenges/challenges.js');
+const cinfo = require('./challenges/cinfo.js');
 const goallist = require('./goals/goallist.js');
 const goals = require('./goals/goals.js');
 const tools = require('./tools/tools.js');
@@ -406,7 +407,7 @@ const cmdList = {
     usage: '',
     type: 'challenges',
     process: function(client, msg, prefix, suffix) {
-      const msgToSend = challenges.listChallenges(client, msg);
+      const msgToSend = cinfo.listChallenges(client, msg);
       msg.channel.send(msgToSend);
       return msgToSend;
     },
@@ -622,7 +623,7 @@ const cmdList = {
     usage: '[server] <on|off>',
     type: 'config',
     process: async function(client, msg, prefix, suffix) {
-      const msgToSend = await challenges.updateFlags(msg, suffix, 'xStatus');
+      const msgToSend = await cinfo.updateFlags(msg, suffix, 'xStatus');
       msg.channel.send(msgToSend);
       return msgToSend;
     },
@@ -636,7 +637,7 @@ const cmdList = {
     usage: '[server] <show|hide>',
     type: 'config',
     process: async function(client, msg, prefix, suffix) {
-      const msgToSend = await challenges.updateFlags(msg, suffix, 'autoStatus');
+      const msgToSend = await cinfo.updateFlags(msg, suffix, 'autoStatus');
       msg.channel.send(msgToSend);
       return msgToSend;
     },
