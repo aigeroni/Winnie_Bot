@@ -157,6 +157,28 @@ class Config {
     return returnMsg;
   }
   /**
+   * Checks server configuration fields.
+   * @param {Object} msg - The message that initiated the check.
+   * @param {String} field - The field to check.
+   * @return {String} - Message to send to user.
+   */
+  async configStatus(msg, field) {
+    let returnMsg = '';
+    const server = await conn.collection('configDB').findOne(
+        {_id: msg.guild.id}
+    );
+    if () {
+      
+    }
+    if (server == null || server.field === undefined) {
+      returnMsg = msg.author +
+          ', this server does not have ' + field + ' configured.';
+    } else {
+      returnMsg = msg.guild.name + '\'s ' + field + ' is ' + server.field;
+    }
+    return returnMsg;
+  }
+  /**
    * Updates user-entered flags.
    * @param {Object} author - The user to update the flags of.
    * @param {String} field - The field to update.
@@ -181,6 +203,23 @@ class Config {
     return returnMsg;
   }
   /**
+   * Updates per-server configuration.
+   * @param {Object} msg - The message that ran this function.
+   * @param {String} suffix - Information after the bot command.
+   * @param {String} flagType - The field to update.
+   * @return {String} - The message to send to the user.
+   */
+  async updateConfig(msg, suffix, flagType) {
+    let returnMsg = '';
+    const args = suffix.split(' ');
+    if (suffix == '') { // check configuration
+
+    } else { // update configuration
+
+    }
+    return returnMsg;
+  }
+  /**
    * Allows server admins to set a custom prefix for Winnie.
    * @param {Object} msg - The message that ran this function.
    * @param {String} suffix - Information after the bot command.
@@ -190,18 +229,7 @@ class Config {
     let returnMsg = '';
     // display Winnie's current prefix (all users)
     if (suffix == '') {
-      const data = await conn.collection('configDB').findOne(
-          {_id: msg.guild.id}
-      );
-      if (data == null || data.prefix == undefined) {
-        returnMsg = msg.author +
-            ', this server does not have a custom prefix configured.';
-      } else {
-        returnMsg = msg.author +
-            ', my current prefix is `' +
-            data.prefix +
-            '`.';
-      }
+      
     } else if (msg.member.permissions.has('ADMINISTRATOR')) {
       if (suffix == 'clear') {
         await conn
