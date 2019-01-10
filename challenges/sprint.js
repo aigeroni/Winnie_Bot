@@ -117,18 +117,9 @@ class Sprint extends Challenge {
     if (this.cDur <= 0) {
       for (const user in this.joined) {
         if (this.joined[user].timeTaken != undefined) {
-          conn.collection('userDB').update(
-              {_id: user},
-              {
-                $inc: {
-                  lifetimeSprintWords:
-                  parseInt(this.goal),
-                  lifetimeSprintMinutes:
-                  this.joined[user].timeTaken,
-                },
-              },
-              {upsert: true}
-          );
+          const data = '$inc: {lifetimeSprintWords:' + parseInt(this.goal) +
+            ', lifetimeSprintMinutes:' + this.joined[user].timeTaken + ',}';
+          clist.dbUpdate('userDB', user, data);
         }
       }
       super.terminate();

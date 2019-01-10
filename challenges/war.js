@@ -1,4 +1,5 @@
 const Challenge = require('./challenge.js');
+const clist = require('./clist.js');
 const conn = require('mongoose').connection;
 
 /** Represents a war. */
@@ -106,13 +107,7 @@ class War extends Challenge {
             dataToChange += 'lifetimeWarMinutes: ' +
               'parseInt(this.joined[user].countData),},';
           }
-          conn.collection('userDB').update(
-              {_id: user},
-              {
-                dataToChange,
-              },
-              {upsert: true}
-          );
+          clist.dbUpdate('userDB', user, dataToChange);
         }
       }
       super.terminate();

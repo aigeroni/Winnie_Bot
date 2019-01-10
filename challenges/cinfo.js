@@ -1,4 +1,5 @@
 const clist = require('./clist.js');
+const challenges = require('./challenges.js');
 const conn = require('mongoose').connection;
 
 /** Class containing functions for challenge management. */
@@ -14,90 +15,61 @@ class Config {
    */
   listChallenges(client, msg) {
     let nonHiddenTotal = 0;
-    let timerInfo = '';
+    let listData = '';
     for (const i in clist.running) {
       if (clist.running.hasOwnProperty(i) && !(
-        this.hiddenCheck(i, msg.guild.id))) {
+        challenges.hiddenCheck(i, msg.guild.id))) {
+        const guildName = client.guilds.get(clist.running[i].channelID).name;
         nonHiddenTotal += 1;
-        // find originating server name
-        const parentGuildName = parentGuild.name;
-        let timeout = '';
-        switch (clist.running[i].state) {
-          case 0:
-            if (clist.running[i].cStart % 60 < 10) {
-              timeout =
-                '0' + (clist.running[i].cStart % 60).toString();
-            } else {
-              timeout = clist.running[i].cStart % 60;
-            }
-            timerInfo +=
-              i + ': ' + clist.running[i].displayName + ' (';
-            if (clist.running[i].type == 'sprint') {
-              timerInfo += clist.running[i].goal + ' words, ';
-            }
-            timerInfo +=
-              clist.running[i].duration +
-              ' minutes, starts in ' +
-              Math.floor(clist.running[i].cStart / 60) +
-              ':' +
-              timeout +
-              '), ' +
-              parentGuildName +
-              '\n';
-            break;
-          case 1:
-            if (clist.running[i].cDur % 60 < 10) {
-              timeout =
-                '0' + (clist.running[i].cDur % 60).toString();
-            } else {
-              timeout = clist.running[i].cDur % 60;
-            }
-            timerInfo +=
-              i + ': ' + clist.running[i].displayName + ' (';
-            if (clist.running[i].type == 'sprint') {
-              timerInfo += clist.running[i].goal + ' words, ';
-            }
-            timerInfo +=
-              clist.running[i].duration +
-              ' minutes, ' +
-              Math.floor(clist.running[i].cDur / 60) +
-              ':' +
-              timeout +
-              ' remaining), ' +
-              parentGuildName +
-              '\n';
-            break;
-          case 2:
-          case 3:
-            timerInfo +=
-              i + ': ' + clist.running[i].displayName + ' (';
-            if (clist.running[i].type == 'sprint') {
-              timerInfo += clist.running[i].goal + ' words, ';
-            }
-            timerInfo +=
-              clist.running[i].duration +
-              ' minutes, ended), ' +
-              parentGuildName +
-              '\n';
-            break;
-          default:
-            break;
-        }
+        listData += this.buildChallengeData(i, guildName);
       }
     }
-    let listMsg = '';
     if (nonHiddenTotal == 0) {
-      listMsg +=
+      listMsg =
         'There are no challenges running.' + ' Why don\'t you start one?';
     } else if (nonHiddenTotal == 1) {
-      listMsg += 'There is ' + nonHiddenTotal + ' challenge running:\n';
+      listMsg = 'There is ' + nonHiddenTotal + ' challenge running:\n';
     } else {
-      listMsg += 'There are ' + nonHiddenTotal + ' challenges running:\n';
+      listMsg = 'There are ' + nonHiddenTotal + ' challenges running:\n';
     }
-    if (nonHiddenTotal > 0) {
-      listMsg += timerInfo;
-    }
+    listMsg += listData;
     return listMsg;
+  }
+  /**
+   * Builds a string with information about a challenge.
+   * @param {Object} chalID - The challenge to build.
+   * @param {Object} guildName - Display name of the challenge's home server.
+   * @return {String} - The message to send to the user.
+   */
+  buildChallengeData(chalID, guildName) {
+    let dataString = '';
+    let timeData = '';
+    let timeVar = undefined;
+    switch (clist.running[chalID].state) {
+      case 0:
+        timeVar = clist.running[chalID].cStart;
+        timeData = 'starts in %m:%s';
+        break;
+      case 1:
+        timeVar = clist.running[chalID].cDur;
+        timeData = '%m:%s remaining';
+        break;
+      default:
+        timeData = 'ended';
+        break;
+    }
+    dataString += chalID + ': ' + clist.running[chalID].displayName + ' (';
+    if (clist.running[chalID].type == 'sprint') {
+      dataString += clist.running[chalID].goal + ' words, ';
+    }
+    dataString += clist.running[chalID].duration + ' minutes, ';
+    let seconds = timeVar % 60;
+    if (seconds < 10) {
+      seconds = '0' + seconds.toString();
+    }
+    dataString += timeData.replace(/%m/, Math.floor(timeVar / 60))
+        .replace(/%s/, seconds) + '), ' + guildName +'\n';
+    return dataString;
   }
   /**
    * Toggles cross-server display and auto-summary flags.
@@ -154,45 +126,32 @@ class Config {
     const server = await conn.collection('configDB').findOne(
         {_id: msg.guild.id}
     );
+    let textType = '';
+    if (field == 'autoStatus') {
+      textType = 'automatic summaries';
+    } else if (field == 'xStatus') {
+      textType = 'cross-server display';
+    }
     let type = 'on';
     if (server.field == 'off') {
       type = 'off';
     }
     if (update === undefined) {
-      returnMsg += msg.guild.name + ' currently has ';
-      if (field == 'autoStatus') {
-        returnMsg += 'automatic summaries';
-      } else if (field == 'xStatus') {
-        returnMsg += 'cross-server display';
-      }
-      returnMsg += ' **' + type + '**.';
+      returnMsg += msg.guild.name + ' currently has ' +
+        textType + ' **' + type + '**.';
     } else if (msg.member.permissions.has('ADMINISTRATOR')) {
-      // if (args[1] == 'show' || args[1] == 'hide') {
-      //   let autoType = 'on';
-      //   if (args[1] == 'hide') {
-      //     autoType = 'off';
-      //     this.autoSumStatus[msg.guild.id] = true;
-      //   } else {
-      //     autoType = 'on';
-      //     this.autoSumStatus[msg.guild.id] = false;
-      //   }
-      //   await conn
-      //       .collection('configDB')
-      //       .update(
-      //           {_id: msg.guild.id},
-      //           {$set: {autoStatus: this.autoSumStatus[msg.guild.id]}},
-      //           {upsert: true}
-      //       );
-      //   returnMsg = msg.author +
-      //       ', you have turned automatic summaries **' +
-      //       autoType +
-      //       '**.';
-      // } else {
-      //   returnMsg = msg.author +
-      //       ', use **show|hide** to toggle automatic summaries.';
+      if (!(update == 'on' || update == 'off')) {
+        const data = '$set: {' + field + ':' + update + ',}';
+        await clist.dbUpdate('configDB', msg.guild.id, data);
+        returnMsg = msg.author + ', you have turned ' + textType + ' **' +
+          update + '**.';
+      } else {
+        returnMsg = msg.author +
+          ', use **on|off** to toggle server preferences.';
+      }
     } else {
       returnMsg = '**Error:** Only server administrators are permitted' +
-          ' to configure server preferences.';
+        ' to configure server preferences.';
     }
     return returnMsg;
   }
@@ -208,11 +167,8 @@ class Config {
     if (!(flag == 'on' || flag == 'off')) {
       returnMsg = author + ', use **on|off** to toggle preferences.';
     } else {
-      await conn.collection('userDB').update(
-          {_id: msg.author.id},
-          {$set: {autoStatus: flag}},
-          {upsert: true}
-      );
+      const data = '$set: {' + field + ':' + flag + '}';
+      await clist.dbUpdate('userDB', msg.author.id, data);
       returnMsg = author + ', you have turned ';
       if (field == 'autoStatus') {
         returnMsg += 'automatic summaries';

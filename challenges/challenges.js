@@ -44,7 +44,7 @@ class Challenges {
         clist.running[chalID].displayName;
       const dbData = '$set: {hookedChannels: clist.running[chalID]' +
         '.hookedChannels, joined: clist.running[chalID].joined,}';
-      await this.dbUpdate(parseInt(chalID), dbData);
+      await clist.dbUpdate('challengeDB', parseInt(chalID), dbData);
     }
     return returnMsg;
   }
@@ -69,7 +69,7 @@ class Challenges {
       returnMsg = msg.author + ', you have left ' +
         clist.running[chalID].displayName;
       const dbData = '$set: {joined: clist.running[chalID].joined,}';
-      await this.dbUpdate(parseInt(chalID), dbData);
+      await clist.dbUpdate('challengeDB', parseInt(chalID), dbData);
     }
     return returnMsg;
   }
@@ -420,7 +420,7 @@ class Challenges {
         this.buildUserData(msg, 'sprint', doneStamp, timeTaken);
       this.pushToHook(chalID, msg);
       const dbData = '$set: {joined: clist.running[chalID].joined,}';
-      await this.dbUpdate(parseInt(chalID), dbData);
+      await clist.dbUpdate('challengeDB', parseInt(chalID), dbData);
       returnMsg = msg.author + ', you completed the sprint in ' +
         timeTaken.toFixed(2) + ' minutes.';
     }
@@ -481,7 +481,7 @@ class Challenges {
         clist.running[chalID].hookedChannels.push(msg.channel.id);
       }
       const dbData = '$set: {joined: clist.running[chalID].joined,}';
-      await this.dbUpdate(parseInt(chalID), dbData);
+      await clist.dbUpdate('challengeDB', parseInt(chalID), dbData);
       returnMsg = msg.author + ', your total of **' + wordsWritten +
         '** ' + writtenType + ' has been added to the summary.';
     }
@@ -548,21 +548,6 @@ class Challenges {
       };
     }
     return data;
-  }
-  /**
-   * Updates the challenge database
-   * @param {String} chalID - The ID of the challenge to update.
-   * @param {String} info - The data to update with.
-   * @return {Object} - User data.
-   */
-  async dbUpdate(chalID, info) {
-    await conn.collection('challengeDB').update(
-        {_id: parseInt(chalID)},
-        {
-          info,
-        },
-        {upsert: true}
-    );
   }
   /**
    * Check to see whether a challenge is hidden from a server.
