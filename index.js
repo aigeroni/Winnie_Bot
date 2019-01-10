@@ -327,7 +327,7 @@ const cmdList = {
     usage: '<id>',
     type: 'challenges',
     process: async function(client, msg, prefix, suffix) {
-      const returnData = await challenges.callTime(msg, suffix);
+      const returnData = await challenges.callTime(msg, prefix, suffix);
       let msgToSend = returnData.returnMsg;
       if (returnData.raptorCheck &&
         msg.author.id in goallist.goalList &&
@@ -358,7 +358,7 @@ const cmdList = {
     usage: '<id> <total> [lines|pages|minutes]',
     type: 'challenges',
     process: async function(client, msg, prefix, suffix) {
-      const returnData = await challenges.addTotal(msg, suffix);
+      const returnData = await challenges.addTotal(msg, prefix, suffix);
       let msgToSend = returnData.returnMsg;
       if (returnData.raptorCheck &&
         msg.author.id in goallist.goalList
@@ -622,7 +622,7 @@ const cmdList = {
     usage: '[server] <on|off>',
     type: 'config',
     process: async function(client, msg, prefix, suffix) {
-      const msgToSend = await challenges.xsDisplay(msg, suffix);
+      const msgToSend = await challenges.updateFlags(msg, suffix, 'xStatus');
       msg.channel.send(msgToSend);
       return msgToSend;
     },
@@ -636,7 +636,7 @@ const cmdList = {
     usage: '[server] <show|hide>',
     type: 'config',
     process: async function(client, msg, prefix, suffix) {
-      const msgToSend = await challenges.autoSum(msg, suffix);
+      const msgToSend = await challenges.updateFlags(msg, suffix, 'autoStatus');
       msg.channel.send(msgToSend);
       return msgToSend;
     },

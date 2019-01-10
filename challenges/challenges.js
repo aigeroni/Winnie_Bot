@@ -30,21 +30,21 @@ class Challenges {
   async joinChallenge(msg, prefix, suffix) {
     let returnMsg = '';
     const chalID = suffix;
-    const returnInfo = checkIDError(chalID, 'join');
+    const returnInfo = this.checkIDError(chalID, msg, 'join', prefix);
     if (returnInfo) {
       returnMsg = returnInfo;
     } else if (msg.author.id in clist.running[chalID].joined) {
       returnMsg = msg.author +
         ', you already have notifications enabled for this challenge.';
     } else {
-      clist.running[chalID].joined[msg.author.id] =
-        buildUserData(msg, clist.running[chalID].type, undefined, undefined);
-      pushToHook(chalID, msg);
+      clist.running[chalID].joined[msg.author.id] = this
+          .buildUserData(msg, clist.running[chalID].type, undefined, undefined);
+      this.pushToHook(chalID, msg);
       returnMsg = msg.author + ', you have joined ' +
         clist.running[chalID].displayName;
       const dbData = '$set: {hookedChannels: clist.running[chalID]' +
         '.hookedChannels, joined: clist.running[chalID].joined,}';
-      await dbUpdate(parseInt(chalID), dbData);
+      await this.dbUpdate(parseInt(chalID), dbData);
     }
     return returnMsg;
   }
@@ -58,18 +58,18 @@ class Challenges {
   async leaveChallenge(msg, prefix, suffix) {
     let returnMsg = '';
     const chalID = suffix;
-    const returnInfo = checkIDError(chalID, 'join');
+    const returnInfo = this.checkIDError(chalID, msg, 'leave', prefix);
     if (returnInfo) {
       returnMsg = returnInfo;
     } else if (!(msg.author.id in clist.running[chalID].joined)) {
       returnMsg = msg.author + ', you have not yet joined this challenge.';
     } else {
       delete clist.running[chalID].joined[msg.author.id];
-      dropFromHook(chalID);
+      this.dropFromHook(chalID, msg);
       returnMsg = msg.author + ', you have left ' +
         clist.running[chalID].displayName;
       const dbData = '$set: {joined: clist.running[chalID].joined,}';
-      await dbUpdate(parseInt(chalID), dbData);
+      await this.dbUpdate(parseInt(chalID), dbData);
     }
     return returnMsg;
   }
@@ -378,7 +378,7 @@ class Challenges {
     let returnMsg = '';
     const chalID = suffix;
     let channelList = [msg.channel.id];
-    const returnInfo = checkIDError(chalID, 'join');
+    const returnInfo = this.checkIDError(chalID, msg, 'cancel', prefix);
     if (returnInfo) {
       returnMsg = returnInfo;
     } else if (clist.running[chalID].creator == msg.author.id) {
@@ -406,7 +406,8 @@ class Challenges {
     let nonHiddenTotal = 0;
     let timerInfo = '';
     for (const i in clist.running) {
-      if (clist.running.hasOwnProperty(i) && !(hiddenCheck(i, msg.guild.id))) {
+      if (clist.running.hasOwnProperty(i) && !(
+        this.hiddenCheck(i, msg.guild.id))) {
         nonHiddenTotal += 1;
         // find originating server name
         const parentGuildName = parentGuild.name;
@@ -491,17 +492,17 @@ class Challenges {
   /**
    * Calls time for a sprint.
    * @param {Object} msg - The message that ran this function.
+   * @param {String} prefix - The bot's prefix.
    * @param {String} suffix - Information after the bot command.
    * @return {Object} - Message to send to user, raptor determination value.
    */
-  async callTime(msg, suffix) {
+  async callTime(msg, prefix, suffix) {
     let returnMsg = '';
-    const args = suffix.split(' ');
-    const chalID = args.shift();
+    const chalID = suffix;
     let raptorCheck = true;
-    if (!(chalID in clist.running)) {
-      raptorCheck = false;
-      returnMsg = '**Error:** This challenge does not exist.';
+    const returnInfo = this.checkIDError(chalID, msg, 'time', prefix);
+    if (returnInfo) {
+      returnMsg = returnInfo;
     } else if (!(clist.running[chalID].type == 'sprint')) {
       raptorCheck = false;
       returnMsg = '**Error:** You can only call time on a sprint.';
@@ -509,10 +510,10 @@ class Challenges {
       const doneStamp = new Date().getTime();
       const timeTaken = (doneStamp - clist.running[chalID].startStamp) / 60000;
       clist.running[chalID].joined[msg.author.id] =
-        buildUserData(msg, 'sprint', doneStamp, timeTaken);
-      pushToHook(chalID, msg);
+        this.buildUserData(msg, 'sprint', doneStamp, timeTaken);
+      this.pushToHook(chalID, msg);
       const dbData = '$set: {joined: clist.running[chalID].joined,}';
-      await dbUpdate(parseInt(chalID), dbData);
+      await this.dbUpdate(parseInt(chalID), dbData);
       returnMsg = msg.author + ', you completed the sprint in ' +
         timeTaken.toFixed(2) + ' minutes.';
     }
@@ -521,10 +522,11 @@ class Challenges {
   /**
    * Adds a total to a challenge.
    * @param {Object} msg - The message that ran this function.
+   * @param {String} prefix - The bot's prefix.
    * @param {String} suffix - Information after the bot command.
    * @return {Object} - Message to send to user, raptor determination value.
    */
-  async addTotal(msg, suffix) {
+  async addTotal(msg, prefix, suffix) {
     let returnMsg = '';
     const args = suffix.split(' ');
     const chalID = args.shift();
@@ -537,25 +539,21 @@ class Challenges {
     if (writtenType.charAt(writtenType.length-1) != 's') {
       writtenType += 's';
     }
-    if (!(
+    const returnInfo = this.checkIDError(chalID, msg, 'total', prefix);
+    if (returnInfo) {
+      returnMsg = returnInfo;
+    } else if (!(
       writtenType == 'lines' || writtenType == 'pages' ||
       writtenType == 'words' || writtenType == 'minutes'
     )) {
       raptorCheck = false;
       returnMsg = '**Error:** You must work in words, lines, or pages.';
-    } else if (!(chalID in clist.running)) {
-      raptorCheck = false;
-      returnMsg = '**Error:** This challenge does not exist!';
     } else if (clist.running[chalID].type == 'sprint') {
       raptorCheck = false;
       returnMsg = '**Error:** You cannot post a total for sprints.';
     } else if (clist.running[chalID].state < 2) {
       raptorCheck = false;
       returnMsg = '**Error:** This challenge has not ended yet!';
-    } else if (hiddenCheck(chalID, msg.guild.id)) {
-      raptorCheck = false;
-      returnMsg = msg.author +
-          ', you do not have permission to join this challenge.';
     } else if (!Number.isInteger(Number(wordsWritten))) {
       raptorCheck = false;
       returnMsg = msg.author +
@@ -570,193 +568,34 @@ class Challenges {
       if (Number(wordsWritten) < 1) {
         raptorCheck = false;
       }
-      clist.running[chalID].joined[msg.author.id] = buildUserData(msg,
+      clist.running[chalID].joined[msg.author.id] = this.buildUserData(msg,
           clist.running[chalID].type, wordsWritten, writtenType);
       if (clist.running[chalID].hookedChannels.indexOf(msg.channel.id) == -1) {
         clist.running[chalID].hookedChannels.push(msg.channel.id);
       }
       const dbData = '$set: {joined: clist.running[chalID].joined,}';
-      await dbUpdate(parseInt(chalID), dbData);
+      await this.dbUpdate(parseInt(chalID), dbData);
       returnMsg = msg.author + ', your total of **' + wordsWritten +
         '** ' + writtenType + ' has been added to the summary.';
     }
     return {returnMsg: returnMsg, raptorCheck: raptorCheck};
   }
   /**
-   * Toggles cross-server display for a server's challenges.
+   * Toggles cross-server display and auto-summary flags.
    * @param {Object} msg - The message that ran this function.
    * @param {String} suffix - Information after the bot command.
+   * @param {String} flagType - The field to update.
    * @return {String} - The message to send to the user.
    */
-  async xsDisplay(msg, suffix) {
+  async updateFlags(msg, suffix, flagType) {
     let returnMsg = '';
-    if (suffix == '') {
-      const user = await conn.collection('userDB').findOne(
-          {_id: msg.author.id}
-      );
-      let xsType = 'on';
-      if (user.xStatus == 'off') {
-        xsType = 'off';
-      }
-      returnMsg = msg.author +
-          ', you currently have cross-server display' +
-          ' for your challenges **' +
-          xsType +
-          '**.';
-    } else {
-      const args = suffix.split(' ');
-      if (args[0] == 'server') {
-        if (args[1] === undefined) {
-          let xsType = 'on';
-          if (this.crossServerStatus[msg.guild.id] == true) {
-            xsType = 'off';
-          }
-          returnMsg = msg.guild.name +
-              ' currently has cross-server challenges turned **' +
-              xsType +
-              '**.';
-        } else if (msg.member.permissions.has('ADMINISTRATOR')) {
-          if (args[1] == 'on' || args[1] == 'off') {
-            let xsType = 'on';
-            if (args[1] == 'off') {
-              xsType = 'off';
-              this.crossServerStatus[msg.guild.id] = true;
-            } else {
-              xsType = 'on';
-              this.crossServerStatus[msg.guild.id] = false;
-            }
-            await conn
-                .collection('configDB')
-                .update(
-                    {_id: msg.guild.id},
-                    {$set: {xStatus: this.crossServerStatus[msg.guild.id]}},
-                    {upsert: true}
-                );
-            returnMsg = msg.author +
-                ', you have turned cross-server challenges **' +
-                xsType +
-                '**.';
-          } else {
-            returnMsg = msg.author +
-                ', use **on|off** to toggle cross-server challenges.';
-          }
-        } else {
-          returnMsg = '**Error:** Only server administrators are permitted' +
-              ' to configure challenges.';
-        }
-      } else {
-        if (suffix == 'on' || suffix == 'off') {
-          let xsType = 'on';
-          if (suffix == 'off') {
-            xsType = 'off';
-          } else {
-            xsType = 'on';
-          }
-          await conn
-              .collection('userDB')
-              .update(
-                  {_id: msg.author.id},
-                  {$set: {xStatus: xsType}},
-                  {upsert: true}
-              );
-          returnMsg = msg.author +
-              ', you have turned cross-server display for your challenges **' +
-              xsType +
-              '**.';
-        } else {
-          returnMsg = msg.author +
-              ', use **on|off** to toggle cross-server challenges.';
-        }
-      }
-    }
-    return returnMsg;
-  }
-  /**
-   * Toggles automatic summaries after challenges for a server.
-   * @param {Object} msg - The message that ran this function.
-   * @param {String} suffix - Information after the bot command.
-   * @return {String} - The message to send to the user.
-   */
-  async autoSum(msg, suffix) {
-    let returnMsg = '';
-    if (suffix == '') {
-      const user = await conn.collection('userDB').findOne(
-          {_id: msg.author.id}
-      );
-      let autoType = 'visible';
-      if (user.autoStatus == 'off') {
-        autoType = 'hidden';
-      }
-      returnMsg = msg.author +
-          ', you currently have automatic' +
-          ' summaries for your challenges **' +
-          autoType +
-          '**.';
-    } else {
-      const args = suffix.split(' ');
-      if (args[0] == 'server') {
-        if (args[1] === undefined) {
-          let autoType = 'visible';
-          if (this.autoSumStatus[msg.guild.id] == true) {
-            autoType = 'hidden';
-          }
-          returnMsg = msg.guild.name +
-              ' currently has automatic summaries **' +
-              autoType +
-              '**.';
-        } else if (msg.member.permissions.has('ADMINISTRATOR')) {
-          if (args[1] == 'show' || args[1] == 'hide') {
-            let autoType = 'on';
-            if (args[1] == 'hide') {
-              autoType = 'off';
-              this.autoSumStatus[msg.guild.id] = true;
-            } else {
-              autoType = 'on';
-              this.autoSumStatus[msg.guild.id] = false;
-            }
-            await conn
-                .collection('configDB')
-                .update(
-                    {_id: msg.guild.id},
-                    {$set: {autoStatus: this.autoSumStatus[msg.guild.id]}},
-                    {upsert: true}
-                );
-            returnMsg = msg.author +
-                ', you have turned automatic summaries **' +
-                autoType +
-                '**.';
-          } else {
-            returnMsg = msg.author +
-                ', use **show|hide** to toggle automatic summaries.';
-          }
-        } else {
-          returnMsg = '**Error:** Only server administrators are permitted' +
-              ' to configure automatic summaries.';
-        }
-      } else {
-        if (suffix == 'show' || suffix == 'hide') {
-          let autoType = 'on';
-          if (suffix == 'hide') {
-            autoType = 'off';
-          } else {
-            autoType = 'on';
-          }
-          await conn
-              .collection('userDB')
-              .update(
-                  {_id: msg.author.id},
-                  {$set: {autoStatus: autoType}},
-                  {upsert: true}
-              );
-          returnMsg = msg.author +
-              ', you have turned automatic summaries for your challenges **' +
-              autoType +
-              '**.';
-        } else {
-          returnMsg = msg.author +
-              ', use **show|hide** to toggle automatic summaries.';
-        }
-      }
+    const args = suffix.split(' ');
+    if (suffix == '') { // user checking own status
+      returnMsg = this.checkStatus(msg.author, flagType);
+    } else if (args[0] == 'server') { // server status
+      returnMsg = this.statusForServer(msg, flagType, args[1]);
+    } else { // user updating own status
+      returnMsg = this.updateStatus(msg.author, flagType, args[0]);
     }
     return returnMsg;
   }
@@ -775,19 +614,126 @@ class Challenges {
     this.timerID = this.timerID + 1;
   }
   /**
+   * Checks the status of user-entered flags.
+   * @param {Object} author - The user to check the flags of.
+   * @param {String} field - The field to check.
+   * @return {String} - Message to send to user.
+   */
+  async checkStatus(author, field) {
+    let returnMsg = '';
+    const user = await conn.collection('userDB').findOne(
+        {_id: author.id}
+    );
+    let type = 'on';
+    if (user.field == 'off') {
+      type = 'off';
+    }
+    returnMsg += author + ', you currently have ';
+    if (field == 'autoStatus') {
+      returnMsg += 'automatic summaries';
+    } else if (field == 'xStatus') {
+      returnMsg += 'cross-server display';
+    }
+    returnMsg += ' for your challenges **' + type + '**.';
+    return returnMsg;
+  }
+  /**
+   * Checks the status of flags for a server.
+   * @param {Object} msg - The message that initiated the check.
+   * @param {String} field - The field to check.
+   * @param {String} update - Information to update field with.
+   * @return {String} - Message to send to user.
+   */
+  async statusForServer(msg, field, update) {
+    let returnMsg = '';
+    const server = await conn.collection('configDB').findOne(
+        {_id: msg.guild.id}
+    );
+    let type = 'on';
+    if (server.field == 'off') {
+      type = 'off';
+    }
+    if (update === undefined) {
+      returnMsg += msg.guild.name + ' currently has ';
+      if (field == 'autoStatus') {
+        returnMsg += 'automatic summaries';
+      } else if (field == 'xStatus') {
+        returnMsg += 'cross-server display';
+      }
+      returnMsg += ' **' + type + '**.';
+    } else if (msg.member.permissions.has('ADMINISTRATOR')) {
+      // if (args[1] == 'show' || args[1] == 'hide') {
+      //   let autoType = 'on';
+      //   if (args[1] == 'hide') {
+      //     autoType = 'off';
+      //     this.autoSumStatus[msg.guild.id] = true;
+      //   } else {
+      //     autoType = 'on';
+      //     this.autoSumStatus[msg.guild.id] = false;
+      //   }
+      //   await conn
+      //       .collection('configDB')
+      //       .update(
+      //           {_id: msg.guild.id},
+      //           {$set: {autoStatus: this.autoSumStatus[msg.guild.id]}},
+      //           {upsert: true}
+      //       );
+      //   returnMsg = msg.author +
+      //       ', you have turned automatic summaries **' +
+      //       autoType +
+      //       '**.';
+      // } else {
+      //   returnMsg = msg.author +
+      //       ', use **show|hide** to toggle automatic summaries.';
+    } else {
+      returnMsg = '**Error:** Only server administrators are permitted' +
+          ' to configure server preferences.';
+    }
+    return returnMsg;
+  }
+  /**
+   * Updates user-entered flags.
+   * @param {Object} author - The user to update the flags of.
+   * @param {String} field - The field to update.
+   * @param {String} flag - The flag to update to.
+   * @return {String} - Message to send to user.
+   */
+  async updateStatus(author, field, flag) {
+    let returnMsg = '';
+    if (!(flag == 'on' || flag == 'off')) {
+      returnMsg = author + ', use **on|off** to toggle preferences.';
+    } else {
+      await conn.collection('userDB').update(
+          {_id: msg.author.id},
+          {$set: {autoStatus: flag}},
+          {upsert: true}
+      );
+      returnMsg = author + ', you have turned ';
+      if (field == 'autoStatus') {
+        returnMsg += 'automatic summaries';
+      } else if (field == 'xStatus') {
+        returnMsg += 'cross-server display';
+      }
+      returnMsg = ' for your challenges **' + flag + '**.';
+    }
+    return returnMsg;
+  }
+  /**
    * Checks for a valid challenge ID.
    * @param {String} chalID - The ID to test for validity.
+   * @param {Object} msg - The message that resulted in the check.
    * @param {String} command - The command that resulted in this error.
+   * @param {String} prefix - The bot's prefix.
    * @return {String} - Error message.
    */
-  checkIDError(chalID, command) {
+  checkIDError(chalID, msg, command, prefix) {
     let returnData = '';
     if (isNaN(chalID) || chalID < 1) {
       returnData = '**Error:** Challenge ID must be an integer. Example: `' +
-        prefix + command + '10793`.';
+        prefix + command + ' 10793`.';
     } else if (!(chalID in clist.running)) {
       returnData = '**Error:** Challenge ' + chalID + ' does not exist!';
-    } else if (hiddenCheck(chalID, msg.guild.id)) {
+    } else if (this.hiddenCheck(chalID, msg.guild.id)) {
       returnData = msg.author + ', you do not have permission to ' +
         command + ' this challenge.';
     } else {
@@ -822,11 +768,11 @@ class Challenges {
   }
   /**
    * Updates the challenge database
-   * @param {String} id - The ID of the challenge to update.
+   * @param {String} chalID - The ID of the challenge to update.
    * @param {String} info - The data to update with.
    * @return {Object} - User data.
    */
-  async dbUpdate(id, info) {
+  async dbUpdate(chalID, info) {
     await conn.collection('challengeDB').update(
         {_id: parseInt(chalID)},
         {
