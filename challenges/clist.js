@@ -52,6 +52,24 @@ class ChallengeList {
     return serverTotals;
   }
   /**
+   * Produces a per-server breakdown of user-entered totals.
+   * @param {String} challengeID - Unique ID of the challenge being summarised.
+   * @return {String} - The message to send to the user.
+   */
+  sprintTotals(challengeID) {
+    let sprintTotals = {};
+    for (const user in this.running[challengeID].joined) {
+      if (this.running[challengeID].joined[user].timeTaken != undefined) {
+        const homeServer = this.getServerFromID(
+            this.running[challengeID].joined[user].channelID);
+        sprintTotals[homeServer][0] +=
+          this.running[challengeID].joined[user].timeTaken;
+        sprintTotals[homeServer][1] += 1;
+      }
+    }
+    return sprintTotals;
+  }
+  /**
    * Summarises a user's total.
    * @param {String} user - The Discord ID of the user.
    * @param {Number} total - The user's productivity during the challenge.
@@ -139,6 +157,28 @@ class ChallengeList {
     return serverText;
   }
   /**
+   * Produces a per-user breakdown of user-entered totals for a sprint.
+   * @param {String} server - Snowflake of the server being posted to.
+   * @param {Object} serverTotals - Summary of user-entered totals by server.
+   * @return {String} - The message to send to the user.
+   */
+  sprintText(server, serverTotals) {
+    let sprintText = '__' + client.guilds.get(server).name + '__:';
+    if (serverTotals[server][1] > 0) {
+      sprintText += ' **' + serverTotals[server][0];
+      if (serverTotals[server][1] == 1) {
+        sprintText += '** ' + item.slice(0, -1);
+      } else {
+        sprintText += '** ' + item;
+      }
+      sprintText += ' (**' + (
+        serverTotals[server][1]/
+        serverTotals[server][0]).toFixed(0)
+        + '** words per minute)\n';
+    }
+    return sprintText;
+  }
+  /**
    * Produces a per-server breakdown of user-entered totals.
    * @param {String} channel - Discord ID of the channel being posted to.
    * @param {Number} challengeID - Unique ID of the challenge being summarised.
@@ -172,15 +212,15 @@ class ChallengeList {
   sprintSummary(channel, challengeID) {
     let returnMsg = '';
     if (this.running[challengeID].state == 1) {
-      // const serverTotals = this.serverTotals(challengeID);
+      const serverTotals = this.sprintTotals(challengeID);
       const summaryServer = client.channels.get(channel).guild;
       returnMsg +=
         this.challengeByUser(summaryServer, challengeID, 'sprint') + '\n';
-      // for (const server in serverTotals) {
-      //   if (serverTotals.hasOwnProperty(server)) {
-      //     returnMsg += this.serverText(server, serverTotals);
-      //   }
-      // }
+      for (const server in serverTotals) {
+        if (serverTotals.hasOwnProperty(server)) {
+          returnMsg += this.sprintText(server, serverTotals);
+        }
+      }
     } else {
       returnMsg = 'This sprint has not started yet.';
     }
