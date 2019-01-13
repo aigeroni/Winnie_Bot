@@ -160,29 +160,6 @@ class Challenge {
   /** Check to see whether the countdown is over, and start the challenge
    * if so.
    */
-  cancel() {
-    if (this.cStart > 0) {
-      this.cStart--;
-    }
-    if (this.cStart == 0) {
-      this.startMsg();
-    } else if (this.cStart == 60) {
-      this.sendMsg(this.displayName + ' starts in 1 minute.');
-    } else if (this.cStart % 300 == 0) {
-      this.sendMsg(
-          this.displayName + ' starts in ' +
-          this.cStart / 60 + ' minutes.'
-      );
-    } else if ([30, 10, 5].includes(this.cStart)) {
-      this.sendMsg(
-          this.displayName + ' starts in ' +
-          this.cStart + ' seconds.'
-      );
-    }
-  }
-  /** Check to see whether the countdown is over, and start the challenge
-   * if so.
-   */
   start() {
     if (this.cStart > 0) {
       this.cStart--;
@@ -238,14 +215,9 @@ class Challenge {
           prefix = config.cmd_prefix[channelObject.guild.id];
         }
         channelObject.send(
-            this.displayName +
-            ' (ID ' +
-            this.objectID +
-            ') has ended! Post your total using `' +
-            prefix +
-            'total ' +
-            this.objectID +
-            ' <total>` to be included in the summary.' +
+            this.displayName + ' (ID ' + this.objectID +
+            ') has ended! Post your total using `' + prefix + 'total ' +
+            this.objectID + ' <total>` to be included in the summary.' +
             userList
         );
       }
@@ -276,29 +248,6 @@ class Challenge {
       }
       conn.collection('challengeDB').remove({_id: this.objectID});
       delete clist.running[this.objectID];
-    }
-  }
-  /** Check to see whether the countdown is over, and start the challenge
-   * if so.
-   */
-  summary() {
-    if (this.cStart > 0) {
-      this.cStart--;
-    }
-    if (this.cStart == 0) {
-      this.startMsg();
-    } else if (this.cStart == 60) {
-      this.sendMsg(this.displayName + ' starts in 1 minute.');
-    } else if (this.cStart % 300 == 0) {
-      this.sendMsg(
-          this.displayName + ' starts in ' +
-          this.cStart / 60 + ' minutes.'
-      );
-    } else if ([30, 10, 5].includes(this.cStart)) {
-      this.sendMsg(
-          this.displayName + ' starts in ' +
-          this.cStart + ' seconds.'
-      );
     }
   }
   /** Get all users hooked from a channel.
