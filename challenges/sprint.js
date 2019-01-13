@@ -1,5 +1,4 @@
 const Challenge = require('./challenge');
-const clist = require('./clist.js');
 const dbc = require('../dbc.js');
 
 /** Represents a sprint. */
@@ -78,7 +77,7 @@ class Sprint extends Challenge {
         break;
       default:
         this.channel.send('**Error:** Invalid state reached.');
-        delete clist.running[this.objectID];
+        this.cancel();
         break;
     }
   }
@@ -95,10 +94,6 @@ class Sprint extends Challenge {
       timeTaken: minutes,
       channelID: channel,
     };
-  }
-  /** Check to see whether the countdown is over, and start the sprint if so. */
-  start() {
-    super.start();
   }
   /** Construct the message displayed to users when a sprint begins. */
   startMsg() {
@@ -138,14 +133,16 @@ class Sprint extends Challenge {
       }
       super.terminate();
     } else if (this.cDur == 60) {
-      super.sendMsg('There is 1 minute remaining in ' + this.displayName + '.');
+      super.buildMsg(
+          'There is 1 minute remaining in ' + this.displayName + '.'
+      );
     } else if (this.cDur % 300 == 0) {
-      super.sendMsg(
+      super.buildMsg(
           'There are ' + this.cDur / 60 + ' minutes remaining in ' +
           this.displayName + '.'
       );
     } else if ([30, 10, 5].includes(this.cDur)) {
-      super.sendMsg(
+      super.buildMsg(
           'There are ' + this.cDur + ' seconds remaining in ' +
           this.displayName + '.'
       );

@@ -67,10 +67,6 @@ class War extends Challenge {
 
     dbc.dbInsert('challengeDB', array);
   }
-  /** Update the war at each tick. */
-  update() {
-    super.update();
-  }
   /**
    * Builds user data for the challenge database.
    * @param {String} channel - The channel from which the user joined.
@@ -84,18 +80,6 @@ class War extends Challenge {
       countType: type,
       channelID: channel,
     };
-  }
-  /** Check to see whether the countdown is over, and start the war if so. */
-  start() {
-    super.start();
-  }
-  /** Construct the message displayed to users when a war begins. */
-  startMsg() {
-    super.startMsg();
-  }
-  /** Check to see whether the war is over, and end it if so. */
-  end() {
-    super.end();
   }
   /** Check to see whether the total period is over, and post the summary. */
   terminate() {

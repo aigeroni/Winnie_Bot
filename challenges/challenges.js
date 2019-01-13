@@ -72,13 +72,8 @@ class Challenges {
     if (returnInfo) {
       returnMsg = returnInfo;
     } else if (clist.running[chalID].creator == msg.author.id) {
-      await conn.collection('challengeDB').remove(
-          {_id: Number(chalID)}
-      );
       channelList = clist.running[chalID].hookedChannels;
-      returnMsg =
-        clist.running[chalID].displayName + ' has been ended by the creator.';
-      delete clist.running[chalID];
+      returnMsg = await clist.running[chalID].cancel(msg.author);
     } else {
       returnMsg = '**Error:** Only the creator of ' +
         clist.running[chalID] +

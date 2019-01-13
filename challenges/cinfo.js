@@ -18,8 +18,7 @@ class Config {
     let nonHiddenTotal = 0;
     let listData = '';
     for (const i in clist.running) {
-      if (!(
-        challenges.hiddenCheck(i, msg.guild.id))) {
+      if (!(challenges.hiddenCheck(i, msg.guild.id))) {
         const guildName = client.guilds.get(clist.running[i].channelID).name;
         nonHiddenTotal += 1;
         listData += this.buildChallengeData(i, guildName);

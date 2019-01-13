@@ -57,6 +57,10 @@ class Challenge {
     this.endStamp = this.startStamp + this.cDur * 1000;
     this.delStamp = this.endStamp + this.cPost * 1000;
 
+    this.init();
+  }
+  /** Starts a challenge. */
+  init() {
     const dateCheck = new Date().getTime();
     if (!(this.startStamp < dateCheck)) {
       this.state = 0;
@@ -76,21 +80,19 @@ class Challenge {
       if (this.countdown != 1) {
         time += 's';
       }
-      for (let i = 0; i < this.hookedChannels.length; i++) {
-        client.channels.get(this.hookedChannels[i]).send(
-            'Your ' +
-            type +
-            ', ' +
-            this.displayName +
-            ' (ID ' +
-            this.objectID +
-            '), starts in ' +
-            this.countdown +
-            ' ' +
-            time +
-            '.'
-        );
-      }
+      this.buildMsg(
+          'Your ' +
+          type +
+          ', ' +
+          this.displayName +
+          ' (ID ' +
+          this.objectID +
+          '), starts in ' +
+          this.countdown +
+          ' ' +
+          time +
+          '.'
+      );
     }
   }
   /** Update the challenge at each tick. */
@@ -117,6 +119,7 @@ class Challenge {
    * @return {String} - Message to display to the user.
    */
   async join(user, channelID) {
+    let returnMsg = '';
     if (user.id in this.joined) {
       returnMsg = user +
         ', you already have notifications enabled for this challenge.';
@@ -149,6 +152,16 @@ class Challenge {
     }
     return returnMsg;
   }
+  /** Cancels a challenge.
+   * @return {String} - Return message.
+   */
+  async cancel() {
+    await conn.collection('challengeDB').remove(
+        {_id: this.objectID}
+    );
+    delete clist.running[this.objectID];
+    return this.displayName + ' has been cancelled.';
+  }
   /**
    * Builds user data for the challenge database.
    * @param {String} channel - The channel from which the user joined.
@@ -167,16 +180,14 @@ class Challenge {
     if (this.cStart == 0) {
       this.startMsg();
     } else if (this.cStart == 60) {
-      this.sendMsg(this.displayName + ' starts in 1 minute.');
+      this.buildMsg(this.displayName + ' starts in 1 minute.');
     } else if (this.cStart % 300 == 0) {
-      this.sendMsg(
-          this.displayName + ' starts in ' +
-          this.cStart / 60 + ' minutes.'
+      this.buildMsg(
+          this.displayName + ' starts in ' + this.cStart / 60 + ' minutes.'
       );
     } else if ([30, 10, 5].includes(this.cStart)) {
-      this.sendMsg(
-          this.displayName + ' starts in ' +
-          this.cStart + ' seconds.'
+      this.buildMsg(
+          this.displayName + ' starts in ' + this.cStart + ' seconds.'
       );
     }
   }
@@ -184,21 +195,13 @@ class Challenge {
   startMsg() {
     for (let i = 0; i < this.hookedChannels.length; i++) {
       const userList = this.getUsers(this.hookedChannels[i]);
-      const channelObject = client.channels.get(this.hookedChannels[i]);
-      let timeString = 'minutes';
-      if (this.duration == 1) {
-        timeString = 'minute';
+      let timeString = 'minute';
+      if (this.duration != 1) {
+        timeString += 's';
       }
-      channelObject.send(
-          this.displayName +
-          ' (ID ' +
-          this.objectID +
-          ', ' +
-          this.duration +
-          ' ' +
-          timeString +
-          ') starts now!'+
-          userList
+      this.sendMsg(
+          this.displayName + ' (ID ' + this.objectID + ', ' + this.duration +
+          ' ' + timeString + ') starts now!'+ userList, this.hookedChannels[i]
       );
     }
     this.state = 1;
@@ -223,14 +226,14 @@ class Challenge {
       }
       this.state = 2;
     } else if (this.cDur == 60) {
-      this.sendMsg('There is 1 minute remaining in ' + this.displayName + '.');
+      this.buildMsg('There is 1 minute remaining in ' + this.displayName + '.');
     } else if (this.cDur % 300 == 0) {
-      this.sendMsg(
+      this.buildMsg(
           'There are ' + this.cDur / 60 + ' minutes remaining in ' +
           this.displayName + '.'
       );
     } else if ([30, 10, 5].includes(this.cDur)) {
-      this.sendMsg(
+      this.buildMsg(
           'There are ' + this.cDur + ' seconds remaining in ' +
           this.displayName + '.'
       );
@@ -263,13 +266,20 @@ class Challenge {
     }
     return userList;
   }
-  /** Send a message to all hooked channels.
+  /** Builds a message to send to all hooked channels.
    * @param {String} msg - The message to send.
    */
-  sendMsg(msg) {
+  buildMsg(msg) {
     for (let i = 0; i < this.hookedChannels.length; i++) {
-      client.channels.get(this.hookedChannels[i]).send(msg);
+      this.sendMsg(msg, this.hookedChannels[i]);
     }
+  }
+  /** Sends a message.
+   * @param {String} msg - The message to send.
+   * @param {String} channelID - The ID of the channel to send the message to.
+   */
+  sendMsg(msg, channelID) {
+    client.channels.get(channelID).send(msg);
   }
   /**
    * Push a channel to the hooked channels list.
