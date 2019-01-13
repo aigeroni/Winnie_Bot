@@ -26,10 +26,8 @@ class Database {
    */
   async dbUpdate(db, id, info) {
     await conn.collection(db).update(
-        {_id: id},
-        {
-          info,
-        },
+        id,
+        info,
         {upsert: true}
     );
   }

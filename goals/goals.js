@@ -1,6 +1,7 @@
 const goallist = require('./goallist.js');
 const Goal = require('./goal');
 const timezoneJS = require('timezone-js');
+const dbc = require('../dbc.js');
 const mtz = require('moment-timezone');
 const conn = require('mongoose').connection;
 
@@ -41,14 +42,7 @@ class Goals {
         prefix + 'timezone Europe/London`';
     } else {
       // add timezone to database, confirm
-      conn.collection('userDB').update(
-          {_id: msg.author.id},
-          {$set: {
-            timezone: timezone,
-          },
-          },
-          {upsert: true}
-      );
+      dbc.dbUpdate('userDB', msg.author.id, {$set: {timezone: timezone}});
       returnMsg =
         msg.author + ', you have set your timezone to **' + timezone + '**.';
     }

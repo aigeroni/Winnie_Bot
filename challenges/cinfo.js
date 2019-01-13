@@ -141,8 +141,9 @@ class Config {
         textType + ' **' + type + '**.';
     } else if (msg.member.permissions.has('ADMINISTRATOR')) {
       if (!(update == 'on' || update == 'off')) {
-        const data = '$set: {' + field + ':' + update + ',}';
-        await dbc.dbUpdate('configDB', msg.guild.id, data);
+        const data = {$set: {}};
+        data.$set = field + ':' + update;
+        await dbc.dbUpdate('configDB', {_id: msg.guild.id}, data);
         returnMsg = msg.author + ', you have turned ' + textType + ' **' +
           update + '**.';
       } else {
@@ -189,8 +190,9 @@ class Config {
     if (!(flag == 'on' || flag == 'off')) {
       returnMsg = author + ', use **on|off** to toggle preferences.';
     } else {
-      const data = '$set: {' + field + ':' + flag + '}';
-      await dbc.dbUpdate('userDB', msg.author.id, data);
+      const data = {$set: {}};
+      data.$set = field + ':' + flag;
+      await dbc.dbUpdate('userDB', {_id: msg.author.id}, data);
       returnMsg = author + ', you have turned ';
       if (field == 'autoStatus') {
         returnMsg += 'automatic summaries';

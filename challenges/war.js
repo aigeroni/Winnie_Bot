@@ -104,7 +104,7 @@ class War extends Challenge {
             dataToChange += 'lifetimeWarMinutes: ' +
               'parseInt(this.joined[user].countData),},';
           }
-          dbc.dbUpdate('userDB', user, dataToChange);
+          dbc.dbUpdate('userDB', {_id: user}, dataToChange);
         }
       }
       super.terminate();

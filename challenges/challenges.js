@@ -110,10 +110,10 @@ class Challenges {
     const words = args.shift();
     const timeout = args.shift();
     let start = args.shift();
-    let sprintName = args.join(' ');
     if (start === undefined) {
       start = 1;
     }
+    let sprintName = args.join(' ');
     if (sprintName == '') {
       sprintName = msg.author.username + '\'s sprint';
     }
@@ -333,22 +333,17 @@ class Challenges {
    */
   async callTime(msg, prefix, suffix) {
     let returnMsg = '';
-    const chalID = suffix;
     let raptorCheck = true;
-    const returnInfo = this.checkIDError(chalID, msg, 'time', prefix);
+    const returnInfo = this.checkIDError(suffix, msg, 'time', prefix);
     if (returnInfo) {
       returnMsg = returnInfo;
-    } else if (!(clist.running[chalID].type == 'sprint')) {
+    } else if (!(clist.running[suffix].type == 'sprint')) {
       raptorCheck = false;
       returnMsg = '**Error:** You can only call time on a sprint.';
     } else {
       const doneStamp = new Date().getTime();
-      const timeTaken = (doneStamp - clist.running[chalID].startStamp) / 60000;
-      clist.running[chalID].joined[msg.author.id] =
-        this.buildUserData(msg, 'sprint', doneStamp, timeTaken);
-      this.pushToHook(chalID, msg);
-      const dbData = '$set: {joined: clist.running[chalID].joined,}';
-      await dbc.dbUpdate('challengeDB', parseInt(chalID), dbData);
+      const timeTaken = (doneStamp - clist.running[suffix].startStamp) / 60000;
+      clist.running[chalID].submitUserData(suffix, doneStamp, timeTaken);
       returnMsg = msg.author + ', you completed the sprint in ' +
         timeTaken.toFixed(2) + ' minutes.';
     }
@@ -394,22 +389,10 @@ class Challenges {
       returnMsg = msg.author +
           ', I need a whole number to include in the summary!';
     } else {
-      for (const user in clist.running[chalID].joined) {
-        if (user == msg.author.id && !(clist.running[chalID].joined[user]
-            .countData === undefined)) {
-          raptorCheck = false;
-        }
-      }
       if (Number(wordsWritten) < 1) {
         raptorCheck = false;
       }
-      clist.running[chalID].joined[msg.author.id] = this.buildUserData(msg,
-          clist.running[chalID].type, wordsWritten, writtenType);
-      if (clist.running[chalID].hookedChannels.indexOf(msg.channel.id) == -1) {
-        clist.running[chalID].hookedChannels.push(msg.channel.id);
-      }
-      const dbData = '$set: {joined: clist.running[chalID].joined,}';
-      await dbc.dbUpdate('challengeDB', parseInt(chalID), dbData);
+      clist.running[chalID].submitUserData(chalID, wordsWritten, writtenType);
       returnMsg = msg.author + ', your total of **' + wordsWritten +
         '** ' + writtenType + ' has been added to the summary.';
     }
@@ -482,11 +465,7 @@ class Challenges {
    * @return {Promise} - Promise object.
    */
   async incrementID() {
-    await conn.collection('timer').update(
-        {data: this.timerID},
-        {data: this.timerID + 1},
-        {upsert: true}
-    );
+    await dbc.dbUpdate('timer', {data: this.timerID}, {data: this.timerID + 1});
     this.timerID = this.timerID + 1;
   }
   /**

@@ -1,5 +1,5 @@
 const goallist = require('./goallist.js');
-const conn = require('mongoose').connection;
+const dbc = require('../dbc.js');
 
 /** Represents a goal. */
 class Goal {
@@ -42,10 +42,7 @@ class Goal {
       terminationTime: this.terminationTime,
       channelID: this.channelID,
     };
-
-    conn
-        .collection('goalDB')
-        .update({authorID: this.authorID}, goalData, {upsert: true});
+    dbc.dbUpdate('goalDB', {authorID: this.authorID}, goalData);
   }
   /** Check to see whether the goal resolves, and handle it if so.
    * @return {Number} - The user's chance of hatching a raptor.

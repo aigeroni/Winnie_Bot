@@ -115,12 +115,7 @@ class Challenge {
       returnMsg = user +
         ', you already have notifications enabled for this challenge.';
     } else {
-      this.joined[user.id] =
-        this.buildUserData(channelID, undefined, undefined);
-      this.pushToHook(channelID);
-      const dbData =
-        '$set: {hookedChannels: this.hookedChannels, joined: this.joined,}';
-      await dbc.dbUpdate('challengeDB', this.objectID, dbData);
+      await this.submitUserData(channelID, undefined, undefined);
       returnMsg = user + ', you have joined ' + this.displayName;
     }
     return returnMsg;
@@ -137,8 +132,8 @@ class Challenge {
     } else {
       delete this.joined[user.id];
       const dbData =
-        '$set: {hookedChannels: this.hookedChannels, joined: this.joined,}';
-      await dbc.dbUpdate('challengeDB', this.objectID, dbData);
+        {$set: {hookedChannels: this.hookedChannels, joined: this.joined}};
+      await dbc.dbUpdate('challengeDB', {_id: this.objectID}, dbData);
       returnMsg = user + ', you have left ' + this.displayName;
     }
     return returnMsg;
@@ -152,6 +147,22 @@ class Challenge {
     );
     delete clist.running[this.objectID];
     return this.displayName + ' (ID ' + this.objectID + ') has been cancelled.';
+  }
+  /**
+   * Builds user data for the challenge database.
+   * @param {String} channel - The channel from which the user joined.
+   * @param {String} param1 - The first join parameter.
+   * @param {String} param2 - The second join parameter.
+   * @return {Promise} - Promise object.
+   */
+  async submitUserData(channel) {
+    this.joined[user.id] = this.buildUserData(channel, param1, param2);
+    if (this.hookedChannels.indexOf(channel) == -1) {
+      this.hookedChannels.push(chanID);
+    }
+    const dbData =
+      {$set: {hookedChannels: this.hookedChannels, joined: this.joined}};
+    await dbc.dbUpdate('challengeDB', {_id: this.objectID}, dbData);
   }
   /**
    * Builds user data for the challenge database.
@@ -271,15 +282,6 @@ class Challenge {
    */
   sendMsg(msg, channelID) {
     client.channels.get(channelID).send(msg);
-  }
-  /**
-   * Push a channel to the hooked channels list.
-   * @param {String} chanID - The ID of the channel to add.
-   */
-  pushToHook(chanID) {
-    if (this.hookedChannels.indexOf(chanID) == -1) {
-      this.hookedChannels.push(chanID);
-    }
   }
 }
 
