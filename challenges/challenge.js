@@ -81,17 +81,8 @@ class Challenge {
         time += 's';
       }
       this.buildMsg(
-          'Your ' +
-          type +
-          ', ' +
-          this.displayName +
-          ' (ID ' +
-          this.objectID +
-          '), starts in ' +
-          this.countdown +
-          ' ' +
-          time +
-          '.'
+          'Your ' + this.type + ', ' + this.displayName + ' (ID ' +
+          this.objectID + '), starts in ' + this.countdown + ' ' + time + '.'
       );
     }
   }
@@ -139,16 +130,16 @@ class Challenge {
    * @param {String} channelID - The channel from which the user joined.
    * @return {String} - Message to display to the user.
    */
-  async leave(user, channelID) {
+  async leave(user) {
+    let returnMsg = '';
     if (!(user.id in this.joined)) {
       returnMsg = user + ', you have not yet joined this challenge.';
     } else {
       delete this.joined[user.id];
-      this.dropFromHook(chalID, msg);
       const dbData =
         '$set: {hookedChannels: this.hookedChannels, joined: this.joined,}';
       await dbc.dbUpdate('challengeDB', this.objectID, dbData);
-      returnMsg = msg.author + ', you have left ' + this.displayName;
+      returnMsg = user + ', you have left ' + this.displayName;
     }
     return returnMsg;
   }
@@ -160,7 +151,7 @@ class Challenge {
         {_id: this.objectID}
     );
     delete clist.running[this.objectID];
-    return this.displayName + ' has been cancelled.';
+    return this.displayName + ' (ID ' + this.objectID + ') has been cancelled.';
   }
   /**
    * Builds user data for the challenge database.

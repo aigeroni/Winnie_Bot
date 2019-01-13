@@ -193,10 +193,8 @@ class Challenges {
     const user = await conn.collection('userDB').findOne(
         {_id: msg.author.id}
     );
-    if (user != null) {
-      if (user.autoStatus == 'off') {
-        crossServerHide = true;
-      }
+    if (user != null && user.autoStatus == 'off') {
+      crossServerHide = true;
     }
     const args = suffix.split(' ');
     if (args[0] == 'join') {
@@ -216,55 +214,35 @@ class Challenges {
     if (warName == '') {
       warName = msg.author.username + '\'s war';
     }
-    if (profanity.check(warName).length > 0) {
-      returnMsg = '**Error:** War names may not contain profanity.';
-    } else if (this.regex.exec(warName)) {
-      returnMsg = '**Error:** War names may not contain emoji.';
-    } else if (msg.mentions.members.size > 0) {
-      returnMsg = '**Error:** War names may not mention users.';
-    } else if (isNaN(start)) {
-      returnMsg = '**Error:** Time to start must be a number. Example: `' +
-          prefix +
-          'war 10 1`.';
-    } else if (isNaN(duration)) {
-      returnMsg = '**Error:** War duration must be a number. Example: `' +
-          prefix +
-          'war 10 1`.';
-    } else if (start > 30) {
-      returnMsg =
-          '**Error:** Wars cannot start more than 30 minutes in the future.';
-    } else if (duration > 60) {
-      returnMsg = '**Error:** Wars cannot last for more than an hour.';
-    } else if (start <= 0) {
-      returnMsg = '**Error:** Wars cannot start in the past.';
-    } else if (duration < 1) {
-      returnMsg = '**Error:** Wars must run for at least a minute.';
-    } else if (warName.length > 150) {
-      returnMsg = '**Error:** War names must be 150 characters or less.';
+    if (msg.mentions.members.size > 0) {
+      returnMsg = '**Error:** Challenge names may not mention users.';
+    } else if (this.validateName(warName)) {
+      returnMsg = this.validateName(warName);
+    } else if (this.validateTime(duration)) {
+      returnMsg = this.validateTime(duration)
+        + 'Example: `' + prefix + 'war 10 1`.';
+    } else if (this.validateCountdown(start)) {
+      returnMsg = this.validateCountdown(start)
+        + 'Example: `' + prefix + 'war 10 1`.';
     } else {
-      try {
-        const creatorID = msg.author.id;
-        const chalID = this.timerID;
-        const startTime = new Date().getTime();
-        clist.running[chalID] = new War(
-            chalID,
-            creatorID,
-            warName,
-            startTime,
-            start,
-            duration,
-            msg.channel.id,
-            crossServerHide,
-            [msg.channel.id],
-            {}
-        );
-        await this.incrementID();
-        if (joinFlag) {
-          returnMsg += await this.joinChallenge(msg, prefix, chalID);
-        }
-      } catch (e) {
-        returnMsg = '**Error:** War creation failed.';
-        logger.error('Error %s: %s.', e, e.stack);
+      const creatorID = msg.author.id;
+      const chalID = this.timerID;
+      const startTime = new Date().getTime();
+      clist.running[chalID] = new War(
+          chalID,
+          creatorID,
+          warName,
+          startTime,
+          start,
+          duration,
+          msg.channel.id,
+          crossServerHide,
+          [msg.channel.id],
+          {}
+      );
+      await this.incrementID();
+      if (joinFlag) {
+        returnMsg += await this.joinChallenge(msg, prefix, chalID);
       }
     }
     return returnMsg;
@@ -467,6 +445,54 @@ class Challenges {
     return {returnMsg: returnMsg, raptorCheck: raptorCheck};
   }
   /**
+   * Validates a challenge name.
+   * @param {String} name - The name to validate.
+   * @return {String} - Message to send to user.
+   */
+  validateName(name) {
+    let returnMsg = false;
+    if (profanity.check(name).length > 0) {
+      returnMsg = '**Error:** Challenge names may not contain profanity.';
+    } else if (this.regex.exec(name)) {
+      returnMsg = '**Error:** Challenge names may not contain emoji.';
+    } else if (name.length > 150) {
+      returnMsg = '**Error:** Challenge names must be 150 characters or less.';
+    }
+    return returnMsg;
+  }
+  /**
+   * Validates a challenge duration.
+   * @param {String} duration - The duration to validate.
+   * @return {String} - Message to send to user.
+   */
+  validateTime(duration) {
+    let returnMsg = false;
+    if (isNaN(duration)) {
+      returnMsg = '**Error:** Challenge duration must be a number.';
+    } else if (duration > 60) {
+      returnMsg = '**Error:** Challenges cannot last for more than an hour.';
+    } else if (duration < 1) {
+      returnMsg = '**Error:** Challenges must run for at least a minute.';
+    }
+    return returnMsg;
+  }
+  /**
+   * Validates the time before a challenge.
+   * @param {String} start - The countdown time to validate.
+   * @return {String} - Message to send to user.
+   */
+  validateCountdown(start) {
+    let returnMsg = false;
+    if (isNaN(start)) {
+      returnMsg = '**Error:** Time to start must be a number.';
+    } else if (start > 30) {
+      returnMsg = '**Error:** Challenges must start within 30 minutes.';
+    } else if (start <= 0) {
+      returnMsg = '**Error:** Challenges cannot start in the past.';
+    }
+    return returnMsg;
+  }
+  /**
    * Increment the challenge ID.
    * @return {Promise} - Promise object.
    */
@@ -514,26 +540,6 @@ class Challenges {
       check = true;
     }
     return check;
-  }
-  /**
-   * Drop a channel from the hooked channels list.
-   * @param {String} chalID - The ID of the challenge to drop from.
-   * @param {String} msg - The message that initiated the drop.
-   */
-  dropFromHook(chalID, msg) {
-    let hookDrop = true;
-    if (clist.running[chalID].channelID == msg.channel.id) {
-      hookDrop = false;
-    }
-    for (const item in clist.running[chalID].joined) {
-      if (clist.running[chalID].joined[item].channelID == msg.channel.id) {
-        hookDrop = false;
-      }
-    }
-    if (hookDrop == true && clist.running[chalID].hookedChannels.indexOf(
-        msg.channel.id) != -1) {
-      clist.running[chalID].hookedChannels.splice(index, 1);
-    }
   }
 }
 
