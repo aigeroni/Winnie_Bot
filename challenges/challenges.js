@@ -333,14 +333,14 @@ class Challenges {
    */
   async callTime(msg, prefix, suffix) {
     let returnMsg = '';
-    let raptorCheck = true;
+    let raptorCheck = false;
     const returnInfo = this.checkIDError(suffix, msg, 'time', prefix);
     if (returnInfo) {
       returnMsg = returnInfo;
     } else if (!(clist.running[suffix].type == 'sprint')) {
-      raptorCheck = false;
       returnMsg = '**Error:** You can only call time on a sprint.';
     } else {
+      raptorCheck = true;
       const doneStamp = new Date().getTime();
       const timeTaken = (doneStamp - clist.running[suffix].startStamp) / 60000;
       clist.running[chalID].submitUserData(suffix, doneStamp, timeTaken);
@@ -361,37 +361,21 @@ class Challenges {
     const args = suffix.split(' ');
     const chalID = args.shift();
     const wordsWritten = args.shift();
-    let writtenType = args.shift();
-    let raptorCheck = true;
-    if (writtenType === undefined) {
-      writtenType = 'words';
-    }
-    if (writtenType.charAt(writtenType.length-1) != 's') {
-      writtenType += 's';
-    }
+    const writtenType = this.typeAssign(args.shift());
+    let raptorCheck = false;
     const returnInfo = this.checkIDError(chalID, msg, 'total', prefix);
-    if (returnInfo) {
-      returnMsg = returnInfo;
-    } else if (!(
-      writtenType == 'lines' || writtenType == 'pages' ||
-      writtenType == 'words' || writtenType == 'minutes'
-    )) {
-      raptorCheck = false;
+    if (!writtenType) {
       returnMsg = '**Error:** You must work in words, lines, or pages.';
+    } else if (returnInfo) {
+      returnMsg = returnInfo;
+    } else if (this.validateGoal(wordsWritten)) {
+      returnMsg = this.validateGoal(wordsWritten);
     } else if (clist.running[chalID].type == 'sprint') {
-      raptorCheck = false;
       returnMsg = '**Error:** You cannot post a total for sprints.';
     } else if (clist.running[chalID].state < 2) {
-      raptorCheck = false;
       returnMsg = '**Error:** This challenge has not ended yet!';
-    } else if (!Number.isInteger(Number(wordsWritten))) {
-      raptorCheck = false;
-      returnMsg = msg.author +
-          ', I need a whole number to include in the summary!';
     } else {
-      if (Number(wordsWritten) < 1) {
-        raptorCheck = false;
-      }
+      raptorCheck = true;
       clist.running[chalID].submitUserData(chalID, wordsWritten, writtenType);
       returnMsg = msg.author + ', your total of **' + wordsWritten +
         '** ' + writtenType + ' has been added to the summary.';
@@ -454,9 +438,9 @@ class Challenges {
   validateGoal(words) {
     let returnMsg = false;
     if (!Number.isInteger(Number(words))) {
-      returnMsg = '**Error:** Word goal must be a whole number.';
+      returnMsg = '**Error:** Word count must be a whole number.';
     } else if (words < 1) {
-      returnMsg = '**Error:** Word goal cannot be negative.';
+      returnMsg = '**Error:** Word count cannot be negative.';
     }
     return returnMsg;
   }
@@ -504,6 +488,23 @@ class Challenges {
       check = true;
     }
     return check;
+  }
+  /**
+   * Validate and assign a total type.
+   * @param {String} type - The type of the challenge.
+   * @return {String} - User data.
+   */
+  typeAssign(type) {
+    if (type === undefined) {
+      type = 'words';
+    }
+    if (type.charAt(type.length-1) != 's') {
+      type += 's';
+    }
+    if (!(['words', 'lines', 'pages', 'minutes'].includes(type))) {
+      type = false;
+    }
+    return type;
   }
 }
 
