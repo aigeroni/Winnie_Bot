@@ -95,10 +95,8 @@ class Challenges {
     const user = await conn.collection('userDB').findOne(
         {_id: msg.author.id}
     );
-    if (user != null) {
-      if (user.autoStatus == 'off') {
-        crossServerHide = true;
-      }
+    if (user != null && user.autoStatus == 'off') {
+      crossServerHide = true;
     }
     const args = suffix.split(' ');
     if (args[0] == 'join') {
@@ -119,62 +117,39 @@ class Challenges {
     if (sprintName == '') {
       sprintName = msg.author.username + '\'s sprint';
     }
-    if (profanity.check(sprintName).length > 0) {
-      returnMsg = '**Error:** Sprint names may not contain profanity.';
-    } else if (this.regex.exec(sprintName)) {
-      returnMsg = '**Error:** Sprint names may not contain emoji.';
-    } else if (msg.mentions.members.size > 0) {
-      returnMsg = '**Error:** Sprint names may not mention users.';
-    } else if (!Number.isInteger(Number(words))) {
-      returnMsg = '**Error:** Word goal must be a whole number. Example: `' +
-          prefix +
-          'sprint 200 10 1`.';
-    } else if (isNaN(timeout)) {
-      returnMsg = '**Error:** Sprint duration must be a number. Example: `' +
-          prefix +
-          'sprint 200 10 1`.';
-    } else if (isNaN(start)) {
-      returnMsg = '**Error:** Time to start must be a number. Example: `' +
-          prefix +
-          'sprint 200 10 1`.';
-    } else if (start > 30) {
-      returnMsg =
-          '**Error:** Sprints cannot start more than 30 minutes in the future.';
-    } else if (timeout > 60) {
-      returnMsg = '**Error:** Sprints cannot last for more than an hour.';
-    } else if (words < 1) {
-      returnMsg = '**Error:** Word goal cannot be negative.';
-    } else if (start <= 0) {
-      returnMsg = '**Error:** Sprints cannot start in the past.';
-    } else if (timeout < 1) {
-      returnMsg = '**Error:** Sprints must run for at least a minute.';
-    } else if (sprintName.length > 150) {
-      returnMsg = '**Error:** Sprint names must be 150 characters or less.';
+    if (msg.mentions.members.size > 0) {
+      returnMsg = '**Error:** Challenge names may not mention users.';
+    } else if (this.validateName(warName)) {
+      returnMsg = this.validateName(warName);
+    } else if (this.validateTime(timeout)) {
+      returnMsg = this.validateTime(timeout)
+        + ' Example: `' + prefix + 'sprint 200 10 1`.';
+    } else if (this.validateCountdown(start)) {
+      returnMsg = this.validateCountdown(start)
+        + ' Example: `' + prefix + 'sprint 200 10 1`.';
+    } else if (this.validateGoal(words)) {
+      returnMsg = this.validateGoal(words)
+        + ' Example: `' + prefix + 'sprint 200 10 1`.';
     } else {
-      try {
-        const creatorID = msg.author.id;
-        const chalID = this.timerID;
-        const startTime = new Date().getTime();
-        clist.running[chalID] = new Sprint(
-            chalID,
-            creatorID,
-            sprintName,
-            startTime,
-            start,
-            words,
-            timeout,
-            msg.channel.id,
-            crossServerHide,
-            [msg.channel.id],
-            {}
-        );
-        await this.incrementID();
-        if (joinFlag) {
-          returnMsg += await this.joinChallenge(msg, prefix, chalID);
-        }
-      } catch (e) {
-        returnMsg = '**Error:** Sprint creation failed.';
-        logger.error('Error %s: %s.', e, e.stack);
+      const creatorID = msg.author.id;
+      const chalID = this.timerID;
+      const startTime = new Date().getTime();
+      clist.running[chalID] = new Sprint(
+          chalID,
+          creatorID,
+          sprintName,
+          startTime,
+          start,
+          words,
+          timeout,
+          msg.channel.id,
+          crossServerHide,
+          [msg.channel.id],
+          {}
+      );
+      await this.incrementID();
+      if (joinFlag) {
+        returnMsg += await this.joinChallenge(msg, prefix, chalID);
       }
     }
     return returnMsg;
@@ -189,6 +164,7 @@ class Challenges {
   async startWar(msg, prefix, suffix) {
     let returnMsg = '';
     let joinFlag = false;
+    const args = suffix.split(' ');
     let crossServerHide = this.crossServerStatus[msg.guild.id];
     const user = await conn.collection('userDB').findOne(
         {_id: msg.author.id}
@@ -196,7 +172,6 @@ class Challenges {
     if (user != null && user.autoStatus == 'off') {
       crossServerHide = true;
     }
-    const args = suffix.split(' ');
     if (args[0] == 'join') {
       args.shift();
       joinFlag = true;
@@ -220,10 +195,10 @@ class Challenges {
       returnMsg = this.validateName(warName);
     } else if (this.validateTime(duration)) {
       returnMsg = this.validateTime(duration)
-        + 'Example: `' + prefix + 'war 10 1`.';
+        + ' Example: `' + prefix + 'war 10 1`.';
     } else if (this.validateCountdown(start)) {
       returnMsg = this.validateCountdown(start)
-        + 'Example: `' + prefix + 'war 10 1`.';
+        + ' Example: `' + prefix + 'war 10 1`.';
     } else {
       const creatorID = msg.author.id;
       const chalID = this.timerID;
@@ -258,6 +233,7 @@ class Challenges {
     let returnMsg = '';
     let joinFlag = false;
     let crossServerHide = this.crossServerStatus[msg.guild.id];
+    const args = suffix.split(' ');
     const user = await conn.collection('userDB').findOne(
         {_id: msg.author.id}
     );
@@ -266,7 +242,6 @@ class Challenges {
         crossServerHide = true;
       }
     }
-    const args = suffix.split(' ');
     if (args[0] == 'join') {
       args.shift();
       joinFlag = true;
@@ -288,12 +263,16 @@ class Challenges {
     if (warName == '') {
       warName = msg.author.username + '\'s war';
     }
-    if (profanity.check(warName).length > 0) {
-      returnMsg = '**Error:** War names may not contain profanity.';
-    } else if (this.regex.exec(warName)) {
-      returnMsg = '**Error:** War names may not contain emoji.';
-    } else if (msg.mentions.members.size > 0) {
-      returnMsg = '**Error:** War names may not mention users.';
+    if (msg.mentions.members.size > 0) {
+      returnMsg = '**Error:** Challenge names may not mention users.';
+    } else if (this.validateName(warName)) {
+      returnMsg = this.validateName(warName);
+    } else if (this.validateTime(duration)) {
+      returnMsg = this.validateTime(duration)
+        + ' Example: `' + prefix + 'chainwar 2 10 1`.';
+    } else if (this.validateCountdown(start)) {
+      returnMsg = this.validateCountdown(start)
+        + ' Example: `' + prefix + 'chainwar 2 10 1`.';
     } else if (isNaN(chainWarCount)) {
       returnMsg = '**Error:** War count must be a number. Example: `' +
           prefix +
@@ -307,10 +286,6 @@ class Challenges {
     })) {
       returnMsg = '**Error:** There cannot be more than 30 minutes' +
           ' between wars in a chain.';
-    } else if (isNaN(duration)) {
-      returnMsg = '**Error:** War duration must be a number. Example: `' +
-          prefix +
-          'chainwar 2 10 1`.';
     } else if (chainWarCount < 2 || chainWarCount > 10) {
       returnMsg = '**Error:** Chains must be between two and ten wars long.';
     } else if (duration * chainWarCount > 120) {
@@ -318,10 +293,6 @@ class Challenges {
           '**Error:** Chain wars cannot run for more than two hours in total.';
     } else if (timeBetween <= 0) {
       returnMsg = '**Error:** Chain wars cannot overlap.';
-    } else if (duration < 1) {
-      returnMsg = '**Error:** Wars must run for at least a minute.';
-    } else if (warName.length > 150) {
-      returnMsg = '**Error:** War names must be 150 characters or less.';
     } else {
       try {
         const creatorID = msg.author.id;
@@ -489,6 +460,20 @@ class Challenges {
       returnMsg = '**Error:** Challenges must start within 30 minutes.';
     } else if (start <= 0) {
       returnMsg = '**Error:** Challenges cannot start in the past.';
+    }
+    return returnMsg;
+  }
+  /**
+   * Validates the word goal for a sprint.
+   * @param {String} words - The goal to validate.
+   * @return {String} - Message to send to user.
+   */
+  validateGoal(words) {
+    let returnMsg = false;
+    if (!Number.isInteger(Number(words))) {
+      returnMsg = '**Error:** Word goal must be a whole number.';
+    } else if (words < 1) {
+      returnMsg = '**Error:** Word goal cannot be negative.';
     }
     return returnMsg;
   }
