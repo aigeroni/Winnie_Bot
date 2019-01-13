@@ -18,7 +18,7 @@ class Config {
     let nonHiddenTotal = 0;
     let listData = '';
     for (const i in clist.running) {
-      if (clist.running.hasOwnProperty(i) && !(
+      if (!(
         challenges.hiddenCheck(i, msg.guild.id))) {
         const guildName = client.guilds.get(clist.running[i].channelID).name;
         nonHiddenTotal += 1;
@@ -167,9 +167,9 @@ class Config {
     const server = await conn.collection('configDB').findOne(
         {_id: msg.guild.id}
     );
-    if () {
+    // if () {
       
-    }
+    // }
     if (server == null || server.field === undefined) {
       returnMsg = msg.author +
           ', this server does not have ' + field + ' configured.';

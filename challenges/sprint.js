@@ -1,7 +1,6 @@
 const Challenge = require('./challenge');
 const clist = require('./clist.js');
 const dbc = require('../dbc.js');
-const conn = require('mongoose').connection;
 
 /** Represents a sprint. */
 class Sprint extends Challenge {
@@ -66,7 +65,7 @@ class Sprint extends Challenge {
     };
     const array = [challengeData];
 
-    conn.collection('challengeDB').insert(array, {}, function(e, docs) {});
+    dbc.dbInsert('challengeDB', array);
   }
   /** Update the sprint at each tick. */
   update() {
@@ -82,6 +81,20 @@ class Sprint extends Challenge {
         delete clist.running[this.objectID];
         break;
     }
+  }
+  /**
+   * Builds user data for the challenge database.
+   * @param {String} channel - The channel from which the user joined.
+   * @param {String} timestamp - The time at which the user finished the sprint.
+   * @param {String} minutes - The time taken to complete the sprint.
+   * @return {Object} - JSON object representing the total.
+   */
+  buildUserData(channel, timestamp, minutes) {
+    return {
+      timestampCalled: timestamp,
+      timeTaken: minutes,
+      channelID: channel,
+    };
   }
   /** Check to see whether the countdown is over, and start the sprint if so. */
   start() {

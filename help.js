@@ -66,9 +66,7 @@ class Help {
       cmdType.substr(1) +
       ':*__\n';
     for (const i in cmdList) {
-      if (cmdList.hasOwnProperty(i) &&
-        !(cmdList[i].alias) &&
-        cmdList[i].type == cmdType) {
+      if (!(cmdList[i].alias) && cmdList[i].type == cmdType) {
         helpMsg += this.buildHelpItem(cmdList[i], prefix);
       }
     }
@@ -137,9 +135,7 @@ class Help {
       ':*__\n';
     let first = true;
     for (const j in cmdList) {
-      if (cmdList.hasOwnProperty(j) &&
-        !(cmdList[j].alias) &&
-        cmdList[j].type == cmdType) {
+      if (!(cmdList[j].alias) && cmdList[j].type == cmdType) {
         if (first == false) {
           helpMsg += ', ';
         }

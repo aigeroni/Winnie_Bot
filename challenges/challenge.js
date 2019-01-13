@@ -1,5 +1,6 @@
 const clist = require('./clist.js');
 const config = require('../config.json');
+const dbc = require('../dbc.js');
 const conn = require('mongoose').connection;
 
 /** Represents a challenge. */
@@ -85,6 +86,7 @@ class Challenge {
             this.objectID +
             '), starts in ' +
             this.countdown +
+            ' ' +
             time +
             '.'
         );
@@ -105,8 +107,77 @@ class Challenge {
         break;
       default:
         this.channel.send('**Error:** Invalid state reached.');
-        delete clist.running[this.objectID];
+        this.cancel();
         break;
+    }
+  }
+  /** Adds a user to a challenge.
+   * @param {String} user - The ID of the user to add.
+   * @param {String} channelID - The channel from which the user joined.
+   * @return {String} - Message to display to the user.
+   */
+  async join(user, channelID) {
+    if (user.id in this.joined) {
+      returnMsg = user +
+        ', you already have notifications enabled for this challenge.';
+    } else {
+      this.joined[user.id] =
+        this.buildUserData(channelID, undefined, undefined);
+      this.pushToHook(channelID);
+      const dbData =
+        '$set: {hookedChannels: this.hookedChannels, joined: this.joined,}';
+      await dbc.dbUpdate('challengeDB', this.objectID, dbData);
+      returnMsg = user + ', you have joined ' + this.displayName;
+    }
+    return returnMsg;
+  }
+  /** Remove a user from a challenge.
+   * @param {String} user - The ID of the user to remove.
+   * @param {String} channelID - The channel from which the user joined.
+   * @return {String} - Message to display to the user.
+   */
+  async leave(user, channelID) {
+    if (!(user.id in this.joined)) {
+      returnMsg = user + ', you have not yet joined this challenge.';
+    } else {
+      delete this.joined[user.id];
+      this.dropFromHook(chalID, msg);
+      const dbData =
+        '$set: {hookedChannels: this.hookedChannels, joined: this.joined,}';
+      await dbc.dbUpdate('challengeDB', this.objectID, dbData);
+      returnMsg = msg.author + ', you have left ' + this.displayName;
+    }
+    return returnMsg;
+  }
+  /**
+   * Builds user data for the challenge database.
+   * @param {String} channel - The channel from which the user joined.
+   * @return {Promise} - Promise object.
+   */
+  buildUserData(channel) {
+    return {channelID: channel};
+  }
+  /** Check to see whether the countdown is over, and start the challenge
+   * if so.
+   */
+  cancel() {
+    if (this.cStart > 0) {
+      this.cStart--;
+    }
+    if (this.cStart == 0) {
+      this.startMsg();
+    } else if (this.cStart == 60) {
+      this.sendMsg(this.displayName + ' starts in 1 minute.');
+    } else if (this.cStart % 300 == 0) {
+      this.sendMsg(
+          this.displayName + ' starts in ' +
+          this.cStart / 60 + ' minutes.'
+      );
+    } else if ([30, 10, 5].includes(this.cStart)) {
+      this.sendMsg(
+          this.displayName + ' starts in ' +
+          this.cStart + ' seconds.'
+      );
     }
   }
   /** Check to see whether the countdown is over, and start the challenge
@@ -207,6 +278,29 @@ class Challenge {
       delete clist.running[this.objectID];
     }
   }
+  /** Check to see whether the countdown is over, and start the challenge
+   * if so.
+   */
+  summary() {
+    if (this.cStart > 0) {
+      this.cStart--;
+    }
+    if (this.cStart == 0) {
+      this.startMsg();
+    } else if (this.cStart == 60) {
+      this.sendMsg(this.displayName + ' starts in 1 minute.');
+    } else if (this.cStart % 300 == 0) {
+      this.sendMsg(
+          this.displayName + ' starts in ' +
+          this.cStart / 60 + ' minutes.'
+      );
+    } else if ([30, 10, 5].includes(this.cStart)) {
+      this.sendMsg(
+          this.displayName + ' starts in ' +
+          this.cStart + ' seconds.'
+      );
+    }
+  }
   /** Get all users hooked from a channel.
    * @param {String} channel - The Discord ID of the channel.
    * @return {String} - A list of user snowflakes.
@@ -226,6 +320,15 @@ class Challenge {
   sendMsg(msg) {
     for (let i = 0; i < this.hookedChannels.length; i++) {
       client.channels.get(this.hookedChannels[i]).send(msg);
+    }
+  }
+  /**
+   * Push a channel to the hooked channels list.
+   * @param {String} chanID - The ID of the channel to add.
+   */
+  pushToHook(chanID) {
+    if (this.hookedChannels.indexOf(chanID) == -1) {
+      this.hookedChannels.push(chanID);
     }
   }
 }

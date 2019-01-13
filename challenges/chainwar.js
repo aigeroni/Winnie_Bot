@@ -1,6 +1,6 @@
 const War = require('./war.js');
 const clist = require('./clist.js');
-const conn = require('mongoose').connection;
+const dbc = require('../dbc.js');
 
 /** Represents a chain war. */
 class ChainWar extends War {
@@ -36,7 +36,7 @@ class ChainWar extends War {
       hidden,
       hookedChannels,
       joined,
-      chainTotal
+      chainTotal,
   ) {
     super(
         objectID,
@@ -78,7 +78,7 @@ class ChainWar extends War {
     };
     const array = [challengeData];
 
-    conn.collection('challengeDB').insert(array, {}, function(e, docs) {});
+    dbc.dbInsert('challengeDB', array);
   }
   /** Update the chain war at each tick. */
   update() {
@@ -99,6 +99,16 @@ class ChainWar extends War {
         delete clist.running[this.objectID];
         break;
     }
+  }
+  /**
+   * Builds user data for the challenge database.
+   * @param {String} channel - The channel from which the user joined.
+   * @param {String} total - The total posted by the user.
+   * @param {String} type - The type of the total.
+   * @return {Object} - JSON object representing the total.
+   */
+  buildUserData(channel, total, type) {
+    return super.buildUserData(channel, total, type);
   }
   /** Check to see whether the countdown is over, and start the war if so. */
   start() {
@@ -122,17 +132,34 @@ class ChainWar extends War {
           this.chainTotal = clist.addToAggregate(this.chainTotal, user);
           this.chainTotal[user][type][0] +=
               parseInt(this.joined[user].countData);
-          this.chainTotal[user][type][1] += 1;
+          this.chainTotal[user][type][1] += parseInt(this.duration);
           this.chainTotal[user].channelID = this.joined[user].channelID;
         }
       }
       for (const user in this.chainTotal) {
-        if (this.chainTotal.hasOwnProperty(user) &&
-          this.hookedChannels.indexOf(this.chainTotal[user].channelID) == -1) {
+        if (this.hookedChannels.indexOf(this.chainTotal[user].channelID)
+          == -1) {
           this.hookedChannels.push(this.chainTotal[user].channelID);
         }
       }
       super.terminate();
+      const channels = [];
+      for (const user in this.chainTotal) {
+        if (this.chainTotal.hasOwnProperty(user)) {
+          if (channels.indexOf(this.chainTotal[user].channelID) == -1) {
+            channels.push(this.chainTotal[user].channelID);
+          }
+        }
+      }
+      if (this.current == this.total) {
+        for (let i = 0; i < channels.length; i++) {
+          console.log(this.objectID);
+          client.channels.get(channels[i]).send(clist
+              .chainSummary(
+                  channels[i], this.warName, this.chainTotal, this.serverTotals
+              ));
+        }
+      }
     }
   }
 }

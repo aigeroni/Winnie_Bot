@@ -1,6 +1,5 @@
 const Challenge = require('./challenge.js');
 const dbc = require('../dbc.js');
-const conn = require('mongoose').connection;
 
 /** Represents a war. */
 class War extends Challenge {
@@ -66,11 +65,25 @@ class War extends Challenge {
     };
     const array = [challengeData];
 
-    conn.collection('challengeDB').insert(array, {}, function(e, docs) {});
+    dbc.dbInsert('challengeDB', array);
   }
   /** Update the war at each tick. */
   update() {
     super.update();
+  }
+  /**
+   * Builds user data for the challenge database.
+   * @param {String} channel - The channel from which the user joined.
+   * @param {String} total - The total posted by the user.
+   * @param {String} type - The type of the total.
+   * @return {Object} - JSON object representing the total.
+   */
+  buildUserData(channel, total, type) {
+    return {
+      countData: total,
+      countType: type,
+      channelID: channel,
+    };
   }
   /** Check to see whether the countdown is over, and start the war if so. */
   start() {

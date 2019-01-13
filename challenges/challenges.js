@@ -34,18 +34,8 @@ class Challenges {
     const returnInfo = this.checkIDError(chalID, msg, 'join', prefix);
     if (returnInfo) {
       returnMsg = returnInfo;
-    } else if (msg.author.id in clist.running[chalID].joined) {
-      returnMsg = msg.author +
-        ', you already have notifications enabled for this challenge.';
     } else {
-      clist.running[chalID].joined[msg.author.id] = this
-          .buildUserData(msg, clist.running[chalID].type, undefined, undefined);
-      this.pushToHook(chalID, msg);
-      returnMsg = msg.author + ', you have joined ' +
-        clist.running[chalID].displayName;
-      const dbData = '$set: {hookedChannels: clist.running[chalID]' +
-        '.hookedChannels, joined: clist.running[chalID].joined,}';
-      await dbc.dbUpdate('challengeDB', parseInt(chalID), dbData);
+      returnMsg = await clist.running[chalID].join(msg.author, msg.channel.id);
     }
     return returnMsg;
   }
@@ -62,15 +52,8 @@ class Challenges {
     const returnInfo = this.checkIDError(chalID, msg, 'leave', prefix);
     if (returnInfo) {
       returnMsg = returnInfo;
-    } else if (!(msg.author.id in clist.running[chalID].joined)) {
-      returnMsg = msg.author + ', you have not yet joined this challenge.';
     } else {
-      delete clist.running[chalID].joined[msg.author.id];
-      this.dropFromHook(chalID, msg);
-      returnMsg = msg.author + ', you have left ' +
-        clist.running[chalID].displayName;
-      const dbData = '$set: {joined: clist.running[chalID].joined,}';
-      await dbc.dbUpdate('challengeDB', parseInt(chalID), dbData);
+      returnMsg = await clist.running[chalID].leave(msg.author);
     }
     return returnMsg;
   }
@@ -94,7 +77,7 @@ class Challenges {
       );
       channelList = clist.running[chalID].hookedChannels;
       returnMsg =
-        clist.running[chalID] + ' has been ended by the creator.';
+        clist.running[chalID].displayName + ' has been ended by the creator.';
       delete clist.running[chalID];
     } else {
       returnMsg = '**Error:** Only the creator of ' +
@@ -190,7 +173,7 @@ class Challenges {
             [msg.channel.id],
             {}
         );
-        this.incrementID();
+        await this.incrementID();
         if (joinFlag) {
           returnMsg += await this.joinChallenge(msg, prefix, chalID);
         }
@@ -280,7 +263,7 @@ class Challenges {
             [msg.channel.id],
             {}
         );
-        this.incrementID();
+        await this.incrementID();
         if (joinFlag) {
           returnMsg += await this.joinChallenge(msg, prefix, chalID);
         }
@@ -493,7 +476,7 @@ class Challenges {
    * @return {Promise} - Promise object.
    */
   async incrementID() {
-    await conn.collection().update(
+    await conn.collection('timer').update(
         {data: this.timerID},
         {data: this.timerID + 1},
         {upsert: true}
@@ -524,31 +507,6 @@ class Challenges {
     return returnData;
   }
   /**
-   * Builds user data for the challenge database.
-   * @param {String} msg - The message that requested the build.
-   * @param {String} type - The type of the challenge.
-   * @param {String} data1 - The first datapoint.
-   * @param {String} data2 - The second datapoint.
-   * @return {Promise} - Promise object.
-   */
-  buildUserData(msg, type, data1, data2) {
-    let data = {};
-    if (type == 'sprint') {
-      data = {
-        timestampCalled: data1,
-        timeTaken: data2,
-        channelID: msg.channel.id,
-      };
-    } else {
-      data = {
-        countData: data1,
-        countType: data2,
-        channelID: msg.channel.id,
-      };
-    }
-    return data;
-  }
-  /**
    * Check to see whether a challenge is hidden from a server.
    * @param {String} chalID - The ID of the challenge to check.
    * @param {String} guildID - The ID of the server to check against.
@@ -561,16 +519,6 @@ class Challenges {
       check = true;
     }
     return check;
-  }
-  /**
-   * Push a channel to the hooked channels list.
-   * @param {String} chalID - The ID of the challenge to push to.
-   * @param {String} msg - The message that initiated the push.
-   */
-  pushToHook(chalID, msg) {
-    if (clist.running[chalID].hookedChannels.indexOf(msg.channel.id) == -1) {
-      clist.running[chalID].hookedChannels.push(msg.channel.id);
-    }
   }
   /**
    * Drop a channel from the hooked channels list.
