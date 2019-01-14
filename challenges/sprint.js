@@ -183,6 +183,9 @@ class Sprint extends Challenge {
       const serverTotals = this.serverTotals();
       const summaryServer = this.getChannel(channel).guild;
       returnMsg += this.challengeByUser(summaryServer);
+      if (Object.keys(serverTotals).length > 1) {
+        returnMsg += '\n';
+      }
       for (const server in serverTotals) {
         if (serverTotals.hasOwnProperty(server)) {
           returnMsg += this.serverText(server, serverTotals);

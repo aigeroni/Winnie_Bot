@@ -132,13 +132,13 @@ class ChallengeStart {
     const chainWarCount = flagData.args.shift();
     const duration = flagData.args.shift();
     let timeBetween = flagData.args.shift().split('|');
+    if (timeBetween === undefined) {
+      timeBetween = [1];
+    }
     while (timeBetween.length < chainWarCount) {
       timeBetween.push(timeBetween[timeBetween.length-1]);
     }
     let warName = flagData.args.join(' ');
-    if (timeBetween === undefined) {
-      timeBetween = [1];
-    }
     if (warName == '') {
       warName = msg.author.username + '\'s war';
     }
@@ -168,6 +168,7 @@ class ChallengeStart {
           msg.channel.id,
           flagData.display,
           [msg.channel.id],
+          {},
           {},
           {}
       );

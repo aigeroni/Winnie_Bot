@@ -22,6 +22,7 @@ class ChainWar extends War {
    * @param {Object} joined - A list of users who have joined the war.
    * @param {Object} chainTotal - Totals for all users, for all wars in the
    *  chain.
+   * @param {Object} serverTotal - Aggregate totals by server.
    */
   constructor(
       objectID,
@@ -37,6 +38,7 @@ class ChainWar extends War {
       hookedChannels,
       joined,
       chainTotal,
+      serverTotal
   ) {
     super(
         objectID,
@@ -55,6 +57,7 @@ class ChainWar extends War {
     this.current = current;
     this.total = total;
     this.chainTotal = chainTotal;
+    this.serverTotal = serverTotal;
     this.countdownList = countdown;
     if (this.state == 2) {
       this.state = 3;
@@ -72,6 +75,7 @@ class ChainWar extends War {
       hookedChannels: this.hookedChannels,
       joined: this.joined,
       chainTotal: this.chainTotal,
+      serverTotal: this.serverTotal,
       state: this.state,
       type: 'chain war',
       hidden: this.hidden,
@@ -131,7 +135,7 @@ class ChainWar extends War {
       if (this.current == this.total) {
         for (let i = 0; i < this.hookedChannels.length; i++) {
           this.getChannel(this.hookedChannels[i]).send(this.chainSummary(
-              this.hookedChannels[i], this.warName, this.chainTotal
+              this.hookedChannels[i]
           ));
         }
       }
@@ -147,6 +151,11 @@ class ChainWar extends War {
             parseInt(this.joined[user].countData);
         this.chainTotal[user][type][1] += parseInt(this.duration);
         this.chainTotal[user].channelID = this.joined[user].channelID;
+        const serverID = this.getChannel(this.joined[user].channelID).guild.id;
+        this.serverTotal = this.addToAggregate(this.serverTotal, serverID);
+        this.serverTotal[serverID][type][0] +=
+            parseInt(this.joined[user].countData);
+        this.serverTotal[serverID][type][1] += parseInt(this.duration);
       }
     }
   }
@@ -166,8 +175,9 @@ class ChainWar extends War {
         } else {
           returnMsg += ', ';
         }
+        returnMsg +=
+          this.userTotals(userObj[item][0], item, userObj[item][1]) + '\n';
         first = false;
-        returnMsg += this.userTotals(userObj[item][0], item, userObj[item][1]);
       }
     }
     return returnMsg;
@@ -175,25 +185,26 @@ class ChainWar extends War {
   /**
    * Builds a summary of chain war aggregate totals for a given channel.
    * @param {String} channel - Discord ID of the channel being posted to.
-   * @param {Number} name - Name of the chain being summarised.
-   * @param {Objects} totals - User-entered totals for the chain.
    * @return {String} - The message to send to the user.
    */
-  chainSummary(channel, name, totals) {
-    let returnMsg = '***Summary for ' + name + ':***\n\n';
+  chainSummary(channel) {
+    let returnMsg = '***Summary for ' + this.warName + ':***\n\n';
     let summaryData = '';
     const summaryServer = client.channels.get(channel).guild;
-    for (const user in totals) {
-      if (client.channels.get(totals[user]
+    for (const user in this.chainTotal) {
+      if (client.channels.get(this.chainTotal[user]
           .channelID).guild.id == summaryServer.id) {
-        summaryData += this.chainByUser(user, totals[user]);
+        summaryData += this.chainByUser(user, this.chainTotal[user]);
       }
     }
-    // for (const server in serverTotals) {
-    //   if (serverTotals.hasOwnProperty(server)) {
-    //     returnMsg += this.serverText(server, serverTotals);
-    //   }
-    // }
+    if (Object.keys(this.serverTotal).length > 1) {
+      returnMsg += '\n';
+    }
+    for (const server in this.serverTotal) {
+      if (this.serverTotal.hasOwnProperty(server)) {
+        summaryData += this.serverText(server, this.serverTotal);
+      }
+    }
     if (summaryData == '') {
       summaryData = 'No totals were posted for this chain war.';
     }

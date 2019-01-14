@@ -117,6 +117,9 @@ class War extends Challenge {
       const serverTotals = this.serverTotals(this.objectID);
       const summaryServer = this.getChannel(channel).guild;
       returnMsg += this.challengeByUser(summaryServer, this.objectID, 'war');
+      if (Object.keys(serverTotals).length > 1) {
+        returnMsg += '\n';
+      }
       for (const server in serverTotals) {
         if (serverTotals.hasOwnProperty(server)) {
           returnMsg += this.serverText(server, serverTotals);
@@ -143,7 +146,7 @@ class War extends Challenge {
         if (cType != undefined && this.channel.guild.id == summaryServer.id) {
           userTotals += client.users.get(user) + ': ' + this.userTotals(
               this.joined[user].countData, cType, this.duration
-          );
+          ) + '\n';
         }
       }
     }
@@ -202,7 +205,6 @@ class War extends Challenge {
       userTotal +=
         ' (**' + (total/time).toFixed(2) + '** ' + type.slice(0, 1) + 'pm)';
     }
-    userTotal += '\n';
     return userTotal;
   }
   /**
@@ -212,12 +214,13 @@ class War extends Challenge {
    * @return {String} - The message to send to the user.
    */
   serverText(server, serverTotals) {
+    console.log(serverTotals[server]);
     let serverText = '__' + client.guilds.get(server).name + '__:';
     let firstType = true;
     for (const item in serverTotals[server]) {
       if (serverTotals[server][item][1] > 0) {
         if (!firstType) {
-          serverText = ', ';
+          serverText += ', ';
         }
         serverText += ' **' + serverTotals[server][item][0];
         if (serverTotals[server][item][0] == 1) {

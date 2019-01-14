@@ -47,7 +47,8 @@ const tickTimer = gameloop.setGameLoop(async function(delta) {
               clist.running[item].hookedChannels.slice(),
               JSON.parse(JSON.stringify(
                   clist.running[item].joined)),
-              clist.running[item].chainTotal
+              clist.running[item].chainTotal,
+              clist.running[item].serverTotal
           );
           start.incrementID();
         }
@@ -149,7 +150,8 @@ client.on('ready', () => {
                   challenge.hidden,
                   challenge.hookedChannels,
                   challenge.joined,
-                  challenge.chainTotal
+                  challenge.chainTotal,
+                  challenge.serverTotal
               );
             }
           });
