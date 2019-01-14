@@ -59,7 +59,7 @@ class Goal {
    * Clears a goal from the database.
    */
   clearGoal() {
-    conn.collection('goalDB').remove({authorID: this.authorID});
+    dbc.dbRemove('goalDB', {authorID: this.authorID});
     delete goallist.goalList[this.authorID];
   }
   /** Update the goal with the user's current progress.
@@ -76,14 +76,11 @@ class Goal {
         this.written = parseInt(wordNumber);
         break;
     }
-    conn
-        .collection('goalDB')
-        .update(
-            {authorID: this.authorID},
-            {$set: {written: this.written}},
-            {upsert: false},
-            function(err) {}
-        );
+    dbc.dbUpdate(
+        'goalDB',
+        {authorID: this.authorID},
+        {$set: {written: this.written}}
+    );
   }
 }
 

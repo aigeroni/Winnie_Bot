@@ -1,5 +1,4 @@
 const dbc = require('../dbc.js');
-const conn = require('mongoose').connection;
 
 /** Information required for challenge creation and summary display. */
 class ChallengeList {
@@ -129,9 +128,7 @@ class ChallengeList {
    */
   async checkStatus(author, field) {
     let returnMsg = '';
-    const user = await conn.collection('userDB').findOne(
-        {_id: author.id}
-    );
+    const user = await dbc.dbFind('userDB', {_id: author.id});
     let type = 'on';
     if (user[field] == 'off') {
       type = 'off';
@@ -154,9 +151,7 @@ class ChallengeList {
    */
   async statusForServer(msg, field, update) {
     let returnMsg = '';
-    const server = await conn.collection('configDB').findOne(
-        {_id: msg.guild.id}
-    );
+    const server = await dbc.dbFind('configDB', {_id: msg.guild.id});
     const fieldOptions = {
       xStatus: 'Cross-Server Display',
       autoStatus: 'Automatic Summaries',

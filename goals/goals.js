@@ -3,7 +3,6 @@ const Goal = require('./goal');
 const timezoneJS = require('timezone-js');
 const dbc = require('../dbc.js');
 const mtz = require('moment-timezone');
-const conn = require('mongoose').connection;
 
 /** Class containing functions for goal management. */
 class Goals {
@@ -28,12 +27,12 @@ class Goals {
    */
   async setTimezone(msg, prefix, suffix) {
     let returnMsg = '';
-    const timezone = suffix.replace(/[a-zA-Z0-9]*/g, function(txt) {
+    const tz = suffix.replace(/[a-zA-Z0-9]*/g, function(txt) {
       return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
     });
     if (suffix == '') {
       returnMsg = msg.author + ', I need a timezone to set!';
-    } else if (!this.regionRegex.test(timezone) || !mtz.tz.zone(timezone)) {
+    } else if (!this.regionRegex.test(tz) || !mtz.tz.zone(tz)) {
       returnMsg = '**Error:** Winnie_Bot accepts IANA timezone identifiers' +
         ' only. These generally take the format of' +
         ' Continent/Your_Areas_Largest_City.\n**For example:** `' +
@@ -42,9 +41,9 @@ class Goals {
         prefix + 'timezone Europe/London`';
     } else {
       // add timezone to database, confirm
-      dbc.dbUpdate('userDB', msg.author.id, {$set: {timezone: timezone}});
+      dbc.dbUpdate('userDB', {_id: msg.author.id}, {$set: {timezone: tz}});
       returnMsg =
-        msg.author + ', you have set your timezone to **' + timezone + '**.';
+        msg.author + ', you have set your timezone to **' + tz + '**.';
     }
     return returnMsg;
   }
@@ -66,9 +65,7 @@ class Goals {
     if (goalType.charAt(goalType.length-1) != 's') {
       goalType += 's';
     }
-    const user = await conn.collection('userDB').findOne(
-        {_id: msg.author.id}
-    );
+    const user = await dbc.dbFind('userDB', {_id: msg.author.id});
     if (goal === undefined || goal == '') {
       returnMsg = msg.author + ', I need a goal to set!';
     } else if (!Number.isInteger(Number(goal))) {

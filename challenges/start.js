@@ -5,7 +5,6 @@ const Sprint = require('./sprint');
 const War = require('./war');
 const clist = require('./clist.js');
 const dbc = require('../dbc.js');
-const conn = require('mongoose').connection;
 
 /** Class containing functions for challenge management. */
 class ChallengeStart {
@@ -287,12 +286,8 @@ class ChallengeStart {
     let joinFlag = false;
     let crossServerHide = false;
     const args = suffix.split(' ');
-    const user = await conn.collection('userDB').findOne(
-        {_id: msg.author.id}
-    );
-    const guild = await conn.collection('configDB').findOne(
-        {_id: msg.guild.id}
-    );
+    const user = await dbc.dbFind('userDB', {_id: msg.author.id});
+    const guild = await dbc.dbFind('configDB', {_id: msg.guild.id});
     if ((user != null && user.xStatus == true) ||
       (guild != null && guild.xStatus == true)) {
       crossServerHide = true;

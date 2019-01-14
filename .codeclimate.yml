@@ -3,6 +3,15 @@ checks:
   method-complexity:
     config:
       threshold: 10
+  method-lines:
+    config:
+      threshold: 30
   return-statements:
     config:
       threshold: 2
+  similar-code:
+    config:
+      threshold: 5
+  identical-code:
+    config:
+      threshold: 5

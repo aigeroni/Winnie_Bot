@@ -1,7 +1,6 @@
 const clist = require('./clist.js');
 const config = require('../config.json');
 const dbc = require('../dbc.js');
-const conn = require('mongoose').connection;
 
 /** Represents a challenge. */
 class Challenge {
@@ -142,7 +141,7 @@ class Challenge {
    * @return {String} - Return message.
    */
   async cancel() {
-    await conn.collection('challengeDB').remove({_id: this.objectID});
+    await dbc.dbRemove('challengeDB', {_id: this.objectID});
     delete clist.running[this.objectID];
     return this.displayName + ' (ID ' + this.objectID + ') has been cancelled.';
   }
@@ -248,7 +247,7 @@ class Challenge {
         this.getChannel(this.hookedChannels[i]).send(
             this.stats(this.hookedChannels[i]));
       }
-      conn.collection('challengeDB').remove({_id: this.objectID});
+      dbc.dbRemove('challengeDB', {_id: this.objectID});
       delete clist.running[this.objectID];
     }
   }

@@ -1,11 +1,13 @@
 const prompts = require('./data.js');
 const fetch = require('node-fetch');
-const conn = require('mongoose').connection;
+const dbc = require('../dbc.js');
 
 /** Class containing functions to handle miscellaneous tools. */
 class Tools {
   /** Initialise variables for tool management. */
   constructor() {
+    this.WAR_RAPTOR_CHANCE = 10;
+
     this.raptorCount = {};
     this.userRaptors = {};
     this.announceChannel = {};
@@ -91,92 +93,36 @@ class Tools {
    * @return {Object} - Async promise.
    */
   async raptor(server, channel, author, raptorChance) {
-    if (!(server in this.raptorCount)) {
-      this.raptorCount[server] = 0;
-    }
-    if (!(server in this.userRaptors)) {
-      this.userRaptors[server] = {};
-    }
-    if (!(author.id in this.userRaptors[server])) {
-      this.userRaptors[server][author.id] = 0;
-    }
     const raptorRoll = Math.random() * 100;
     if (raptorRoll < raptorChance) {
-      this.raptorCount[server] += 1;
-      this.userRaptors[server][author.id] += 1;
-      conn
-          .collection('raptorDB')
-          .update(
-              {_id: server},
-              {$inc: {
-                count: 1,
-              },
-              },
-              {upsert: true}
-          );
-      conn.collection('raptorUserDB').update(
+      await dbc.dbUpdate('raptorDB', {_id: server}, {$inc: {count: 1}});
+      await dbc.dbUpdate(
+          'raptorUserDB',
           {_id: {server: server, user: author.id}},
-          {$inc: {
-            count: 1,
-          },
-          },
-          {upsert: true}
+          {$inc: {count: 1}}
       );
-      const userData = await conn.collection('userDB').findOne(
-          {_id: author.id}
-      );
+      const userData = await dbc.dbFind('userDB', {_id: author.id});
       const currentRaptors = userData.raptorTotal;
       if (currentRaptors == 0) {
-        await conn.collection('raptorBuckets').update(
-            {_id: 0},
-            {$inc: {
-              rank: 1,
-            },
-            }
-        );
-        await conn.collection('raptorBuckets').update(
-            {_id: 1},
-            {$setOnInsert: {
-              rank: 1,
-            }, $push: {
-              users: author.id,
-            },
-            },
-            {upsert: true}
-        );
+        await dbc.dbUpdate('raptorBuckets', {_id: 0}, {$inc: {rank: 1}});
       } else {
-        await conn.collection('raptorBuckets').update(
+        await dbc.dbUpdate(
+            'raptorBuckets',
             {_id: currentRaptors},
-            {$inc: {
-              rank: 1,
-            }, $pull: {
-              users: author.id,
-            },
-            }
-        );
-        await conn.collection('raptorBuckets').update(
-            {_id: currentRaptors + 1},
-            {$setOnInsert: {
-              rank: 1,
-            }, $push: {
-              users: author.id,
-            },
-            },
-            {upsert: true}
+            {$inc: {rank: 1}, $pull: {users: author.id}}
         );
       }
-      conn.collection('userDB').update(
-          {_id: author.id},
-          {$inc: {
-            raptorTotal: 1,
-          },
-          },
-          {upsert: true}
+      await dbc.dbUpdate(
+          'raptorBuckets',
+          {_id: currentRaptors + 1},
+          {$setOnInsert: {rank: 1}, $push: {users: author.id}}
       );
+      await dbc.dbUpdate('userID', {_id: author.id}, {$inc: {raptorTotal: 1}});
+      const channelRaptors = await dbc.dbFind('raptorDB', {_id: server});
       channel.send(
           author +
           ', you have hatched a raptor! Your server currently houses ' +
-          this.raptorCount[server] +
+          channelRaptors.count +
           ' raptors.'
       );
     }
@@ -192,13 +138,10 @@ class Tools {
     const siteUrl = 'https://nanowrimo.org/participants/' + suffix + '/stats';
     const requestData = await fetch(siteUrl);
     if (requestData.status == 200) {
-      await conn.collection('userDB').update(
+      await dbc.dbUpdate(
+          'userDB',
           {_id: msg.author.id},
-          {$set: {
-            siteName: suffix,
-          },
-          },
-          {upsert: true}
+          {$set: {siteName: suffix}}
       );
       returnMsg = msg.author +
           ', your NaNo username has been set to `' +
@@ -219,15 +162,9 @@ class Tools {
    * @return {String} - The message to send to the user.
    */
   async userInfo(client, msg) {
-    const document = await conn.collection('userDB').findOne(
-        {_id: msg.author.id}
-    );
-    const data = await conn.collection('raptorBuckets').findOne(
-        {users: msg.author.id}
-    );
-    const usersWithRaptors = await conn.collection('raptorBuckets').findOne(
-        {_id: 0}
-    );
+    const document = await dbc.dbFind('userDB', {_id: msg.author.id});
+    const data = await dbc.dbFind('raptorBuckets', {users: msg.author.id});
+    const usersWithRaptors = await dbc.dbFind('raptorBuckets', {_id: 0});
     let statsTable = '***User Statistics for ' + msg.author.username + ':***\n';
     if (!(document == null || document.lifetimeSprintMinutes === undefined)) {
       statsTable += '\n*Sprint Statistics:* **' +
@@ -302,11 +239,12 @@ class Tools {
     } else {
       statsTable += document.raptorTotal +'** (Global Rank **' + data.rank;
     }
-    statsTable += '** of **' + (usersWithRaptors.rank - 1) +'**)';
+    statsTable += '** of **' + (usersWithRaptors.rank - 1) +
+      '**)\n*NaNo Site Username:*';
     if (document == null || document.siteName === undefined) {
-      statsTable += '\n*NaNo Site Username:* unknown';
+      statsTable += ' unknown';
     } else {
-      statsTable += '\n*NaNo Site Username:* `' + document.siteName + '`';
+      statsTable += ' `' + document.siteName + '`';
     }
     if (document == null || document.timezone === undefined) {
       statsTable += '\n*Timezone:* unknown';
