@@ -2,9 +2,9 @@ const ChainWar = require('./challenges/chainwar');
 const Goal = require('./goals/goal');
 const Sprint = require('./challenges/sprint');
 const War = require('./challenges/war');
+const start = require('./challenges/start.js');
 const clist = require('./challenges/clist.js');
 const challenges = require('./challenges/challenges.js');
-const cinfo = require('./challenges/cinfo.js');
 const goallist = require('./goals/goallist.js');
 const goals = require('./goals/goals.js');
 const tools = require('./tools/tools.js');
@@ -212,7 +212,7 @@ const cmdList = {
     usage: '[join] [hide] <words> <duration> [time to start [name]]',
     type: 'challenges',
     process: async function(client, msg, prefix, suffix) {
-      const returnMsg = await challenges.startSprint(msg, prefix, suffix);
+      const returnMsg = await start.startSprint(msg, prefix, suffix);
       if (returnMsg != '') {
         msg.channel.send(returnMsg);
       }
@@ -232,7 +232,7 @@ const cmdList = {
     usage: '[join] [hide] <duration> [time to start [name]]',
     type: 'challenges',
     process: async function(client, msg, prefix, suffix) {
-      const returnMsg = await challenges.startWar(msg, prefix, suffix);
+      const returnMsg = await start.startWar(msg, prefix, suffix);
       if (returnMsg != '') {
         msg.channel.send(returnMsg);
       }
@@ -253,7 +253,7 @@ const cmdList = {
       ' [time between wars [name]]',
     type: 'challenges',
     process: async function(client, msg, prefix, suffix) {
-      const returnMsg = await challenges.startChainWar(msg, prefix, suffix);
+      const returnMsg = await start.startChainWar(msg, prefix, suffix);
       if (returnMsg != '') {
         msg.channel.send(returnMsg);
       }
@@ -343,7 +343,7 @@ const cmdList = {
             msg.guild.id,
             msg.channel,
             msg.author,
-            challenges.WAR_RAPTOR_CHANCE
+            tools.WAR_RAPTOR_CHANCE
         );
       }
       msg.channel.send(msgToSend);
@@ -381,7 +381,7 @@ const cmdList = {
             msg.guild.id,
             msg.channel,
             msg.author,
-            challenges.WAR_RAPTOR_CHANCE
+            tools.WAR_RAPTOR_CHANCE
         );
       }
       msg.channel.send(msgToSend);
@@ -407,7 +407,7 @@ const cmdList = {
     usage: '',
     type: 'challenges',
     process: function(client, msg, prefix, suffix) {
-      const msgToSend = cinfo.listChallenges(client, msg);
+      const msgToSend = clist.listChallenges(client, msg);
       msg.channel.send(msgToSend);
       return msgToSend;
     },
@@ -623,7 +623,7 @@ const cmdList = {
     usage: '[server] <on|off>',
     type: 'config',
     process: async function(client, msg, prefix, suffix) {
-      const msgToSend = await cinfo.updateFlags(msg, suffix, 'xStatus');
+      const msgToSend = await clist.updateFlags(msg, suffix, 'xStatus');
       msg.channel.send(msgToSend);
       return msgToSend;
     },
@@ -637,7 +637,7 @@ const cmdList = {
     usage: '[server] <show|hide>',
     type: 'config',
     process: async function(client, msg, prefix, suffix) {
-      const msgToSend = await cinfo.updateFlags(msg, suffix, 'autoStatus');
+      const msgToSend = await clist.updateFlags(msg, suffix, 'autoStatus');
       msg.channel.send(msgToSend);
       return msgToSend;
     },
