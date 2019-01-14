@@ -38,7 +38,7 @@ class ChallengeList {
     return listMsg;
   }
   /**
-   * Builds a string with information about a challenge.
+   * Builds challenge data for display.
    * @param {Object} chalID - The challenge to build.
    * @param {Object} guildName - Display name of the challenge's home server.
    * @return {String} - The message to send to the user.
@@ -61,16 +61,32 @@ class ChallengeList {
         break;
     }
     dataString += chalID + ': ' + clist.running[chalID].displayName + ' (';
-    if (clist.running[chalID].type == 'sprint') {
+    if (type == 'sprint') {
       dataString += clist.running[chalID].goal + ' words, ';
     }
-    dataString += clist.running[chalID].duration + ' minutes, ';
-    let seconds = timeVar % 60;
-    if (seconds < 10) {
-      seconds = '0' + seconds.toString();
+    dataString += clist.running[chalID].duration + ' minutes, ' +
+      this.buildDataString(timeData, timeVar, clist.running[chalID].type);
+    return dataString; 
+  }
+    /**
+   * Builds a string with information about a challenge.
+   * @param {Number} timeData - Time remaining in the challenge.
+   * @param {String} timeVar - Text describing the challenge.
+   * @return {String} - The message to send to the user.
+   */
+  buildDataString(timeData, timeVar) {
+    let dataString = '';
+    if (timeVar === undefined) {
+      dataString = timeVar;
+    } else {
+      let seconds = timeVar % 60;
+      if (seconds < 10) {
+        seconds = '0' + seconds.toString();
+      }
+      dataString += timeData.replace(/%m/, Math.floor(timeVar / 60))
+          .replace(/%s/, seconds); 
     }
-    dataString += timeData.replace(/%m/, Math.floor(timeVar / 60))
-        .replace(/%s/, seconds) + '), ' + guildName +'\n';
+    dataString += '), ' + guildName +'\n';
     return dataString;
   }
   /**
@@ -159,28 +175,6 @@ class ChallengeList {
     return returnMsg;
   }
   /**
-   * Checks server configuration fields.
-   * @param {Object} msg - The message that initiated the check.
-   * @param {String} field - The field to check.
-   * @return {String} - Message to send to user.
-   */
-  async configStatus(msg, field) {
-    let returnMsg = '';
-    const server = await conn.collection('configDB').findOne(
-        {_id: msg.guild.id}
-    );
-    // if () {
-      
-    // }
-    if (server == null || server.field === undefined) {
-      returnMsg = msg.author +
-          ', this server does not have ' + field + ' configured.';
-    } else {
-      returnMsg = msg.guild.name + '\'s ' + field + ' is ' + server.field;
-    }
-    return returnMsg;
-  }
-  /**
    * Updates user-entered flags.
    * @param {Object} author - The user to update the flags of.
    * @param {String} field - The field to update.
@@ -206,125 +200,24 @@ class ChallengeList {
     return returnMsg;
   }
   /**
-   * Updates per-server configuration.
-   * @param {Object} msg - The message that ran this function.
-   * @param {String} suffix - Information after the bot command.
-   * @param {String} flagType - The field to update.
-   * @return {String} - The message to send to the user.
-   */
-  async updateConfig(msg, suffix, flagType) {
-    let returnMsg = '';
-    const args = suffix.split(' ');
-    if (suffix == '') { // check configuration
-
-    } else { // update configuration
-
-    }
-    return returnMsg;
-  }
-  /**
-   * Allows server admins to set a custom prefix for Winnie.
+   * Validates custom prefixes for Winnie.
    * @param {Object} msg - The message that ran this function.
    * @param {String} suffix - Information after the bot command.
    * @return {String} - The message to send to the user.
    */
-  async customPrefix(msg, suffix) {
+  async validatePrefix(msg, suffix) {
     let returnMsg = '';
-    // display Winnie's current prefix (all users)
-    if (suffix == '') {
-      
-    } else if (msg.member.permissions.has('ADMINISTRATOR')) {
-      if (suffix == 'clear') {
-        await conn
-            .collection('configDB')
-            .update(
-                {_id: msg.guild.id},
-                {$set: {prefix: undefined}},
-                {upsert: true}
-            );
-        returnMsg = msg.author +
-            ', you have reset my prefix to the default `' +
-            config.cmd_prefix['default'] +
-            '`.';
-      } else { // change prefix (admins only)
-        if (suffix.length > 0 && suffix.length < 3) {
-          config.cmd_prefix[msg.guild.id] = suffix;
-          await conn
-              .collection('configDB')
-              .update(
-                  {_id: msg.guild.id},
-                  {$set: {prefix: suffix}},
-                  {upsert: true}
-              );
-          returnMsg = msg.author +
-              ', you have changed my prefix to `' +
-              suffix +
-              '`.';
-        } else {
-          returnMsg = '**Error:**:' +
-            ' My prefix must be less than three characters.';
-        }
-      }
+    if (suffix.length > 0 && suffix.length < 3) {
+      config.cmd_prefix[msg.guild.id] = suffix;
+      await dbc.dbUpdate(
+          'configDB', {_id: msg.guild.id}, {$set: {prefix: newPrefix}});
+      returnMsg = msg.author +
+        ', you have changed my prefix to `' +
+        suffix +
+        '`.';
     } else {
-      returnMsg = '**Error:**: Only server administrators are permitted to' +
-          ' configure the prefix.';
-    }
-    return returnMsg;
-  }
-  /**
-   * Allows server admins to configure a channel for word count reminders.
-   * @param {Object} msg - The message that ran this function.
-   * @param {String} suffix - Information after the bot command.
-   * @return {String} - The message to send to the user.
-   */
-  async announcementChannel(msg, suffix) {
-    let returnMsg = '';
-    returnMsg = suffix;
-    // display the current announcements channel (all users)
-    if (suffix == '') {
-      const data = await conn.collection('configDB').findOne(
-          {_id: msg.guild.id}
-      );
-      if (data == null || data.announcements == undefined) {
-        returnMsg = msg.author +
-            ', announcements are not yet configured for this server.';
-      } else {
-        returnMsg = msg.author +
-          ', announcements are posted in ' +
-          client.channels.get(data.announcements) +
-          '.';
-      }
-    } else { // change announcements channel (admins only)
-      if (msg.member.permissions.has('ADMINISTRATOR')) {
-        const channelObject = client.channels.get(suffix.slice(2, -1));
-        if (channelObject != undefined) {
-          const perms = (channelObject.guild.me.permissionsIn(channelObject));
-          if (perms.hasPermission('SEND_MESSAGES')) {
-            this.announceChannel[msg.guild.id] = channelObject.id;
-            await conn
-                .collection('configDB')
-                .update(
-                    {_id: msg.guild.id},
-                    {$set: {announcements: channelObject.id}},
-                    {upsert: true}
-                );
-            returnMsg = msg.author +
-                ', you have changed the announcements channel to ' +
-                channelObject +
-                '.';
-          } else {
-            returnMsg = '**Error:**: I need permission to send messages' +
-                ' in the announcements channel.';
-          }
-        } else {
-          returnMsg = '**Error:**: ' +
-              suffix +
-              ' is not a valid channel.';
-        }
-      } else {
-        returnMsg = '**Error:**: Only server administrators are permitted to' +
-            ' configure the announcements channel.';
-      }
+      returnMsg = '**Error:**:' +
+        ' My prefix must be less than three characters.';
     }
     return returnMsg;
   }
