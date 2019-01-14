@@ -42,7 +42,7 @@ class Challenge {
     this.countdown = countdown;
     this.duration = duration;
     this.channelID = channel;
-    this.channel = client.channels.get(this.channelID);
+    this.channel = this.getChannel(this.channelID);
     this.type = type;
     this.joined = joined;
     this.hookedChannels = hookedChannels;
@@ -115,7 +115,7 @@ class Challenge {
       returnMsg = user +
         ', you already have notifications enabled for this challenge.';
     } else {
-      await this.submitUserData(channelID, undefined, undefined);
+      await this.submitUserData(user.id, channelID, undefined, undefined);
       returnMsg = user + ', you have joined ' + this.displayName;
     }
     return returnMsg;
@@ -142,23 +142,22 @@ class Challenge {
    * @return {String} - Return message.
    */
   async cancel() {
-    await conn.collection('challengeDB').remove(
-        {_id: this.objectID}
-    );
+    await conn.collection('challengeDB').remove({_id: this.objectID});
     delete clist.running[this.objectID];
     return this.displayName + ' (ID ' + this.objectID + ') has been cancelled.';
   }
   /**
    * Builds user data for the challenge database.
+   * @param {String} user - The user to build for.
    * @param {String} channel - The channel from which the user joined.
    * @param {String} param1 - The first join parameter.
    * @param {String} param2 - The second join parameter.
    * @return {Promise} - Promise object.
    */
-  async submitUserData(channel) {
-    this.joined[user.id] = this.buildUserData(channel, param1, param2);
+  async submitUserData(user, channel, param1, param2) {
+    this.joined[user] = this.buildUserData(channel, param1, param2);
     if (this.hookedChannels.indexOf(channel) == -1) {
-      this.hookedChannels.push(chanID);
+      this.hookedChannels.push(channel);
     }
     const dbData =
       {$set: {hookedChannels: this.hookedChannels, joined: this.joined}};
@@ -214,7 +213,7 @@ class Challenge {
     if (this.cDur <= 0) {
       for (let i = 0; i < this.hookedChannels.length; i++) {
         const userList = this.getUsers(this.hookedChannels[i]);
-        const channelObject = client.channels.get(this.hookedChannels[i]);
+        const channelObject = this.getChannel(this.hookedChannels[i]);
         let prefix = config.cmd_prefix['default'];
         if (config.cmd_prefix[channelObject.guild.id]) {
           prefix = config.cmd_prefix[channelObject.guild.id];
@@ -246,14 +245,19 @@ class Challenge {
     this.cPost--;
     if (this.cPost <= 0) {
       for (let i = 0; i < this.hookedChannels.length; i++) {
-        client.channels
-            .get(this.hookedChannels[i])
-            .send(clist
-                .generateSummary(this.hookedChannels[i], this.objectID));
+        this.getChannel(this.hookedChannels[i]).send(
+            this.stats(this.hookedChannels[i]));
       }
       conn.collection('challengeDB').remove({_id: this.objectID});
       delete clist.running[this.objectID];
     }
+  }
+  /** Prints statistics for a challenge.
+   * @param {String} channel - Channel to print to.
+   * @return {String} - Return message.
+   */
+  stats(channel) {
+    return '***Statistics for ' + this.displayName + ':***\n\n';
   }
   /** Get all users hooked from a channel.
    * @param {String} channel - The Discord ID of the channel.
@@ -281,7 +285,15 @@ class Challenge {
    * @param {String} channelID - The ID of the channel to send the message to.
    */
   sendMsg(msg, channelID) {
-    client.channels.get(channelID).send(msg);
+    this.getChannel(channelID).send(msg);
+  }
+  /**
+   * Gets a channel object from its ID.
+   * @param {String} channel - The channel to get.
+   * @return {String} - The channel snowflake.
+   */
+  getChannel(channel) {
+    return client.channels.get(channel);
   }
 }
 

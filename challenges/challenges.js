@@ -119,8 +119,8 @@ class Challenges {
     }
     if (msg.mentions.members.size > 0) {
       returnMsg = '**Error:** Challenge names may not mention users.';
-    } else if (this.validateName(warName)) {
-      returnMsg = this.validateName(warName);
+    } else if (this.validateName(sprintName)) {
+      returnMsg = this.validateName(sprintName);
     } else if (this.validateTime(timeout)) {
       returnMsg = this.validateTime(timeout)
         + ' Example: `' + prefix + 'sprint 200 10 1`.';
@@ -339,11 +339,14 @@ class Challenges {
       returnMsg = returnInfo;
     } else if (!(clist.running[suffix].type == 'sprint')) {
       returnMsg = '**Error:** You can only call time on a sprint.';
+    } else if (clist.running[suffix].state == 0) {
+      returnMsg = '**Error:** This challenge has not started yet!';
     } else {
       raptorCheck = true;
       const doneStamp = new Date().getTime();
       const timeTaken = (doneStamp - clist.running[suffix].startStamp) / 60000;
-      clist.running[chalID].submitUserData(suffix, doneStamp, timeTaken);
+      clist.running[suffix]
+          .submitUserData(msg.author.id, msg.channel.id, doneStamp, timeTaken);
       returnMsg = msg.author + ', you completed the sprint in ' +
         timeTaken.toFixed(2) + ' minutes.';
     }
@@ -376,7 +379,8 @@ class Challenges {
       returnMsg = '**Error:** This challenge has not ended yet!';
     } else {
       raptorCheck = true;
-      clist.running[chalID].submitUserData(chalID, wordsWritten, writtenType);
+      clist.running[chalID].submitUserData(msg.author.id,
+          msg.channel.id, wordsWritten, writtenType);
       returnMsg = msg.author + ', your total of **' + wordsWritten +
         '** ' + writtenType + ' has been added to the summary.';
     }
@@ -483,8 +487,8 @@ class Challenges {
    */
   hiddenCheck(chalID, guildID) {
     let check = false;
-    if (clist.running[chalID].hidden && client.channels.get(
-        clist.running[chalID].channelID).guild.id != guildID) {
+    if (clist.running[chalID].hidden && clist.running[chalID].channel.guild.id
+        != guildID) {
       check = true;
     }
     return check;

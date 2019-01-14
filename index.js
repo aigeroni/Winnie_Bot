@@ -396,7 +396,7 @@ const cmdList = {
     usage: '<id>',
     type: 'challenges',
     process: function(client, msg, prefix, suffix) {
-      const msgToSend = clist.generateSummary(msg.channel, suffix);
+      const msgToSend = clist.generateSummary(msg.channel.id, suffix);
       msg.channel.send(msgToSend);
       return msgToSend;
     },

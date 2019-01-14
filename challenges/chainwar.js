@@ -129,7 +129,7 @@ class ChainWar extends War {
       for (const user in this.joined) {
         if (this.joined.hasOwnProperty(user)) {
           const type = this.joined[user].countType;
-          this.chainTotal = clist.addToAggregate(this.chainTotal, user);
+          this.chainTotal = this.addToAggregate(this.chainTotal, user);
           this.chainTotal[user][type][0] +=
               parseInt(this.joined[user].countData);
           this.chainTotal[user][type][1] += parseInt(this.duration);
@@ -153,8 +153,7 @@ class ChainWar extends War {
       }
       if (this.current == this.total) {
         for (let i = 0; i < channels.length; i++) {
-          console.log(this.objectID);
-          client.channels.get(channels[i]).send(clist
+          this.getChannel(channels[i]).send(clist
               .chainSummary(
                   channels[i], this.warName, this.chainTotal, this.serverTotals
               ));
