@@ -1,5 +1,3 @@
-const clist = require('./clist.js');
-const challenges = require('./challenges.js');
 const dbc = require('../dbc.js');
 const conn = require('mongoose').connection;
 
@@ -11,6 +9,20 @@ class ChallengeList {
     this.running = {};
   }
   /**
+   * Check to see whether a challenge is hidden from a server.
+   * @param {String} chalID - The ID of the challenge to check.
+   * @param {String} guildID - The ID of the server to check against.
+   * @return {Object} - User data.
+   */
+  hiddenCheck(chalID, guildID) {
+    let check = false;
+    if (this.running[chalID].hidden && this.running[chalID].channel.guild.id
+        != guildID) {
+      check = true;
+    }
+    return check;
+  }
+  /**
    * Lists all running challenges.
    * @param {Object} client - The Discord client.
    * @param {Object} msg - The message that ran this function.
@@ -19,13 +31,14 @@ class ChallengeList {
   listChallenges(client, msg) {
     let nonHiddenTotal = 0;
     let listData = '';
-    for (const i in clist.running) {
-      if (!(challenges.hiddenCheck(i, msg.guild.id))) {
-        const guildName = client.guilds.get(clist.running[i].channelID).name;
+    for (const i in this.running) {
+      if (!(this.hiddenCheck(i, msg.guild.id))) {
+        const guildName = this.running[i].channel.guild.name;
         nonHiddenTotal += 1;
         listData += this.buildChallengeData(i, guildName);
       }
     }
+    let listMsg = '';
     if (nonHiddenTotal == 0) {
       listMsg =
         'There are no challenges running.' + ' Why don\'t you start one?';
@@ -47,28 +60,29 @@ class ChallengeList {
     let dataString = '';
     let timeData = '';
     let timeVar = undefined;
-    switch (clist.running[chalID].state) {
+    switch (this.running[chalID].state) {
       case 0:
-        timeVar = clist.running[chalID].cStart;
+        timeVar = this.running[chalID].cStart;
         timeData = 'starts in %m:%s';
         break;
       case 1:
-        timeVar = clist.running[chalID].cDur;
+        timeVar = this.running[chalID].cDur;
         timeData = '%m:%s remaining';
         break;
       default:
         timeData = 'ended';
         break;
     }
-    dataString += chalID + ': ' + clist.running[chalID].displayName + ' (';
-    if (type == 'sprint') {
-      dataString += clist.running[chalID].goal + ' words, ';
+    dataString += chalID + ': ' + this.running[chalID].displayName + ' (';
+    if (this.running[chalID].type == 'sprint') {
+      dataString += this.running[chalID].goal + ' words, ';
     }
-    dataString += clist.running[chalID].duration + ' minutes, ' +
-      this.buildDataString(timeData, timeVar, clist.running[chalID].type);
-    return dataString; 
+    dataString += this.running[chalID].duration + ' minutes, ' +
+      this.buildDataString(timeData, timeVar, this.running[chalID].type) +
+      '), ' + guildName +'\n';
+    return dataString;
   }
-    /**
+  /**
    * Builds a string with information about a challenge.
    * @param {Number} timeData - Time remaining in the challenge.
    * @param {String} timeVar - Text describing the challenge.
@@ -77,16 +91,15 @@ class ChallengeList {
   buildDataString(timeData, timeVar) {
     let dataString = '';
     if (timeVar === undefined) {
-      dataString = timeVar;
+      dataString = timeData;
     } else {
       let seconds = timeVar % 60;
       if (seconds < 10) {
         seconds = '0' + seconds.toString();
       }
       dataString += timeData.replace(/%m/, Math.floor(timeVar / 60))
-          .replace(/%s/, seconds); 
+          .replace(/%s/, seconds);
     }
-    dataString += '), ' + guildName +'\n';
     return dataString;
   }
   /**
@@ -120,7 +133,7 @@ class ChallengeList {
         {_id: author.id}
     );
     let type = 'on';
-    if (user.field == 'off') {
+    if (user[field] == 'off') {
       type = 'off';
     }
     returnMsg += author + ', you currently have ';
@@ -144,30 +157,23 @@ class ChallengeList {
     const server = await conn.collection('configDB').findOne(
         {_id: msg.guild.id}
     );
-    let textType = '';
-    if (field == 'autoStatus') {
-      textType = 'automatic summaries';
-    } else if (field == 'xStatus') {
-      textType = 'cross-server display';
-    }
-    let type = 'on';
-    if (server.field == 'off') {
-      type = 'off';
+    const fieldOptions = {
+      xStatus: 'Cross-Server Display',
+      autoStatus: 'Automatic Summaries',
+      prefix: 'Prefix',
+      announce: 'Announcements Channel',
+    };
+    let fieldData = '';
+    if (server[field] === undefined) {
+      fieldData = 'not configured';
+    } else {
+      fieldData = server[field];
     }
     if (update === undefined) {
-      returnMsg += msg.guild.name + ' currently has ' +
-        textType + ' **' + type + '**.';
+      returnMsg += '**' + msg.guild.name + ' ' + fieldOptions[field] +
+        ':** ' + fieldData + '.';
     } else if (msg.member.permissions.has('ADMINISTRATOR')) {
-      if (!(update == 'on' || update == 'off')) {
-        const data = {$set: {}};
-        data.$set = field + ':' + update;
-        await dbc.dbUpdate('configDB', {_id: msg.guild.id}, data);
-        returnMsg = msg.author + ', you have turned ' + textType + ' **' +
-          update + '**.';
-      } else {
-        returnMsg = msg.author +
-          ', use **on|off** to toggle server preferences.';
-      }
+      // update field
     } else {
       returnMsg = '**Error:** Only server administrators are permitted' +
         ' to configure server preferences.';
@@ -187,15 +193,15 @@ class ChallengeList {
       returnMsg = author + ', use **on|off** to toggle preferences.';
     } else {
       const data = {$set: {}};
-      data.$set = field + ':' + flag;
-      await dbc.dbUpdate('userDB', {_id: msg.author.id}, data);
+      data.$set = {[field]: flag};
+      await dbc.dbUpdate('userDB', {_id: author.id}, data);
       returnMsg = author + ', you have turned ';
       if (field == 'autoStatus') {
         returnMsg += 'automatic summaries';
       } else if (field == 'xStatus') {
         returnMsg += 'cross-server display';
       }
-      returnMsg = ' for your challenges **' + flag + '**.';
+      returnMsg += ' for your challenges **' + flag + '**.';
     }
     return returnMsg;
   }
@@ -219,56 +225,6 @@ class ChallengeList {
       returnMsg = '**Error:**:' +
         ' My prefix must be less than three characters.';
     }
-    return returnMsg;
-  }
-  /**
-   * Summarises all chain war aggregates for a given server.
-   * @param {String} user - The user being summarised.
-   * @param {Object} userObj - Information about the user being summarised.
-   * @return {String} - The message to send to the user.
-   */
-  chainByUser(user, userObj) {
-    let returnMsg = '';
-    let first = true;
-    for (const item in userObj) {
-      if (item != 'channelID' && userObj[item][1] > 0) {
-        if (first == true) {
-          returnMsg += client.users.get(user) + ': ';
-        } else {
-          returnMsg += ', ';
-        }
-        first = false;
-        returnMsg += this.userTotals(userObj[item][0], item, userObj[item][1]);
-      }
-    }
-    return returnMsg;
-  }
-  /**
-   * Builds a summary of chain war aggregate totals for a given channel.
-   * @param {String} channel - Discord ID of the channel being posted to.
-   * @param {Number} name - Name of the chain being summarised.
-   * @param {Objects} totals - User-entered totals for the chain.
-   * @return {String} - The message to send to the user.
-   */
-  chainSummary(channel, name, totals) {
-    let returnMsg = '***Summary for ' + name + ':***\n\n';
-    let summaryData = '';
-    const summaryServer = client.channels.get(channel).guild;
-    for (const user in totals) {
-      if (client.channels.get(totals[user]
-          .channelID).guild.id == summaryServer.id) {
-        summaryData += this.chainByUser(user, totals[user]);
-      }
-    }
-    for (const server in serverTotals) {
-      if (serverTotals.hasOwnProperty(server)) {
-        returnMsg += this.sprintText(server, serverTotals);
-      }
-    }
-    if (summaryData == '') {
-      summaryData = 'No totals were posted for this chain war.';
-    }
-    returnMsg += summaryData;
     return returnMsg;
   }
   /**

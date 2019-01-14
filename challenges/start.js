@@ -5,7 +5,6 @@ const Sprint = require('./sprint');
 const War = require('./war');
 const clist = require('./clist.js');
 const dbc = require('../dbc.js');
-const logger = require('../logger.js');
 const conn = require('mongoose').connection;
 
 /** Class containing functions for challenge management. */
@@ -26,30 +25,14 @@ class ChallengeStart {
    */
   async startSprint(msg, prefix, suffix) {
     let returnMsg = '';
-    let joinFlag = false;
-    let crossServerHide = this.crossServerStatus[msg.guild.id];
-    const user = await conn.collection('userDB').findOne(
-        {_id: msg.author.id}
-    );
-    if (user != null && user.autoStatus == 'off') {
-      crossServerHide = true;
-    }
-    const args = suffix.split(' ');
-    if (args[0] == 'join') {
-      args.shift();
-      joinFlag = true;
-    }
-    if (args[0] == 'hide') {
-      args.shift();
-      crossServerHide = true;
-    }
-    const words = args.shift();
-    const timeout = args.shift();
-    let start = args.shift();
+    const flagData = await this.flagCheck(msg, suffix);
+    const words = flagData.args.shift();
+    const timeout = flagData.args.shift();
+    let start = flagData.args.shift();
     if (start === undefined) {
       start = 1;
     }
-    let sprintName = args.join(' ');
+    let sprintName = flagData.args.join(' ');
     if (sprintName == '') {
       sprintName = msg.author.username + '\'s sprint';
     }
@@ -67,26 +50,23 @@ class ChallengeStart {
       returnMsg = this.validateGoal(words)
         + ' Example: `' + prefix + 'sprint 200 10 1`.';
     } else {
-      const creatorID = msg.author.id;
-      const chalID = this.timerID;
-      const startTime = new Date().getTime();
-      clist.running[chalID] = new Sprint(
-          chalID,
-          creatorID,
+      clist.running[this.timerID] = new Sprint(
+          this.timerID,
+          msg.author.id,
           sprintName,
-          startTime,
+          new Date().getTime(),
           start,
           words,
           timeout,
           msg.channel.id,
-          crossServerHide,
+          flagData.display,
           [msg.channel.id],
           {}
       );
-      await this.incrementID();
-      if (joinFlag) {
-        returnMsg += await this.joinChallenge(msg, prefix, chalID);
+      if (flagData.joinFlag) {
+        returnMsg += await this.joinChallenge(msg, prefix, this.timerID);
       }
+      await this.incrementID();
     }
     return returnMsg;
   }
@@ -99,26 +79,10 @@ class ChallengeStart {
    */
   async startWar(msg, prefix, suffix) {
     let returnMsg = '';
-    let joinFlag = false;
-    const args = suffix.split(' ');
-    let crossServerHide = this.crossServerStatus[msg.guild.id];
-    const user = await conn.collection('userDB').findOne(
-        {_id: msg.author.id}
-    );
-    if (user != null && user.autoStatus == 'off') {
-      crossServerHide = true;
-    }
-    if (args[0] == 'join') {
-      args.shift();
-      joinFlag = true;
-    }
-    if (args[0] == 'hide') {
-      args.shift();
-      crossServerHide = true;
-    }
-    const duration = args.shift();
-    let start = args.shift();
-    let warName = args.join(' ');
+    const flagData = await this.flagCheck(msg, suffix);
+    const duration = flagData.args.shift();
+    let start = flagData.args.shift();
+    let warName = flagData.args.join(' ');
     if (start === undefined) {
       start = 1;
     }
@@ -136,25 +100,22 @@ class ChallengeStart {
       returnMsg = this.validateCountdown(start)
         + ' Example: `' + prefix + 'war 10 1`.';
     } else {
-      const creatorID = msg.author.id;
-      const chalID = this.timerID;
-      const startTime = new Date().getTime();
-      clist.running[chalID] = new War(
-          chalID,
-          creatorID,
+      clist.running[this.timerID] = new War(
+          this.timerID,
+          msg.author.id,
           warName,
-          startTime,
+          new Date().getTime(),
           start,
           duration,
           msg.channel.id,
-          crossServerHide,
+          flagData.display,
           [msg.channel.id],
           {}
       );
-      await this.incrementID();
-      if (joinFlag) {
-        returnMsg += await this.joinChallenge(msg, prefix, chalID);
+      if (flagData.joinFlag) {
+        returnMsg += await this.joinChallenge(msg, prefix, this.timerID);
       }
+      await this.incrementID();
     }
     return returnMsg;
   }
@@ -167,32 +128,14 @@ class ChallengeStart {
    */
   async startChainWar(msg, prefix, suffix) {
     let returnMsg = '';
-    let joinFlag = false;
-    let crossServerHide = this.crossServerStatus[msg.guild.id];
-    const args = suffix.split(' ');
-    const user = await conn.collection('userDB').findOne(
-        {_id: msg.author.id}
-    );
-    if (user != null) {
-      if (user.autoStatus == 'off') {
-        crossServerHide = true;
-      }
-    }
-    if (args[0] == 'join') {
-      args.shift();
-      joinFlag = true;
-    }
-    if (args[0] == 'hide') {
-      args.shift();
-      crossServerHide = true;
-    }
-    const chainWarCount = args.shift();
-    const duration = args.shift();
-    let timeBetween = args.shift().split('|');
+    const flagData = await this.flagCheck(msg, suffix);
+    const chainWarCount = flagData.args.shift();
+    const duration = flagData.args.shift();
+    let timeBetween = flagData.args.shift().split('|');
     while (timeBetween.length < chainWarCount) {
       timeBetween.push(timeBetween[timeBetween.length-1]);
     }
-    let warName = args.join(' ');
+    let warName = flagData.args.join(' ');
     if (timeBetween === undefined) {
       timeBetween = [1];
     }
@@ -206,8 +149,8 @@ class ChallengeStart {
     } else if (this.validateTime(duration)) {
       returnMsg = this.validateTime(duration)
         + ' Example: `' + prefix + 'chainwar 2 10 1`.';
-    } else if (this.validateCountdown(start)) {
-      returnMsg = this.validateCountdown(start)
+    } else if (this.validateChainCount(timeBetween)) {
+      returnMsg = this.validateChainCount(timeBetween)
         + ' Example: `' + prefix + 'chainwar 2 10 1`.';
     } else if (isNaN(chainWarCount)) {
       returnMsg = '**Error:** War count must be a number. Example: `' +
@@ -230,33 +173,25 @@ class ChallengeStart {
     } else if (timeBetween <= 0) {
       returnMsg = '**Error:** Chain wars cannot overlap.';
     } else {
-      try {
-        const creatorID = msg.author.id;
-        const chalID = this.timerID;
-        const startTime = new Date().getTime();
-        clist.running[chalID] = new ChainWar(
-            chalID,
-            creatorID,
-            warName,
-            startTime,
-            1,
-            chainWarCount,
-            timeBetween,
-            duration,
-            msg.channel.id,
-            crossServerHide,
-            [msg.channel.id],
-            {},
-            {}
-        );
-        await this.incrementID();
-        if (joinFlag) {
-          returnMsg += await this.joinChallenge(msg, prefix, chalID);
-        }
-      } catch (e) {
-        returnMsg = '**Error:** Chain war creation failed.';
-        logger.error('Error %s: %s.', e, e.stack);
+      clist.running[this.timerID] = new ChainWar(
+          this.timerID,
+          msg.author.id,
+          warName,
+          new Date().getTime(),
+          1,
+          chainWarCount,
+          timeBetween,
+          duration,
+          msg.channel.id,
+          flagData.display,
+          [msg.channel.id],
+          {},
+          {}
+      );
+      if (flagData.joinFlag) {
+        returnMsg += await this.joinChallenge(msg, prefix, this.timerID);
       }
+      await this.incrementID();
     }
     return returnMsg;
   }
@@ -293,18 +228,16 @@ class ChallengeStart {
     return returnMsg;
   }
   /**
-   * Validates the time before a challenge.
-   * @param {String} start - The countdown time to validate.
+   * Validates splits between wars in a chain.
+   * @param {String} splits - An array of splits to validate.
    * @return {String} - Message to send to user.
    */
-  validateCountdown(start) {
+  validateChainCount(splits) {
     let returnMsg = false;
-    if (isNaN(start)) {
-      returnMsg = '**Error:** Time to start must be a number.';
-    } else if (start > 30) {
-      returnMsg = '**Error:** Challenges must start within 30 minutes.';
-    } else if (start <= 0) {
-      returnMsg = '**Error:** Challenges cannot start in the past.';
+    for (const item in splits) {
+      if (this.validateCountdown(splits[item])) {
+        returnMsg = this.validateCountdown(splits[item]);
+      }
     }
     return returnMsg;
   }
@@ -323,12 +256,60 @@ class ChallengeStart {
     return returnMsg;
   }
   /**
+   * Validates the time before a challenge.
+   * @param {String} start - The countdown time to validate.
+   * @return {String} - Message to send to user.
+   */
+  validateCountdown(start) {
+    let returnMsg = false;
+    if (isNaN(start)) {
+      returnMsg = '**Error:** Time to start must be a number.';
+    } else if (start > 30) {
+      returnMsg = '**Error:** Challenges must start within 30 minutes.';
+    } else if (start <= 0) {
+      returnMsg = '**Error:** Challenges cannot start in the past.';
+    }
+    return returnMsg;
+  }
+  /**
    * Increment the challenge ID.
    * @return {Promise} - Promise object.
    */
   async incrementID() {
     await dbc.dbUpdate('timer', {data: this.timerID}, {data: this.timerID + 1});
     this.timerID = this.timerID + 1;
+  }
+  /**
+   * Configure options for a challenge.
+   * @param {String} msg - The message that created the challenge.
+   * @param {Array} suffix - Options to configure.
+   * @return {Promise} - Promise object.
+   */
+  async flagCheck(msg, suffix) {
+    let joinFlag = false;
+    let crossServerHide = false;
+    const args = suffix.split(' ');
+    const user = await conn.collection('userDB').findOne(
+        {_id: msg.author.id}
+    );
+    const guild = await conn.collection('configDB').findOne(
+        {_id: msg.guild.id}
+    );
+    if (
+      (user != null && user.xStatus == true) ||
+      (guild != null && guild.xStatus == true)
+    ) {
+      crossServerHide = true;
+    }
+    if (args[0] == 'join') {
+      args.shift();
+      joinFlag = true;
+    }
+    if (args[0] == 'hide') {
+      args.shift();
+      crossServerHide = true;
+    }
+    return {join: joinFlag, display: crossServerHide, args: args};
   }
 }
 

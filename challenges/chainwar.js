@@ -126,40 +126,79 @@ class ChainWar extends War {
   terminate() {
     this.cPost--;
     if (this.cPost <= 0) {
-      for (const user in this.joined) {
-        if (this.joined.hasOwnProperty(user)) {
-          const type = this.joined[user].countType;
-          this.chainTotal = this.addToAggregate(this.chainTotal, user);
-          this.chainTotal[user][type][0] +=
-              parseInt(this.joined[user].countData);
-          this.chainTotal[user][type][1] += parseInt(this.duration);
-          this.chainTotal[user].channelID = this.joined[user].channelID;
-        }
-      }
-      for (const user in this.chainTotal) {
-        if (this.hookedChannels.indexOf(this.chainTotal[user].channelID)
-          == -1) {
-          this.hookedChannels.push(this.chainTotal[user].channelID);
-        }
-      }
+      this.addToChains();
       super.terminate();
-      const channels = [];
-      for (const user in this.chainTotal) {
-        if (this.chainTotal.hasOwnProperty(user)) {
-          if (channels.indexOf(this.chainTotal[user].channelID) == -1) {
-            channels.push(this.chainTotal[user].channelID);
-          }
-        }
-      }
       if (this.current == this.total) {
-        for (let i = 0; i < channels.length; i++) {
-          this.getChannel(channels[i]).send(clist
-              .chainSummary(
-                  channels[i], this.warName, this.chainTotal, this.serverTotals
-              ));
+        for (let i = 0; i < this.hookedChannels.length; i++) {
+          this.getChannel(this.hookedChannels[i]).send(this.chainSummary(
+              this.hookedChannels[i], this.warName, this.chainTotal
+          ));
         }
       }
     }
+  }
+  /** Add chain war totals to chain summary. */
+  addToChains() {
+    for (const user in this.joined) {
+      if (this.joined.hasOwnProperty(user)) {
+        const type = this.joined[user].countType;
+        this.chainTotal = this.addToAggregate(this.chainTotal, user);
+        this.chainTotal[user][type][0] +=
+            parseInt(this.joined[user].countData);
+        this.chainTotal[user][type][1] += parseInt(this.duration);
+        this.chainTotal[user].channelID = this.joined[user].channelID;
+      }
+    }
+  }
+  /**
+   * Summarises all chain war aggregates for a given server.
+   * @param {String} user - The user being summarised.
+   * @param {Object} userObj - Information about the user being summarised.
+   * @return {String} - The message to send to the user.
+   */
+  chainByUser(user, userObj) {
+    let returnMsg = '';
+    let first = true;
+    for (const item in userObj) {
+      if (item != 'channelID' && userObj[item][1] > 0) {
+        if (first == true) {
+          returnMsg += client.users.get(user) + ': ';
+        } else {
+          returnMsg += ', ';
+        }
+        first = false;
+        returnMsg += this.userTotals(userObj[item][0], item, userObj[item][1]);
+      }
+    }
+    return returnMsg;
+  }
+  /**
+   * Builds a summary of chain war aggregate totals for a given channel.
+   * @param {String} channel - Discord ID of the channel being posted to.
+   * @param {Number} name - Name of the chain being summarised.
+   * @param {Objects} totals - User-entered totals for the chain.
+   * @return {String} - The message to send to the user.
+   */
+  chainSummary(channel, name, totals) {
+    let returnMsg = '***Summary for ' + name + ':***\n\n';
+    let summaryData = '';
+    const summaryServer = client.channels.get(channel).guild;
+    for (const user in totals) {
+      if (client.channels.get(totals[user]
+          .channelID).guild.id == summaryServer.id) {
+        summaryData += this.chainByUser(user, totals[user]);
+      }
+    }
+    // for (const server in serverTotals) {
+    //   if (serverTotals.hasOwnProperty(server)) {
+    //     returnMsg += this.serverText(server, serverTotals);
+    //   }
+    // }
+    if (summaryData == '') {
+      summaryData = 'No totals were posted for this chain war.';
+    }
+    returnMsg += summaryData;
+    return returnMsg;
   }
 }
 

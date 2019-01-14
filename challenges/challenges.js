@@ -143,27 +143,13 @@ class Challenges {
         prefix + command + ' 10793`.';
     } else if (!(chalID in clist.running)) {
       returnData = '**Error:** Challenge ' + chalID + ' does not exist!';
-    } else if (this.hiddenCheck(chalID, msg.guild.id)) {
+    } else if (clist.hiddenCheck(chalID, msg.guild.id)) {
       returnData = msg.author + ', you do not have permission to ' +
         command + ' this challenge.';
     } else {
       returnData = false;
     }
     return returnData;
-  }
-  /**
-   * Check to see whether a challenge is hidden from a server.
-   * @param {String} chalID - The ID of the challenge to check.
-   * @param {String} guildID - The ID of the server to check against.
-   * @return {Object} - User data.
-   */
-  hiddenCheck(chalID, guildID) {
-    let check = false;
-    if (clist.running[chalID].hidden && clist.running[chalID].channel.guild.id
-        != guildID) {
-      check = true;
-    }
-    return check;
   }
   /**
    * Validate and assign a total type.
