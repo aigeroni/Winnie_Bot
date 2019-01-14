@@ -8,6 +8,7 @@ const challenges = require('./challenges/challenges.js');
 const goallist = require('./goals/goallist.js');
 const goals = require('./goals/goals.js');
 const tools = require('./tools/tools.js');
+const dice = require('./tools/dice.js');
 const help = require('./help.js');
 const config = require('./config.json');
 const Discord = require('discord.js');
@@ -167,20 +168,6 @@ client.on('ready', () => {
                 goal.terminationTime,
                 goal.channelID
             );
-          });
-        });
-        conn.collection('raptorDB').find({}, function(e, guilds) {
-          guilds.forEach(function(guild) {
-            tools.raptorCount[guild._id] = guild.count;
-          });
-        });
-        conn.collection('raptorUserDB').find({}, function(e, authors) {
-          authors.forEach(function(author) {
-            if (!(author._id.server in tools.userRaptors)) {
-              tools.userRaptors[author._id.server] = {};
-            }
-            tools.userRaptors[author._id.server][author._id.user]
-                = author.count;
           });
         });
         conn.collection('configDB').find({}, function(e, guilds) {
@@ -563,7 +550,7 @@ const cmdList = {
     usage: '<x, x y, xdy>',
     type: 'tools',
     process: function(client, msg, prefix, suffix) {
-      const msgToSend = tools.rollDice(prefix, suffix);
+      const msgToSend = dice.rollDice(prefix, suffix);
       msg.channel.send(msgToSend);
       return msgToSend;
     },
@@ -600,8 +587,8 @@ const cmdList = {
     name: 'raptors',
     description: 'Displays raptor statistics.',
     type: 'tools',
-    process: function(client, msg, prefix, suffix) {
-      const msgToSend = tools.raptorStats(client, msg);
+    process: async function(client, msg, prefix, suffix) {
+      const msgToSend = await tools.raptorStats(client, msg);
       msg.channel.send(msgToSend);
       return msgToSend;
     },

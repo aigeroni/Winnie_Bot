@@ -8,8 +8,6 @@ class Tools {
   constructor() {
     this.WAR_RAPTOR_CHANCE = 10;
 
-    this.raptorCount = {};
-    this.userRaptors = {};
     this.announceChannel = {};
   }
   /**
@@ -97,8 +95,7 @@ class Tools {
     if (raptorRoll < raptorChance) {
       await dbc.dbUpdate('raptorDB', {_id: server}, {$inc: {count: 1}});
       await dbc.dbUpdate(
-          'raptorUserDB',
-          {_id: {server: server, user: author.id}},
+          'raptorUserDB', {_id: {server: server, user: author.id}},
           {$inc: {count: 1}}
       );
       const userData = await dbc.dbFind('userDB', {_id: author.id});
@@ -107,14 +104,12 @@ class Tools {
         await dbc.dbUpdate('raptorBuckets', {_id: 0}, {$inc: {rank: 1}});
       } else {
         await dbc.dbUpdate(
-            'raptorBuckets',
-            {_id: currentRaptors},
+            'raptorBuckets', {_id: currentRaptors},
             {$inc: {rank: 1}, $pull: {users: author.id}}
         );
       }
       await dbc.dbUpdate(
-          'raptorBuckets',
-          {_id: currentRaptors + 1},
+          'raptorBuckets', {_id: currentRaptors + 1},
           {$setOnInsert: {rank: 1}, $push: {users: author.id}}
       );
       await dbc.dbUpdate('userID', {_id: author.id}, {$inc: {raptorTotal: 1}});
@@ -259,158 +254,67 @@ class Tools {
    * @param {Object} msg - The message that ran this function.
    * @return {String} - The message to send to the user.
    */
-  raptorStats(client, msg) {
+  async raptorStats(client, msg) {
     let raptorMsg = '__**Raptor Statistics:**__';
-    const raptorOrd = this.sortCollection(this.raptorCount);
-    for (let i = 0; i < raptorOrd.length; i++) {
-      if (i < 10 || raptorOrd[i] == msg.guild.id) {
-        raptorMsg +=
-          '\n' +
-          (i + 1) +
-          '. *' +
-          client.guilds.get(raptorOrd[i]) +
-          ':* ' +
-          this.raptorCount[raptorOrd[i]];
-      }
-    }
-    if (!(this.userRaptors[msg.guild.id] === undefined)) {
-      const userOrd = this.sortCollection(this.userRaptors[msg.guild.id]);
-      if (this.raptorCount[msg.guild.id] > 0) {
-        raptorMsg += '\n\n**Raptors by Author:**';
-        for (let i = 0; i < userOrd.length; i++) {
-          if (i < 10 || userOrd[i] == msg.author.id) {
-            raptorMsg +=
-              '\n' +
-              (i + 1) +
-              '. *';
-            if (client.users.get(userOrd[i]) === undefined) {
-              raptorMsg += 'Unknown User';
-            } else {
-              raptorMsg += client.users.get(userOrd[i]).username;
-            }
-            raptorMsg += ':* ' +
-              this.userRaptors[msg.guild.id][userOrd[i]];
-          }
-        }
-      }
-    }
+    raptorMsg += await this.raptorsByGuild(client, msg.guild.id);
+    raptorMsg += await this.guildRaptors(client, msg.guild.id, msg.author.id);
     return raptorMsg;
   }
   /**
-   * Sorts a collection.
-   * @param {Object} toSort - The collection to sort.
-   * @return {Object} - The sorted collection.
-   */
-  sortCollection(toSort) {
-    const keys = Object.keys(toSort);
-    keys.sort(function(x, y) {
-      return toSort[y] - toSort[x];
-    });
-    return keys;
-  }
-  /**
-   * Roll dice according to the user's specifications.
-   * @param {String} prefix - The bot's prefix.
-   * @param {String} suffix - Information after the bot command.
+   * Displays raptor statistics by server.
+   * @param {Object} client - The Discord client.
+   * @param {Object} guildID - The server to display to.
    * @return {String} - The message to send to the user.
    */
-  rollDice(prefix, suffix) {
-    let diceString = '';
-    let diceSum = 0;
-    const faces = suffix.split('+');
-    for (let i = 0; i < faces.length; i++) {
-      if (Number.isInteger(Number(faces[i]))) {
-        // Single number
-        if (faces.length == 1) {
-          // Treat as a 1dx roll
-          const roll = Math.floor(Math.random() * Number(faces[i])) + 1;
-          diceString += roll;
-          diceSum += roll;
+  async raptorsByGuild(client, guildID) {
+    let raptorMsg = '';
+    const guilds = await dbc.dbSort('raptorDB', {}, {count: -1});
+    let i = 0;
+    await guilds.forEach(function(guild) {
+      if (i < 10 || guild._id == guildID) {
+        raptorMsg += '\n' + (i + 1) + '. *';
+        if (client.guilds.get(guild._id) === undefined) {
+          raptorMsg += 'Unknown Server';
         } else {
-          // Add to the other rolls
-          diceString += '(' + Number(faces[i]) + ')';
-          diceSum += Number(faces[i]);
+          raptorMsg += client.guilds.get(guild._id);
         }
-      } else if (faces[i].split('d').length == 2) {
-        // RPG-style roll
-        const rpgRoll = faces[i].split('d');
-        if (rpgRoll[0] == '') {
-          rpgRoll[0] = 1;
-        }
-        if (
-          !Number.isInteger(Number(rpgRoll[0])) ||
-          !Number.isInteger(Number(rpgRoll[1]))
-        ) {
-          diceString =
-            '**Error:**: Both values in an RPG-style roll must be integers.' +
-            ' Example: `' +
-            prefix +
-            'roll 2d6`.';
-          diceSum = 0;
-          break;
-        } else {
-          if (rpgRoll[0] > 20) {
-            diceString = '**Error:**: I cannot roll more than 20 dice at once.';
-            diceSum = 0;
-            break;
-          } else {
-            for (let j = 0; j < Number(rpgRoll[0]); j++) {
-              const roll = Math.floor(Math.random() * Number(rpgRoll[1])) + 1;
-              diceString += roll;
-              if (j < Number(rpgRoll[0]) - 1) {
-                diceString += ', ';
-              }
-              diceSum += roll;
-            }
-          }
-        }
-      } else if (faces[i].split(' ').length == 2) {
-        // Range roll
-        const rangeRoll = faces[i].split(' ');
-        if (
-          !Number.isInteger(Number(rangeRoll[0])) ||
-          !Number.isInteger(Number(rangeRoll[1]))
-        ) {
-          diceString = '**Error:**: Both values in a range roll must be' +
-            ' integers. Example: `' +
-            prefix +
-            'roll 1 100`.';
-          diceSum = 0;
-          break;
-        } else {
-          if (Number(rangeRoll[0]) < Number(rangeRoll[1])) {
-            const roll = Math.floor(
-                Math.random() *
-                (1 + Number(rangeRoll[1]) - Number(rangeRoll[0])) +
-                Number(rangeRoll[0])
-            );
-            diceString += roll;
-            diceSum += roll;
-          } else {
-            // First number is larger than second
-            diceString =
-              '**Error:**: The first number in a range' +
-              ' roll must be smaller than the second.';
-            diceSum = 0;
-            break;
-          }
-        }
-      } else {
-        diceString = '**Error:**: ' + faces[i] + ' is not a valid roll.' +
-          ' Example: `' +
-          prefix +
-          'roll 2d6 + 5`.';
-        diceSum = 0;
-        break;
+        raptorMsg += ':* ' + guild.count;
+        i++;
       }
-      if (i < faces.length - 1) {
-        diceString += ', ';
+    });
+    return raptorMsg;
+  }
+  /**
+   * Displays raptor statistics for a server.
+   * @param {Object} client - The Discord client.
+   * @param {Object} guildID - The server to display to.
+   * @param {Object} userID - The user that called the raptor summary.
+   * @return {String} - The message to send to the user.
+   */
+  async guildRaptors(client, guildID, userID) {
+    let raptorMsg = '\n\n**Raptors by Author:**';
+    const users = await dbc.dbSort(
+        'raptorUserDB',
+        {_id: {$elemMatch: {server: guildID}}},
+        {count: -1}
+    );
+    let i = 0;
+    await users.forEach(function(user) {
+      if (i < 10 || user._id.user == userID) {
+        raptorMsg += '\n' + (i + 1) + '. *';
+        if (client.users.get(user._id.user) === undefined) {
+          raptorMsg += 'Unknown User';
+        } else {
+          raptorMsg += client.users.get(user._id.user).username;
+        }
+        raptorMsg += ':* ' + user.count;
+        i++;
       }
+    });
+    if (i == 0) {
+      raptorMsg = '';
     }
-    if (diceSum > 0) {
-      diceString += '\nTotal = ' + diceSum;
-    }
-    return diceString;
+    return raptorMsg;
   }
 }
 

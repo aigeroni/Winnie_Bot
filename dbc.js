@@ -46,12 +46,24 @@ class Database {
    * Finds a record in the database
    * @param  {String} db - The database to search.
    * @param {String} id - The document to find.
-   * @return {Promise} - Promise object.
+   * @return {Object} - Record according to search term.
    */
   async dbFind(db, id) {
     return await conn.collection(db).findOne(
         id
     );
+  }
+  /**
+   * Sorts records from the database
+   * @param {String} db - The database to search.
+   * @param {String} param - The search term.
+   * @param {String} sort - The field to sort by.
+   * @return {Object} - Record according to search term.
+   */
+  async dbSort(db, param, sort) {
+    return await conn.collection(db).find(
+        param
+    ).sort(sort);
   }
 }
 
