@@ -33,8 +33,8 @@ const tickTimer = gameloop.setGameLoop(async function(delta) {
           clist.running[item].current <
           clist.running[item].total
         ) {
-          clist.running[challenges.timerID] = new ChainWar(
-              challenges.timerID,
+          clist.running[start.timerID] = new ChainWar(
+              start.timerID,
               clist.running[item].creator,
               clist.running[item].warName,
               new Date().getTime(),
@@ -49,7 +49,7 @@ const tickTimer = gameloop.setGameLoop(async function(delta) {
                   clist.running[item].joined)),
               clist.running[item].chainTotal
           );
-          challenges.incrementID();
+          start.incrementID();
         }
       }
       clist.running[item].update();
@@ -103,7 +103,7 @@ client.on('ready', () => {
         logger.info('Database created!');
         conn.collection('timer').find({}, function(e, t) {
           t.forEach(function(tx) {
-            challenges.timerID = tx.data;
+            start.timerID = tx.data;
           });
         });
         conn.collection('challengeDB').find({}, function(e, challengeinput) {
@@ -183,8 +183,8 @@ client.on('ready', () => {
         });
         conn.collection('configDB').find({}, function(e, guilds) {
           guilds.forEach(function(guild) {
-            challenges.crossServerStatus[guild._id] = guild.xStatus;
-            challenges.autoSumStatus[guild._id] = guild.autoStatus;
+            start.crossServerStatus[guild._id] = guild.xStatus;
+            start.autoSumStatus[guild._id] = guild.autoStatus;
             if (guild.prefix) {
               config.cmd_prefix[guild._id] = guild.prefix;
             }

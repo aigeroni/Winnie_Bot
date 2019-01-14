@@ -152,26 +152,9 @@ class ChallengeStart {
     } else if (this.validateChainCount(timeBetween)) {
       returnMsg = this.validateChainCount(timeBetween)
         + ' Example: `' + prefix + 'chainwar 2 10 1`.';
-    } else if (isNaN(chainWarCount)) {
-      returnMsg = '**Error:** War count must be a number. Example: `' +
-          prefix +
-          'chainwar 2 10 1`.';
-    } else if (timeBetween.some(isNaN)) {
-      returnMsg = '**Error:** Time between wars must be a number. Example: `' +
-          prefix +
-          'chainwar 2 10 1`.';
-    } else if (timeBetween.some(function(currentValue) {
-      return currentValue > 30;
-    })) {
-      returnMsg = '**Error:** There cannot be more than 30 minutes' +
-          ' between wars in a chain.';
-    } else if (chainWarCount < 2 || chainWarCount > 10) {
-      returnMsg = '**Error:** Chains must be between two and ten wars long.';
-    } else if (duration * chainWarCount > 120) {
-      returnMsg =
-          '**Error:** Chain wars cannot run for more than two hours in total.';
-    } else if (timeBetween <= 0) {
-      returnMsg = '**Error:** Chain wars cannot overlap.';
+    } else if (this.validateChainLength(chainWarCount)) {
+      returnMsg = this.validateChainLength(chainWarCount)
+        + ' Example: `' + prefix + 'chainwar 2 10 1`.';
     } else {
       clist.running[this.timerID] = new ChainWar(
           this.timerID,
@@ -272,6 +255,20 @@ class ChallengeStart {
     return returnMsg;
   }
   /**
+   * Validates the number of wars in a chain.
+   * @param {String} length - The length to validate.
+   * @return {String} - Message to send to user.
+   */
+  validateChainLength(length) {
+    let returnMsg = false;
+    if (isNaN(length)) {
+      returnMsg = '**Error:** War count must be a number.';
+    } else if (length < 2 || length > 10) {
+      returnMsg = '**Error:** Chains must be between two and ten wars long.';
+    }
+    return returnMsg;
+  }
+  /**
    * Increment the challenge ID.
    * @return {Promise} - Promise object.
    */
@@ -295,10 +292,8 @@ class ChallengeStart {
     const guild = await conn.collection('configDB').findOne(
         {_id: msg.guild.id}
     );
-    if (
-      (user != null && user.xStatus == true) ||
-      (guild != null && guild.xStatus == true)
-    ) {
+    if ((user != null && user.xStatus == true) ||
+      (guild != null && guild.xStatus == true)) {
       crossServerHide = true;
     }
     if (args[0] == 'join') {
