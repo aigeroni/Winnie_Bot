@@ -9,9 +9,3 @@ checks:
   return-statements:
     config:
       threshold: 2
-  similar-code:
-    config:
-      threshold: 5
-  identical-code:
-    config:
-      threshold: 5
