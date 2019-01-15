@@ -1,11 +1,13 @@
 const dbc = require('../dbc.js');
+const config = require('../config.json');
 
 /** Information required for challenge creation and summary display. */
 class ChallengeList {
   /** Initialise variables required for challenge creation and summaries. */
   constructor() {
-    this.DUR_AFTER = 30;
+    this.DUR_AFTER = 300;
     this.running = {};
+    this.announceChannel = {};
   }
   /**
    * Check to see whether a challenge is hidden from a server.
@@ -116,7 +118,9 @@ class ChallengeList {
     } else if (args[0] == 'server') { // server status
       returnMsg = this.statusForServer(msg, flagType, args[1]);
     } else { // user updating own status
-      returnMsg = this.updateStatus(msg.author, flagType, args[0]);
+      returnMsg = this.updateStatus(
+          msg.author, 'userDB', msg.author.id, flagType, args[0]
+      );
     }
     return returnMsg;
   }
@@ -159,16 +163,29 @@ class ChallengeList {
       announce: 'Announcements Channel',
     };
     let fieldData = '';
+    console.log(server);
     if (server[field] === undefined) {
       fieldData = 'not configured';
     } else {
       fieldData = server[field];
     }
-    if (update === undefined) {
+    if (update === undefined || update == '') {
       returnMsg += '**' + msg.guild.name + ' ' + fieldOptions[field] +
         ':** ' + fieldData + '.';
     } else if (msg.member.permissions.has('ADMINISTRATOR')) {
-      // update field
+      switch (field) {
+        case 'prefix':
+          returnMsg = this.validatePrefix(msg, update);
+          break;
+        case 'announce':
+          returnMsg = this.validateChannel(msg, update);
+          break;
+        default:
+          returnMsg = this.updateStatus(
+              msg.author, 'configDB', msg.guild.id, field, update
+          );
+          break;
+      }
     } else {
       returnMsg = '**Error:** Only server administrators are permitted' +
         ' to configure server preferences.';
@@ -178,47 +195,82 @@ class ChallengeList {
   /**
    * Updates user-entered flags.
    * @param {Object} author - The user to update the flags of.
+   * @param {String} db - The database name.
+   * @param {String} id - The ID of the field to update.
    * @param {String} field - The field to update.
    * @param {String} flag - The flag to update to.
    * @return {String} - Message to send to user.
    */
-  async updateStatus(author, field, flag) {
+  async updateStatus(author, db, id, field, flag) {
     let returnMsg = '';
     if (!(flag == 'on' || flag == 'off')) {
       returnMsg = author + ', use **on|off** to toggle preferences.';
     } else {
       const data = {$set: {}};
       data.$set = {[field]: flag};
-      await dbc.dbUpdate('userDB', {_id: author.id}, data);
+      await dbc.dbUpdate(db, {_id: id}, data);
       returnMsg = author + ', you have turned ';
       if (field == 'autoStatus') {
         returnMsg += 'automatic summaries';
       } else if (field == 'xStatus') {
         returnMsg += 'cross-server display';
       }
-      returnMsg += ' for your challenges **' + flag + '**.';
+      returnMsg += ' **' + flag + '**.';
     }
     return returnMsg;
   }
   /**
    * Validates custom prefixes for Winnie.
-   * @param {Object} msg - The message that ran this function.
-   * @param {String} suffix - Information after the bot command.
+   * @param {String} msg - The message that initiated the change.
+   * @param {String} update - Data to update with.
    * @return {String} - The message to send to the user.
    */
-  async validatePrefix(msg, suffix) {
+  async validatePrefix(msg, update) {
     let returnMsg = '';
-    if (suffix.length > 0 && suffix.length < 3) {
-      config.cmd_prefix[msg.guild.id] = suffix;
+    if (update == 'clear') {
+      delete config.cmd_prefix[msg.guild.id];
       await dbc.dbUpdate(
-          'configDB', {_id: msg.guild.id}, {$set: {prefix: newPrefix}});
+          'configDB', {_id: msg.guild.id}, {$unset: {prefix: 1}});
+      returnMsg = msg.author + ', you have reset my prefix.';
+    } else if (update.length > 0 && update.length < 3) {
+      config.cmd_prefix[msg.guild.id] = update;
+      await dbc.dbUpdate(
+          'configDB', {_id: msg.guild.id}, {$set: {prefix: update}});
       returnMsg = msg.author +
         ', you have changed my prefix to `' +
-        suffix +
+        update +
         '`.';
     } else {
       returnMsg = '**Error:**:' +
         ' My prefix must be less than three characters.';
+    }
+    return returnMsg;
+  }
+  /**
+   * Validates announcement channels for Winnie.
+   * @param {String} msg - The message that initiated the change.
+   * @param {String} update - Data to update with.
+   * @return {String} - The message to send to the user.
+   */
+  async validateChannel(msg, update) {
+    let returnMsg = '';
+    const channelObject = client.channels.get(update.slice(2, -1));
+    if (channelObject == undefined) {
+      returnMsg = '**Error:**: ' + update + ' is not a valid channel.';
+    } else if (channelObject.guild.me.permissionsIn(channelObject)
+        .hasPermission('SEND_MESSAGES')) {
+      this.announceChannel[msg.guild.id] = channelObject.id;
+      await dbc.dbUpdate(
+          'configDB',
+          {_id: msg.guild.id},
+          {$set: {announce: channelObject.id}}
+      );
+      returnMsg = msg.author +
+          ', you have changed the announcements channel to ' +
+          channelObject + '.';
+    } else {
+      returnMsg = '**Error:**: I need permission to send messages' +
+          ' in the announcements channel.';
     }
     return returnMsg;
   }

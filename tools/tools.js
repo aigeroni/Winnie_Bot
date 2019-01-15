@@ -7,8 +7,6 @@ class Tools {
   /** Initialise variables for tool management. */
   constructor() {
     this.WAR_RAPTOR_CHANCE = 10;
-
-    this.announceChannel = {};
   }
   /**
    * Gives the user a target for a number of minutes.

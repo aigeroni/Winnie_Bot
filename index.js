@@ -76,9 +76,9 @@ const tickTimer = gameloop.setGameLoop(async function(delta) {
   if (date.month == 10) {
     if (date.hours == 0 && date.minutes == 0 && date.seconds == 0) {
       const wordGoal = ((50000/30) * (date.date)).toFixed(0);
-      for (item in tools.announceChannel) {
-        if (tools.announceChannel.hasOwnProperty(item)) {
-          const channel = client.channels.get(tools.announceChannel[item]);
+      for (item in clist.announceChannel) {
+        if (clist.announceChannel.hasOwnProperty(item)) {
+          const channel = client.channels.get(clist.announceChannel[item]);
           channel.send(
               '**Day ' +
               date.date +
@@ -108,6 +108,7 @@ client.on('ready', () => {
             start.timerID = tx.data;
           });
         });
+        // import challenges
         conn.collection('challengeDB').find({}, function(e, challengeinput) {
           challengeinput.forEach(function(challenge) {
             if (challenge.type == 'sprint') {
@@ -157,6 +158,7 @@ client.on('ready', () => {
             }
           });
         });
+        // import goals
         conn.collection('goalDB').find({}, function(e, goals) {
           goals.forEach(function(goal) {
             goallist.goalList[goal.authorID] = new Goal(
@@ -170,15 +172,14 @@ client.on('ready', () => {
             );
           });
         });
+        // import configuration
         conn.collection('configDB').find({}, function(e, guilds) {
           guilds.forEach(function(guild) {
-            start.crossServerStatus[guild._id] = guild.xStatus;
-            start.autoSumStatus[guild._id] = guild.autoStatus;
             if (guild.prefix) {
               config.cmd_prefix[guild._id] = guild.prefix;
             }
-            if (guild.announcements) {
-              tools.announceChannel[guild._id] = guild.announcements;
+            if (guild.announce) {
+              clist.announceChannel[guild._id] = guild.announce;
             }
           });
         });
@@ -639,7 +640,7 @@ const cmdList = {
     usage: '<prefix>',
     type: 'config',
     process: async function(client, msg, prefix, suffix) {
-      const msgToSend = await tools.customPrefix(msg, suffix);
+      const msgToSend = await clist.statusForServer(msg, 'prefix', suffix);
       msg.channel.send(msgToSend);
       return msgToSend;
     },
@@ -654,7 +655,7 @@ const cmdList = {
     type: 'config',
     process: async function(client, msg, prefix, suffix) {
       logger.info(suffix);
-      const msgToSend = await tools.announcementChannel(msg, suffix);
+      const msgToSend = await clist.statusForServer(msg, 'announce', suffix);
       msg.channel.send(msgToSend);
       return msgToSend;
     },
@@ -708,7 +709,7 @@ client.on('message', async (msg) => {
       } catch (e) {
         msg.channel.send('**Unknown Error:** I\'m sorry, I\'m afraid I' +
           ' can\'t do that.  See log file for details.');
-        logger.error('Error %s: %s.', e, e.stack);
+        logger.info('Error %s: %s.', e, e.stack);
       }
     }
     logger.info(
