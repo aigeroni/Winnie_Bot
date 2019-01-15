@@ -112,8 +112,8 @@ class Challenges {
       returnMsg = '**Error:** You must work in words, lines, or pages.';
     } else if (returnInfo) {
       returnMsg = returnInfo;
-    } else if (start.validateGoal(wordsWritten)) {
-      returnMsg = start.validateGoal(wordsWritten);
+    } else if (this.validateGoal(wordsWritten)) {
+      returnMsg = this.validateGoal(wordsWritten);
     } else if (clist.running[chalID].type == 'sprint') {
       returnMsg = '**Error:** You cannot post a total for sprints.';
     } else if (clist.running[chalID].state < 2) {
@@ -166,6 +166,20 @@ class Challenges {
       type = false;
     }
     return type;
+  }
+    /**
+   * Validates the word goal for a sprint.
+   * @param {String} words - The goal to validate.
+   * @return {String} - Message to send to user.
+   */
+  validateGoal(words) {
+    let returnMsg = false;
+    if (!Number.isInteger(Number(words))) {
+      returnMsg = '**Error:** Word count must be a whole number.';
+    } else if (words < 1) {
+      returnMsg = '**Error:** Word count cannot be negative.';
+    }
+    return returnMsg;
   }
 }
 

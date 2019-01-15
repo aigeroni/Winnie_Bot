@@ -46,8 +46,8 @@ class ChallengeStart {
     } else if (this.validateCountdown(start)) {
       returnMsg = this.validateCountdown(start)
         + ' Example: `' + prefix + 'sprint 200 10 1`.';
-    } else if (this.validateGoal(words)) {
-      returnMsg = this.validateGoal(words)
+    } else if (challenges.validateGoal(words)) {
+      returnMsg = challenges.validateGoal(words)
         + ' Example: `' + prefix + 'sprint 200 10 1`.';
     } else {
       clist.running[this.timerID] = new Sprint(
@@ -80,6 +80,7 @@ class ChallengeStart {
   async startWar(msg, prefix, suffix) {
     let returnMsg = '';
     const flagData = await this.flagCheck(msg, suffix);
+    console.log(flagData);
     const duration = flagData.args.shift();
     let start = flagData.args.shift();
     let warName = flagData.args.join(' ');
@@ -112,7 +113,7 @@ class ChallengeStart {
           [msg.channel.id],
           {}
       );
-      if (flagData.joinFlag) {
+      if (flagData.join) {
         returnMsg += await challenges.joinChallenge(msg, prefix, this.timerID);
       }
       await this.incrementID();
@@ -222,20 +223,6 @@ class ChallengeStart {
       if (this.validateCountdown(splits[item])) {
         returnMsg = this.validateCountdown(splits[item]);
       }
-    }
-    return returnMsg;
-  }
-  /**
-   * Validates the word goal for a sprint.
-   * @param {String} words - The goal to validate.
-   * @return {String} - Message to send to user.
-   */
-  validateGoal(words) {
-    let returnMsg = false;
-    if (!Number.isInteger(Number(words))) {
-      returnMsg = '**Error:** Word count must be a whole number.';
-    } else if (words < 1) {
-      returnMsg = '**Error:** Word count cannot be negative.';
     }
     return returnMsg;
   }
