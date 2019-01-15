@@ -122,7 +122,7 @@ class War extends Challenge {
       }
       for (const server in serverTotals) {
         if (serverTotals.hasOwnProperty(server)) {
-          returnMsg += this.serverText(server, serverTotals);
+          returnMsg += this.serverText(server, serverTotals) + '\n';
         }
       }
     } else {
@@ -143,7 +143,8 @@ class War extends Challenge {
     for (const user in this.joined) {
       if (this.joined.hasOwnProperty(user)) {
         const cType = this.joined[user].countType;
-        if (cType != undefined && this.channel.guild.id == summaryServer.id) {
+        if (cType != undefined && client.channels.get(this.joined[user]
+          .channelID).guild.id == summaryServer.id) {
           userTotals += client.users.get(user) + ': ' + this.userTotals(
               this.joined[user].countData, cType, this.duration
           ) + '\n';
@@ -231,7 +232,7 @@ class War extends Challenge {
         serverText += ' (**' + (
           serverTotals[server][item][0]/
           serverTotals[server][item][1]).toFixed(0)
-          + '** avg)\n';
+          + '** avg)';
         firstType = false;
       }
     }

@@ -1,5 +1,4 @@
 const clist = require('./clist.js');
-const start = require('./start.js');
 
 /** Class containing functions for challenge management. */
 class Challenges {

@@ -155,7 +155,7 @@ class ChainWar extends War {
         this.serverTotal = this.addToAggregate(this.serverTotal, serverID);
         this.serverTotal[serverID][type][0] +=
             parseInt(this.joined[user].countData);
-        this.serverTotal[serverID][type][1] += parseInt(this.duration);
+        this.serverTotal[serverID][type][1] += 1;
       }
     }
   }

@@ -110,7 +110,7 @@ class Tools {
           'raptorBuckets', {_id: currentRaptors + 1},
           {$setOnInsert: {rank: 1}, $push: {users: author.id}}
       );
-      await dbc.dbUpdate('userID', {_id: author.id}, {$inc: {raptorTotal: 1}});
+      await dbc.dbUpdate('userDB', {_id: author.id}, {$inc: {raptorTotal: 1}});
       const channelRaptors = await dbc.dbFind('raptorDB', {_id: server});
       channel.send(
           author +

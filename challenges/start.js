@@ -4,6 +4,7 @@ const ChainWar = require('./chainwar');
 const Sprint = require('./sprint');
 const War = require('./war');
 const clist = require('./clist.js');
+const challenges = require('./challenges.js');
 const dbc = require('../dbc.js');
 
 /** Class containing functions for challenge management. */
@@ -63,7 +64,7 @@ class ChallengeStart {
           {}
       );
       if (flagData.joinFlag) {
-        returnMsg += await this.joinChallenge(msg, prefix, this.timerID);
+        returnMsg += await challenges.joinChallenge(msg, prefix, this.timerID);
       }
       await this.incrementID();
     }
@@ -112,7 +113,7 @@ class ChallengeStart {
           {}
       );
       if (flagData.joinFlag) {
-        returnMsg += await this.joinChallenge(msg, prefix, this.timerID);
+        returnMsg += await challenges.joinChallenge(msg, prefix, this.timerID);
       }
       await this.incrementID();
     }
@@ -172,7 +173,7 @@ class ChallengeStart {
           {}
       );
       if (flagData.joinFlag) {
-        returnMsg += await this.joinChallenge(msg, prefix, this.timerID);
+        returnMsg += await challenges.joinChallenge(msg, prefix, this.timerID);
       }
       await this.incrementID();
     }
