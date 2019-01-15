@@ -2,12 +2,13 @@ const ChainWar = require('./challenges/chainwar');
 const Goal = require('./goals/goal');
 const Sprint = require('./challenges/sprint');
 const War = require('./challenges/war');
+const start = require('./challenges/start.js');
 const clist = require('./challenges/clist.js');
 const challenges = require('./challenges/challenges.js');
-const cinfo = require('./challenges/cinfo.js');
 const goallist = require('./goals/goallist.js');
 const goals = require('./goals/goals.js');
 const tools = require('./tools/tools.js');
+const dice = require('./tools/dice.js');
 const help = require('./help.js');
 const config = require('./config.json');
 const Discord = require('discord.js');
@@ -33,8 +34,8 @@ const tickTimer = gameloop.setGameLoop(async function(delta) {
           clist.running[item].current <
           clist.running[item].total
         ) {
-          clist.running[challenges.timerID] = new ChainWar(
-              challenges.timerID,
+          clist.running[start.timerID] = new ChainWar(
+              start.timerID,
               clist.running[item].creator,
               clist.running[item].warName,
               new Date().getTime(),
@@ -47,9 +48,10 @@ const tickTimer = gameloop.setGameLoop(async function(delta) {
               clist.running[item].hookedChannels.slice(),
               JSON.parse(JSON.stringify(
                   clist.running[item].joined)),
-              clist.running[item].chainTotal
+              clist.running[item].chainTotal,
+              clist.running[item].serverTotal
           );
-          challenges.incrementID();
+          start.incrementID();
         }
       }
       clist.running[item].update();
@@ -74,9 +76,9 @@ const tickTimer = gameloop.setGameLoop(async function(delta) {
   if (date.month == 10) {
     if (date.hours == 0 && date.minutes == 0 && date.seconds == 0) {
       const wordGoal = ((50000/30) * (date.date)).toFixed(0);
-      for (item in tools.announceChannel) {
-        if (tools.announceChannel.hasOwnProperty(item)) {
-          const channel = client.channels.get(tools.announceChannel[item]);
+      for (item in clist.announceChannel) {
+        if (clist.announceChannel.hasOwnProperty(item)) {
+          const channel = client.channels.get(clist.announceChannel[item]);
           channel.send(
               '**Day ' +
               date.date +
@@ -103,9 +105,10 @@ client.on('ready', () => {
         logger.info('Database created!');
         conn.collection('timer').find({}, function(e, t) {
           t.forEach(function(tx) {
-            challenges.timerID = tx.data;
+            start.timerID = tx.data;
           });
         });
+        // import challenges
         conn.collection('challengeDB').find({}, function(e, challengeinput) {
           challengeinput.forEach(function(challenge) {
             if (challenge.type == 'sprint') {
@@ -149,11 +152,13 @@ client.on('ready', () => {
                   challenge.hidden,
                   challenge.hookedChannels,
                   challenge.joined,
-                  challenge.chainTotal
+                  challenge.chainTotal,
+                  challenge.serverTotal
               );
             }
           });
         });
+        // import goals
         conn.collection('goalDB').find({}, function(e, goals) {
           goals.forEach(function(goal) {
             goallist.goalList[goal.authorID] = new Goal(
@@ -167,29 +172,14 @@ client.on('ready', () => {
             );
           });
         });
-        conn.collection('raptorDB').find({}, function(e, guilds) {
-          guilds.forEach(function(guild) {
-            tools.raptorCount[guild._id] = guild.count;
-          });
-        });
-        conn.collection('raptorUserDB').find({}, function(e, authors) {
-          authors.forEach(function(author) {
-            if (!(author._id.server in tools.userRaptors)) {
-              tools.userRaptors[author._id.server] = {};
-            }
-            tools.userRaptors[author._id.server][author._id.user]
-                = author.count;
-          });
-        });
+        // import configuration
         conn.collection('configDB').find({}, function(e, guilds) {
           guilds.forEach(function(guild) {
-            challenges.crossServerStatus[guild._id] = guild.xStatus;
-            challenges.autoSumStatus[guild._id] = guild.autoStatus;
             if (guild.prefix) {
               config.cmd_prefix[guild._id] = guild.prefix;
             }
-            if (guild.announcements) {
-              tools.announceChannel[guild._id] = guild.announcements;
+            if (guild.announce) {
+              clist.announceChannel[guild._id] = guild.announce;
             }
           });
         });
@@ -212,7 +202,7 @@ const cmdList = {
     usage: '[join] [hide] <words> <duration> [time to start [name]]',
     type: 'challenges',
     process: async function(client, msg, prefix, suffix) {
-      const returnMsg = await challenges.startSprint(msg, prefix, suffix);
+      const returnMsg = await start.startSprint(msg, prefix, suffix);
       if (returnMsg != '') {
         msg.channel.send(returnMsg);
       }
@@ -232,7 +222,7 @@ const cmdList = {
     usage: '[join] [hide] <duration> [time to start [name]]',
     type: 'challenges',
     process: async function(client, msg, prefix, suffix) {
-      const returnMsg = await challenges.startWar(msg, prefix, suffix);
+      const returnMsg = await start.startWar(msg, prefix, suffix);
       if (returnMsg != '') {
         msg.channel.send(returnMsg);
       }
@@ -253,7 +243,7 @@ const cmdList = {
       ' [time between wars [name]]',
     type: 'challenges',
     process: async function(client, msg, prefix, suffix) {
-      const returnMsg = await challenges.startChainWar(msg, prefix, suffix);
+      const returnMsg = await start.startChainWar(msg, prefix, suffix);
       if (returnMsg != '') {
         msg.channel.send(returnMsg);
       }
@@ -343,7 +333,7 @@ const cmdList = {
             msg.guild.id,
             msg.channel,
             msg.author,
-            challenges.WAR_RAPTOR_CHANCE
+            tools.WAR_RAPTOR_CHANCE
         );
       }
       msg.channel.send(msgToSend);
@@ -381,7 +371,7 @@ const cmdList = {
             msg.guild.id,
             msg.channel,
             msg.author,
-            challenges.WAR_RAPTOR_CHANCE
+            tools.WAR_RAPTOR_CHANCE
         );
       }
       msg.channel.send(msgToSend);
@@ -396,7 +386,7 @@ const cmdList = {
     usage: '<id>',
     type: 'challenges',
     process: function(client, msg, prefix, suffix) {
-      const msgToSend = clist.generateSummary(msg.channel, suffix);
+      const msgToSend = clist.generateSummary(msg.channel.id, suffix);
       msg.channel.send(msgToSend);
       return msgToSend;
     },
@@ -407,7 +397,7 @@ const cmdList = {
     usage: '',
     type: 'challenges',
     process: function(client, msg, prefix, suffix) {
-      const msgToSend = cinfo.listChallenges(client, msg);
+      const msgToSend = clist.listChallenges(client, msg);
       msg.channel.send(msgToSend);
       return msgToSend;
     },
@@ -561,7 +551,7 @@ const cmdList = {
     usage: '<x, x y, xdy>',
     type: 'tools',
     process: function(client, msg, prefix, suffix) {
-      const msgToSend = tools.rollDice(prefix, suffix);
+      const msgToSend = dice.rollDice(prefix, suffix);
       msg.channel.send(msgToSend);
       return msgToSend;
     },
@@ -598,8 +588,8 @@ const cmdList = {
     name: 'raptors',
     description: 'Displays raptor statistics.',
     type: 'tools',
-    process: function(client, msg, prefix, suffix) {
-      const msgToSend = tools.raptorStats(client, msg);
+    process: async function(client, msg, prefix, suffix) {
+      const msgToSend = await tools.raptorStats(client, msg);
       msg.channel.send(msgToSend);
       return msgToSend;
     },
@@ -623,7 +613,7 @@ const cmdList = {
     usage: '[server] <on|off>',
     type: 'config',
     process: async function(client, msg, prefix, suffix) {
-      const msgToSend = await cinfo.updateFlags(msg, suffix, 'xStatus');
+      const msgToSend = await clist.updateFlags(msg, suffix, 'xStatus');
       msg.channel.send(msgToSend);
       return msgToSend;
     },
@@ -637,7 +627,7 @@ const cmdList = {
     usage: '[server] <show|hide>',
     type: 'config',
     process: async function(client, msg, prefix, suffix) {
-      const msgToSend = await cinfo.updateFlags(msg, suffix, 'autoStatus');
+      const msgToSend = await clist.updateFlags(msg, suffix, 'autoStatus');
       msg.channel.send(msgToSend);
       return msgToSend;
     },
@@ -650,7 +640,7 @@ const cmdList = {
     usage: '<prefix>',
     type: 'config',
     process: async function(client, msg, prefix, suffix) {
-      const msgToSend = await tools.customPrefix(msg, suffix);
+      const msgToSend = await clist.statusForServer(msg, 'prefix', suffix);
       msg.channel.send(msgToSend);
       return msgToSend;
     },
@@ -665,7 +655,7 @@ const cmdList = {
     type: 'config',
     process: async function(client, msg, prefix, suffix) {
       logger.info(suffix);
-      const msgToSend = await tools.announcementChannel(msg, suffix);
+      const msgToSend = await clist.statusForServer(msg, 'announce', suffix);
       msg.channel.send(msgToSend);
       return msgToSend;
     },
@@ -719,7 +709,7 @@ client.on('message', async (msg) => {
       } catch (e) {
         msg.channel.send('**Unknown Error:** I\'m sorry, I\'m afraid I' +
           ' can\'t do that.  See log file for details.');
-        logger.error('Error %s: %s.', e, e.stack);
+        logger.info('Error %s: %s.', e, e.stack);
       }
     }
     logger.info(

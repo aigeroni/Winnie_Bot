@@ -1,281 +1,277 @@
+const dbc = require('../dbc.js');
+const config = require('../config.json');
+
 /** Information required for challenge creation and summary display. */
 class ChallengeList {
   /** Initialise variables required for challenge creation and summaries. */
   constructor() {
-    this.DUR_AFTER = 30;
+    this.DUR_AFTER = 300;
     this.running = {};
+    this.announceChannel = {};
   }
   /**
-   * Gets a server from a channel ID.
-   * @param {String} channel - The channel to get the parent server of.
-   * @return {String} - The relevant server.
+   * Check to see whether a challenge is hidden from a server.
+   * @param {String} chalID - The ID of the challenge to check.
+   * @param {String} guildID - The ID of the server to check against.
+   * @return {Object} - User data.
    */
-  getServerFromID(channel) {
-    return client.channels.get(channel).guild.id;
-  }
-  /**
-   * Adds an object to an aggregate list of totals.
-   * @param {Object} serverList - The object to add to.
-   * @param {String} server - The object to add.
-   * @return {String} - The relevant server.
-   */
-  addToAggregate(serverList, server) {
-    if (serverList[server] === undefined) {
-      serverList[server] = {
-        words: [0, 0],
-        lines: [0, 0],
-        pages: [0, 0],
-        minutes: [0, 0],
-      };
+  hiddenCheck(chalID, guildID) {
+    let check = false;
+    if (this.running[chalID].hidden && this.running[chalID].channel.guild.id
+        != guildID) {
+      check = true;
     }
-    return serverList;
+    return check;
   }
   /**
-   * Produces a per-server breakdown of user-entered totals for a war.
-   * @param {String} challengeID - Unique ID of the challenge being summarised.
+   * Lists all running challenges.
+   * @param {Object} client - The Discord client.
+   * @param {Object} msg - The message that ran this function.
    * @return {String} - The message to send to the user.
    */
-  serverTotals(challengeID) {
-    let serverTotals = {};
-    for (const user in this.running[challengeID].joined) {
-      if (this.running[challengeID].joined[user].countType != undefined) {
-        const homeServer = this.getServerFromID(
-            this.running[challengeID].joined[user].channelID);
-        serverTotals = this.addToAggregate(serverTotals, homeServer);
-        serverTotals[homeServer][this.running[challengeID]
-            .joined[user].countType][0] +=
-            parseInt(this.running[challengeID].joined[user].countData);
-        serverTotals[homeServer][this.running[challengeID]
-            .joined[user].countType][1] += 1;
+  listChallenges(client, msg) {
+    let nonHiddenTotal = 0;
+    let listData = '';
+    for (const i in this.running) {
+      if (!(this.hiddenCheck(i, msg.guild.id))) {
+        const guildName = this.running[i].channel.guild.name;
+        nonHiddenTotal += 1;
+        listData += this.buildChallengeData(i, guildName);
       }
     }
-    return serverTotals;
-  }
-  /**
-   * Produces a per-server breakdown of user-entered totals for a sprint.
-   * @param {String} challengeID - Unique ID of the challenge being summarised.
-   * @return {String} - The message to send to the user.
-   */
-  sprintTotals(challengeID) {
-    const sprintTotals = {};
-    for (const user in this.running[challengeID].joined) {
-      if (this.running[challengeID].joined[user].timeTaken != undefined) {
-        const homeServer = this.getServerFromID(
-            this.running[challengeID].joined[user].channelID);
-        sprintTotals[homeServer][0] +=
-          this.running[challengeID].joined[user].timeTaken;
-        sprintTotals[homeServer][1] += 1;
-      }
-    }
-    return sprintTotals;
-  }
-  /**
-   * Summarises a user's total.
-   * @param {Number} total - The user's productivity during the challenge.
-   * @param {String} type - The type of the total.
-   * @param {Number} time - The duration of the challenge.
-   * @return {String} - The message to send to the user.
-   */
-  userTotals(total, type, time) {
-    let userTotal = '';
-    if (type == 'sprint') {
-      userTotal += '**' + time.toFixed(2) + '** minutes';
-      type = 'words';
-    } else if (total == 1) {
-      userTotal += '**' + total + '** ' + type.slice(0, -1);
+    let listMsg = '';
+    if (nonHiddenTotal == 0) {
+      listMsg =
+        'There are no challenges running.' + ' Why don\'t you start one?';
+    } else if (nonHiddenTotal == 1) {
+      listMsg = 'There is ' + nonHiddenTotal + ' challenge running:\n';
     } else {
-      userTotal += '**' + total + '** ' + type;
+      listMsg = 'There are ' + nonHiddenTotal + ' challenges running:\n';
     }
-    if (type != 'minutes') {
-      userTotal +=
-        ' (**' + (total/time).toFixed(2) + '** ' + type.slice(0, 1) + 'pm)';
-    }
-    userTotal += '\n';
-    return userTotal;
+    listMsg += listData;
+    return listMsg;
   }
   /**
-   * Summarises all war totals for a given server.
-   * @param {String} summaryServer - The server being summarised.
-   * @param {Number} challengeID - Unique ID of the challenge being summarised.
-   * @param {String} type - The type of challenge to summarise.
+   * Builds challenge data for display.
+   * @param {Object} chalID - The challenge to build.
+   * @param {Object} guildName - Display name of the challenge's home server.
    * @return {String} - The message to send to the user.
    */
-  challengeByUser(summaryServer, challengeID, type) {
-    let userTotals = '';
-    for (const user in this.running[challengeID].joined) {
-      if (this.running[challengeID].joined.hasOwnProperty(user)) {
-        let count = '';
-        let cType = '';
-        let time = '';
-        let check = '';
-        if (type == 'sprint') {
-          count = this.running[challengeID].goal;
-          cType = 'sprint';
-          time = check = this.running[challengeID].joined[user].timeTaken;
-        } else {
-          count = this.running[challengeID].joined[user].countData;
-          cType = check = this.running[challengeID].joined[user].countType;
-          time = this.running[challengeID].duration;
-        }
-        if (check != undefined &&
-          (this.getServerFromID(this.running[challengeID]
-              .joined[user].channelID) == summaryServer.id)) {
-          userTotals += client.users.get(user) + ': ' +
-            this.userTotals(count, cType, time);
-        }
+  buildChallengeData(chalID, guildName) {
+    let dataString = '';
+    let timeData = '';
+    let timeVar = undefined;
+    switch (this.running[chalID].state) {
+      case 0:
+        timeVar = this.running[chalID].cStart;
+        timeData = 'starts in %m:%s';
+        break;
+      case 1:
+        timeVar = this.running[chalID].cDur;
+        timeData = '%m:%s remaining';
+        break;
+      default:
+        timeData = 'ended';
+        break;
+    }
+    dataString += chalID + ': ' + this.running[chalID].displayName + ' (';
+    if (this.running[chalID].type == 'sprint') {
+      dataString += this.running[chalID].goal + ' words, ';
+    }
+    dataString += this.running[chalID].duration + ' minutes, ' +
+      this.buildDataString(timeData, timeVar, this.running[chalID].type) +
+      '), ' + guildName +'\n';
+    return dataString;
+  }
+  /**
+   * Builds a string with information about a challenge.
+   * @param {Number} timeData - Time remaining in the challenge.
+   * @param {String} timeVar - Text describing the challenge.
+   * @return {String} - The message to send to the user.
+   */
+  buildDataString(timeData, timeVar) {
+    let dataString = '';
+    if (timeVar === undefined) {
+      dataString = timeData;
+    } else {
+      let seconds = timeVar % 60;
+      if (seconds < 10) {
+        seconds = '0' + seconds.toString();
       }
+      dataString += timeData.replace(/%m/, Math.floor(timeVar / 60))
+          .replace(/%s/, seconds);
     }
-    return userTotals;
+    return dataString;
   }
   /**
-   * Summarises all chain war aggregates for a given server.
-   * @param {String} user - The user being summarised.
-   * @param {Object} userObj - Information about the user being summarised.
+   * Toggles cross-server display and auto-summary flags.
+   * @param {Object} msg - The message that ran this function.
+   * @param {String} suffix - Information after the bot command.
+   * @param {String} flagType - The field to update.
    * @return {String} - The message to send to the user.
    */
-  chainByUser(user, userObj) {
+  async updateFlags(msg, suffix, flagType) {
     let returnMsg = '';
-    let first = true;
-    for (const item in userObj) {
-      if (item != 'channelID' && userObj[item][1] > 0) {
-        if (first == true) {
-          returnMsg += client.users.get(user) + ': ';
-        } else {
-          returnMsg += ', ';
-        }
-        first = false;
-        returnMsg += this.userTotals(userObj[item][0], item, userObj[item][1]);
-      }
+    const args = suffix.split(' ');
+    if (suffix == '') { // user checking own status
+      returnMsg = this.checkStatus(msg.author, flagType);
+    } else if (args[0] == 'server') { // server status
+      returnMsg = this.statusForServer(msg, flagType, args[1]);
+    } else { // user updating own status
+      returnMsg = this.updateStatus(
+          msg.author, 'userDB', msg.author.id, flagType, args[0]
+      );
     }
     return returnMsg;
   }
   /**
-   * Displays war totals in a human-readable format.
-   * @param {String} server - Snowflake of the server being posted to.
-   * @param {Object} serverTotals - Summary of user-entered totals by server.
-   * @return {String} - The message to send to the user.
+   * Checks the status of user-entered flags.
+   * @param {Object} author - The user to check the flags of.
+   * @param {String} field - The field to check.
+   * @return {String} - Message to send to user.
    */
-  serverText(server, serverTotals) {
-    let serverText = '__' + client.guilds.get(server).name + '__:';
-    let firstType = true;
-    for (const item in serverTotals[server]) {
-      if (serverTotals[server][item][1] > 0) {
-        if (!firstType) {
-          serverText = ', ';
-        }
-        serverText += ' **' + serverTotals[server][item][0];
-        if (serverTotals[server][item][0] == 1) {
-          serverText += '** ' + item.slice(0, -1);
-        } else {
-          serverText += '** ' + item;
-        }
-        serverText += ' (**' + (
-          serverTotals[server][item][0]/
-          serverTotals[server][item][1]).toFixed(0)
-          + '** avg)\n';
-        firstType = false;
-      }
-    }
-    return serverText;
-  }
-  /**
-   * Displays sprint totals in a human-readable format.
-   * @param {String} server - Snowflake of the server being posted to.
-   * @param {Object} serverTotals - Summary of user-entered totals by server.
-   * @return {String} - The message to send to the user.
-   */
-  sprintText(server, serverTotals) {
-    let sprintText = '__' + client.guilds.get(server).name + '__:';
-    if (serverTotals[server][1] > 0) {
-      sprintText += ' **' + serverTotals[server][0];
-      if (serverTotals[server][1] == 1) {
-        sprintText += '** ' + item.slice(0, -1);
-      } else {
-        sprintText += '** ' + item;
-      }
-      sprintText += ' (**' + (
-        serverTotals[server][1]/
-        serverTotals[server][0]).toFixed(0)
-        + '** words per minute)\n';
-    }
-    return sprintText;
-  }
-  /**
-   * Builds a war summary for a given channel.
-   * @param {String} channel - Discord ID of the channel being posted to.
-   * @param {Number} challengeID - Unique ID of the challenge being summarised.
-   * @return {String} - The message to send to the user.
-   */
-  warSummary(channel, challengeID) {
+  async checkStatus(author, field) {
     let returnMsg = '';
-    if (this.running[challengeID].state >= 2) {
-      const serverTotals = this.serverTotals(challengeID);
-      const summaryServer = client.channels.get(channel).guild;
-      returnMsg += this.challengeByUser(summaryServer, challengeID, 'war');
-      for (const server in serverTotals) {
-        if (serverTotals.hasOwnProperty(server)) {
-          returnMsg += this.serverText(server, serverTotals);
-        }
+    const user = await dbc.dbFind('userDB', {_id: author.id});
+    let type = 'on';
+    if (user[field] == 'off') {
+      type = 'off';
+    }
+    returnMsg += author + ', you currently have ';
+    if (field == 'autoStatus') {
+      returnMsg += 'automatic summaries';
+    } else if (field == 'xStatus') {
+      returnMsg += 'cross-server display';
+    }
+    returnMsg += ' for your challenges **' + type + '**.';
+    return returnMsg;
+  }
+  /**
+   * Checks the status of flags for a server.
+   * @param {Object} msg - The message that initiated the check.
+   * @param {String} field - The field to check.
+   * @param {String} update - Information to update field with.
+   * @return {String} - Message to send to user.
+   */
+  async statusForServer(msg, field, update) {
+    let returnMsg = '';
+    const server = await dbc.dbFind('configDB', {_id: msg.guild.id});
+    const fieldOptions = {
+      xStatus: 'Cross-Server Display',
+      autoStatus: 'Automatic Summaries',
+      prefix: 'Prefix',
+      announce: 'Announcements Channel',
+    };
+    let fieldData = '';
+    console.log(server);
+    if (server[field] === undefined) {
+      fieldData = 'not configured';
+    } else {
+      fieldData = server[field];
+    }
+    if (update === undefined || update == '') {
+      returnMsg += '**' + msg.guild.name + ' ' + fieldOptions[field] +
+        ':** ' + fieldData + '.';
+    } else if (msg.member.permissions.has('ADMINISTRATOR')) {
+      switch (field) {
+        case 'prefix':
+          returnMsg = this.validatePrefix(msg, update);
+          break;
+        case 'announce':
+          returnMsg = this.validateChannel(msg, update);
+          break;
+        default:
+          returnMsg = this.updateStatus(
+              msg.author, 'configDB', msg.guild.id, field, update
+          );
+          break;
       }
     } else {
-      returnMsg = 'This war has not ended yet.';
-    }
-    if (returnMsg == '') {
-      returnMsg = 'Nobody has posted a total for this war yet.';
+      returnMsg = '**Error:** Only server administrators are permitted' +
+        ' to configure server preferences.';
     }
     return returnMsg;
   }
   /**
-   * Builds a sprint summary for a given channel.
-   * @param {String} channel - Discord ID of the channel being posted to.
-   * @param {Number} challengeID - Unique ID of the challenge being summarised.
-   * @return {String} - The message to send to the user.
+   * Updates user-entered flags.
+   * @param {Object} author - The user to update the flags of.
+   * @param {String} db - The database name.
+   * @param {String} id - The ID of the field to update.
+   * @param {String} field - The field to update.
+   * @param {String} flag - The flag to update to.
+   * @return {String} - Message to send to user.
    */
-  sprintSummary(channel, challengeID) {
+  async updateStatus(author, db, id, field, flag) {
     let returnMsg = '';
-    if (this.running[challengeID].state == 1) {
-      const serverTotals = this.sprintTotals(challengeID);
-      const summaryServer = client.channels.get(channel).guild;
-      returnMsg += this.challengeByUser(summaryServer, challengeID, 'sprint');
-      for (const server in serverTotals) {
-        if (serverTotals.hasOwnProperty(server)) {
-          returnMsg += this.sprintText(server, serverTotals);
-        }
-      }
+    if (!(flag == 'on' || flag == 'off')) {
+      returnMsg = author + ', use **on|off** to toggle preferences.';
     } else {
-      returnMsg = 'This sprint has not started yet.';
-    }
-    if (returnMsg == '') {
-      returnMsg = 'Nobody has finished this sprint yet.';
+      const data = {$set: {}};
+      data.$set = {[field]: flag};
+      await dbc.dbUpdate(db, {_id: id}, data);
+      returnMsg = author + ', you have turned ';
+      if (field == 'autoStatus') {
+        returnMsg += 'automatic summaries';
+      } else if (field == 'xStatus') {
+        returnMsg += 'cross-server display';
+      }
+      returnMsg += ' **' + flag + '**.';
     }
     return returnMsg;
   }
   /**
-   * Builds a summary of chain war aggregate totals for a given channel.
-   * @param {String} channel - Discord ID of the channel being posted to.
-   * @param {Number} name - Name of the chain being summarised.
-   * @param {Objects} totals - User-entered totals for the chain.
+   * Validates custom prefixes for Winnie.
+   * @param {String} msg - The message that initiated the change.
+   * @param {String} update - Data to update with.
    * @return {String} - The message to send to the user.
    */
-  chainSummary(channel, name, totals) {
-    let returnMsg = '***Summary for ' + name + ':***\n\n';
-    let summaryData = '';
-    const summaryServer = client.channels.get(channel).guild;
-    for (const user in totals) {
-      if (client.channels.get(totals[user]
-          .channelID).guild.id == summaryServer.id) {
-        summaryData += this.chainByUser(user, totals[user]);
-      }
+  async validatePrefix(msg, update) {
+    let returnMsg = '';
+    if (update == 'clear') {
+      delete config.cmd_prefix[msg.guild.id];
+      await dbc.dbUpdate(
+          'configDB', {_id: msg.guild.id}, {$unset: {prefix: 1}});
+      returnMsg = msg.author + ', you have reset my prefix.';
+    } else if (update.length > 0 && update.length < 3) {
+      config.cmd_prefix[msg.guild.id] = update;
+      await dbc.dbUpdate(
+          'configDB', {_id: msg.guild.id}, {$set: {prefix: update}});
+      returnMsg = msg.author +
+        ', you have changed my prefix to `' +
+        update +
+        '`.';
+    } else {
+      returnMsg = '**Error:**:' +
+        ' My prefix must be less than three characters.';
     }
-    for (const server in serverTotals) {
-      if (serverTotals.hasOwnProperty(server)) {
-        returnMsg += this.sprintText(server, serverTotals);
-      }
+    return returnMsg;
+  }
+  /**
+   * Validates announcement channels for Winnie.
+   * @param {String} msg - The message that initiated the change.
+   * @param {String} update - Data to update with.
+   * @return {String} - The message to send to the user.
+   */
+  async validateChannel(msg, update) {
+    let returnMsg = '';
+    const channelObject = client.channels.get(update.slice(2, -1));
+    if (channelObject == undefined) {
+      returnMsg = '**Error:**: ' + update + ' is not a valid channel.';
+    } else if (channelObject.guild.me.permissionsIn(channelObject)
+        .hasPermission('SEND_MESSAGES')) {
+      this.announceChannel[msg.guild.id] = channelObject.id;
+      await dbc.dbUpdate(
+          'configDB',
+          {_id: msg.guild.id},
+          {$set: {announce: channelObject.id}}
+      );
+      returnMsg = msg.author +
+          ', you have changed the announcements channel to ' +
+          channelObject + '.';
+    } else {
+      returnMsg = '**Error:**: I need permission to send messages' +
+          ' in the announcements channel.';
     }
-    if (summaryData == '') {
-      summaryData = 'No totals were posted for this chain war.';
-    }
-    returnMsg += summaryData;
     return returnMsg;
   }
   /**
@@ -287,14 +283,7 @@ class ChallengeList {
   generateSummary(channel, challengeID) {
     let msgToSend = '';
     if (challengeID in this.running) {
-      msgToSend = '***Statistics for ' +
-        this.running[challengeID].displayName +
-        ':***\n\n';
-      if (this.running[challengeID].type == 'sprint') {
-        msgToSend += this.sprintSummary(channel, challengeID);
-      } else {
-        msgToSend += this.warSummary(channel, challengeID);
-      }
+      msgToSend = this.running[challengeID].stats(channel);
     } else {
       msgToSend = '**Error:** This challenge does not exist.';
     }

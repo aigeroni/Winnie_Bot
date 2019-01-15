@@ -3,6 +3,9 @@ checks:
   method-complexity:
     config:
       threshold: 10
+  method-lines:
+    config:
+      threshold: 30
   return-statements:
     config:
       threshold: 2

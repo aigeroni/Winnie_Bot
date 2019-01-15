@@ -1,5 +1,5 @@
 const goallist = require('./goallist.js');
-const conn = require('mongoose').connection;
+const dbc = require('../dbc.js');
 
 /** Represents a goal. */
 class Goal {
@@ -42,10 +42,7 @@ class Goal {
       terminationTime: this.terminationTime,
       channelID: this.channelID,
     };
-
-    conn
-        .collection('goalDB')
-        .update({authorID: this.authorID}, goalData, {upsert: true});
+    dbc.dbUpdate('goalDB', {authorID: this.authorID}, goalData);
   }
   /** Check to see whether the goal resolves, and handle it if so.
    * @return {Number} - The user's chance of hatching a raptor.
@@ -62,7 +59,7 @@ class Goal {
    * Clears a goal from the database.
    */
   clearGoal() {
-    conn.collection('goalDB').remove({authorID: this.authorID});
+    dbc.dbRemove('goalDB', {authorID: this.authorID});
     delete goallist.goalList[this.authorID];
   }
   /** Update the goal with the user's current progress.
@@ -79,14 +76,11 @@ class Goal {
         this.written = parseInt(wordNumber);
         break;
     }
-    conn
-        .collection('goalDB')
-        .update(
-            {authorID: this.authorID},
-            {$set: {written: this.written}},
-            {upsert: false},
-            function(err) {}
-        );
+    dbc.dbUpdate(
+        'goalDB',
+        {authorID: this.authorID},
+        {$set: {written: this.written}}
+    );
   }
 }
 
