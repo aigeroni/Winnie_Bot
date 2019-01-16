@@ -1,4 +1,5 @@
 const goallist = require('./goallist.js');
+const logger = require('../logger.js');
 const dbc = require('../dbc.js');
 
 /** Represents a goal. */
@@ -49,10 +50,10 @@ class Goal {
    */
   update() {
     const currentTime = new Date().getTime();
-    console.log(currentTime);
-    console.log(this.terminationTime);
+    logger.info(currentTime);
+    logger.info(this.terminationTime);
     if (currentTime >= this.terminationTime) {
-      console.log('Goal time is up ' + this.authorID);
+      logger.info('Goal time is up ' + this.authorID);
       const raptorRollData = [this.channel, (this.written / this.goal) * 100];
       this.clearGoal(this.authorID);
       return raptorRollData;

@@ -61,6 +61,7 @@ const tickTimer = gameloop.setGameLoop(async function(delta) {
   // check goals
   for (const item in goallist.goalList) {
     if (goallist.goalList.hasOwnProperty(item)) {
+      logger.info('Updating goal');
       const raptorRoll = goallist.goalList[item].update();
       if (raptorRoll) {
         await tools.raptor(
