@@ -24,9 +24,9 @@ timezoneJS.timezone.zoneFileBasePath = 'node_modules/timezone-js/tz';
 timezoneJS.timezone.init();
 
 const tickTimer = gameloop.setGameLoop(async function(delta) {
-  logger.info('Timer running: ' + delta);
   logger.info(clist.running);
   logger.info(goallist.goalList);
+  logger.info('Timer running: ' + delta);
   // check challenges
   for (const item in clist.running) {
     logger.info('Updating challenge');
