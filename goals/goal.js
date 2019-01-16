@@ -49,7 +49,10 @@ class Goal {
    */
   update() {
     const currentTime = new Date().getTime();
+    console.log(currentTime);
+    console.log(this.terminationTime);
     if (currentTime >= this.terminationTime) {
+      console.log('Goal time is up ' + this.authorID);
       const raptorRollData = [this.channel, (this.written / this.goal) * 100];
       this.clearGoal(this.authorID);
       return raptorRollData;
