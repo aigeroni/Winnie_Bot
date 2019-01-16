@@ -48,7 +48,8 @@ class Goal {
    * @return {Number} - The user's chance of hatching a raptor.
    */
   update() {
-    if (new Date().getTime() >= this.terminationTime) {
+    const currentTime = new Date().getTime();
+    if (currentTime >= this.terminationTime) {
       const raptorRollData = [this.channel, (this.written / this.goal) * 100];
       this.clearGoal(this.authorID);
       return raptorRollData;
