@@ -25,8 +25,11 @@ timezoneJS.timezone.init();
 
 const tickTimer = gameloop.setGameLoop(async function(delta) {
   logger.info('Timer running: ' + delta);
+  logger.info(clist.running);
+  logger.info(goallist.goalList);
   // check challenges
   for (const item in clist.running) {
+    logger.info('Updating challenge');
     if (clist.running.hasOwnProperty(item)) {
       if (clist.running[item].type == 'chain war' &&
         clist.running[item].state == 2) {
