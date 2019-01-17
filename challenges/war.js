@@ -144,7 +144,7 @@ class War extends Challenge {
       if (this.joined.hasOwnProperty(user)) {
         const cType = this.joined[user].countType;
         if (cType != undefined && client.channels.get(this.joined[user]
-          .channelID).guild.id == summaryServer.id) {
+            .channelID).guild.id == summaryServer.id) {
           userTotals += client.users.get(user) + ': ' + this.userTotals(
               this.joined[user].countData, cType, this.duration
           ) + '\n';

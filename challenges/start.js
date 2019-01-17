@@ -64,7 +64,8 @@ class ChallengeStart {
           {}
       );
       if (flagData.joinFlag) {
-        returnMsg += await challenges.joinChallenge(msg, prefix, this.timerID);
+        returnMsg +=
+          await clist.running[this.timerID].join(msg.author, msg.channel.id);
       }
       await this.incrementID();
     }
@@ -114,7 +115,8 @@ class ChallengeStart {
           {}
       );
       if (flagData.join) {
-        returnMsg += await challenges.joinChallenge(msg, prefix, this.timerID);
+        returnMsg +=
+          await clist.running[this.timerID].join(msg.author, msg.channel.id);
       }
       await this.incrementID();
     }
@@ -174,7 +176,8 @@ class ChallengeStart {
           {}
       );
       if (flagData.joinFlag) {
-        returnMsg += await challenges.joinChallenge(msg, prefix, this.timerID);
+        returnMsg +=
+          await clist.running[this.timerID].join(msg.author, msg.channel.id);
       }
       await this.incrementID();
     }

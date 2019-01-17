@@ -27,16 +27,13 @@ const tickTimer = gameloop.setGameLoop(async function(delta) {
   // check challenges
   for (const item in clist.running) {
     if (clist.running.hasOwnProperty(item)) {
-      logger.info('Updating challenge ' + clist.running[item].objectID);
       if (clist.running[item].type == 'chain war' &&
         clist.running[item].state == 2) {
         clist.running[item].state = 3;
-        logger.info('Entered chain war block');
         if (
           clist.running[item].current <
           clist.running[item].total
         ) {
-          logger.info('Entered new chain war creation');
           clist.running[start.timerID] = new ChainWar(
               start.timerID,
               clist.running[item].creator,
@@ -54,19 +51,15 @@ const tickTimer = gameloop.setGameLoop(async function(delta) {
               clist.running[item].chainTotal,
               clist.running[item].serverTotal
           );
-          logger.info('ID increment');
           start.incrementID();
         }
       }
-      logger.info('Running challenge update');
       clist.running[item].update();
-      logger.info('Finished updating challenge ' + clist.running[item].objectID);
     }
   }
   // check goals
   for (const item in goallist.goalList) {
     if (goallist.goalList.hasOwnProperty(item)) {
-      logger.info('Updating goal');
       const raptorRoll = goallist.goalList[item].update();
       if (raptorRoll) {
         await tools.raptor(
@@ -656,7 +649,6 @@ const cmdList = {
     usage: '<channel>',
     type: 'config',
     process: async function(client, msg, prefix, suffix) {
-      logger.info(suffix);
       const msgToSend = await clist.statusForServer(msg, 'announce', suffix);
       msg.channel.send(msgToSend);
       return msgToSend;
