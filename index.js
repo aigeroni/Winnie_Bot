@@ -24,13 +24,10 @@ timezoneJS.timezone.zoneFileBasePath = 'node_modules/timezone-js/tz';
 timezoneJS.timezone.init();
 
 const tickTimer = gameloop.setGameLoop(async function(delta) {
-  logger.info(clist.running);
-  logger.info(goallist.goalList);
-  logger.info('Timer running: ' + delta);
   // check challenges
   for (const item in clist.running) {
-    logger.info('Updating challenge');
     if (clist.running.hasOwnProperty(item)) {
+      logger.info('Updating challenge ' + clist.running[item].objectID);
       if (clist.running[item].type == 'chain war' &&
         clist.running[item].state == 2) {
         clist.running[item].state = 3;
@@ -59,6 +56,7 @@ const tickTimer = gameloop.setGameLoop(async function(delta) {
         }
       }
       clist.running[item].update();
+      logger.info('Finished updating challenge ' + clist.running[item].objectID);
     }
   }
   // check goals
