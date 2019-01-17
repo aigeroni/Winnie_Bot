@@ -147,15 +147,17 @@ class ChainWar extends War {
       if (this.joined.hasOwnProperty(user)) {
         const type = this.joined[user].countType;
         this.chainTotal = this.addToAggregate(this.chainTotal, user);
-        this.chainTotal[user][type][0] +=
-            parseInt(this.joined[user].countData);
-        this.chainTotal[user][type][1] += parseInt(this.duration);
-        this.chainTotal[user].channelID = this.joined[user].channelID;
         const serverID = this.getChannel(this.joined[user].channelID).guild.id;
         this.serverTotal = this.addToAggregate(this.serverTotal, serverID);
-        this.serverTotal[serverID][type][0] +=
+        if (this.joined[user].countData != null) {
+          this.chainTotal[user][type][0] +=
             parseInt(this.joined[user].countData);
-        this.serverTotal[serverID][type][1] += 1;
+          this.chainTotal[user][type][1] += parseInt(this.duration);
+          this.chainTotal[user].channelID = this.joined[user].channelID;
+          this.serverTotal[serverID][type][0] +=
+              parseInt(this.joined[user].countData);
+          this.serverTotal[serverID][type][1] += 1;
+        }
       }
     }
   }
