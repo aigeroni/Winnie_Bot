@@ -143,6 +143,11 @@ class Challenge {
   async cancel() {
     await dbc.dbRemove('challengeDB', {_id: this.objectID});
     delete clist.running[this.objectID];
+    for (let i = 0; i < this.hookedChannels.length; i++) {
+      client.channels.get(this.hookedChannels[i]).send(this.displayName +
+        ' (ID ' + this.objectID + ') has been cancelled. ' +
+        this.getUsers(this.hookedChannels[i]));
+    }
     return this.displayName + ' (ID ' +
       this.objectID + ') has been cancelled. ';
   }

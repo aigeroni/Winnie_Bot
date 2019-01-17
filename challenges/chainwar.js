@@ -160,8 +160,9 @@ class ChainWar extends War {
         logger.info('Added user to aggregate');
         this.chainTotal[user][type][0] +=
             parseInt(this.joined[user].countData);
-        this.chainTotal[user][type][1] += parseInt(this.duration);
         logger.info('Added total to aggregate');
+        this.chainTotal[user][type][1] += parseInt(this.duration);
+        logger.info('Added duration to aggregate');
         this.chainTotal[user].channelID = this.joined[user].channelID;
         const serverID = this.getChannel(this.joined[user].channelID).guild.id;
         logger.info('Pulled channel');
