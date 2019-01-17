@@ -144,8 +144,7 @@ class Challenge {
     await dbc.dbRemove('challengeDB', {_id: this.objectID});
     delete clist.running[this.objectID];
     return this.displayName + ' (ID ' +
-      this.objectID + ') has been cancelled. ' +
-      this.getUsers(this.hookedChannels[i]);
+      this.objectID + ') has been cancelled. ';
   }
   /**
    * Builds user data for the challenge database.
