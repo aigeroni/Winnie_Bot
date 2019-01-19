@@ -215,7 +215,6 @@ class War extends Challenge {
    * @return {String} - The message to send to the user.
    */
   serverText(server, serverTotals) {
-    console.log(serverTotals[server]);
     let serverText = '__' + client.guilds.get(server).name + '__:';
     let firstType = true;
     for (const item in serverTotals[server]) {

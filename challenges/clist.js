@@ -163,7 +163,6 @@ class ChallengeList {
       announce: 'Announcements Channel',
     };
     let fieldData = '';
-    console.log(server);
     if (server[field] === undefined) {
       fieldData = 'not configured';
     } else {

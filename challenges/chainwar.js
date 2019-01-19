@@ -104,16 +104,6 @@ class ChainWar extends War {
         break;
     }
   }
-  /**
-   * Builds user data for the challenge database.
-   * @param {String} channel - The channel from which the user joined.
-   * @param {String} total - The total posted by the user.
-   * @param {String} type - The type of the total.
-   * @return {Object} - JSON object representing the total.
-   */
-  buildUserData(channel, total, type) {
-    return super.buildUserData(channel, total, type);
-  }
   /** Check to see whether the countdown is over, and start the war if so. */
   start() {
     super.start();
@@ -204,7 +194,7 @@ class ChainWar extends War {
     }
     for (const server in this.serverTotal) {
       if (this.serverTotal.hasOwnProperty(server)) {
-        summaryData += this.serverText(server, this.serverTotal);
+        summaryData += this.serverText(server, this.serverTotal) + '\n';
       }
     }
     if (summaryData == '') {

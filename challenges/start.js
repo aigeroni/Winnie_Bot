@@ -81,7 +81,6 @@ class ChallengeStart {
   async startWar(msg, prefix, suffix) {
     let returnMsg = '';
     const flagData = await this.flagCheck(msg, suffix);
-    console.log(flagData);
     const duration = flagData.args.shift();
     let start = flagData.args.shift();
     let warName = flagData.args.join(' ');
@@ -175,7 +174,7 @@ class ChallengeStart {
           {},
           {}
       );
-      if (flagData.joinFlag) {
+      if (flagData.join) {
         returnMsg +=
           await clist.running[this.timerID].join(msg.author, msg.channel.id);
       }

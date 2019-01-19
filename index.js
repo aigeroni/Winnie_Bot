@@ -296,13 +296,8 @@ const cmdList = {
     alias: true,
     type: 'challenges',
     process: async function(client, msg, prefix, suffix) {
-      const returnData = await challenges.stopChallenge(msg, prefix, suffix);
-      for (let i = 0; i < returnData.channelList.length; i++) {
-        client.channels
-            .get(returnData.channelList[i])
-            .send(returnData.returnMsg);
-      }
-      return returnData.returnMsg;
+      const returnMsg = await challenges.stopChallenge(msg, prefix, suffix);
+      return returnMsg;
     },
   },
   time: {

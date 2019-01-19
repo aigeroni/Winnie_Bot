@@ -51,19 +51,18 @@ class Challenges {
   async stopChallenge(msg, prefix, suffix) {
     let returnMsg = '';
     const chalID = suffix;
-    let channelList = [msg.channel.id];
     const returnInfo = this.checkIDError(chalID, msg, 'cancel', prefix);
     if (returnInfo) {
       returnMsg = returnInfo;
     } else if (clist.running[chalID].creator == msg.author.id) {
-      channelList = clist.running[chalID].hookedChannels;
       returnMsg = await clist.running[chalID].cancel(msg.author);
     } else {
       returnMsg = '**Error:** Only the creator of ' +
         clist.running[chalID] +
         ' can end this challenge.';
+      msg.channel.send(returnMsg);
     }
-    return {channelList: channelList, returnMsg: returnMsg};
+    return returnMsg;
   }
   /**
    * Calls time for a sprint.
