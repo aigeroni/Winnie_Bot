@@ -166,7 +166,7 @@ class Challenges {
     }
     return type;
   }
-    /**
+  /**
    * Validates the word goal for a sprint.
    * @param {String} words - The goal to validate.
    * @return {String} - Message to send to user.
