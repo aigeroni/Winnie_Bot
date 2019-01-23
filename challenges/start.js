@@ -63,7 +63,7 @@ class ChallengeStart {
           [msg.channel.id],
           {}
       );
-      if (flagData.joinFlag) {
+      if (flagData.join) {
         returnMsg +=
           await clist.running[this.timerID].join(msg.author, msg.channel.id);
       }

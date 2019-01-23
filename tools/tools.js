@@ -296,7 +296,6 @@ class Tools {
         {'_id.server': guildID},
         {count: -1}
     );
-    console.log(users);
     let i = 0;
     await users.forEach(function(user) {
       if (i < 10 || user._id.user == userID) {
