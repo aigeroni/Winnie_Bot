@@ -277,8 +277,8 @@ class Tools {
           raptorMsg += client.guilds.get(guild._id);
         }
         raptorMsg += ':* ' + guild.count;
-        i++;
       }
+      i++;
     });
     return raptorMsg;
   }
@@ -293,9 +293,10 @@ class Tools {
     let raptorMsg = '\n\n**Raptors by Author:**';
     const users = await dbc.dbSort(
         'raptorUserDB',
-        {_id: {$elemMatch: {server: guildID}}},
+        {'_id.server': guildID},
         {count: -1}
     );
+    console.log(users);
     let i = 0;
     await users.forEach(function(user) {
       if (i < 10 || user._id.user == userID) {
@@ -306,8 +307,8 @@ class Tools {
           raptorMsg += client.users.get(user._id.user).username;
         }
         raptorMsg += ':* ' + user.count;
-        i++;
       }
+      i++;
     });
     if (i == 0) {
       raptorMsg = '';

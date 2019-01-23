@@ -168,7 +168,7 @@ class ChainWar extends War {
           returnMsg += ', ';
         }
         returnMsg +=
-          this.userTotals(userObj[item][0], item, userObj[item][1]) + '\n';
+          this.userTotals(userObj[item][0], item, userObj[item][1]);
         first = false;
       }
     }
@@ -186,7 +186,7 @@ class ChainWar extends War {
     for (const user in this.chainTotal) {
       if (client.channels.get(this.chainTotal[user]
           .channelID).guild.id == summaryServer.id) {
-        summaryData += this.chainByUser(user, this.chainTotal[user]);
+        summaryData += this.chainByUser(user, this.chainTotal[user]) + '\n';
       }
     }
     if (Object.keys(this.serverTotal).length > 1) {
