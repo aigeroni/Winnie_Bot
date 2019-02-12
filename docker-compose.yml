@@ -8,6 +8,7 @@ services:
         - "8080:8080"
         links:
         - mongo
+        - postgres
     mongo:
         container_name: mongo
         image: mongo
@@ -15,3 +16,10 @@ services:
         - ./data:/data/db
         ports:
         - "27017:27017"
+    postgres:
+        container_name: postgres
+        image: postgres
+        volumes:
+        - ./postgres-data:/var/lib/postgresql/data
+        ports:
+        - "5432:5432"
