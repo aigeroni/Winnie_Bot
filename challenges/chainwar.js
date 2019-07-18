@@ -180,7 +180,7 @@ class ChainWar extends War {
    * @return {String} - The message to send to the user.
    */
   chainSummary(channel) {
-    let returnMsg = '***Summary for ' + this.warName + ':***\n\n';
+    let returnMsg = '***Summary for ' + this.warName + ':***\n';
     let summaryData = '';
     const summaryServer = client.channels.get(channel).guild;
     for (const user in this.chainTotal) {
@@ -190,7 +190,7 @@ class ChainWar extends War {
       }
     }
     if (Object.keys(this.serverTotal).length > 1) {
-      returnMsg += '\n';
+      summaryData += '\n';
     }
     for (const server in this.serverTotal) {
       if (this.serverTotal.hasOwnProperty(server)) {
