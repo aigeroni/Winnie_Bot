@@ -5,17 +5,17 @@
   "main": "index.js",
   "dependencies": {
     "discord.js": "^11.5.1",
-    "emoji-regex": "^7.0.3",
+    "emoji-regex": "^8.0.0",
     "eslint": "^5.16.0",
-    "eslint-config-google": "^0.11.0",
+    "eslint-config-google": "^0.13.0",
     "moment-timezone": "^0.5.25",
     "mongodb": "^3.2.7",
-    "mongoose": "^5.5.12",
+    "mongoose": "^5.6.5",
     "node-fetch": "^2.6.0",
     "node-gameloop": "^0.1.4",
     "profanity-util": "^0.2.0",
     "timezone-js": "^0.4.13",
-    "winston": "^2.4.4"
+    "winston": "^3.2.1"
   },
   "devDependencies": {},
   "scripts": {
