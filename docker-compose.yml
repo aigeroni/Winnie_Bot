@@ -3,7 +3,7 @@ services:
     app:
         container_name: app
         restart: always
-        image: 217834298957.dkr.ecr.us-east-1.amazonaws.com/winniebot:latest
+        image: ${winniebot_image}$
         ports:
         - "8080:8080"
         links:

@@ -1,5 +1,5 @@
 {
-  "token": "$$token$$",
-  "storage_url": "$$dbloc$$",
+  "token": "${token}$",
+  "storage_url": "${dbloc}$",
   "cmd_prefix": {"default": "!"}
 }
