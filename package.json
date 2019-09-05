@@ -4,19 +4,19 @@
   "description": "Provides commands for Discord-based writing groups, including word wars, sprints and goals. Created for NaNoWriMo Melbourne Region",
   "main": "index.js",
   "dependencies": {
-    "discord.js": "^11.4.2",
-    "emoji-regex": "^7.0.3",
-    "eslint": "^5.13.0",
-    "eslint-config-google": "^0.11.0",
-    "moment-timezone": "^0.5.23",
-    "mongodb": "^3.1.13",
-    "mongoose": "^5.4.11",
-    "node-fetch": "^2.3.0",
+    "discord.js": "^11.5.1",
+    "emoji-regex": "^8.0.0",
+    "eslint": "^6.0.1",
+    "eslint-config-google": "^0.14.0",
+    "moment-timezone": "^0.5.26",
+    "mongodb": "^3.2.7",
+    "mongoose": "^5.6.5",
+    "node-fetch": "^2.6.0",
     "node-gameloop": "^0.1.4",
     "pg": "^7.8.0",
     "profanity-util": "^0.2.0",
     "timezone-js": "^0.4.13",
-    "winston": "^2.4.4"
+    "winston": "^3.2.1"
   },
   "devDependencies": {},
   "scripts": {

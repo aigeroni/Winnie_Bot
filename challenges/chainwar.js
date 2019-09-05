@@ -190,7 +190,7 @@ class ChainWar extends War {
       }
     }
     if (Object.keys(this.serverTotal).length > 1) {
-      returnMsg += '\n';
+      summaryData += '\n';
     }
     for (const server in this.serverTotal) {
       if (this.serverTotal.hasOwnProperty(server)) {
