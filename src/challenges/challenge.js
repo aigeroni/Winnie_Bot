@@ -1,5 +1,5 @@
 const clist = require('./clist.js');
-const config = require('../config.json');
+const config = require('../../config.json');
 const dbc = require('../dbc.js');
 
 /** Represents a challenge. */

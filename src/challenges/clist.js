@@ -1,5 +1,5 @@
 const dbc = require('../dbc.js');
-const config = require('../config.json');
+const config = require('../../config.json');
 
 /** Information required for challenge creation and summary display. */
 class ChallengeList {
