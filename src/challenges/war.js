@@ -30,7 +30,7 @@ class War extends Challenge {
       hidden,
       hookedChannels,
       joined,
-      type
+      type,
   ) {
     if (type == undefined) {
       type = 'war';
@@ -46,7 +46,7 @@ class War extends Challenge {
         type,
         hidden,
         hookedChannels,
-        joined
+        joined,
     );
 
     const challengeData = {
@@ -146,7 +146,7 @@ class War extends Challenge {
         if (cType != undefined && client.channels.get(this.joined[user]
             .channelID).guild.id == summaryServer.id) {
           userTotals += client.users.get(user) + ': ' + this.userTotals(
-              this.joined[user].countData, cType, this.duration
+              this.joined[user].countData, cType, this.duration,
           ) + '\n';
         }
       }
@@ -230,8 +230,8 @@ class War extends Challenge {
         }
         serverText += ' (**' + (
           serverTotals[server][item][0]/
-          serverTotals[server][item][1]).toFixed(0)
-          + '** avg)';
+          serverTotals[server][item][1]).toFixed(0) +
+          '** avg)';
         firstType = false;
       }
     }

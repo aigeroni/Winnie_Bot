@@ -96,7 +96,7 @@ class Goals {
           0,
           startTime.getTime(),
           endTime.getTime(),
-          msg.channel.id
+          msg.channel.id,
       );
       returnMsg = msg.author +
         ', your goal for today is **' + goal + '** ' + goalType + '.';

@@ -14,7 +14,7 @@ class Database {
     await conn.collection(db).insert(
         info,
         {},
-        function(e, docs) {}
+        function(e, docs) {},
     );
   }
   /**
@@ -28,7 +28,7 @@ class Database {
     await conn.collection(db).update(
         id,
         info,
-        {upsert: true}
+        {upsert: true},
     );
   }
   /**
@@ -39,7 +39,7 @@ class Database {
    */
   async dbRemove(db, id) {
     await conn.collection(db).remove(
-        id
+        id,
     );
   }
   /**
@@ -50,7 +50,7 @@ class Database {
    */
   async dbFind(db, id) {
     return await conn.collection(db).findOne(
-        id
+        id,
     );
   }
   /**
@@ -62,7 +62,7 @@ class Database {
    */
   async dbSort(db, param, sort) {
     return await conn.collection(db).find(
-        param
+        param,
     ).sort(sort);
   }
 }

@@ -22,7 +22,7 @@ class Goal {
       written,
       startTime,
       terminationTime,
-      channelID
+      channelID,
   ) {
     this.authorID = authorID;
     this.goal = goal;
@@ -80,7 +80,7 @@ class Goal {
     dbc.dbUpdate(
         'goalDB',
         {authorID: this.authorID},
-        {$set: {written: this.written}}
+        {$set: {written: this.written}},
     );
   }
 }

@@ -42,13 +42,13 @@ class Help {
     helpMsg.push(
         '**Winnie_Bot Commands:**\n' +
         '*Replace the <angled brackets> with the relevant information. ' +
-        'Anything in [square brackets] is optional.*\n\n'
+        'Anything in [square brackets] is optional.*\n\n',
     );
     for (let i = 0; i < this.commandTypes.length; i++) {
       helpMsg.push(this.buildHelpSection(
           cmdList,
           prefix,
-          this.commandTypes[i]
+          this.commandTypes[i],
       ));
     }
     return helpMsg;

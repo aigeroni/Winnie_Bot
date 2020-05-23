@@ -41,14 +41,14 @@ class ChallengeStart {
     } else if (this.validateName(sprintName)) {
       returnMsg = this.validateName(sprintName);
     } else if (this.validateTime(timeout)) {
-      returnMsg = this.validateTime(timeout)
-        + ' Example: `' + prefix + 'sprint 200 10 1`.';
+      returnMsg = this.validateTime(timeout) +
+        ' Example: `' + prefix + 'sprint 200 10 1`.';
     } else if (this.validateCountdown(start)) {
-      returnMsg = this.validateCountdown(start)
-        + ' Example: `' + prefix + 'sprint 200 10 1`.';
+      returnMsg = this.validateCountdown(start) +
+        ' Example: `' + prefix + 'sprint 200 10 1`.';
     } else if (challenges.validateGoal(words)) {
-      returnMsg = challenges.validateGoal(words)
-        + ' Example: `' + prefix + 'sprint 200 10 1`.';
+      returnMsg = challenges.validateGoal(words) +
+        ' Example: `' + prefix + 'sprint 200 10 1`.';
     } else {
       clist.running[this.timerID] = new Sprint(
           this.timerID,
@@ -61,7 +61,7 @@ class ChallengeStart {
           msg.channel.id,
           flagData.display,
           [msg.channel.id],
-          {}
+          {},
       );
       if (flagData.join) {
         returnMsg +=
@@ -95,11 +95,11 @@ class ChallengeStart {
     } else if (this.validateName(warName)) {
       returnMsg = this.validateName(warName);
     } else if (this.validateTime(duration)) {
-      returnMsg = this.validateTime(duration)
-        + ' Example: `' + prefix + 'war 10 1`.';
+      returnMsg = this.validateTime(duration) +
+        ' Example: `' + prefix + 'war 10 1`.';
     } else if (this.validateCountdown(start)) {
-      returnMsg = this.validateCountdown(start)
-        + ' Example: `' + prefix + 'war 10 1`.';
+      returnMsg = this.validateCountdown(start) +
+        ' Example: `' + prefix + 'war 10 1`.';
     } else {
       clist.running[this.timerID] = new War(
           this.timerID,
@@ -111,7 +111,7 @@ class ChallengeStart {
           msg.channel.id,
           flagData.display,
           [msg.channel.id],
-          {}
+          {},
       );
       if (flagData.join) {
         returnMsg +=
@@ -149,14 +149,14 @@ class ChallengeStart {
     } else if (this.validateName(warName)) {
       returnMsg = this.validateName(warName);
     } else if (this.validateTime(duration)) {
-      returnMsg = this.validateTime(duration)
-        + ' Example: `' + prefix + 'chainwar 2 10 1`.';
+      returnMsg = this.validateTime(duration) +
+        ' Example: `' + prefix + 'chainwar 2 10 1`.';
     } else if (this.validateChainCount(timeBetween)) {
-      returnMsg = this.validateChainCount(timeBetween)
-        + ' Example: `' + prefix + 'chainwar 2 10 1`.';
+      returnMsg = this.validateChainCount(timeBetween) +
+        ' Example: `' + prefix + 'chainwar 2 10 1`.';
     } else if (this.validateChainLength(chainWarCount)) {
-      returnMsg = this.validateChainLength(chainWarCount)
-        + ' Example: `' + prefix + 'chainwar 2 10 1`.';
+      returnMsg = this.validateChainLength(chainWarCount) +
+        ' Example: `' + prefix + 'chainwar 2 10 1`.';
     } else {
       clist.running[this.timerID] = new ChainWar(
           this.timerID,
@@ -172,7 +172,7 @@ class ChallengeStart {
           [msg.channel.id],
           {},
           {},
-          {}
+          {},
       );
       if (flagData.join) {
         returnMsg +=

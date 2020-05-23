@@ -17,8 +17,8 @@ class ChallengeList {
    */
   hiddenCheck(chalID, guildID) {
     let check = false;
-    if (this.running[chalID].hidden && this.running[chalID].channel.guild.id
-        != guildID) {
+    if (this.running[chalID].hidden && this.running[chalID].channel.guild.id !=
+        guildID) {
       check = true;
     }
     return check;
@@ -119,7 +119,7 @@ class ChallengeList {
       returnMsg = this.statusForServer(msg, flagType, args[1]);
     } else { // user updating own status
       returnMsg = this.updateStatus(
-          msg.author, 'userDB', msg.author.id, flagType, args[0]
+          msg.author, 'userDB', msg.author.id, flagType, args[0],
       );
     }
     return returnMsg;
@@ -181,7 +181,7 @@ class ChallengeList {
           break;
         default:
           returnMsg = this.updateStatus(
-              msg.author, 'configDB', msg.guild.id, field, update
+              msg.author, 'configDB', msg.guild.id, field, update,
           );
           break;
       }
@@ -262,7 +262,7 @@ class ChallengeList {
       await dbc.dbUpdate(
           'configDB',
           {_id: msg.guild.id},
-          {$set: {announce: channelObject.id}}
+          {$set: {announce: channelObject.id}},
       );
       returnMsg = msg.author +
           ', you have changed the announcements channel to ' +

@@ -49,7 +49,7 @@ const tickTimer = gameloop.setGameLoop(async function(delta) {
               JSON.parse(JSON.stringify(
                   clist.running[item].joined)),
               clist.running[item].chainTotal,
-              clist.running[item].serverTotal
+              clist.running[item].serverTotal,
           );
           start.incrementID();
         }
@@ -66,7 +66,7 @@ const tickTimer = gameloop.setGameLoop(async function(delta) {
             raptorRoll[0].guild.id,
             raptorRoll[0],
             client.users.get(item),
-            raptorRoll[1]
+            raptorRoll[1],
         );
       }
     }
@@ -123,7 +123,7 @@ client.on('ready', () => {
                   challenge.channel,
                   challenge.hidden,
                   challenge.hookedChannels,
-                  challenge.joined
+                  challenge.joined,
               );
             } else if (challenge.type == 'war') {
               clist.running[challenge._id] = new War(
@@ -136,7 +136,7 @@ client.on('ready', () => {
                   challenge.channel,
                   challenge.hidden,
                   challenge.hookedChannels,
-                  challenge.joined
+                  challenge.joined,
               );
             } else if (challenge.type == 'chain war') {
               clist.running[challenge._id] = new ChainWar(
@@ -153,7 +153,7 @@ client.on('ready', () => {
                   challenge.hookedChannels,
                   challenge.joined,
                   challenge.chainTotal,
-                  challenge.serverTotal
+                  challenge.serverTotal,
               );
             }
           });
@@ -168,7 +168,7 @@ client.on('ready', () => {
                 goal.written,
                 goal.startTime,
                 goal.terminationTime,
-                goal.channelID
+                goal.channelID,
             );
           });
         });
@@ -183,7 +183,7 @@ client.on('ready', () => {
             }
           });
         });
-      }
+      },
   );
   client.user.setActivity('twitter.com/Winnie_Discord');
 });
@@ -323,7 +323,7 @@ const cmdList = {
             msg.guild.id,
             msg.channel,
             msg.author,
-            tools.WAR_RAPTOR_CHANCE
+            tools.WAR_RAPTOR_CHANCE,
         );
       }
       msg.channel.send(msgToSend);
@@ -361,7 +361,7 @@ const cmdList = {
             msg.guild.id,
             msg.channel,
             msg.author,
-            tools.WAR_RAPTOR_CHANCE
+            tools.WAR_RAPTOR_CHANCE,
         );
       }
       msg.channel.send(msgToSend);
@@ -665,7 +665,7 @@ client.on('message', async (msg) => {
         prefix +
         '` prefix. Use `' +
         prefix +
-        'help` for command information.'
+        'help` for command information.',
     );
   }
   if (
@@ -679,7 +679,7 @@ client.on('message', async (msg) => {
         .substring(prefix.length)
         .toLowerCase();
     const suffix = userEnteredText.substring(
-        cmdData.length + prefix.length + 1
+        cmdData.length + prefix.length + 1,
     );
     const cmd = cmdList[cmdData];
     if (cmdData === 'help') {
@@ -704,7 +704,7 @@ client.on('message', async (msg) => {
     logger.info(
         'User: ' + msg.author +
         ' Command: ' + msg.content+
-        ' Response: ' + sentMsg
+        ' Response: ' + sentMsg,
     );
   }
 });
@@ -713,7 +713,7 @@ process.on('uncaughtException', function(e) {
   logger.error(
       'Error %s: %s.\nWinnie_Bot will now attempt to reconnect.',
       e,
-      e.stack
+      e.stack,
   );
   try {
     client.login(config.token);
