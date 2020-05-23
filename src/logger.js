@@ -1,4 +1,3 @@
-
 const winston = require('winston');
 
 const logPath = __dirname + '/logs/debug.log';
