@@ -1,8 +1,8 @@
 const PROMPT_LIST = [
   'One of your characters receives an anonymous gift.',
   'Your character invites someone they don’t like over for dinner.',
-  'A character is scared that someone will find out about something'
-            + ' they did.',
+  'A character is scared that someone will find out about something' +
+            ' they did.',
   'Your character goes to the other side of town for a day.',
   'Two characters get into a heated argument about work.',
   'A character suddenly has to travel a long distance.',
@@ -16,8 +16,8 @@ const PROMPT_LIST = [
   'Two things are unexpectedly related.',
   'The lights go out.',
   'Choose an object you can see; write it into your story.',
-  'Today’s headlines make an announcement that is important to your'
-            + ' character.',
+  'Today’s headlines make an announcement that is important to your' +
+            ' character.',
   'Your character tries something wild.',
   'A character tells a lie.',
   'The right thing is there for your character, but at the wrong time.',
@@ -29,8 +29,8 @@ const PROMPT_LIST = [
   'Something doesn’t work as it’s supposed to.',
   'A character loses something, but then finds or gets it back.',
   'A character changes careers.',
-  'Start and end a paragraph with the same sentence, but give it different'
-        + ' meanings.',
+  'Start and end a paragraph with the same sentence, but give it different' +
+        ' meanings.',
   'A character goes for a walk and discovers something strange.',
   'A character gets into a fight.',
   'Something has gone horribly wrong.',

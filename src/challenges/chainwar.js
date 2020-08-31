@@ -38,7 +38,7 @@ class ChainWar extends War {
       hookedChannels,
       joined,
       chainTotal,
-      serverTotal
+      serverTotal,
   ) {
     super(
         objectID,
@@ -51,7 +51,7 @@ class ChainWar extends War {
         hidden,
         hookedChannels,
         joined,
-        'chain war'
+        'chain war',
     );
     this.warName = warName;
     this.current = current;
@@ -125,7 +125,7 @@ class ChainWar extends War {
       if (this.current == this.total) {
         for (let i = 0; i < this.hookedChannels.length; i++) {
           this.getChannel(this.hookedChannels[i]).send(this.chainSummary(
-              this.hookedChannels[i]
+              this.hookedChannels[i],
           ));
         }
       }

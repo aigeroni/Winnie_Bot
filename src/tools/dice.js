@@ -119,7 +119,7 @@ class Dice {
       const roll = Math.floor(
           Math.random() *
           (1 + Number(rangeRoll[1]) - Number(rangeRoll[0])) +
-          Number(rangeRoll[0])
+          Number(rangeRoll[0]),
       );
       diceString += roll;
       diceSum += roll;

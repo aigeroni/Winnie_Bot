@@ -94,7 +94,7 @@ class Tools {
       await dbc.dbUpdate('raptorDB', {_id: server}, {$inc: {count: 1}});
       await dbc.dbUpdate(
           'raptorUserDB', {_id: {server: server, user: author.id}},
-          {$inc: {count: 1}}
+          {$inc: {count: 1}},
       );
       const userData = await dbc.dbFind('userDB', {_id: author.id});
       const currentRaptors = userData.raptorTotal;
@@ -103,12 +103,12 @@ class Tools {
       } else {
         await dbc.dbUpdate(
             'raptorBuckets', {_id: currentRaptors},
-            {$inc: {rank: 1}, $pull: {users: author.id}}
+            {$inc: {rank: 1}, $pull: {users: author.id}},
         );
       }
       await dbc.dbUpdate(
           'raptorBuckets', {_id: currentRaptors + 1},
-          {$setOnInsert: {rank: 1}, $push: {users: author.id}}
+          {$setOnInsert: {rank: 1}, $push: {users: author.id}},
       );
       await dbc.dbUpdate('userDB', {_id: author.id}, {$inc: {raptorTotal: 1}});
       const channelRaptors = await dbc.dbFind('raptorDB', {_id: server});
@@ -116,7 +116,7 @@ class Tools {
           author +
           ', you have hatched a raptor! Your server currently houses ' +
           channelRaptors.count +
-          ' raptors.'
+          ' raptors.',
       );
     }
   }
@@ -134,7 +134,7 @@ class Tools {
       await dbc.dbUpdate(
           'userDB',
           {_id: msg.author.id},
-          {$set: {siteName: suffix}}
+          {$set: {siteName: suffix}},
       );
       returnMsg = msg.author +
           ', your NaNo username has been set to `' +
@@ -294,7 +294,7 @@ class Tools {
     const users = await dbc.dbSort(
         'raptorUserDB',
         {'_id.server': guildID},
-        {count: -1}
+        {count: -1},
     );
     let i = 0;
     await users.forEach(function(user) {

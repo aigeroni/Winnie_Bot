@@ -1,5 +1,5 @@
 const clist = require('./clist.js');
-const config = require('../config.json');
+const config = require('../../config.json');
 const dbc = require('../dbc.js');
 
 /** Represents a challenge. */
@@ -32,7 +32,7 @@ class Challenge {
       type,
       hidden,
       hookedChannels,
-      joined
+      joined,
   ) {
     this.objectID = objectID;
     this.creator = creator;
@@ -81,7 +81,7 @@ class Challenge {
       }
       this.buildMsg(
           'Your ' + this.type + ', ' + this.displayName + ' (ID ' +
-          this.objectID + '), starts in ' + this.countdown + ' ' + time + '.'
+          this.objectID + '), starts in ' + this.countdown + ' ' + time + '.',
       );
     }
   }
@@ -189,11 +189,11 @@ class Challenge {
       this.buildMsg(this.displayName + ' starts in 1 minute.');
     } else if (this.cStart % 300 == 0) {
       this.buildMsg(
-          this.displayName + ' starts in ' + this.cStart / 60 + ' minutes.'
+          this.displayName + ' starts in ' + this.cStart / 60 + ' minutes.',
       );
     } else if ([30, 10, 5].includes(this.cStart)) {
       this.buildMsg(
-          this.displayName + ' starts in ' + this.cStart + ' seconds.'
+          this.displayName + ' starts in ' + this.cStart + ' seconds.',
       );
     }
   }
@@ -207,7 +207,7 @@ class Challenge {
       }
       this.sendMsg(
           this.displayName + ' (ID ' + this.objectID + ', ' + this.duration +
-          ' ' + timeString + ') starts now!'+ userList, this.hookedChannels[i]
+          ' ' + timeString + ') starts now!'+ userList, this.hookedChannels[i],
       );
     }
     this.state = 1;
@@ -227,7 +227,7 @@ class Challenge {
             this.displayName + ' (ID ' + this.objectID +
             ') has ended! Post your total using `' + prefix + 'total ' +
             this.objectID + ' <total>` to be included in the summary.' +
-            userList
+            userList,
         );
       }
       this.state = 2;
@@ -236,12 +236,12 @@ class Challenge {
     } else if (this.cDur % 300 == 0) {
       this.buildMsg(
           'There are ' + this.cDur / 60 + ' minutes remaining in ' +
-          this.displayName + '.'
+          this.displayName + '.',
       );
     } else if ([30, 10, 5].includes(this.cDur)) {
       this.buildMsg(
           'There are ' + this.cDur + ' seconds remaining in ' +
-          this.displayName + '.'
+          this.displayName + '.',
       );
     }
   }

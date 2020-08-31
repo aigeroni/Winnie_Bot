@@ -1,10 +1,9 @@
-
 const winston = require('winston');
 
 const logPath = __dirname + '/logs/debug.log';
 const exceptionPath = __dirname + '/logs/exception.log';
 
-const logger = new (winston.createLogger)({
+const logger = winston.createLogger({
 
   transports: [
     new (winston.transports.Console)({

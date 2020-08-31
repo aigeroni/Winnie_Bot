@@ -30,7 +30,7 @@ class Sprint extends Challenge {
       channel,
       hidden,
       hookedChannels,
-      joined
+      joined,
   ) {
     super(
         objectID,
@@ -43,7 +43,7 @@ class Sprint extends Challenge {
         'sprint',
         hidden,
         hookedChannels,
-        joined
+        joined,
     );
     this.goal = goal;
     this.cPost = 0;
@@ -87,7 +87,7 @@ class Sprint extends Challenge {
       }
       this.buildMsg(
           'Your ' + this.type + ', ' + this.displayName + ' (ID ' +
-          this.objectID + '), starts in ' + this.countdown + ' ' + time + '.'
+          this.objectID + '), starts in ' + this.countdown + ' ' + time + '.',
       );
     }
   }
@@ -140,7 +140,7 @@ class Sprint extends Challenge {
           ') starts now! Race to ' +
           this.goal +
           ' words!' +
-          userList
+          userList,
       );
     }
     this.state = 1;
@@ -159,17 +159,17 @@ class Sprint extends Challenge {
       super.terminate();
     } else if (this.cDur == 60) {
       super.buildMsg(
-          'There is 1 minute remaining in ' + this.displayName + '.'
+          'There is 1 minute remaining in ' + this.displayName + '.',
       );
     } else if (this.cDur % 300 == 0) {
       super.buildMsg(
           'There are ' + this.cDur / 60 + ' minutes remaining in ' +
-          this.displayName + '.'
+          this.displayName + '.',
       );
     } else if ([30, 10, 5].includes(this.cDur)) {
       super.buildMsg(
           'There are ' + this.cDur + ' seconds remaining in ' +
-          this.displayName + '.'
+          this.displayName + '.',
       );
     }
   }
@@ -250,8 +250,8 @@ class Sprint extends Challenge {
     }
     sprintText += ' (**' + (
       serverTotals[server][1]/
-      serverTotals[server][0]).toFixed(2)
-      + '** wpm)\n';
+      serverTotals[server][0]).toFixed(2) +
+      '** wpm)\n';
     return sprintText;
   }
   /**
