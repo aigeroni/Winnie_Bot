@@ -73,3 +73,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 Winnie's repository is located at https://github.com/lisushka/Winnie_Bot.
 Winnie's avatar, 'Tiny Cities', was created by [Rachael Wheeler](http://www.rachaelw.com.au/).  Prints, notebooks, and other items featuring 'Tiny Cities' are available for purchase [here](https://www.redbubble.com/people/scorpiraw/works/33012468-tiny-cities).
+
+## Data Deletion
+
+Winnie only stores data that you provide to her, and your data is only stored under the unique identifier that Discord uses for your account.  If you wish to request deletion of your user data on the public Winnie_Bot instance, please contact dawn@dawnbug.com with your request.
