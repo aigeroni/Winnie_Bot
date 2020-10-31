@@ -4,8 +4,9 @@ class Help {
    * @param {Object} commandTypes - A list of command categories.
    */
   constructor() {
-    this.commandTypes = ['challenges', 'goals', 'tools', 'config'];
+    this.commandTypes = ['challenges', 'goals', 'tools', 'config']
   }
+
   /**
    * Provides help messages for a command or list of commands.
    * @param {Object} cmdList - A list of Winnie's commands.
@@ -14,23 +15,24 @@ class Help {
    * @return {String} - the help message.
    */
   buildHelpMsg(cmdList, prefix, suffix) {
-    let helpMsg = '';
+    let helpMsg = ''
     if (!suffix) {
-      helpMsg = this.buildMainHelp(cmdList, prefix);
-    } else if (suffix == 'all') {
-      helpMsg = this.buildAllHelp(cmdList, prefix);
+      helpMsg = this.buildMainHelp(cmdList, prefix)
+    } else if (suffix === 'all') {
+      helpMsg = this.buildAllHelp(cmdList, prefix)
     } else if (this.commandTypes.indexOf(suffix) > -1) {
       helpMsg = '**Winnie_Bot Commands:**\n' +
         '*Replace the <angled brackets> with the relevant information. ' +
         'Anything in [square brackets] is optional.*\n\n' +
-        this.buildHelpSection(cmdList, prefix, suffix);
+        this.buildHelpSection(cmdList, prefix, suffix)
     } else if (cmdList[suffix] === undefined) {
-      helpMsg = '**Error:** That command does not exist.';
+      helpMsg = '**Error:** That command does not exist.'
     } else {
-      helpMsg = this.buildHelpItem(cmdList[suffix], prefix);
+      helpMsg = this.buildHelpItem(cmdList[suffix], prefix)
     }
-    return helpMsg;
+    return helpMsg
   }
+
   /**
    * Builds help message for all commands.
    * @param {Object} cmdList - A list of Winnie's commands.
@@ -38,21 +40,22 @@ class Help {
    * @return {String} - the help message.
    */
   buildAllHelp(cmdList, prefix) {
-    const helpMsg = [];
+    const helpMsg = []
     helpMsg.push(
-        '**Winnie_Bot Commands:**\n' +
+      '**Winnie_Bot Commands:**\n' +
         '*Replace the <angled brackets> with the relevant information. ' +
         'Anything in [square brackets] is optional.*\n\n',
-    );
+    )
     for (let i = 0; i < this.commandTypes.length; i++) {
       helpMsg.push(this.buildHelpSection(
-          cmdList,
-          prefix,
-          this.commandTypes[i],
-      ));
+        cmdList,
+        prefix,
+        this.commandTypes[i],
+      ))
     }
-    return helpMsg;
+    return helpMsg
   }
+
   /**
    * Builds a help message for a specific type of command.
    * @param {Object} cmdList - A list of Winnie's commands.
@@ -64,14 +67,15 @@ class Help {
     let helpMsg = '__*' +
       cmdType.charAt(0).toUpperCase() +
       cmdType.substr(1) +
-      ':*__\n';
+      ':*__\n'
     for (const i in cmdList) {
-      if (!(cmdList[i].alias) && cmdList[i].type == cmdType) {
-        helpMsg += this.buildHelpItem(cmdList[i], prefix);
+      if (!cmdList[i].alias && cmdList[i].type === cmdType) {
+        helpMsg += this.buildHelpItem(cmdList[i], prefix)
       }
     }
-    return helpMsg;
+    return helpMsg
   }
+
   /**
    * Builds a help message for a specific command.
    * @param {Object} cmd - The command to provide help for.
@@ -79,27 +83,28 @@ class Help {
    * @return {String} - the help message.
    */
   buildHelpItem(cmd, prefix) {
-    let helpMsg = '**' + prefix + cmd.name;
+    let helpMsg = '**' + prefix + cmd.name
     if (cmd.usage) {
-      helpMsg += ' ' + cmd.usage;
+      helpMsg += ' ' + cmd.usage
     }
     helpMsg += ':**\n' +
         cmd.description.replace(/%prefix/g, prefix) +
-        '\n';
+        '\n'
     if (cmd.example) {
       helpMsg += '**Example:** `' +
       prefix +
       cmd.example +
-      '`\n';
+      '`\n'
     }
     if (cmd.aliases) {
       helpMsg += '**Aliases:** ' +
       cmd.aliases +
-      '\n';
+      '\n'
     }
-    helpMsg += '\n';
-    return helpMsg;
+    helpMsg += '\n'
+    return helpMsg
   }
+
   /**
    * Builds the main help message.
    * @param {Object} cmdList - A list of Winnie's commands.
@@ -107,9 +112,9 @@ class Help {
    * @return {String} - the help message.
    */
   buildMainHelp(cmdList, prefix) {
-    let helpMsg = '**Winnie_Bot Commands:**';
+    let helpMsg = '**Winnie_Bot Commands:**'
     for (let i = 0; i < this.commandTypes.length; i++) {
-      helpMsg += this.buildMainSections(cmdList, prefix, this.commandTypes[i]);
+      helpMsg += this.buildMainSections(cmdList, prefix, this.commandTypes[i])
     }
     helpMsg += '\n\nUse `' +
       prefix +
@@ -118,9 +123,10 @@ class Help {
       'help <challenges|goals|tools|config>` to get help' +
       ' for a command type, or `' +
       prefix +
-      'help all` to have Winnie DM you help for all commands.';
-    return helpMsg;
+      'help all` to have Winnie DM you help for all commands.'
+    return helpMsg
   }
+
   /**
    * Builds each section of the main help message.
    * @param {Object} cmdList - A list of Winnie's commands.
@@ -132,24 +138,24 @@ class Help {
     let helpMsg = '\n__*' +
       cmdType.charAt(0).toUpperCase() +
       cmdType.substr(1).toLowerCase() +
-      ':*__\n';
-    let first = true;
+      ':*__\n'
+    let first = true
     for (const j in cmdList) {
-      if (!(cmdList[j].alias) && cmdList[j].type == cmdType) {
-        if (first == false) {
-          helpMsg += ', ';
+      if (!cmdList[j].alias && cmdList[j].type === cmdType) {
+        if (first === false) {
+          helpMsg += ', '
         }
-        helpMsg += prefix + cmdList[j].name;
+        helpMsg += prefix + cmdList[j].name
         if (cmdList[j].aliases) {
           helpMsg += ' (aliases: ' +
           cmdList[j].aliases +
-          ')';
+          ')'
         }
-        first = false;
+        first = false
       }
     }
-    return helpMsg;
+    return helpMsg
   }
 }
 
-module.exports = new Help();
+module.exports = new Help()

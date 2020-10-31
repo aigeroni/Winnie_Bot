@@ -1,6 +1,6 @@
-const War = require('./war.js');
-const clist = require('./clist.js');
-const dbc = require('../dbc.js');
+const War = require('./war.js')
+const clist = require('./clist.js')
+const dbc = require('../dbc.js')
 
 /** Represents a chain war. */
 class ChainWar extends War {
@@ -25,42 +25,42 @@ class ChainWar extends War {
    * @param {Object} serverTotal - Aggregate totals by server.
    */
   constructor(
+    objectID,
+    creator,
+    warName,
+    initStamp,
+    current,
+    total,
+    countdown,
+    duration,
+    channel,
+    hidden,
+    hookedChannels,
+    joined,
+    chainTotal,
+    serverTotal,
+  ) {
+    super(
       objectID,
       creator,
-      warName,
+      warName + ' (' + current + '/' + total + ')',
       initStamp,
-      current,
-      total,
-      countdown,
+      countdown[current - 1],
       duration,
       channel,
       hidden,
       hookedChannels,
       joined,
-      chainTotal,
-      serverTotal,
-  ) {
-    super(
-        objectID,
-        creator,
-        warName + ' (' + current + '/' + total + ')',
-        initStamp,
-        countdown[current - 1],
-        duration,
-        channel,
-        hidden,
-        hookedChannels,
-        joined,
-        'chain war',
-    );
-    this.warName = warName;
-    this.current = current;
-    this.total = total;
-    this.chainTotal = chainTotal;
-    this.serverTotal = serverTotal;
-    this.countdownList = countdown;
-    if (this.state == 2) {
-      this.state = 3;
+      'chain war',
+    )
+    this.warName = warName
+    this.current = current
+    this.total = total
+    this.chainTotal = chainTotal
+    this.serverTotal = serverTotal
+    this.countdownList = countdown
+    if (this.state === 2) {
+      this.state = 3
     }
     const challengeData = {
       _id: this.objectID,
@@ -79,78 +79,85 @@ class ChainWar extends War {
       state: this.state,
       type: 'chain war',
       hidden: this.hidden,
-    };
-    const array = [challengeData];
+    }
+    const array = [challengeData]
 
-    dbc.dbInsert('challengeDB', array);
+    dbc.dbInsert('challengeDB', array)
   }
+
   /** Update the chain war at each tick. */
   update() {
     switch (this.state) {
-      case 0:
-        this.start();
-        break;
-      case 1:
-        this.end();
-        break;
-      case 2:
-        break;
-      case 3:
-        this.terminate();
-        break;
-      default:
-        this.channel.send('**Error:** Invalid state reached.');
-        delete clist.running[this.objectID];
-        break;
+    case 0:
+      this.start()
+      break
+    case 1:
+      this.end()
+      break
+    case 2:
+      break
+    case 3:
+      this.terminate()
+      break
+    default:
+      this.channel.send('**Error:** Invalid state reached.')
+      delete clist.running[this.objectID]
+      break
     }
   }
+
   /** Check to see whether the countdown is over, and start the war if so. */
   start() {
-    super.start();
+    super.start()
   }
+
   /** Construct the message displayed to users when a chain war begins. */
   startMsg() {
-    super.startMsg();
+    super.startMsg()
   }
+
   /** Check to see whether the chain war is over, and end it if so. */
   end() {
-    super.end();
+    super.end()
   }
+
   /** Check to see whether the total period is over, and post the summary. */
   terminate() {
-    this.cPost--;
+    this.cPost--
     if (this.cPost <= 0) {
-      this.addToChains();
-      super.terminate();
-      if (this.current == this.total) {
+      this.addToChains()
+      super.terminate()
+      if (this.current === this.total) {
         for (let i = 0; i < this.hookedChannels.length; i++) {
           this.getChannel(this.hookedChannels[i]).send(this.chainSummary(
-              this.hookedChannels[i],
-          ));
+            this.hookedChannels[i],
+          ))
         }
       }
     }
   }
+
   /** Add chain war totals to chain summary. */
   addToChains() {
     for (const user in this.joined) {
       if (this.joined.hasOwnProperty(user)) {
-        const type = this.joined[user].countType;
-        this.chainTotal = this.addToAggregate(this.chainTotal, user);
-        const serverID = this.getChannel(this.joined[user].channelID).guild.id;
-        this.serverTotal = this.addToAggregate(this.serverTotal, serverID);
-        if (this.joined[user].countData != null) {
+        const type = this.joined[user].countType
+        this.chainTotal = this.addToAggregate(this.chainTotal, user)
+        const serverID = this.getChannel(this.joined[user].channelID).guild.id
+        this.serverTotal = this.addToAggregate(this.serverTotal, serverID)
+        if (this.joined[user].countData !== null) {
           this.chainTotal[user][type][0] +=
-            parseInt(this.joined[user].countData);
-          this.chainTotal[user][type][1] += parseInt(this.duration);
-          this.chainTotal[user].channelID = this.joined[user].channelID;
+            parseInt(this.joined[user].countData)
+          this.chainTotal[user][type][1] += parseInt(this.duration)
+          this.chainTotal[user].channelID = this.joined[user].channelID
           this.serverTotal[serverID][type][0] +=
-              parseInt(this.joined[user].countData);
-          this.serverTotal[serverID][type][1] += 1;
+              parseInt(this.joined[user].countData)
+          this.serverTotal[serverID][type][1] += 1
         }
       }
     }
   }
+
   /**
    * Summarises all chain war aggregates for a given server.
    * @param {String} user - The user being summarised.
@@ -158,51 +165,52 @@ class ChainWar extends War {
    * @return {String} - The message to send to the user.
    */
   chainByUser(user, userObj) {
-    let returnMsg = '';
-    let first = true;
+    let returnMsg = ''
+    let first = true
     for (const item in userObj) {
-      if (item != 'channelID' && userObj[item][1] > 0) {
-        if (first == true) {
-          returnMsg += client.users.get(user) + ': ';
+      if (item !== 'channelID' && userObj[item][1] > 0) {
+        if (first === true) {
+          returnMsg += client.users.get(user) + ': '
         } else {
-          returnMsg += ', ';
+          returnMsg += ', '
         }
         returnMsg +=
-          this.userTotals(userObj[item][0], item, userObj[item][1]);
-        first = false;
+          this.userTotals(userObj[item][0], item, userObj[item][1])
+        first = false
       }
     }
-    return returnMsg;
+    return returnMsg
   }
+
   /**
    * Builds a summary of chain war aggregate totals for a given channel.
    * @param {String} channel - Discord ID of the channel being posted to.
    * @return {String} - The message to send to the user.
    */
   chainSummary(channel) {
-    let returnMsg = '***Summary for ' + this.warName + ':***\n';
-    let summaryData = '';
-    const summaryServer = client.channels.get(channel).guild;
+    let returnMsg = '***Summary for ' + this.warName + ':***\n'
+    let summaryData = ''
+    const summaryServer = client.channels.get(channel).guild
     for (const user in this.chainTotal) {
       if (client.channels.get(this.chainTotal[user]
-          .channelID).guild.id == summaryServer.id) {
-        summaryData += this.chainByUser(user, this.chainTotal[user]) + '\n';
+        .channelID).guild.id === summaryServer.id) {
+        summaryData += this.chainByUser(user, this.chainTotal[user]) + '\n'
       }
     }
     if (Object.keys(this.serverTotal).length > 1) {
-      summaryData += '\n';
+      summaryData += '\n'
     }
     for (const server in this.serverTotal) {
       if (this.serverTotal.hasOwnProperty(server)) {
-        summaryData += this.serverText(server, this.serverTotal) + '\n';
+        summaryData += this.serverText(server, this.serverTotal) + '\n'
       }
     }
-    if (summaryData == '') {
-      summaryData = 'No totals were posted for this chain war.';
+    if (summaryData === '') {
+      summaryData = 'No totals were posted for this chain war.'
     }
-    returnMsg += summaryData;
-    return returnMsg;
+    returnMsg += summaryData
+    return returnMsg
   }
 }
 
-module.exports = ChainWar;
+module.exports = ChainWar

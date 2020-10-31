@@ -2,8 +2,8 @@
 class GoalList {
   /** Initialise a list of goals being tracked by Winnie. */
   constructor() {
-    this.goalList = {};
+    this.goalList = {}
   }
 }
 
-module.exports = new GoalList();
+module.exports = new GoalList()

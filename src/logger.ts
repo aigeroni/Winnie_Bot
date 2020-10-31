@@ -1,12 +1,12 @@
-const winston = require('winston');
+const winston = require('winston')
 
-const logPath = __dirname + '/logs/debug.log';
-const exceptionPath = __dirname + '/logs/exception.log';
+const logPath = __dirname + '/logs/debug.log'
+const exceptionPath = __dirname + '/logs/exception.log'
 
 const logger = winston.createLogger({
 
   transports: [
-    new (winston.transports.Console)({
+    new winston.transports.Console({
       json: false,
       timestamp: true,
     }),
@@ -21,7 +21,7 @@ const logger = winston.createLogger({
   ],
 
   exceptionHandlers: [
-    new (winston.transports.Console)({
+    new winston.transports.Console({
       json: false,
       timestamp: true,
     }),
@@ -36,7 +36,7 @@ const logger = winston.createLogger({
 
   exitOnError: false,
 
-});
+})
 
-module.exports = logger;
+module.exports = logger
 
