@@ -1,4 +1,4 @@
-const conn = require('mongoose').connection;
+const conn = require('mongoose').connection
 
 /** Database methods. */
 class Database {
@@ -12,11 +12,12 @@ class Database {
    */
   async dbInsert(db, info) {
     await conn.collection(db).insert(
-        info,
-        {},
-        function(e, docs) {},
-    );
+      info,
+      {},
+      function (e, docs) {},
+    )
   }
+
   /**
    * Updates the database
    * @param  {String} db - The database to update.
@@ -26,11 +27,12 @@ class Database {
    */
   async dbUpdate(db, id, info) {
     await conn.collection(db).update(
-        id,
-        info,
-        {upsert: true},
-    );
+      id,
+      info,
+      {upsert: true},
+    )
   }
+
   /**
    * Removes a record from the database
    * @param  {String} db - The database to remove from.
@@ -39,9 +41,10 @@ class Database {
    */
   async dbRemove(db, id) {
     await conn.collection(db).remove(
-        id,
-    );
+      id,
+    )
   }
+
   /**
    * Finds a record in the database
    * @param  {String} db - The database to search.
@@ -50,9 +53,10 @@ class Database {
    */
   async dbFind(db, id) {
     return await conn.collection(db).findOne(
-        id,
-    );
+      id,
+    )
   }
+
   /**
    * Sorts records from the database
    * @param {String} db - The database to search.
@@ -62,9 +66,9 @@ class Database {
    */
   async dbSort(db, param, sort) {
     return await conn.collection(db).find(
-        param,
-    ).sort(sort);
+      param,
+    ).sort(sort)
   }
 }
 
-module.exports = new Database();
+module.exports = new Database()

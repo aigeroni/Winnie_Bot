@@ -1,5 +1,5 @@
-const goallist = require('./goallist.js');
-const dbc = require('../dbc.js');
+const goallist = require('./goallist.js')
+const dbc = require('../dbc.js')
 
 /** Represents a goal. */
 class Goal {
@@ -16,22 +16,22 @@ class Goal {
    * @param {Number} channelID - Discord ID of start channel.
    */
   constructor(
-      authorID,
-      goal,
-      goalType,
-      written,
-      startTime,
-      terminationTime,
-      channelID,
+    authorID,
+    goal,
+    goalType,
+    written,
+    startTime,
+    terminationTime,
+    channelID,
   ) {
-    this.authorID = authorID;
-    this.goal = goal;
-    this.goalType = goalType;
-    this.written = written;
-    this.startTime = startTime;
-    this.terminationTime = terminationTime;
-    this.channelID = channelID;
-    this.channel = client.channels.get(this.channelID);
+    this.authorID = authorID
+    this.goal = goal
+    this.goalType = goalType
+    this.written = written
+    this.startTime = startTime
+    this.terminationTime = terminationTime
+    this.channelID = channelID
+    this.channel = client.channels.get(this.channelID)
 
     const goalData = {
       authorID: this.authorID,
@@ -41,28 +41,31 @@ class Goal {
       startTime: this.startTime,
       terminationTime: this.terminationTime,
       channelID: this.channelID,
-    };
-    dbc.dbUpdate('goalDB', {authorID: this.authorID}, goalData);
+    }
+    dbc.dbUpdate('goalDB', {authorID: this.authorID}, goalData)
   }
+
   /** Check to see whether the goal resolves, and handle it if so.
    * @return {Number} - The user's chance of hatching a raptor.
    */
   update() {
-    const currentTime = new Date().getTime();
+    const currentTime = new Date().getTime()
     if (currentTime >= this.terminationTime) {
-      const raptorRollData = [this.channel, (this.written / this.goal) * 100];
-      this.clearGoal(this.authorID);
-      return raptorRollData;
+      const raptorRollData = [this.channel, this.written / this.goal * 100]
+      this.clearGoal(this.authorID)
+      return raptorRollData
     }
-    return false;
+    return false
   }
+
   /**
    * Clears a goal from the database.
    */
   clearGoal() {
-    dbc.dbRemove('goalDB', {authorID: this.authorID});
-    delete goallist.goalList[this.authorID];
+    dbc.dbRemove('goalDB', {authorID: this.authorID})
+    delete goallist.goalList[this.authorID]
   }
+
   /** Update the goal with the user's current progress.
    * @param {Number} wordNumber - The user's progress towards their goal.
    * @param {Boolean} type - Whether to overwrite the user's progress with the
@@ -70,19 +73,19 @@ class Goal {
    */
   addWords(wordNumber, type) {
     switch (type) {
-      case false:
-        this.written += parseInt(wordNumber);
-        break;
-      case true:
-        this.written = parseInt(wordNumber);
-        break;
+    case false:
+      this.written += parseInt(wordNumber)
+      break
+    case true:
+      this.written = parseInt(wordNumber)
+      break
     }
     dbc.dbUpdate(
-        'goalDB',
-        {authorID: this.authorID},
-        {$set: {written: this.written}},
-    );
+      'goalDB',
+      {authorID: this.authorID},
+      {$set: {written: this.written}},
+    )
   }
 }
 
-module.exports = Goal;
+module.exports = Goal

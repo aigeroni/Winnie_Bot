@@ -50,6 +50,6 @@ const PROMPT_LIST = [
   'Something has a dual function.',
   'The only useful thing is in the corner.',
   'Your character cracks a bad joke.',
-];
+]
 
-exports.PROMPT_LIST = PROMPT_LIST;
+exports.PROMPT_LIST = PROMPT_LIST

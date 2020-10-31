@@ -1,10 +1,11 @@
-const clist = require('./clist.js');
+const clist = require('./clist.js')
 
 /** Class containing functions for challenge management. */
 class Challenges {
   /** Initialise variables required for challenge management. */
   constructor() {
   }
+
   /**
    * Add a user to the list of joined users for a challenge.
    * @param {Object} msg - The message that ran this function.
@@ -13,16 +14,17 @@ class Challenges {
    * @return {String} - The message to send to the user.
    */
   async joinChallenge(msg, prefix, suffix) {
-    let returnMsg = '';
-    const chalID = suffix;
-    const returnInfo = this.checkIDError(chalID, msg, 'join', prefix);
+    let returnMsg = ''
+    const chalID = suffix
+    const returnInfo = this.checkIDError(chalID, msg, 'join', prefix)
     if (returnInfo) {
-      returnMsg = returnInfo;
+      returnMsg = returnInfo
     } else {
-      returnMsg = await clist.running[chalID].join(msg.author, msg.channel.id);
+      returnMsg = await clist.running[chalID].join(msg.author, msg.channel.id)
     }
-    return returnMsg;
+    return returnMsg
   }
+
   /**
    * Remove a user from the list of joined users for a challenge.
    * @param {Object} msg - The message that ran this function.
@@ -31,16 +33,17 @@ class Challenges {
    * @return {String} - The message to send to the user.
    */
   async leaveChallenge(msg, prefix, suffix) {
-    let returnMsg = '';
-    const chalID = suffix;
-    const returnInfo = this.checkIDError(chalID, msg, 'leave', prefix);
+    let returnMsg = ''
+    const chalID = suffix
+    const returnInfo = this.checkIDError(chalID, msg, 'leave', prefix)
     if (returnInfo) {
-      returnMsg = returnInfo;
+      returnMsg = returnInfo
     } else {
-      returnMsg = await clist.running[chalID].leave(msg.author);
+      returnMsg = await clist.running[chalID].leave(msg.author)
     }
-    return returnMsg;
+    return returnMsg
   }
+
   /**
    * Terminates a challenge early.
    * @param {Object} msg - The message that ran this function.
@@ -49,21 +52,22 @@ class Challenges {
    * @return {Object} - Channels to send message to, and message to send.
    */
   async stopChallenge(msg, prefix, suffix) {
-    let returnMsg = '';
-    const chalID = suffix;
-    const returnInfo = this.checkIDError(chalID, msg, 'cancel', prefix);
+    let returnMsg = ''
+    const chalID = suffix
+    const returnInfo = this.checkIDError(chalID, msg, 'cancel', prefix)
     if (returnInfo) {
-      returnMsg = returnInfo;
+      returnMsg = returnInfo
     } else if (clist.running[chalID].creator == msg.author.id) {
-      returnMsg = await clist.running[chalID].cancel(msg.author);
+      returnMsg = await clist.running[chalID].cancel(msg.author)
     } else {
       returnMsg = '**Error:** Only the creator of ' +
         clist.running[chalID] +
-        ' can end this challenge.';
-      msg.channel.send(returnMsg);
+        ' can end this challenge.'
+      msg.channel.send(returnMsg)
     }
-    return returnMsg;
+    return returnMsg
   }
+
   /**
    * Calls time for a sprint.
    * @param {Object} msg - The message that ran this function.
@@ -72,26 +76,27 @@ class Challenges {
    * @return {Object} - Message to send to user, raptor determination value.
    */
   async callTime(msg, prefix, suffix) {
-    let returnMsg = '';
-    let raptorCheck = false;
-    const returnInfo = this.checkIDError(suffix, msg, 'time', prefix);
+    let returnMsg = ''
+    let raptorCheck = false
+    const returnInfo = this.checkIDError(suffix, msg, 'time', prefix)
     if (returnInfo) {
-      returnMsg = returnInfo;
+      returnMsg = returnInfo
     } else if (!(clist.running[suffix].type == 'sprint')) {
-      returnMsg = '**Error:** You can only call time on a sprint.';
+      returnMsg = '**Error:** You can only call time on a sprint.'
     } else if (clist.running[suffix].state == 0) {
-      returnMsg = '**Error:** This challenge has not started yet!';
+      returnMsg = '**Error:** This challenge has not started yet!'
     } else {
-      raptorCheck = true;
-      const doneStamp = new Date().getTime();
-      const timeTaken = (doneStamp - clist.running[suffix].startStamp) / 60000;
+      raptorCheck = true
+      const doneStamp = new Date().getTime()
+      const timeTaken = (doneStamp - clist.running[suffix].startStamp) / 60000
       clist.running[suffix]
-          .submitUserData(msg.author.id, msg.channel.id, doneStamp, timeTaken);
+        .submitUserData(msg.author.id, msg.channel.id, doneStamp, timeTaken)
       returnMsg = msg.author + ', you completed the sprint in ' +
-        timeTaken.toFixed(2) + ' minutes.';
+        timeTaken.toFixed(2) + ' minutes.'
     }
-    return {returnMsg: returnMsg, raptorCheck: raptorCheck};
+    return {returnMsg: returnMsg, raptorCheck: raptorCheck}
   }
+
   /**
    * Adds a total to a challenge.
    * @param {Object} msg - The message that ran this function.
@@ -100,32 +105,33 @@ class Challenges {
    * @return {Object} - Message to send to user, raptor determination value.
    */
   async addTotal(msg, prefix, suffix) {
-    let returnMsg = '';
-    const args = suffix.split(' ');
-    const chalID = args.shift();
-    const wordsWritten = args.shift();
-    const writtenType = this.typeAssign(args.shift());
-    let raptorCheck = false;
-    const returnInfo = this.checkIDError(chalID, msg, 'total', prefix);
+    let returnMsg = ''
+    const args = suffix.split(' ')
+    const chalID = args.shift()
+    const wordsWritten = args.shift()
+    const writtenType = this.typeAssign(args.shift())
+    let raptorCheck = false
+    const returnInfo = this.checkIDError(chalID, msg, 'total', prefix)
     if (!writtenType) {
-      returnMsg = '**Error:** You must work in words, lines, or pages.';
+      returnMsg = '**Error:** You must work in words, lines, or pages.'
     } else if (returnInfo) {
-      returnMsg = returnInfo;
+      returnMsg = returnInfo
     } else if (this.validateGoal(wordsWritten)) {
-      returnMsg = this.validateGoal(wordsWritten);
+      returnMsg = this.validateGoal(wordsWritten)
     } else if (clist.running[chalID].type == 'sprint') {
-      returnMsg = '**Error:** You cannot post a total for sprints.';
+      returnMsg = '**Error:** You cannot post a total for sprints.'
     } else if (clist.running[chalID].state < 2) {
-      returnMsg = '**Error:** This challenge has not ended yet!';
+      returnMsg = '**Error:** This challenge has not ended yet!'
     } else {
-      raptorCheck = true;
+      raptorCheck = true
       clist.running[chalID].submitUserData(msg.author.id,
-          msg.channel.id, wordsWritten, writtenType);
+        msg.channel.id, wordsWritten, writtenType)
       returnMsg = msg.author + ', your total of **' + wordsWritten +
-        '** ' + writtenType + ' has been added to the summary.';
+        '** ' + writtenType + ' has been added to the summary.'
     }
-    return {returnMsg: returnMsg, raptorCheck: raptorCheck};
+    return {returnMsg: returnMsg, raptorCheck: raptorCheck}
   }
+
   /**
    * Checks for a valid challenge ID.
    * @param {String} chalID - The ID to test for validity.
@@ -135,20 +141,21 @@ class Challenges {
    * @return {String} - Error message.
    */
   checkIDError(chalID, msg, command, prefix) {
-    let returnData = '';
+    let returnData = ''
     if (isNaN(chalID) || chalID < 1) {
       returnData = '**Error:** Challenge ID must be an integer. Example: `' +
-        prefix + command + ' 10793`.';
+        prefix + command + ' 10793`.'
     } else if (!(chalID in clist.running)) {
-      returnData = '**Error:** Challenge ' + chalID + ' does not exist!';
+      returnData = '**Error:** Challenge ' + chalID + ' does not exist!'
     } else if (clist.hiddenCheck(chalID, msg.guild.id)) {
       returnData = msg.author + ', you do not have permission to ' +
-        command + ' this challenge.';
+        command + ' this challenge.'
     } else {
-      returnData = false;
+      returnData = false
     }
-    return returnData;
+    return returnData
   }
+
   /**
    * Validate and assign a total type.
    * @param {String} type - The type of the challenge.
@@ -156,30 +163,31 @@ class Challenges {
    */
   typeAssign(type) {
     if (type === undefined) {
-      type = 'words';
+      type = 'words'
     }
-    if (type.charAt(type.length-1) != 's') {
-      type += 's';
+    if (type.charAt(type.length-1) !== 's') {
+      type += 's'
     }
-    if (!(['words', 'lines', 'pages', 'minutes'].includes(type))) {
-      type = false;
+    if (!['words', 'lines', 'pages', 'minutes'].includes(type)) {
+      type = false
     }
-    return type;
+    return type
   }
+
   /**
    * Validates the word goal for a sprint.
    * @param {String} words - The goal to validate.
    * @return {String} - Message to send to user.
    */
   validateGoal(words) {
-    let returnMsg = false;
+    let returnMsg = false
     if (!Number.isInteger(Number(words))) {
-      returnMsg = '**Error:** Word count must be a whole number.';
+      returnMsg = '**Error:** Word count must be a whole number.'
     } else if (words < 1) {
-      returnMsg = '**Error:** Word count cannot be negative.';
+      returnMsg = '**Error:** Word count cannot be negative.'
     }
-    return returnMsg;
+    return returnMsg
   }
 }
 
-module.exports = new Challenges();
+module.exports = new Challenges()
