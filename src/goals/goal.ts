@@ -1,28 +1,41 @@
-const goallist = require('./goallist.js')
-const dbc = require('../dbc.js')
+import GoalCache from './goal-cache'
+import GoalTypes from './goal-types'
+import { Client, Snowflake, TextChannel } from 'discord.js'
+
+declare const client: Client
+
+// const dbc = require('../dbc.js');
 
 /** Represents a goal. */
-class Goal {
+export default class Goal {
+
+  authorID: Snowflake
+  channel: TextChannel
+  goal: number
+  goalType: GoalTypes
+  startTime: number
+  terminationTime: number
+  written: number
+
   /**
    * Create a goal.
-   * @param {Number} authorID - The Discord ID of the goal setter.
-   * @param {Number} goal - The goal that the user is trying to reach.
-   * @param {String} goalType - The type of goal that the user is trying to
-   * reach (words, lines, pages, or minutes).
-   * @param {Number} written - The user's progress towards their goal.
-   * @param {Number} startTime - UNIX timestamp of the second the goal was set.
-   * @param {Number} terminationTime - UNIX timestamp of the second the goal
-   * will resolve.
-   * @param {Number} channelID - Discord ID of start channel.
+   *
+   * @param authorID - The Discord ID of the goal setter.
+   * @param goal - The goal that the user is trying to reach.
+   * @param goalType - The type of goal that the user is trying to reach.
+   * @param written - The user's progress towards their goal.
+   * @param startTime - UNIX timestamp of the second the goal was set.
+   * @param terminationTime - UNIX timestamp of the second the goal will resolve.
+   * @param channelID - Discord ID of start channel.
    */
   constructor(
-    authorID,
-    goal,
-    goalType,
-    written,
-    startTime,
-    terminationTime,
-    channelID,
+    authorID: Snowflake,
+    goal: number,
+    goalType: GoalTypes,
+    written: number,
+    startTime: number,
+    terminationTime: number,
+    channelID: Snowflake,
   ) {
     this.authorID = authorID
     this.goal = goal
@@ -30,8 +43,7 @@ class Goal {
     this.written = written
     this.startTime = startTime
     this.terminationTime = terminationTime
-    this.channelID = channelID
-    this.channel = client.channels.get(this.channelID)
+    this.channel = client.channels.get(channelID) as TextChannel
 
     const goalData = {
       authorID: this.authorID,
@@ -40,52 +52,54 @@ class Goal {
       written: this.written,
       startTime: this.startTime,
       terminationTime: this.terminationTime,
-      channelID: this.channelID,
+      channelID: this.channel.id,
     }
     dbc.dbUpdate('goalDB', {authorID: this.authorID}, goalData)
   }
 
-  /** Check to see whether the goal resolves, and handle it if so.
-   * @return {Number} - The user's chance of hatching a raptor.
+  /**
+   * Check to see whether the goal resolves, and handle it if so.
+   *
+   * @return The user's chance of hatching a raptor.
    */
-  update() {
+  update(): Record<string, TextChannel | number> | undefined {
     const currentTime = new Date().getTime()
+
     if (currentTime >= this.terminationTime) {
-      const raptorRollData = [this.channel, this.written / this.goal * 100]
-      this.clearGoal(this.authorID)
-      return raptorRollData
+      this.clearGoal()
+      return {
+        channel: this.channel,
+        chance: this.written / this.goal * 100,
+      }
     }
-    return false
   }
 
   /**
    * Clears a goal from the database.
    */
-  clearGoal() {
-    dbc.dbRemove('goalDB', {authorID: this.authorID})
-    delete goallist.goalList[this.authorID]
+  async clearGoal(): Promise<void> {
+    await dbc.dbRemove('goalDB', { authorID: this.authorID })
+    GoalCache.remove(this)
   }
 
-  /** Update the goal with the user's current progress.
-   * @param {Number} wordNumber - The user's progress towards their goal.
-   * @param {Boolean} type - Whether to overwrite the user's progress with the
-   * given total (true), or add it to their existing progress (false).
+  /**
+   * Update the goal with the user's current progress.
+   *
+   * @param wordNumber - The user's progress towards their goal.
+   * @param overwrite - Whether to overwrite the user's progress with the
+   *   given total (true), or add it to their existing progress (false).
    */
-  addWords(wordNumber, type) {
-    switch (type) {
-    case false:
-      this.written += parseInt(wordNumber)
-      break
-    case true:
-      this.written = parseInt(wordNumber)
-      break
+  async addWords(wordNumber: number, overwrite: boolean): Promise<void> {
+    if (overwrite) {
+      this.written = wordNumber
+    } else {
+      this.written = wordNumber
     }
-    dbc.dbUpdate(
-      'goalDB',
-      {authorID: this.authorID},
-      {$set: {written: this.written}},
-    )
+
+    await dbc.dbUpdate('goalDB', {authorID: this.authorID}, {
+      $set: {
+        written: this.written,
+      },
+    })
   }
 }
-
-module.exports = Goal
