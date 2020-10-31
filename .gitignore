@@ -1,6 +1,7 @@
 config.json
 data
 package-lock.json
+yarn.lock
 
 
 
