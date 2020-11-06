@@ -1,49 +1,79 @@
-const War = require('./war.js')
-const clist = require('./clist.js')
-const dbc = require('../dbc.js')
+import ChallengeStates from './challenge-states'
+import ChallengeTypes from './challenge-types'
+import War from './war'
+import { ChallengeUser, WarUser } from './challenge-user'
+import { Client, GuildChannel, Snowflake } from 'discord.js'
 
-/** Represents a chain war. */
-class ChainWar extends War {
+// const clist = require('./clist.js')
+// const dbc = require('../dbc.js')
+
+declare const client: Client
+
+/**
+ * Represents a chain war.
+ */
+export default class ChainWar extends War {
+  /**
+   * The name of this war.
+   *
+   * Format:
+   * <chain_war_name> (<current_war>/<total_wars>)
+   * My Chain War (2/5)
+   */
+  warName: string
+
+  /**
+   * The index of the current war in the chain
+   */
+  current: number
+
+  /**
+   * The total number of wars in the chain.
+   */
+  total: number
+
+  chainTotal: Record<Snowflake, Record<string, Array<number>>>
+  serverTotal: Record<Snowflake, Record<string, Array<number>>>
+  countdownList: Array<number>
+
   /**
    * Create a chain war.
-   * @param {Number} objectID - The unique ID of the chain war.
-   * @param {Number} creator - The Discord ID of the creator.
-   * @param {String} warName - The name of the chain war.
-   * @param {Number} initStamp - UNIX timestamp of creation time.
-   * @param {Number} current - The number of the current war in the chain.
-   * @param {Number} total - The total number of wars in the chain.
-   * @param {Number} countdown - Time in minutes from creation to start.
-   * @param {Number} duration - Duration in minutes.
-   * @param {String} channel - Discord ID of start channel.
-   * @param {Boolean} hidden - Flag for whether challenge is visible to users
-   *  on other servers.
-   * @param {Array} hookedChannels - A list of channels that have joined the
-   *  war.
-   * @param {Object} joined - A list of users who have joined the war.
-   * @param {Object} chainTotal - Totals for all users, for all wars in the
-   *  chain.
-   * @param {Object} serverTotal - Aggregate totals by server.
+   *
+   * @param objectID - The unique ID of the chain war.
+   * @param creator - The Discord ID of the creator.
+   * @param warName - The name of the chain war.
+   * @param initStamp - UNIX timestamp of creation time.
+   * @param current - The number of the current war in the chain.
+   * @param total - The total number of wars in the chain.
+   * @param countdown - Time in minutes from creation to start.
+   * @param duration - Duration in minutes.
+   * @param channel - Discord ID of start channel.
+   * @param hidden - Flag for whether challenge is visible to users on other servers.
+   * @param hookedChannels - A list of channels that have joined the war.
+   * @param joined - A list of users who have joined the war.
+   * @param chainTotal - Totals for all users, for all wars in the chain.
+   * @param serverTotal - Aggregate totals by server.
    */
   constructor(
-    objectID,
-    creator,
-    warName,
-    initStamp,
-    current,
-    total,
-    countdown,
-    duration,
-    channel,
-    hidden,
-    hookedChannels,
-    joined,
-    chainTotal,
-    serverTotal,
+    objectID: number,
+    creator: Snowflake,
+    warName: string,
+    initStamp: number,
+    current: number,
+    total: number,
+    countdown: Array<number>,
+    duration: number,
+    channel: Snowflake,
+    hidden: boolean,
+    hookedChannels: Array<Snowflake>,
+    joined: Record<Snowflake, ChallengeUser>,
+    chainTotal: Record<Snowflake, Record<string, Array<number>>>,
+    serverTotal: Record<Snowflake, Record<string, Array<number>>>,
   ) {
     super(
       objectID,
       creator,
-      warName + ' (' + current + '/' + total + ')',
+      `${warName} (${current}/${total})`,
       initStamp,
       countdown[current - 1],
       duration,
@@ -51,7 +81,7 @@ class ChainWar extends War {
       hidden,
       hookedChannels,
       joined,
-      'chain war',
+      ChallengeTypes.CHAIN_WAR,
     )
     this.warName = warName
     this.current = current
@@ -59,8 +89,8 @@ class ChainWar extends War {
     this.chainTotal = chainTotal
     this.serverTotal = serverTotal
     this.countdownList = countdown
-    if (this.state === 2) {
-      this.state = 3
+    if (this.state === ChallengeStates.ENDED) {
+      this.state = ChallengeStates.POST_ENDED
     }
     const challengeData = {
       _id: this.objectID,
@@ -71,13 +101,13 @@ class ChainWar extends War {
       total: this.total,
       countdown: this.countdownList,
       duration: this.duration,
-      channel: this.channelID,
+      channel: this.channel.id,
       hookedChannels: this.hookedChannels,
       joined: this.joined,
       chainTotal: this.chainTotal,
       serverTotal: this.serverTotal,
       state: this.state,
-      type: 'chain war',
+      type: ChallengeTypes.CHAIN_WAR,
       hidden: this.hidden,
     }
     const array = [challengeData]
@@ -85,18 +115,20 @@ class ChainWar extends War {
     dbc.dbInsert('challengeDB', array)
   }
 
-  /** Update the chain war at each tick. */
-  update() {
+  /**
+   * Update the chain war at each tick.
+   */
+  async update(): Promise<void> {
     switch (this.state) {
-    case 0:
+    case ChallengeStates.SCHEDULED:
       this.start()
       break
-    case 1:
+    case ChallengeStates.IN_PROGRESS:
       this.end()
       break
-    case 2:
+    case ChallengeStates.ENDED:
       break
-    case 3:
+    case ChallengeStates.POST_ENDED:
       this.terminate()
       break
     default:
@@ -106,23 +138,10 @@ class ChainWar extends War {
     }
   }
 
-  /** Check to see whether the countdown is over, and start the war if so. */
-  start() {
-    super.start()
-  }
-
-  /** Construct the message displayed to users when a chain war begins. */
-  startMsg() {
-    super.startMsg()
-  }
-
-  /** Check to see whether the chain war is over, and end it if so. */
-  end() {
-    super.end()
-  }
-
-  /** Check to see whether the total period is over, and post the summary. */
-  terminate() {
+  /**
+   * Check to see whether the total period is over, and post the summary.
+   */
+  async terminate(): Promise<void> {
     this.cPost--
     if (this.cPost <= 0) {
       this.addToChains()
@@ -137,80 +156,80 @@ class ChainWar extends War {
     }
   }
 
-  /** Add chain war totals to chain summary. */
-  addToChains() {
-    for (const user in this.joined) {
-      if (this.joined.hasOwnProperty(user)) {
-        const type = this.joined[user].countType
-        this.chainTotal = this.addToAggregate(this.chainTotal, user)
-        const serverID = this.getChannel(this.joined[user].channelID).guild.id
-        this.serverTotal = this.addToAggregate(this.serverTotal, serverID)
-        if (this.joined[user].countData !== null) {
-          this.chainTotal[user][type][0] +=
-            parseInt(this.joined[user].countData)
-          this.chainTotal[user][type][1] += parseInt(this.duration)
-          this.chainTotal[user].channelID = this.joined[user].channelID
-          this.serverTotal[serverID][type][0] +=
-              parseInt(this.joined[user].countData)
-          this.serverTotal[serverID][type][1] += 1
-        }
+  /**
+   * Add chain war totals to chain summary.
+   */
+  addToChains(): void {
+    Object.entries(this.joined).forEach(([userID, joinedUser]) => {
+      const warUser = joinedUser as WarUser
+      const type = warUser.countType
+      this.chainTotal = this.addToAggregate(this.chainTotal, userID)
+      const serverID = this.getChannel(warUser.channelID).guild.id
+      this.serverTotal = this.addToAggregate(this.serverTotal, serverID)
+
+      if (warUser.countData) {
+        this.chainTotal[userID][type][0] += warUser.countData
+        this.chainTotal[userID][type][1] += this.duration
+        this.serverTotal[serverID][type][0] += warUser.countData
+        this.serverTotal[serverID][type][1] += 1
       }
-    }
+    })
   }
 
   /**
    * Summarises all chain war aggregates for a given server.
-   * @param {String} user - The user being summarised.
-   * @param {Object} userObj - Information about the user being summarised.
-   * @return {String} - The message to send to the user.
+   *
+   * @param user - The user being summarised.
+   * @param userObj - Information about the user being summarised.
+   * @return The message to send to the user.
    */
-  chainByUser(user, userObj) {
+  chainByUser(user: Snowflake, userObj: Record<Snowflake, Array<number>>): string {
     let returnMsg = ''
     let first = true
     for (const item in userObj) {
-      if (item !== 'channelID' && userObj[item][1] > 0) {
-        if (first === true) {
-          returnMsg += client.users.get(user) + ': '
-        } else {
-          returnMsg += ', '
-        }
-        returnMsg +=
-          this.userTotals(userObj[item][0], item, userObj[item][1])
+      if (userObj[item][1] > 0) {
+        returnMsg += first === true ? `${client.users.get(user)}: ` : ', '
+        returnMsg += this.userTotals(userObj[item][0], item, userObj[item][1])
+
         first = false
       }
     }
+
     return returnMsg
   }
 
   /**
    * Builds a summary of chain war aggregate totals for a given channel.
-   * @param {String} channel - Discord ID of the channel being posted to.
-   * @return {String} - The message to send to the user.
+   *
+   * @param channel - Discord ID of the channel being posted to.
+   * @return The message to send to the user.
    */
-  chainSummary(channel) {
-    let returnMsg = '***Summary for ' + this.warName + ':***\n'
+  chainSummary(channelID: Snowflake): string {
+    let returnMsg = `***Summary for ${this.warName }:***\n`
     let summaryData = ''
-    const summaryServer = client.channels.get(channel).guild
-    for (const user in this.chainTotal) {
-      if (client.channels.get(this.chainTotal[user]
-        .channelID).guild.id === summaryServer.id) {
-        summaryData += this.chainByUser(user, this.chainTotal[user]) + '\n'
+
+    const channel = client.channels.get(channelID) as GuildChannel
+    const summaryServer = channel?.guild
+
+    Object.entries(this.chainTotal).forEach(([userID, totals]) => {
+      const userChannel = client.channels.get(this.joined[userID].channelID) as GuildChannel
+      const userServer = userChannel?.guild
+      if (userServer.id === summaryServer.id) {
+        summaryData += `${this.chainByUser(userID, totals)}\n`
       }
-    }
-    if (Object.keys(this.serverTotal).length > 1) {
-      summaryData += '\n'
-    }
-    for (const server in this.serverTotal) {
-      if (this.serverTotal.hasOwnProperty(server)) {
-        summaryData += this.serverText(server, this.serverTotal) + '\n'
-      }
-    }
+    })
+
+    if (Object.keys(this.serverTotal).length > 1) { summaryData += '\n' }
+
+    Object.keys(this.serverTotal).forEach((serverID) => {
+      summaryData += this.serverText(serverID, this.serverTotal) + '\n'
+    })
+
     if (summaryData === '') {
       summaryData = 'No totals were posted for this chain war.'
     }
+
     returnMsg += summaryData
     return returnMsg
   }
 }
-
-module.exports = ChainWar

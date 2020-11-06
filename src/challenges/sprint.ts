@@ -1,36 +1,49 @@
-const Challenge = require('./challenge')
-const dbc = require('../dbc.js')
+import Challenge from './challenge'
+import ChallengeStates from './challenge-states'
+import ChallengeTypes from './challenge-types'
+import { Client, Guild, Snowflake } from 'discord.js'
+import { SprintUser } from './challenge-user'
 
-/** Represents a sprint. */
-class Sprint extends Challenge {
+// const dbc = require('../dbc.js');
+
+declare let client: Client
+
+/**
+ * Represents a sprint.
+ */
+export default class Sprint extends Challenge {
+  /**
+   * The goal, in number of words, of the sprint.
+   */
+  goal: number
+
   /**
    * Create a chain war.
-   * @param {Number} objectID - The unique ID of the sprint.
-   * @param {Number} creator - The Discord ID of the creator.
-   * @param {String} displayName - The name of the sprint.
-   * @param {Number} initStamp - UNIX timestamp of creation time.
-   * @param {Number} countdown - Time in minutes from creation to start.
-   * @param {Number} goal - The goal, in words, of the sprint.
-   * @param {Number} duration - Duration in minutes.
-   * @param {String} channel - Discord ID of start channel.
-   * @param {Boolean} hidden - Flag for whether challenge is visible to users
-   *  on other servers.
-   * @param {Array} hookedChannels - A list of channels that have joined the
-   *  sprint.
-   * @param {Object} joined - A list of users who have joined the sprint.
+   *
+   * @param objectID - The unique ID of the sprint.
+   * @param creator - The Discord ID of the creator.
+   * @param displayName - The name of the sprint.
+   * @param initStamp - UNIX timestamp of creation time.
+   * @param countdown - Time in minutes from creation to start.
+   * @param goal - The goal, in words, of the sprint.
+   * @param duration - Duration in minutes.
+   * @param channel - Discord ID of start channel.
+   * @param hidden - Flag for whether challenge is visible to users on other servers.
+   * @param hookedChannels - A list of channels that have joined the sprint.
+   * @param joined - A list of users who have joined the sprint.
    */
   constructor(
-    objectID,
-    creator,
-    displayName,
-    initStamp,
-    countdown,
-    goal,
-    duration,
-    channel,
-    hidden,
-    hookedChannels,
-    joined,
+    objectID: number,
+    creator: Snowflake,
+    displayName: string,
+    initStamp: number,
+    countdown: number,
+    goal: number,
+    duration: number,
+    channel: Snowflake,
+    hidden: boolean,
+    hookedChannels: Array<Snowflake>,
+    joined: Record<Snowflake, SprintUser>,
   ) {
     super(
       objectID,
@@ -40,7 +53,7 @@ class Sprint extends Challenge {
       countdown,
       duration,
       channel,
-      'sprint',
+      ChallengeTypes.SPRINT,
       hidden,
       hookedChannels,
       joined,
@@ -56,11 +69,11 @@ class Sprint extends Challenge {
       countdown: this.countdown,
       goal: this.goal,
       duration: this.duration,
-      channel: this.channelID,
+      channel: this.channel.id,
       hookedChannels: this.hookedChannels,
       joined: this.joined,
       state: this.state,
-      type: 'sprint',
+      type: ChallengeTypes.SPRINT,
       hidden: this.hidden,
     }
     const array = [challengeData]
@@ -68,33 +81,34 @@ class Sprint extends Challenge {
     dbc.dbInsert('challengeDB', array)
   }
 
-  /** Starts a challenge. */
-  init() {
-    const dateCheck = new Date().getTime()
-    if (!(this.startStamp < dateCheck)) {
-      this.state = 0
-      this.cStart = Math.ceil((this.startStamp - dateCheck) / 1000)
-    } else if (!(this.endStamp < dateCheck)) {
-      this.state = 1
-      this.cDur = Math.ceil((this.endStamp - dateCheck) / 1000)
+  /**
+   * Starts a challenge.
+   */
+  init(): void {
+    const currentTime = new Date().getTime()
+    if (!(this.startStamp < currentTime)) {
+      this.state = ChallengeStates.SCHEDULED
+      this.cStart = Math.ceil((this.startStamp - currentTime) / 1000)
+    } else if (!(this.endStamp < currentTime)) {
+      this.state = ChallengeStates.IN_PROGRESS
+      this.cDur = Math.ceil((this.endStamp - currentTime) / 1000)
     } else {
-      this.state = 1
+      this.state = ChallengeStates.IN_PROGRESS
       this.cDur = 0
     }
-    if (this.state === 0 && this.cStart === this.countdown * 60) {
-      let time = 'minute'
-      if (this.countdown !== 1) {
-        time += 's'
-      }
-      this.buildMsg(
-        'Your ' + this.type + ', ' + this.displayName + ' (ID ' +
-          this.objectID + '), starts in ' + this.countdown + ' ' + time + '.',
-      )
+
+    if (this.state === ChallengeStates.SCHEDULED && this.cStart === this.countdown * 60) {
+      const timeString = this.countdown === 1 ? 'minute' : 'minutes'
+      const message = `Your ${this.type}, ${this.displayName} (ID ${this.objectID}), starts in ${this.countdown} ${timeString}`
+
+      this.buildMessage(message)
     }
   }
 
-  /** Update the sprint at each tick. */
-  update() {
+  /**
+   * Update the sprint at each tick.
+   */
+  async update(): Promise<void> {
     switch (this.state) {
     case 0:
       this.start()
@@ -104,19 +118,20 @@ class Sprint extends Challenge {
       break
     default:
       this.channel.send('**Error:** Invalid state reached.')
-      this.cancel()
+      await this.cancel()
       break
     }
   }
 
   /**
    * Builds user data for the challenge database.
-   * @param {String} channel - The channel from which the user joined.
-   * @param {String} timestamp - The time at which the user finished the sprint.
-   * @param {String} minutes - The time taken to complete the sprint.
-   * @return {Object} - JSON object representing the total.
+   *
+   * @param channel - The channel from which the user joined.
+   * @param timestamp - The time at which the user finished the sprint.
+   * @param minutes - The time taken to complete the sprint.
+   * @return JSON object representing the total.
    */
-  buildUserData(channel, timestamp, minutes) {
+  buildUserData(channel: Snowflake, timestamp: number, minutes: number): SprintUser {
     return {
       timestampCalled: timestamp,
       timeTaken: minutes,
@@ -124,135 +139,128 @@ class Sprint extends Challenge {
     }
   }
 
-  /** Construct the message displayed to users when a sprint begins. */
-  startMsg() {
-    for (let i = 0; i < this.hookedChannels.length; i++) {
-      const userList = super.getUsers(this.hookedChannels[i])
-      const channelObject = this.getChannel(this.hookedChannels[i])
-      let timeString = 'minutes'
-      if (this.duration === 1) {
-        timeString = 'minute'
-      }
-      channelObject.send(
-        this.displayName +
-          ' (ID ' +
-          this.objectID +
-          ', ' +
-          this.duration +
-          ' ' +
-          timeString +
-          ') starts now! Race to ' +
-          this.goal +
-          ' words!' +
-          userList,
-      )
-    }
-    this.state = 1
-  }
-
-  /** Check to see whether the sprint is over, and post the summary if so. */
-  end() {
-    this.cDur--
-    if (this.cDur <= 0) {
-      for (const user in this.joined) {
-        if (this.joined[user].timeTaken !== undefined) {
-          const data = {$inc: {lifetimeSprintWords: parseInt(this.goal),
-            lifetimeSprintMinutes: this.joined[user].timeTaken}}
-          dbc.dbUpdate('userDB', {_id: user}, data)
-        }
-      }
-      super.terminate()
-    } else if (this.cDur === 60) {
-      super.buildMsg(
-        'There is 1 minute remaining in ' + this.displayName + '.',
-      )
-    } else if (this.cDur % 300 === 0) {
-      super.buildMsg(
-        'There are ' + this.cDur / 60 + ' minutes remaining in ' +
-          this.displayName + '.',
-      )
-    } else if ([30, 10, 5].includes(this.cDur)) {
-      super.buildMsg(
-        'There are ' + this.cDur + ' seconds remaining in ' +
-          this.displayName + '.',
-      )
-    }
-  }
-
-  /** Prints statistics for a challenge.
-   * @param {String} channel - Channel to print to.
-   * @return {String} - Return message.
+  /**
+   * send the message displayed to users when a sprint begins.
    */
-  stats(channel) {
-    let returnMsg = ''
-    if (this.state === 1) {
+  startMessage(): void {
+    const timeString = this.duration === 1 ? 'minute' : 'minutes'
+    const message = `${this.displayName} (ID ${this.objectID}, ${this.duration}) ${timeString}) starts now! Race to ${this.goal} words!`
+
+    this.hookedChannels.forEach((channelID) => {
+      const userList = super.getUsers(channelID)
+      const channelObject = this.getChannel(channelID)
+
+      channelObject.send(`${message} ${userList}`)
+    })
+  }
+
+  /**
+   * Check to see whether the sprint is over, and post the summary if so.
+   */
+  end(): void {
+    this.cDur--
+
+    if (this.cDur <= 0) {
+      Object.entries(this.joined).forEach(([userID, joinedUser]) => {
+        const sprintUser = joinedUser as SprintUser
+
+        if (sprintUser.timeTaken) {
+          const data = {
+            $inc: {
+              lifetimeSprintWords: this.goal,
+              lifetimeSprintMinutes: sprintUser.timeTaken,
+            },
+          }
+          dbc.dbUpdate('userDB', {_id: userID}, data)
+        }
+      })
+      this.terminate()
+    } else if (this.cDur === 60) {
+      this.buildMessage(`There is 1 minute remaining in ${this.displayName}.`)
+    } else if (this.cDur % 300 === 0) {
+      this.buildMessage(`There are ${this.cDur / 60} minutes remaining in ${this.displayName}.`)
+    } else if ([30, 10, 5].includes(this.cDur)) {
+      this.buildMessage(`There are ${this.cDur} seconds remaining in ${this.displayName}.`)
+    }
+  }
+
+  /**
+   * Prints statistics for a challenge.
+   *
+   * @param channel - Channel to print to.
+   * @return Return message.
+   */
+  stats(channel: Snowflake): string {
+    let returnMessage = `***Statistics for ${this.displayName}:***\n\n`
+    if (this.state === ChallengeStates.IN_PROGRESS) {
       const serverTotals = this.serverTotals()
       const summaryServer = this.getChannel(channel).guild
-      returnMsg += this.challengeByUser(summaryServer)
+      returnMessage += this.challengeByUser(summaryServer)
       if (Object.keys(serverTotals).length > 1) {
-        returnMsg += '\n'
+        returnMessage += '\n'
       }
       for (const server in serverTotals) {
-        if (serverTotals.hasOwnProperty(server)) {
-          returnMsg += this.serverText(server, serverTotals)
+        if (serverTotals[server]) {
+          returnMessage += this.serverText(server, serverTotals)
         }
       }
     } else {
-      returnMsg = 'This sprint has not started yet.'
+      returnMessage = 'This sprint has not started yet.'
     }
-    if (returnMsg === '') {
-      returnMsg = 'Nobody has finished this sprint yet.'
+    if (returnMessage === '') {
+      returnMessage = 'Nobody has finished this sprint yet.'
     }
-    return super.stats() + returnMsg
+    return returnMessage
   }
 
   /**
    * Summarises all totals for a given server.
-   * @param {String} summaryServer - The server being summarised.
-   * @return {String} - The message to send to the user.
+   *
+   * @param summaryServer - The server being summarised.
+   * @return The message to send to the user.
    */
-  challengeByUser(summaryServer) {
-    let userTotals = ''
-    for (const user in this.joined) {
-      if (this.joined.hasOwnProperty(user)) {
-        const count = this.goal
-        const time = this.joined[user].timeTaken
-        if (time !== undefined && this.channel.guild.id === summaryServer.id) {
-          userTotals += client.users.get(user) + ': ' +
-            this.userTotals(time, count)
-        }
+  challengeByUser(summaryServer: Guild): string {
+    return Object.entries(this.joined).reduce((userTotals, [userID, joinedUser]) => {
+      const sprintUser = joinedUser as SprintUser
+
+      const count = this.goal
+      const time = sprintUser.timeTaken
+
+      if (!!time && this.channel.guild.id === summaryServer.id) {
+        userTotals += `${client.users.get(userID)}: ${this.userTotals(time, count)}`
       }
-    }
-    return userTotals
+
+      return userTotals
+    }, '')
   }
 
   /**
    * Produces a per-server breakdown of user-entered totals for a sprint.
-   * @param {String} challengeID - Unique ID of the challenge being summarised.
-   * @return {String} - The message to send to the user.
+   * @param challengeID - Unique ID of the challenge being summarised.
+   * @return The message to send to the user.
    */
-  serverTotals() {
-    let sprintTotals = {}
-    for (const user in this.joined) {
-      if (this.joined[user].timeTaken !== undefined) {
-        const homeServer =
-          this.getChannel(this.joined[user].channelID).guild.id
-        sprintTotals = this.addToAggregate(sprintTotals, homeServer)
-        sprintTotals[homeServer][0] += this.joined[user].timeTaken
-        sprintTotals[homeServer][1] += this.goal
-      }
-    }
-    return sprintTotals
+  serverTotals(): Record<Snowflake, Array<number>> {
+    return Object.values(this.joined).reduce((sprintTotals: Record<Snowflake, Array<number>>, joinedUser) => {
+      const sprintUser = joinedUser as SprintUser
+      const homeServerID = this.getChannel(joinedUser.channelID).guild.id
+
+      sprintTotals = this.addToAggregate(sprintTotals, homeServerID)
+      sprintTotals[homeServerID][0] += sprintUser.timeTaken
+      sprintTotals[homeServerID][1] += this.goal
+
+      return sprintTotals
+    }, {})
   }
 
   /**
    * Displays sprint totals in a human-readable format.
-   * @param {String} server - Snowflake of the server being posted to.
-   * @param {Object} serverTotals - Summary of user-entered totals by server.
-   * @return {String} - The message to send to the user.
+   *
+   * @param server - Snowflake of the server being posted to.
+   * @param serverTotals - Summary of user-entered totals by server.
+   * @return The message to send to the user.
    */
-  serverText(server, serverTotals) {
-    let sprintText = '__' + client.guilds.get(server).name + '__:'
+  serverText(server: Snowflake, serverTotals: Record<Snowflake, Array<number>>): string {
+    let sprintText = '__' + client.guilds.get(server)?.name + '__:'
     sprintText += ' **' + serverTotals[server][0].toFixed(2) + '** minute'
     if (serverTotals[server][0] !== 1) {
       sprintText += 's'
@@ -266,28 +274,26 @@ class Sprint extends Challenge {
 
   /**
    * Adds an object to an aggregate list of totals.
-   * @param {Object} serverList - The object to add to.
-   * @param {String} server - The object to add.
-   * @return {String} - The relevant server.
+   *
+   * @param serverList - The object to add to.
+   * @param server - The object to add.
+   * @return The relevant server.
    */
-  addToAggregate(serverList, server) {
-    if (serverList[server] === undefined) {
-      serverList[server] = [0, 0]
+  addToAggregate(serverList: Record<Snowflake, Array<number>>, serverID: Snowflake): Record<Snowflake, Array<number>> {
+    if (!serverList[serverID]) {
+      serverList[serverID] = [0, 0]
     }
     return serverList
   }
 
   /**
    * Summarises a user's total.
-   * @param {Number} time - The user's completion time.
-   * @param {Number} goal - The sprint's word goal.
-   * @return {String} - The message to send to the user.
+   *
+   * @param time - The user's completion time.
+   * @param goal - The sprint's word goal.
+   * @return The message to send to the user.
    */
-  userTotals(time, goal) {
-    const userTotal = '**' + time.toFixed(2) + '** minutes (**' +
-      (goal/time).toFixed(2) + '** wpm)\n'
-    return userTotal
+  userTotals(time: number, goal: number): string {
+    return `**${time.toFixed(2)}** minutes (**${(goal/time).toFixed(2)}** wpm)\n`
   }
 }
-
-module.exports = Sprint
