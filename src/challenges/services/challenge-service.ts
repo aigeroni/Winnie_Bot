@@ -1,4 +1,4 @@
-const clist = require('./clist.js')
+const clist = require('../clist.js')
 
 /** Class containing functions for challenge management. */
 class Challenges {

@@ -1,6 +1,6 @@
-import Goal from './goal'
-import GoalCache from './goal-cache'
-import GoalTypes from './goal-types'
+import Goal from '../models/goal'
+import GoalCache from '../goal-cache'
+import GoalTypes from '../models/goal-types'
 import mtz from 'moment-timezone'
 import timezoneJS from 'timezone-js'
 import { Message, User } from 'discord.js'
@@ -8,7 +8,7 @@ import { Message, User } from 'discord.js'
 /**
  * Class containing functions for goal management.
  */
-export default class Goals {
+export default class GoalService {
   static readonly REGION_REGEX = /^(Africa|America|Antarctica|Asia|Atlantic|Australia|Europe|Indian|Pacific|Etc)/
 
   /**
@@ -58,7 +58,7 @@ export default class Goals {
       return `${message.author}, I need a goal to set!`
     } else if (!Number.isInteger(Number(goal))) {
       return `**Error:** Your goal must be a whole number. Example: \`${prefix}set 1667\`.`
-    } else if (message.author.id in goallist.goalList) {
+    } else if (GoalCache.has(message.author.id)) {
       return `${message.author}, you have already set a goal today. Use the update commands to record your progress.`
     } else if (goalType as GoalTypes === undefined) {
       return `**Error:** Goal type must be words, lines, pages, or minutes. Example: \`${prefix}set 50 lines\`.`
@@ -110,7 +110,7 @@ export default class Goals {
     }
 
     goal.addWords(newGoalNum, overwrite)
-    return Goals.goalData(message.author)
+    return GoalService.goalData(message.author)
   }
 
   /**
@@ -137,7 +137,7 @@ export default class Goals {
       return this.goalData(message.author)
     } else {
       goal.clearGoal()
-      return await Goals.setGoal(message, prefix, suffix)
+      return await GoalService.setGoal(message, prefix, suffix)
     }
   }
 

@@ -1,4 +1,4 @@
-import GoalCache from './goal-cache'
+import GoalCache from '../goal-cache'
 import GoalTypes from './goal-types'
 import { Client, Snowflake, TextChannel } from 'discord.js'
 
