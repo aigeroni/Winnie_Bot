@@ -17,6 +17,14 @@ enum ChallengeStates {
    * The challenge has ended.
    */
   ENDED = 2,
+
+  /**
+   * CHAIN WAR ONLY
+   *
+   * Represents a state between when the previous war ended and the
+   * next war has yet to begin it's countdown.
+   */
+  POST_ENDED = 3,
 }
 
 export default ChallengeStates
