@@ -1,4 +1,4 @@
-import Goal from './goal'
+import Goal from './models/goal'
 import { Snowflake } from 'discord.js'
 
 /**

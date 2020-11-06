@@ -1,11 +1,11 @@
 const profanity = require('profanity-util', {substring: 'lite'})
 const emojiRegex = require('emoji-regex/es2015/index.js')
-const ChainWar = require('./chainwar')
-const Sprint = require('./sprint')
-const War = require('./war')
-const clist = require('./clist.js')
-const challenges = require('./challenges.js')
-const dbc = require('../dbc.js')
+const ChainWar = require('../models/chainwar')
+const Sprint = require('../models/sprint')
+const War = require('../models/war')
+const clist = require('../clist.js')
+const challenges = require('../models/challenges.js')
+const dbc = require('../../dbc.js')
 
 /** Class containing functions for challenge management. */
 class ChallengeStart {
