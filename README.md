@@ -59,8 +59,10 @@ We welcome all contributors to Winnie.  Your pull requests will be reviewed by t
 
 ## Authors
 
-* **Dawn E. Collett** - *Primary Developer* - [GitHub](https://github.com/lisushka)
+* **Dawn E. Collett** - *Maintainer* - [GitHub](https://github.com/lisushka)
+* **Katie Macke** - *Development Team* - [GitHub](https://github.com/asleepysheepy)
 * **Robert W. McLeod** - *Server management assistance* - [GitHub](https://github.com/RobFaie)
+* **Lauren Jenkinson** - *Server management assistance* - [GitHub](https://github.com/alxce)
 
 ## License
 
