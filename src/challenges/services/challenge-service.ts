@@ -118,7 +118,8 @@ export default class ChallengeService {
     let returnMessage = ''
     const args = suffix.split(' ')
     const challengeID = args.shift() ?? ''
-    const wordsWritten = args.shift() ?? ''
+    const wordsWrittenString = args.shift()
+    const wordsWritten = wordsWrittenString ? parseInt(wordsWrittenString) : null
     const writtenType = this.typeAssign(args.shift())
     let raptorCheck = false
 
@@ -205,11 +206,10 @@ export default class ChallengeService {
    * @param words - The goal to validate.
    * @return Message to send to user.
    */
-  static validateGoal(words: string): string | undefined {
-    if (words && !Number.isInteger(Number(words))) {
-      return '**Error:** Word count must be a whole number.'
-    } else if (parseInt(words) < 1) {
-      return '**Error:** Word count cannot be negative.'
-    }
+  static validateGoal(words: number | null): string | undefined {
+    if (!words) { return '**Error:** Word count must be a whole number.' }
+    if (!Number.isInteger(words)) { return '**Error:** Word count must be a whole number.' }
+
+    if (words < 1) { return '**Error:** Word count cannot be negative.' }
   }
 }

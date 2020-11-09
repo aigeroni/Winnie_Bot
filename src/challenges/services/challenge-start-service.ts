@@ -1,307 +1,332 @@
-const profanity = require('profanity-util', {substring: 'lite'})
-const emojiRegex = require('emoji-regex/es2015/index.js')
-const ChainWar = require('../models/chainwar')
-const Sprint = require('../models/sprint')
-const War = require('../models/war')
-const clist = require('../clist.js')
-const challenges = require('../models/challenges.js')
-const dbc = require('../../dbc.js')
+import ChainWar from '../models/chainwar'
+import ChallengeCache from '../challenge-cache'
+import ChallengeService from './challenge-service'
+// import clist from '../clist.js'
+// import dbc from '../../dbc.js'
+import Profanity from 'profanity-util'
+import Sprint from '../models/sprint'
+import War from '../models/war'
+import emojiRegexImport from 'emoji-regex/es2015'
+import { Message } from 'discord.js'
 
-/** Class containing functions for challenge management. */
-class ChallengeStart {
-  /** Initialise variables required for challenge management. */
-  constructor() {
-    this.timerID = 1
-    this.crossServerStatus = {}
-    this.autoSumStatus = {}
-    this.regex = emojiRegex()
-  }
+const emojiRegex = emojiRegexImport()
 
+interface StartCommandFlags {
+  join: boolean,
+  display: boolean,
+  args: Array<string>
+}
+
+/**
+ * Class containing functions for challenge management.
+ */
+export default class ChallengeStartService {
   /**
    * Creates a new sprint.
-   * @param {Object} msg - The message that ran this function.
-   * @param {String} prefix - The bot's prefix.
-   * @param {String} suffix - Information after the bot command.
-   * @return {String} - The message to send to the user.
+   *
+   * @param message - The message that ran this function.
+   * @param prefix - The bot's prefix.
+   * @param suffix - Information after the bot command.
+   * @return The message to send to the user.
    */
-  async startSprint(msg, prefix, suffix) {
-    let returnMsg = ''
-    const flagData = await this.flagCheck(msg, suffix)
-    const words = flagData.args.shift()
-    const timeout = flagData.args.shift()
-    let start = flagData.args.shift()
-    if (start === undefined) {
-      start = 1
-    }
+  static async startSprint(message: Message, prefix: string, suffix: string): Promise<string> {
+    const exampleCommandUsage = `Example: \`${prefix}sprint 200 10 1\``
+
+    const flagData = await ChallengeStartService.flagCheck(message, suffix)
+
+    const wordsString = flagData.args.shift()
+    const words = wordsString ? parseInt(wordsString) : 1
+    const timeoutString = flagData.args.shift()
+    const timeout = timeoutString ? parseInt(timeoutString) : 1
+    const startString = flagData.args.shift()
+    const start = startString ? parseInt(startString) : 1
+
     let sprintName = flagData.args.join(' ')
     if (sprintName === '') {
-      sprintName = msg.author.username + '\'s sprint'
+      sprintName = message.author.username + '\'s sprint'
     }
-    if (msg.mentions.members.size > 0) {
-      returnMsg = '**Error:** Challenge names may not mention users.'
-    } else if (this.validateName(sprintName)) {
-      returnMsg = this.validateName(sprintName)
-    } else if (this.validateTime(timeout)) {
-      returnMsg = this.validateTime(timeout) +
-        ' Example: `' + prefix + 'sprint 200 10 1`.'
-    } else if (this.validateCountdown(start)) {
-      returnMsg = this.validateCountdown(start) +
-        ' Example: `' + prefix + 'sprint 200 10 1`.'
-    } else if (challenges.validateGoal(words)) {
-      returnMsg = challenges.validateGoal(words) +
-        ' Example: `' + prefix + 'sprint 200 10 1`.'
-    } else {
-      clist.running[this.timerID] = new Sprint(
-        this.timerID,
-        msg.author.id,
-        sprintName,
-        new Date().getTime(),
-        start,
-        words,
-        timeout,
-        msg.channel.id,
-        flagData.display,
-        [msg.channel.id],
-        {},
-      )
-      if (flagData.join) {
-        returnMsg +=
-          await clist.running[this.timerID].join(msg.author, msg.channel.id)
-      }
-      await this.incrementID()
+    if (message.mentions.members.size > 0) { return '**Error:** Challenge names may not mention users.' }
+
+    const nameValidationResult = ChallengeStartService.validateName(sprintName)
+    if (nameValidationResult) { return nameValidationResult }
+
+    const timeValidationResult = ChallengeStartService.validateTime(timeout)
+    if (timeValidationResult) { return `${timeValidationResult} ${exampleCommandUsage}.` }
+
+    const countdownValidationResult = ChallengeStartService.validateCountdown(start)
+    if (countdownValidationResult) { return `${countdownValidationResult} ${exampleCommandUsage}.` }
+
+    if (ChallengeService.validateGoal(words)) { return `${challenges.validateGoal(words)} ${exampleCommandUsage}.` }
+
+    const sprintID = ChallengeCache.nextIndex()
+    const sprint = new Sprint(
+      sprintID,
+      message.author.id,
+      sprintName,
+      new Date().getTime(),
+      start,
+      words,
+      timeout,
+      message.channel.id,
+      flagData.display,
+      [message.channel.id],
+      {},
+    )
+
+    ChallengeCache.add(sprint)
+
+    let returnMessage = ''
+    if (flagData.join) {
+      returnMessage += await sprint.join(message.author, message.channel.id)
     }
-    return returnMsg
+
+    return returnMessage
   }
 
   /**
    * Creates a new war.
-   * @param {Object} msg - The message that ran this function.
-   * @param {String} prefix - The bot's prefix.
-   * @param {String} suffix - Information after the bot command.
-   * @return {String} - The message to send to the user.
+   *
+   * @param message - The message that ran this function.
+   * @param prefix - The bot's prefix.
+   * @param suffix - Information after the bot command.
+   * @return The message to send to the user.
    */
-  async startWar(msg, prefix, suffix) {
-    let returnMsg = ''
-    const flagData = await this.flagCheck(msg, suffix)
-    const duration = flagData.args.shift()
-    let start = flagData.args.shift()
+  static async startWar(message: Message, prefix: string, suffix: string): Promise<string> {
+    const commandUsage = `Example: \`${prefix}war 10 1\``
+
+    const flagData = await ChallengeStartService.flagCheck(message, suffix)
+    const durationString = flagData.args.shift()
+    const duration = durationString ? parseInt(durationString) : 0
+    const startString = flagData.args.shift()
+    const start = startString ? parseInt(startString) : 1
     let warName = flagData.args.join(' ')
-    if (start === undefined) {
-      start = 1
-    }
     if (warName === '') {
-      warName = msg.author.username + '\'s war'
+      warName = `${message.author.username}'s war`
     }
-    if (msg.mentions.members.size > 0) {
-      returnMsg = '**Error:** Challenge names may not mention users.'
-    } else if (this.validateName(warName)) {
-      returnMsg = this.validateName(warName)
-    } else if (this.validateTime(duration)) {
-      returnMsg = this.validateTime(duration) +
-        ' Example: `' + prefix + 'war 10 1`.'
-    } else if (this.validateCountdown(start)) {
-      returnMsg = this.validateCountdown(start) +
-        ' Example: `' + prefix + 'war 10 1`.'
-    } else {
-      clist.running[this.timerID] = new War(
-        this.timerID,
-        msg.author.id,
-        warName,
-        new Date().getTime(),
-        start,
-        duration,
-        msg.channel.id,
-        flagData.display,
-        [msg.channel.id],
-        {},
-      )
-      if (flagData.join) {
-        returnMsg +=
-          await clist.running[this.timerID].join(msg.author, msg.channel.id)
-      }
-      await this.incrementID()
+
+    if (message.mentions.members.size > 0) {
+      return '**Error:** Challenge names may not mention users.'
     }
-    return returnMsg
+
+    const nameValidationResult = ChallengeStartService.validateName(warName)
+    if (nameValidationResult) { return nameValidationResult }
+
+    const timeValidationResult = ChallengeStartService.validateTime(duration)
+    if (timeValidationResult) { return `${timeValidationResult} ${commandUsage}` }
+
+    const countdownValidationResult = ChallengeStartService.validateCountdown(start)
+    if (countdownValidationResult) { return `${countdownValidationResult} ${commandUsage}` }
+
+    const warID = ChallengeCache.nextIndex()
+    const war = new War(
+      warID,
+      message.author.id,
+      warName,
+      new Date().getTime(),
+      start,
+      duration,
+      message.channel.id,
+      flagData.display,
+      [message.channel.id],
+      {},
+    )
+
+    ChallengeCache.add(war)
+
+    let returnMessage = ''
+    if (flagData.join) {
+      returnMessage += await war.join(message.author, message.channel.id)
+    }
+
+    return returnMessage
   }
 
   /**
    * Creates a new chain war.
-   * @param {Object} msg - The message that ran this function.
-   * @param {String} prefix - The bot's prefix.
-   * @param {String} suffix - Information after the bot command.
-   * @return {String} - The message to send to the user.
+   *
+   * @param message - The message that ran this function.
+   * @param prefix - The bot's prefix.
+   * @param suffix - Information after the bot command.
+   * @return The message to send to the user.
    */
-  async startChainWar(msg, prefix, suffix) {
-    let returnMsg = ''
-    const flagData = await this.flagCheck(msg, suffix)
-    const chainWarCount = flagData.args.shift()
-    const duration = flagData.args.shift()
-    let timeBetween = flagData.args.shift().split('|')
-    if (timeBetween === undefined) {
-      timeBetween = [1]
+  static async startChainWar(message: Message, prefix: string, suffix: string): Promise<string> {
+    const commandUsage = `Example: \`${prefix}chainwar 2 10 1\`.`
+
+    const flagData = await ChallengeStartService.flagCheck(message, suffix)
+
+    const chainWarCountString = flagData.args.shift()
+    const chainWarCount = chainWarCountString ? parseInt(chainWarCountString) : 0
+    const durationString = flagData.args.shift()
+    const duration = durationString ? parseInt(durationString) : 0
+
+    const timeBetweenStrings = flagData.args.shift()?.split('|') ?? ['1']
+    while (timeBetweenStrings.length < chainWarCount) {
+      timeBetweenStrings.push(timeBetweenStrings[timeBetweenStrings.length-1])
     }
-    while (timeBetween.length < chainWarCount) {
-      timeBetween.push(timeBetween[timeBetween.length-1])
-    }
+    const timeBetween = timeBetweenStrings.map((time) => parseInt(time))
+
     let warName = flagData.args.join(' ')
     if (warName === '') {
-      warName = msg.author.username + '\'s war'
+      warName = message.author.username + '\'s war'
     }
-    if (msg.mentions.members.size > 0) {
-      returnMsg = '**Error:** Challenge names may not mention users.'
-    } else if (this.validateName(warName)) {
-      returnMsg = this.validateName(warName)
-    } else if (this.validateTime(duration)) {
-      returnMsg = this.validateTime(duration) +
-        ' Example: `' + prefix + 'chainwar 2 10 1`.'
-    } else if (this.validateChainCount(timeBetween)) {
-      returnMsg = this.validateChainCount(timeBetween) +
-        ' Example: `' + prefix + 'chainwar 2 10 1`.'
-    } else if (this.validateChainLength(chainWarCount)) {
-      returnMsg = this.validateChainLength(chainWarCount) +
-        ' Example: `' + prefix + 'chainwar 2 10 1`.'
-    } else {
-      clist.running[this.timerID] = new ChainWar(
-        this.timerID,
-        msg.author.id,
-        warName,
-        new Date().getTime(),
-        1,
-        chainWarCount,
-        timeBetween,
-        duration,
-        msg.channel.id,
-        flagData.display,
-        [msg.channel.id],
-        {},
-        {},
-        {},
-      )
-      if (flagData.join) {
-        returnMsg +=
-          await clist.running[this.timerID].join(msg.author, msg.channel.id)
-      }
-      await this.incrementID()
+
+    if (message.mentions.members.size > 0) {
+      return '**Error:** Challenge names may not mention users.'
     }
-    return returnMsg
+
+    const nameValidationResult = ChallengeStartService.validateName(warName)
+    if (nameValidationResult) { return nameValidationResult }
+
+    const timeValidationResult = ChallengeStartService.validateTime(duration)
+    if (timeValidationResult) { return `${timeValidationResult} ${commandUsage}` }
+
+    const chainCountValidationResult = ChallengeStartService.validateChainCount(timeBetween)
+    if (chainCountValidationResult) { return `${chainCountValidationResult} ${commandUsage}` }
+
+    const chainLengthValidationResult = ChallengeStartService.validateChainLength(chainWarCount)
+    if (chainLengthValidationResult) { return `${chainLengthValidationResult} ${commandUsage}` }
+
+    const chainWarID = ChallengeCache.nextIndex()
+    const chainWar = new ChainWar(
+      chainWarID,
+      message.author.id,
+      warName,
+      new Date().getTime(),
+      1,
+      chainWarCount,
+      timeBetween,
+      duration,
+      message.channel.id,
+      flagData.display,
+      [message.channel.id],
+      {},
+      {},
+      {},
+    )
+
+    ChallengeCache.add(chainWar)
+
+    let returnMessage = ''
+    if (flagData.join) {
+      returnMessage += await chainWar.join(message.author, message.channel.id)
+    }
+
+    return returnMessage
   }
 
   /**
    * Validates a challenge name.
-   * @param {String} name - The name to validate.
-   * @return {String} - Message to send to user.
+   * @param name - The name to validate.
+   * @return Message to send to user.
    */
-  validateName(name) {
-    let returnMsg = false
-    if (profanity.check(name).length > 0) {
-      returnMsg = '**Error:** Challenge names may not contain profanity.'
-    } else if (this.regex.exec(name)) {
-      returnMsg = '**Error:** Challenge names may not contain emoji.'
+  static validateName(name: string): string | undefined {
+    if (Profanity.check(name).length > 0) {
+      return '**Error:** Challenge names may not contain profanity.'
+    } else if (emojiRegex.exec(name)) {
+      return '**Error:** Challenge names may not contain emoji.'
     } else if (name.length > 150) {
-      returnMsg = '**Error:** Challenge names must be 150 characters or less.'
+      return '**Error:** Challenge names must be 150 characters or less.'
     }
-    return returnMsg
   }
 
   /**
    * Validates a challenge duration.
-   * @param {String} duration - The duration to validate.
-   * @return {String} - Message to send to user.
+   *
+   * @param duration - The duration to validate.
+   * @return Message to send to user.
    */
-  validateTime(duration) {
-    let returnMsg = false
+  static validateTime(duration: number): string | undefined {
     if (isNaN(duration)) {
-      returnMsg = '**Error:** Challenge duration must be a number.'
+      return '**Error:** Challenge duration must be a number.'
     } else if (duration > 60) {
-      returnMsg = '**Error:** Challenges cannot last for more than an hour.'
+      return '**Error:** Challenges cannot last for more than an hour.'
     } else if (duration < 1) {
-      returnMsg = '**Error:** Challenges must run for at least a minute.'
+      return '**Error:** Challenges must run for at least a minute.'
     }
-    return returnMsg
   }
 
   /**
    * Validates splits between wars in a chain.
-   * @param {String} splits - An array of splits to validate.
-   * @return {String} - Message to send to user.
+   *
+   * @param splits - An array of splits to validate.
+   * @return Message to send to user.
    */
-  validateChainCount(splits) {
-    let returnMsg = false
-    for (const item in splits) {
-      if (this.validateCountdown(splits[item])) {
-        returnMsg = this.validateCountdown(splits[item])
-      }
-    }
-    return returnMsg
+  static validateChainCount(splits: Array<number>): string | undefined {
+    let returnMessage
+
+    splits.forEach((countdown) => {
+      const countdownValidationResult = ChallengeStartService.validateCountdown(countdown)
+      if (countdownValidationResult) { returnMessage = countdownValidationResult }
+    })
+
+    return returnMessage
   }
 
   /**
    * Validates the time before a challenge.
-   * @param {String} start - The countdown time to validate.
-   * @return {String} - Message to send to user.
+   *
+   * @param start - The countdown time to validate.
+   * @return Message to send to user.
    */
-  validateCountdown(start) {
-    let returnMsg = false
+  static validateCountdown(start: number): string | undefined {
     if (isNaN(start)) {
-      returnMsg = '**Error:** Time to start must be a number.'
+      return '**Error:** Time to start must be a number.'
     } else if (start > 30) {
-      returnMsg = '**Error:** Challenges must start within 30 minutes.'
+      return '**Error:** Challenges must start within 30 minutes.'
     } else if (start <= 0) {
-      returnMsg = '**Error:** Challenges cannot start in the past.'
+      return '**Error:** Challenges cannot start in the past.'
     }
-    return returnMsg
   }
 
   /**
    * Validates the number of wars in a chain.
-   * @param {String} length - The length to validate.
-   * @return {String} - Message to send to user.
+   *
+   * @param length - The length to validate.
+   * @return Message to send to user.
    */
-  validateChainLength(length) {
-    let returnMsg = false
+  static validateChainLength(length: number): string | undefined {
     if (isNaN(length)) {
-      returnMsg = '**Error:** War count must be a number.'
-    } else if (length < 2 || length > 10) {
-      returnMsg = '**Error:** Chains must be between two and ten wars long.'
+      return '**Error:** War count must be a number.'
     }
-    return returnMsg
-  }
 
-  /**
-   * Increment the challenge ID.
-   * @return {Promise} - Promise object.
-   */
-  async incrementID() {
-    await dbc.dbUpdate('timer', {data: this.timerID}, {data: this.timerID + 1})
-    this.timerID = this.timerID + 1
+    if (length < 2 || length > 10) {
+      return '**Error:** Chains must be between two and ten wars long.'
+    }
   }
 
   /**
    * Configure options for a challenge.
-   * @param {String} msg - The message that created the challenge.
-   * @param {Array} suffix - Options to configure.
-   * @return {Promise} - Promise object.
+   *
+   * @param message - The message that created the challenge.
+   * @param suffix - Options to configure.
+   * @return Promise object.
    */
-  async flagCheck(msg, suffix) {
+  static async flagCheck(message: Message, suffix: string): Promise<StartCommandFlags> {
     let joinFlag = false
     let crossServerHide = false
+
     const args = suffix.split(' ')
-    const user = await dbc.dbFind('userDB', {_id: msg.author.id})
-    const guild = await dbc.dbFind('configDB', {_id: msg.guild.id})
-    if (user !== null && user.xStatus === true ||
-      guild !== null && guild.xStatus === true) {
+    const user = await dbc.dbFind('userDB', {_id: message.author.id})
+    const guild = await dbc.dbFind('configDB', {_id: message.guild.id})
+
+    if (user !== null && user.xStatus === true || guild !== null && guild.xStatus === true) {
       crossServerHide = true
     }
+
     if (args[0] === 'join') {
       args.shift()
       joinFlag = true
     }
+
     if (args[0] === 'hide') {
       args.shift()
       crossServerHide = true
     }
-    return {join: joinFlag, display: crossServerHide, args: args}
+
+    return {
+      join: joinFlag,
+      display: crossServerHide,
+      args,
+    }
   }
 }
-
-module.exports = new ChallengeStart()
