@@ -1,7 +1,6 @@
 import ChainWar from '../models/chainwar'
 import ChallengeCache from '../challenge-cache'
 import ChallengeService from './challenge-service'
-// import clist from '../clist.js'
 // import dbc from '../../dbc.js'
 import Profanity from 'profanity-util'
 import Sprint from '../models/sprint'
