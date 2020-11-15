@@ -1,10 +1,10 @@
+import ChallengeCache from '../challenge-cache'
 import ChallengeStates from './challenge-states'
 import ChallengeTypes from './challenge-types'
 import War from './war'
 import { ChallengeUser, WarUser } from './challenge-user'
 import { Client, GuildChannel, Snowflake } from 'discord.js'
 
-// const clist = require('./clist.js')
 // const dbc = require('../dbc.js')
 
 declare const client: Client
@@ -133,7 +133,7 @@ export default class ChainWar extends War {
       break
     default:
       this.channel.send('**Error:** Invalid state reached.')
-      delete clist.running[this.objectID]
+      ChallengeCache.remove(this.objectID)
       break
     }
   }

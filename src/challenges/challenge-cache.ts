@@ -51,6 +51,15 @@ class ChallengeCache {
   }
 
   /**
+   * Removes the challenge with the given ID from the cache
+   *
+   * @param challengeID The id of the challenge to be removed
+   */
+  remove(challengeID: number): void {
+    this.running.delete(challengeID)
+  }
+
+  /**
    * Gets the challenge with a given id
    *
    * @param challengeID - the ID of the challenge to get.
@@ -61,13 +70,22 @@ class ChallengeCache {
   }
 
   /**
+   * Check if there is a currently running challenge with the given ID
+   *
+   * @param challengeID The challenge id
+   */
+  hasRunning(challengeID: number): boolean {
+    return this.running.has(challengeID)
+  }
+
+  /**
    * Check to see whether a challenge is hidden from a server.
    *
    * @param challengeID - The ID of the challenge to check.
    * @param guildID - The ID of the server to check against.
    * @return User data.
    */
-  hiddenCheck(challengeID: number, guildID: Snowflake): boolean {
+  isHidden(challengeID: number, guildID: Snowflake): boolean {
     const challenge = this.running.get(challengeID)
     if (!challenge) { return false }
 
@@ -85,7 +103,7 @@ class ChallengeCache {
     let listData = ''
 
     this.running.forEach((challenge, id) => {
-      const hidden = this.hiddenCheck(id, message.guild.id)
+      const hidden = this.isHidden(id, message.guild.id)
 
       if (hidden) {
         const guildName = challenge.channel.guild.name

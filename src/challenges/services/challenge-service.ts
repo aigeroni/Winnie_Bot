@@ -1,6 +1,8 @@
 import ChallengeCache from '../challenge-cache'
 import ChallengeStates from '../models/challenge-states'
 import ChallengeTypes from '../models/challenge-types'
+import Sprint from '../models/sprint'
+import War from '../models/war'
 import { Message } from 'discord.js'
 
 /**
@@ -21,6 +23,10 @@ export default class ChallengeService {
     if (errorMessage) { return errorMessage }
 
     const challenge = ChallengeCache.getRunning(challengeID)
+    if (!challenge) {
+      return `Unable to find challenge with ID: ${challengeID}`
+    }
+
     return await challenge.join(message.author, message.channel.id)
   }
 
@@ -38,6 +44,10 @@ export default class ChallengeService {
     if (errorMessage) { return errorMessage }
 
     const challenge = ChallengeCache.getRunning(challengeID)
+    if (!challenge) {
+      return `Unable to find challenge with ID: ${challengeID}`
+    }
+
     return await challenge.leave(message.author)
   }
 
@@ -49,15 +59,18 @@ export default class ChallengeService {
    * @param suffix - Information after the bot command.
    * @return Channels to send message to, and message to send.
    */
-  async stopChallenge(message: Message, prefix: string, suffix: string): Promise<string> {
+  async stopChallenge(message: Message, prefix: string, suffix: string): Promise<string | void> {
     const challengeID = suffix
     const errorMessage = ChallengeService.checkIDError(challengeID, message, 'cancel', prefix)
     if (errorMessage) { return errorMessage }
 
     const challenge = ChallengeCache.getRunning(challengeID)
+    if (!challenge) {
+      return `Unable to find challenge with ID: ${challengeID}`
+    }
 
     if (challenge.creator === message.author.id) {
-      return await challenge.cancel(message.author)
+      return await challenge.cancel()
     }
 
     const returnMessage = `**Error:** Only the creator of ${challenge} can end this challenge.`
@@ -87,8 +100,9 @@ export default class ChallengeService {
 
     let returnMessage = ''
     const challenge = ChallengeCache.getRunning(challengeID)
-
-    if (challenge.type !== ChallengeTypes.SPRINT) {
+    if (!challenge) {
+      returnMessage = `Unable to find challenge with ID: ${challengeID}`
+    } else if (challenge.type !== ChallengeTypes.SPRINT) {
       returnMessage = '**Error:** You can only call time on a sprint.'
     } else if (challenge.state === ChallengeStates.SCHEDULED) {
       returnMessage = '**Error:** This challenge has not started yet!'
@@ -96,7 +110,8 @@ export default class ChallengeService {
       raptorCheck = true
       const doneStamp = new Date().getTime()
       const timeTaken = (doneStamp - clist.running[suffix].startStamp) / 60000
-      challenge.submitUserData(message.author.id, message.channel.id, doneStamp, timeTaken)
+      const sprint = challenge as Sprint
+      sprint.submitUserData(message.author.id, message.channel.id, doneStamp, timeTaken)
       returnMessage = `${message.author}, you completed the sprint in ${timeTaken.toFixed(2)} minutes.`
     }
 
@@ -140,7 +155,10 @@ export default class ChallengeService {
 
     const challenge = ChallengeCache.getRunning(challengeID)
     const validationMessage = ChallengeService.validateGoal(wordsWritten)
-    if (validationMessage) {
+
+    if (!challenge) {
+      returnMessage = `Unable to find challenge with ID: ${challengeID}`
+    } else if (validationMessage) {
       returnMessage = validationMessage
     } else if (challenge.type !== ChallengeTypes.SPRINT) {
       returnMessage = '**Error:** You cannot post a total for sprints.'
@@ -148,7 +166,8 @@ export default class ChallengeService {
       returnMessage = '**Error:** This challenge has not ended yet!'
     } else {
       raptorCheck = true
-      challenge.submitUserData(message.author.id, message.channel.id, wordsWritten, writtenType)
+      const war = challenge as War
+      war.submitUserData(message.author.id, message.channel.id, wordsWritten, writtenType)
       returnMessage = `${message.author}, your total of **${wordsWritten}** ${writtenType} has been added to the summary.`
     }
 

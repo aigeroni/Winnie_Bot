@@ -1,8 +1,8 @@
+import ChallengeCache from '../challenge-cache'
 import ChallengeStates from './challenge-states'
 import ChallengeTypes from './challenge-types'
 import { ChallengeUser } from './challenge-user'
 import { Client, Snowflake, TextChannel, User } from 'discord.js'
-import challengeCache from '../challenge-cache'
 
 // const config = require('../../config.json')
 // const dbc = require('../dbc.js')
@@ -258,7 +258,7 @@ export default abstract class Challenge {
     if (this.cPost > 0) { return }
 
     await dbc.dbRemove('challengeDB', { _id: this.objectID })
-    challengeCache.remove(this.objectID)
+    ChallengeCache.remove(this.objectID)
 
     this.hookedChannels.forEach((channelID) => {
       const stats = this.stats(channelID)
@@ -271,7 +271,7 @@ export default abstract class Challenge {
    */
   async cancel(): Promise<void> {
     await dbc.dbRemove('challengeDB', {_id: this.objectID})
-    challengeCache.remove(this.objectID)
+    ChallengeCache.remove(this.objectID)
 
     const message = `${this.displayName} (ID ${this.objectID}) has been cancelled.`
     this.hookedChannels.forEach((channelID) => {
@@ -375,27 +375,6 @@ export default abstract class Challenge {
       }
     }
     return userList
-  }
-
-  /**
-   * Builds user data for the challenge database.
-   *
-   * @param userID - The id of the user to build for.
-   * @param channelID - The is of the channel from which the user joined.
-   * @return Promise object.
-   */
-  async submitUserData(userID: Snowflake, channelID: Snowflake): Promise<void> {
-    this.joined[userID] = this.buildUserData(channelID)
-    if (this.hookedChannels.indexOf(channelID) < 0) {
-      this.hookedChannels.push(channelID)
-    }
-    const dbData = {
-      $set: {
-        hookedChannels: this.hookedChannels,
-        joined: this.joined,
-      },
-    }
-    await dbc.dbUpdate('challengeDB', {_id: this.objectID}, dbData)
   }
 
   /**

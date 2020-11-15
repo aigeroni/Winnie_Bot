@@ -72,6 +72,20 @@ export default class War extends Challenge {
     dbc.dbInsert('challengeDB', array)
   }
 
+  async submitUserData(userID: Snowflake, channelID: Snowflake, total: number, type: string): Promise<void> {
+    this.joined[userID] = this.buildUserData(channelID, total, type)
+    if (this.hookedChannels.indexOf(channelID) < 0) {
+      this.hookedChannels.push(channelID)
+    }
+    const dbData = {
+      $set: {
+        hookedChannels: this.hookedChannels,
+        joined: this.joined,
+      },
+    }
+    await dbc.dbUpdate('challengeDB', {_id: this.objectID}, dbData)
+  }
+
   /**
    * Builds user data for the challenge database.
    *
