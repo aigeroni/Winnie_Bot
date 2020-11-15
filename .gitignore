@@ -2,8 +2,6 @@ config.json
 data
 package-lock.json
 
-
-
 # Logs
 logs
 !logs/*.md

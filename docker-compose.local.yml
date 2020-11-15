@@ -1,0 +1,17 @@
+version: "3.8"
+services:
+  app:
+    container_name: app
+    restart: always
+    image: ${winniebot_image}$
+    depends_on:
+      - postgres
+    env_file: .env
+  postgres:
+    container_name: postgres
+    image: postgres
+    volumes:
+      - ./data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    env_file: .env

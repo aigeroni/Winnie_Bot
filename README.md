@@ -1,7 +1,22 @@
-
 # Winnie_Bot
 
 Winnie is a Discord bot for authors.  Winnie allows users to track goals, challenge each other to word wars and sprints, and get prompts to assist with their writing.
+
+## Table of Contents
+
+* [Adding Winnie to your Discord server](#adding-winnie-to-your-discord-server)
+  * [Inviting the public Winnie_Bot account](#inviting-the-public-winnie-bot-account)
+  * [Setting up your own instance of Winnie](#setting-up-your-own-instance-of-winnie)
+    * [Requirements](#requirements)
+    * [Setting up a Discord bot instance](#setting-up-a-discord-bot-instance)
+    * [Inviting your instance of Winnie to your server](#inviting-your-instance-of-winnie-to-your-server)
+* [Dependencies and frameworks](#Dependencies-and-frameworks)
+* [Bug reports](#bug-reports)
+* [Contributing to Winnie](#contributing-to-winnie)
+* [Authors](#authors)
+* [License](#license)
+* [Acknowledgments](#acknowledgments)
+* [Data Deletion](#data-deletion)
 
 ## Adding Winnie to your Discord server
 
@@ -15,13 +30,14 @@ If you want to invite the public Winnie_Bot account to your server, go [here](ht
 
 #### Requirements
 
-* Node.js
-* npm (Node Package Manager)
+* [Node.js](https://nodejs.org/en/)
+* [Yarn Package Manager](https://yarnpkg.com/)
+* [Docker](https://www.docker.com/)
 
 #### Setting up a Discord bot instance
 
 * Sign in to Discord
-* Go to https://discordapp.com/developers/, and click on 'My Apps'
+* Go to the [Discord Dev Portal](https://discordapp.com/developers/), and click on 'My Apps'
 * Click on 'New App' to create a Discord application
 * Go to the Bot tab, and click the Add Bot button to create a bot user
 * Copy the token under Bot/Token - you will need this in the next step
@@ -29,9 +45,8 @@ If you want to invite the public Winnie_Bot account to your server, go [here](ht
 #### Installation Instructions
 
 * Clone the Winnie_Bot repository onto your server.
-* Run `npm install` to get package dependencies.
-* Edit the `config.json` file in Winnie's root directory as follows: {"token": "your bot's token from the previous step", "storageUrl": "location of your MongoDB"}
-* Initialise MongoDB.
+* Run `docker build .` to get package dependencies.
+* Set an environment variable with your bot token.
 * Run `bash tz-script.sh` to download the IANA timezone data.
 * Run `node index.js` to initialise Winnie.
 
@@ -70,10 +85,10 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Acknowledgments
 
-* Winnie is inspired by Timmy, ChatNaNo's IRC bot.  Timmy can be found at https://github.com/utoxin/TimTheWordWarBot.
+* Winnie is inspired by Timmy, ChatNaNo's IRC bot.  Timmy can be found at [utoxin/TimTheWordWarBot](https://github.com/utoxin/TimTheWordWarBot).
 * Prompts were brainstormed by NaNo's Australia::Melbourne region.
 
-Winnie's repository is located at https://github.com/lisushka/Winnie_Bot.
+Winnie's repository is located at [aigeroni/Winnie_Bot](https://github.com/aigeroni/Winnie_Bot).
 Winnie's avatar, 'Tiny Cities', was created by [Rachael Wheeler](http://www.rachaelw.com.au/).  Prints, notebooks, and other items featuring 'Tiny Cities' are available for purchase [here](https://www.redbubble.com/people/scorpiraw/works/33012468-tiny-cities).
 
 ## Data Deletion

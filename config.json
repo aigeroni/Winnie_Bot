@@ -1,5 +1,0 @@
-{
-  "token": "${token}$",
-  "storage_url": "${dbloc}$",
-  "cmd_prefix": {"default": "!"}
-}
