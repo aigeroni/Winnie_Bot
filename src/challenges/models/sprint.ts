@@ -126,6 +126,27 @@ export default class Sprint extends Challenge {
   /**
    * Builds user data for the challenge database.
    *
+   * @param userID - The id of the user to build for.
+   * @param channelID - The is of the channel from which the user joined.
+   * @return Promise object.
+   */
+  async submitUserData(userID: Snowflake, channelID: Snowflake, timestamp: number, minutes: number): Promise<void> {
+    this.joined[userID] = this.buildUserData(channelID, timestamp, minutes)
+    if (this.hookedChannels.indexOf(channelID) < 0) {
+      this.hookedChannels.push(channelID)
+    }
+    const dbData = {
+      $set: {
+        hookedChannels: this.hookedChannels,
+        joined: this.joined,
+      },
+    }
+    await dbc.dbUpdate('challengeDB', {_id: this.objectID}, dbData)
+  }
+
+  /**
+   * Builds user data for the challenge database.
+   *
    * @param channel - The channel from which the user joined.
    * @param timestamp - The time at which the user finished the sprint.
    * @param minutes - The time taken to complete the sprint.

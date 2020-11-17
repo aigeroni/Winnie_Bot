@@ -1,193 +1,234 @@
-const clist = require('../clist.js')
+import ChallengeCache from '../challenge-cache'
+import ChallengeStates from '../models/challenge-states'
+import ChallengeTypes from '../models/challenge-types'
+import Sprint from '../models/sprint'
+import War from '../models/war'
+import { Message } from 'discord.js'
 
-/** Class containing functions for challenge management. */
-class Challenges {
-  /** Initialise variables required for challenge management. */
-  constructor() {
-  }
-
+/**
+ * Class containing functions for challenge management.
+ */
+export default class ChallengeService {
   /**
    * Add a user to the list of joined users for a challenge.
-   * @param {Object} msg - The message that ran this function.
-   * @param {String} prefix - The bot's prefix.
-   * @param {String} suffix - Information after the bot command.
-   * @return {String} - The message to send to the user.
+   *
+   * @param message - The message that ran this function.
+   * @param prefix - The bot's prefix.
+   * @param suffix - Information after the bot command.
+   * @return The message to send to the user.
    */
-  async joinChallenge(msg, prefix, suffix) {
-    let returnMsg = ''
-    const chalID = suffix
-    const returnInfo = this.checkIDError(chalID, msg, 'join', prefix)
-    if (returnInfo) {
-      returnMsg = returnInfo
-    } else {
-      returnMsg = await clist.running[chalID].join(msg.author, msg.channel.id)
+  static async joinChallenge(message: Message, prefix: string, suffix: string): Promise<string> {
+    const challengeID = suffix
+    const errorMessage = ChallengeService.checkIDError(challengeID, message, 'join', prefix)
+    if (errorMessage) { return errorMessage }
+
+    const challenge = ChallengeCache.getRunning(challengeID)
+    if (!challenge) {
+      return `Unable to find challenge with ID: ${challengeID}`
     }
-    return returnMsg
+
+    return await challenge.join(message.author, message.channel.id)
   }
 
   /**
    * Remove a user from the list of joined users for a challenge.
-   * @param {Object} msg - The message that ran this function.
-   * @param {String} prefix - The bot's prefix.
-   * @param {String} suffix - Information after the bot command.
-   * @return {String} - The message to send to the user.
+   *
+   * @param message - The message that ran this function.
+   * @param prefix - The bot's prefix.
+   * @param suffix - Information after the bot command.
+   * @return The message to send to the user.
    */
-  async leaveChallenge(msg, prefix, suffix) {
-    let returnMsg = ''
-    const chalID = suffix
-    const returnInfo = this.checkIDError(chalID, msg, 'leave', prefix)
-    if (returnInfo) {
-      returnMsg = returnInfo
-    } else {
-      returnMsg = await clist.running[chalID].leave(msg.author)
+  async leaveChallenge(message: Message, prefix: string, suffix: string): Promise<string> {
+    const challengeID = suffix
+    const errorMessage = ChallengeService.checkIDError(challengeID, message, 'leave', prefix)
+    if (errorMessage) { return errorMessage }
+
+    const challenge = ChallengeCache.getRunning(challengeID)
+    if (!challenge) {
+      return `Unable to find challenge with ID: ${challengeID}`
     }
-    return returnMsg
+
+    return await challenge.leave(message.author)
   }
 
   /**
    * Terminates a challenge early.
-   * @param {Object} msg - The message that ran this function.
-   * @param {String} prefix - The bot's prefix.
-   * @param {String} suffix - Information after the bot command.
-   * @return {Object} - Channels to send message to, and message to send.
+   *
+   * @param message - The message that ran this function.
+   * @param prefix - The bot's prefix.
+   * @param suffix - Information after the bot command.
+   * @return Channels to send message to, and message to send.
    */
-  async stopChallenge(msg, prefix, suffix) {
-    let returnMsg = ''
-    const chalID = suffix
-    const returnInfo = this.checkIDError(chalID, msg, 'cancel', prefix)
-    if (returnInfo) {
-      returnMsg = returnInfo
-    } else if (clist.running[chalID].creator == msg.author.id) {
-      returnMsg = await clist.running[chalID].cancel(msg.author)
-    } else {
-      returnMsg = '**Error:** Only the creator of ' +
-        clist.running[chalID] +
-        ' can end this challenge.'
-      msg.channel.send(returnMsg)
+  async stopChallenge(message: Message, prefix: string, suffix: string): Promise<string | void> {
+    const challengeID = suffix
+    const errorMessage = ChallengeService.checkIDError(challengeID, message, 'cancel', prefix)
+    if (errorMessage) { return errorMessage }
+
+    const challenge = ChallengeCache.getRunning(challengeID)
+    if (!challenge) {
+      return `Unable to find challenge with ID: ${challengeID}`
     }
-    return returnMsg
+
+    if (challenge.creator === message.author.id) {
+      return await challenge.cancel()
+    }
+
+    const returnMessage = `**Error:** Only the creator of ${challenge} can end this challenge.`
+    message.channel.send(returnMessage)
+    return returnMessage
   }
 
   /**
    * Calls time for a sprint.
-   * @param {Object} msg - The message that ran this function.
-   * @param {String} prefix - The bot's prefix.
-   * @param {String} suffix - Information after the bot command.
-   * @return {Object} - Message to send to user, raptor determination value.
+   *
+   * @param message - The message that ran this function.
+   * @param prefix - The bot's prefix.
+   * @param suffix - Information after the bot command.
+   * @return Message to send to user, raptor determination value.
    */
-  async callTime(msg, prefix, suffix) {
-    let returnMsg = ''
+  async callTime(message: Message, prefix: string, suffix: string): Promise<Record<string, string | boolean>> {
+    const challengeID = suffix
     let raptorCheck = false
-    const returnInfo = this.checkIDError(suffix, msg, 'time', prefix)
-    if (returnInfo) {
-      returnMsg = returnInfo
-    } else if (!(clist.running[suffix].type == 'sprint')) {
-      returnMsg = '**Error:** You can only call time on a sprint.'
-    } else if (clist.running[suffix].state == 0) {
-      returnMsg = '**Error:** This challenge has not started yet!'
+
+    const errorMessage = ChallengeService.checkIDError(suffix, message, 'time', prefix)
+    if (errorMessage) {
+      return {
+        returnMessage: errorMessage,
+        raptorCheck,
+      }
+    }
+
+    let returnMessage = ''
+    const challenge = ChallengeCache.getRunning(challengeID)
+    if (!challenge) {
+      returnMessage = `Unable to find challenge with ID: ${challengeID}`
+    } else if (challenge.type !== ChallengeTypes.SPRINT) {
+      returnMessage = '**Error:** You can only call time on a sprint.'
+    } else if (challenge.state === ChallengeStates.SCHEDULED) {
+      returnMessage = '**Error:** This challenge has not started yet!'
     } else {
       raptorCheck = true
       const doneStamp = new Date().getTime()
       const timeTaken = (doneStamp - clist.running[suffix].startStamp) / 60000
-      clist.running[suffix]
-        .submitUserData(msg.author.id, msg.channel.id, doneStamp, timeTaken)
-      returnMsg = msg.author + ', you completed the sprint in ' +
-        timeTaken.toFixed(2) + ' minutes.'
+      const sprint = challenge as Sprint
+      sprint.submitUserData(message.author.id, message.channel.id, doneStamp, timeTaken)
+      returnMessage = `${message.author}, you completed the sprint in ${timeTaken.toFixed(2)} minutes.`
     }
-    return {returnMsg: returnMsg, raptorCheck: raptorCheck}
+
+    return {
+      returnMessage,
+      raptorCheck,
+    }
   }
 
   /**
    * Adds a total to a challenge.
-   * @param {Object} msg - The message that ran this function.
-   * @param {String} prefix - The bot's prefix.
-   * @param {String} suffix - Information after the bot command.
-   * @return {Object} - Message to send to user, raptor determination value.
+   *
+   * @param message - The message that ran this function.
+   * @param prefix - The bot's prefix.
+   * @param suffix - Information after the bot command.
+   * @return Message to send to user, raptor determination value.
    */
-  async addTotal(msg, prefix, suffix) {
-    let returnMsg = ''
+  async addTotal(message: Message, prefix: string, suffix: string): Promise<Record<string, string | boolean>> {
+    let returnMessage = ''
     const args = suffix.split(' ')
-    const chalID = args.shift()
-    const wordsWritten = args.shift()
+    const challengeID = args.shift() ?? ''
+    const wordsWrittenString = args.shift()
+    const wordsWritten = wordsWrittenString ? parseInt(wordsWrittenString) : null
     const writtenType = this.typeAssign(args.shift())
     let raptorCheck = false
-    const returnInfo = this.checkIDError(chalID, msg, 'total', prefix)
+
     if (!writtenType) {
-      returnMsg = '**Error:** You must work in words, lines, or pages.'
-    } else if (returnInfo) {
-      returnMsg = returnInfo
-    } else if (this.validateGoal(wordsWritten)) {
-      returnMsg = this.validateGoal(wordsWritten)
-    } else if (clist.running[chalID].type == 'sprint') {
-      returnMsg = '**Error:** You cannot post a total for sprints.'
-    } else if (clist.running[chalID].state < 2) {
-      returnMsg = '**Error:** This challenge has not ended yet!'
+      return {
+        returnMessage: '**Error:** You must work in words, lines, or pages.',
+        raptorCheck,
+      }
+    }
+
+    const errorMessage = ChallengeService.checkIDError(challengeID, message, 'total', prefix)
+    if (errorMessage) {
+      return {
+        returnMessage: errorMessage,
+        raptorCheck,
+      }
+    }
+
+    const challenge = ChallengeCache.getRunning(challengeID)
+    const validationMessage = ChallengeService.validateGoal(wordsWritten)
+
+    if (!challenge) {
+      returnMessage = `Unable to find challenge with ID: ${challengeID}`
+    } else if (validationMessage) {
+      returnMessage = validationMessage
+    } else if (challenge.type !== ChallengeTypes.SPRINT) {
+      returnMessage = '**Error:** You cannot post a total for sprints.'
+    } else if (challenge.state < ChallengeStates.ENDED) {
+      returnMessage = '**Error:** This challenge has not ended yet!'
     } else {
       raptorCheck = true
-      clist.running[chalID].submitUserData(msg.author.id,
-        msg.channel.id, wordsWritten, writtenType)
-      returnMsg = msg.author + ', your total of **' + wordsWritten +
-        '** ' + writtenType + ' has been added to the summary.'
+      const war = challenge as War
+      war.submitUserData(message.author.id, message.channel.id, wordsWritten, writtenType)
+      returnMessage = `${message.author}, your total of **${wordsWritten}** ${writtenType} has been added to the summary.`
     }
-    return {returnMsg: returnMsg, raptorCheck: raptorCheck}
+
+    return {
+      returnMessage,
+      raptorCheck,
+    }
   }
 
   /**
    * Checks for a valid challenge ID.
-   * @param {String} chalID - The ID to test for validity.
-   * @param {Object} msg - The message that resulted in the check.
-   * @param {String} command - The command that resulted in this error.
-   * @param {String} prefix - The bot's prefix.
-   * @return {String} - Error message.
+   *
+   * @param challengeID - The ID to test for validity.
+   * @param message - The message that resulted in the check.
+   * @param command - The command that resulted in this error.
+   * @param prefix - The bot's prefix.
+   * @return Error message.
    */
-  checkIDError(chalID, msg, command, prefix) {
-    let returnData = ''
-    if (isNaN(chalID) || chalID < 1) {
-      returnData = '**Error:** Challenge ID must be an integer. Example: `' +
-        prefix + command + ' 10793`.'
-    } else if (!(chalID in clist.running)) {
-      returnData = '**Error:** Challenge ' + chalID + ' does not exist!'
-    } else if (clist.hiddenCheck(chalID, msg.guild.id)) {
-      returnData = msg.author + ', you do not have permission to ' +
-        command + ' this challenge.'
-    } else {
-      returnData = false
+  static checkIDError(challengeID: string, message: Message, command: string, prefix: string): string | undefined {
+    const id = parseInt(challengeID)
+
+    if (isNaN(id) || id < 1) {
+      return `**Error:** Challenge ID must be an integer. Example: \`${prefix}${command} 10793\`.`
     }
-    return returnData
+
+    if (!ChallengeCache.hasRunning(id)) {
+      return `**Error:** Challenge ${challengeID} does not exist!`
+    }
+
+    if (ChallengeCache.isHidden(id, message.guild.id)) {
+      return `${message.author}, you do not have permission to ${command} this challenge.`
+    }
   }
 
   /**
    * Validate and assign a total type.
-   * @param {String} type - The type of the challenge.
-   * @return {String} - User data.
+   *
+   * @param type - The type of the challenge.
+   * @return User data.
    */
-  typeAssign(type) {
-    if (type === undefined) {
-      type = 'words'
-    }
-    if (type.charAt(type.length-1) !== 's') {
-      type += 's'
-    }
+  typeAssign(type: string | undefined): string | undefined {
+    if (type === undefined) { return 'words' }
+    if (type.charAt(type.length-1) !== 's') { type += 's' }
+
     if (!['words', 'lines', 'pages', 'minutes'].includes(type)) {
-      type = false
+      return
     }
+
     return type
   }
 
   /**
    * Validates the word goal for a sprint.
-   * @param {String} words - The goal to validate.
-   * @return {String} - Message to send to user.
+   *
+   * @param words - The goal to validate.
+   * @return Message to send to user.
    */
-  validateGoal(words) {
-    let returnMsg = false
-    if (!Number.isInteger(Number(words))) {
-      returnMsg = '**Error:** Word count must be a whole number.'
-    } else if (words < 1) {
-      returnMsg = '**Error:** Word count cannot be negative.'
-    }
-    return returnMsg
+  static validateGoal(words: number | null): string | undefined {
+    if (!words) { return '**Error:** Word count must be a whole number.' }
+    if (!Number.isInteger(words)) { return '**Error:** Word count must be a whole number.' }
+
+    if (words < 1) { return '**Error:** Word count cannot be negative.' }
   }
 }
-
-module.exports = new Challenges()

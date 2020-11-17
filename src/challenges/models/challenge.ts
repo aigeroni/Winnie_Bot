@@ -1,13 +1,19 @@
+import ChallengeCache from '../challenge-cache'
 import ChallengeStates from './challenge-states'
 import ChallengeTypes from './challenge-types'
 import { ChallengeUser } from './challenge-user'
 import { Client, Snowflake, TextChannel, User } from 'discord.js'
 
-// const clist = require('./clist.js')
 // const config = require('../../config.json')
 // const dbc = require('../dbc.js')
 
 declare let client: Client
+
+/**
+ * the default amount of time to wait between the end of a challenge
+ * and then the challenge's summary is poated
+ */
+const DEFAULT_POST_TIMEOUT = 300
 
 /**
  * Represents a challenge.
@@ -17,7 +23,7 @@ export default abstract class Challenge {
   /**
    * The duration of the challenge, in seconds
    */
-  protected cDur: number
+  cDur: number
 
   /**
    * The start channel
@@ -32,7 +38,7 @@ export default abstract class Challenge {
   /**
    * Time, in seconds, between when the challenge ends and when the summary message is posted
    */
-  protected cPost: number
+  cPost: number
 
   /**
    * The Snowflake (Discord ID) of the challenge creator
@@ -42,7 +48,7 @@ export default abstract class Challenge {
   /**
    * Time, is seconds, between challenge creation and challenge start
    */
-  protected cStart: number
+  cStart: number
 
   /**
    * The UNIX timestamp at which this challenge deleted
@@ -100,7 +106,7 @@ export default abstract class Challenge {
   /**
    * The current start of the challenge
    */
-  protected state: ChallengeStates
+  state: ChallengeStates
 
   /**
    * The type of challenge
@@ -150,7 +156,7 @@ export default abstract class Challenge {
 
     this.cStart = this.countdown * 60
     this.cDur = this.duration * 60
-    this.cPost = clist.DUR_AFTER
+    this.cPost = DEFAULT_POST_TIMEOUT
 
     this.startStamp = this.initStamp + this.cStart * 1000
     this.endStamp = this.startStamp + this.cDur * 1000
@@ -252,7 +258,7 @@ export default abstract class Challenge {
     if (this.cPost > 0) { return }
 
     await dbc.dbRemove('challengeDB', { _id: this.objectID })
-    clist.running.splice(clist.running.indexOf(this.objectID), 1)
+    ChallengeCache.remove(this.objectID)
 
     this.hookedChannels.forEach((channelID) => {
       const stats = this.stats(channelID)
@@ -265,7 +271,7 @@ export default abstract class Challenge {
    */
   async cancel(): Promise<void> {
     await dbc.dbRemove('challengeDB', {_id: this.objectID})
-    clist.running.splice(clist.running.indexOf(this.objectID), 1)
+    ChallengeCache.remove(this.objectID)
 
     const message = `${this.displayName} (ID ${this.objectID}) has been cancelled.`
     this.hookedChannels.forEach((channelID) => {
@@ -369,27 +375,6 @@ export default abstract class Challenge {
       }
     }
     return userList
-  }
-
-  /**
-   * Builds user data for the challenge database.
-   *
-   * @param userID - The id of the user to build for.
-   * @param channelID - The is of the channel from which the user joined.
-   * @return Promise object.
-   */
-  async submitUserData(userID: Snowflake, channelID: Snowflake): Promise<void> {
-    this.joined[userID] = this.buildUserData(channelID)
-    if (this.hookedChannels.indexOf(channelID) < 0) {
-      this.hookedChannels.push(channelID)
-    }
-    const dbData = {
-      $set: {
-        hookedChannels: this.hookedChannels,
-        joined: this.joined,
-      },
-    }
-    await dbc.dbUpdate('challengeDB', {_id: this.objectID}, dbData)
   }
 
   /**
