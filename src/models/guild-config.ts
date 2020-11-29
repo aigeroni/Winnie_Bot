@@ -58,6 +58,14 @@ export class GuildConfig extends BaseEntity {
   })
   auto_summaries = true
 
+  @Column({
+    type: 'varchar',
+    default: 'en',
+    nullable: false,
+    length: 2,
+  })
+  locale = 'en'
+
   constructor(id: Snowflake) {
     super()
 

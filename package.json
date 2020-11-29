@@ -5,6 +5,8 @@
   "main": "dist/index.js",
   "dependencies": {
     "discord.js": "^12.4.0",
+    "i18next": "^19.8.4",
+    "i18next-fs-backend": "^1.0.7",
     "pg": "^8.4.0",
     "reflect-metadata": "^0.1.13",
     "typeorm": "^0.2.29",
@@ -12,6 +14,7 @@
   },
   "devDependencies": {
     "@tsconfig/node14": "^1.0.0",
+    "@types/i18next-fs-backend": "^1.0.0",
     "@types/node": "^14.11.10",
     "@typescript-eslint/eslint-plugin": "^4.5.0",
     "@typescript-eslint/parser": "^4.5.0",
