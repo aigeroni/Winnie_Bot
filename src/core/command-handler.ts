@@ -61,7 +61,7 @@ async function execute(command: Command, message: Message, args: Array<string>, 
  *
  * @param message - The message that was sent and may contain a command.
  */
-export default async function handleCommand(message: Message): Promise<void> {
+export async function handleCommand(message: Message): Promise<void> {
   const guildConfig = await GuildConfig.findOne(message.guild?.id)
   if (!guildConfig) { return }
 
