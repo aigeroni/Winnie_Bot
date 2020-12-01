@@ -54,4 +54,7 @@ async function startWinnie(): Promise<void> {
   Logger.info('Successfully logged in to Discord.')
 }
 
-startWinnie()
+startWinnie().catch((error) => {
+  Logger.error(`Unable to start Winnie.\n${error}`)
+  process.exit()
+})
