@@ -1,7 +1,7 @@
 import Winston from 'winston'
 
-const logPath = __dirname + '/logs/debug.log'
-const exceptionPath = __dirname + '/logs/exception.log'
+const logPath = __dirname + '../../../logs/debug.log'
+const exceptionPath = __dirname + '../../../logs/exception.log'
 
 const fileTransportOptions = (filename: string): Winston.transports.FileTransportOptions => ({
   filename,
