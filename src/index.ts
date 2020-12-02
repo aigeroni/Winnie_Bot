@@ -1,11 +1,8 @@
 import * as CommandHandler from './core/command-handler'
 import I18n from './core/i18n'
 import Logger from './core/logger'
+import events from './events'
 import { Client, ClientOptions } from 'discord.js'
-import { Event } from './core/types'
-
-//TODO: Remove once real events exist.
-declare const events: Array<Event>
 
 /**
  * Registers all the event listeners used by Winnie.
