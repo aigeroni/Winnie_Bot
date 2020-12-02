@@ -10,13 +10,14 @@ export default class I18n {
    */
   static async init(): Promise<void> {
     await i18next.use(Backend).init({
+      backend: { loadPath: './locales/{{lng}}/{{ns}}.json' },
+      debug: process.env.NODE_ENV !== 'production',
+      defaultNS: 'winnie',
+      fallbackLng: ['en'],
       lng: 'en',
+      ns: ['commands', 'winnie'],
       preload: ['en'],
       supportedLngs: ['en', 'fr', 'hu', 'nl', 'sv'],
-      debug: process.env.NODE_ENV !== 'production',
-      backend: {
-        loadPath: '/locales/{{lng}}/{{ns}}.json',
-      },
     })
   }
 

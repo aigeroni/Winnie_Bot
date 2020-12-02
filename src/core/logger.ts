@@ -13,12 +13,11 @@ const fileTransportOptions = (filename: string): Winston.transports.FileTranspor
 
 const logger = Winston.createLogger({
   format: Winston.format.combine(
-    Winston.format.timestamp({
-      format: 'YYYY-MM-DD HH:mm:ss',
-    }),
+    Winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
     Winston.format.errors({ stack: true }),
     Winston.format.splat(),
-    Winston.format.json()
+    Winston.format.json(),
+    Winston.format.printf((info) => `${info.timestamp} ${info.level}: ${info.message}`),
   ),
   transports: [
     new Winston.transports.File(fileTransportOptions(logPath)),
@@ -31,12 +30,7 @@ const logger = Winston.createLogger({
 })
 
 if (process.env.NODE_ENV !== 'production') {
-  logger.add(new Winston.transports.Console({
-    format: Winston.format.combine(
-      Winston.format.colorize(),
-      Winston.format.simple()
-    ),
-  }))
+  logger.add(new Winston.transports.Console({ format: Winston.format.colorize()}))
 }
 
 export default logger
