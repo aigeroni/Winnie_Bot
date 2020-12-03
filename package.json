@@ -27,12 +27,13 @@
   },
   "scripts": {
     "build": "tsc",
-    "typeorm": "tsc && node -r dotenv/config ./node_modules/typeorm/cli.js",
+    "docker:local:down": "docker-compose -f docker/docker-compose.local.yml down",
+    "docker:local:up": "docker-compose -f docker/docker-compose.local.yml up",
     "lint:all": "eslint src --ext .ts",
     "lint:fix": "eslint src --ext .ts --fix",
-    "lint": "eslint",
     "start": "tsc && node -r dotenv/config .",
-    "test": "tsc && jest"
+    "test": "tsc && jest",
+    "typeorm": "tsc && node -r dotenv/config ./node_modules/typeorm/cli.js"
   },
   "repository": {
     "type": "git",
