@@ -6,7 +6,6 @@ export class addLocaleToGuildConfig1606633721989 implements MigrationInterface {
       name: 'locale',
       type: 'varchar',
       length: '2',
-      default: 'en',
       isNullable: false,
     }))
   }

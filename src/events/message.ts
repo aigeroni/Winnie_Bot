@@ -7,7 +7,7 @@ const MessageEvent: Event = {
   name: 'message',
   handle: async (message: Message, client: Client): Promise<void> => {
     if (!client.user) { return }
-    if (message.mentions.has(client.user?.id)) { return }
+    if (!message.mentions.has(client.user?.id)) { return }
 
     const guildConfig = await GuildConfig.findOne(message.guild?.id)
     if (!guildConfig) { return }

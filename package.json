@@ -2,7 +2,7 @@
   "name": "winnie_bot",
   "version": "2.0.0",
   "description": "Provides commands for Discord-based writing groups, including word wars, sprints and goals. Created for NaNoWriMo Melbourne Region",
-  "main": "dist/index.js",
+  "main": "dist/src/index.js",
   "dependencies": {
     "discord.js": "^12.4.0",
     "i18next": "^19.8.4",
@@ -27,12 +27,12 @@
   },
   "scripts": {
     "build": "tsc",
-    "typeorm": "node -r ts-node/register -r dotenv/config ./node_modules/typeorm/cli.js",
+    "typeorm": "tsc && node -r dotenv/config ./node_modules/typeorm/cli.js",
     "lint:all": "eslint src --ext .ts",
     "lint:fix": "eslint src --ext .ts --fix",
     "lint": "eslint",
     "start": "tsc && node -r dotenv/config .",
-    "test": "jest"
+    "test": "tsc && jest"
   },
   "repository": {
     "type": "git",

@@ -9,17 +9,13 @@ module.exports = {
   'synchronize': false,
   'logging': true,
   'entities': [
-    'src/models/**/*.ts',
+    'dist/src/models/**/*.js',
   ],
   'migrations': [
-    'db/migration/**/*.ts',
-  ],
-  'subscribers': [
-    'src/subscriber/**/*.ts',
+    'dist/src/db/migration/**/*.js',
   ],
   'cli': {
     'entitiesDir': 'src/models',
     'migrationsDir': 'db/migration',
-    'subscribersDir': 'src/subscriber',
   },
 }
