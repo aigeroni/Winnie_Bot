@@ -58,6 +58,9 @@ export class GuildConfig extends BaseEntity {
   })
   auto_summaries = true
 
+  /**
+   * The locale to use for messages sent to this guild
+   */
   @Column({
     type: 'varchar',
     default: 'en',
@@ -66,9 +69,30 @@ export class GuildConfig extends BaseEntity {
   })
   locale = 'en'
 
+  /**
+   * Create a new instance of a guild config object
+   *
+   * @param id The guild id
+   */
   constructor(id: Snowflake) {
     super()
 
     this.id = id
+  }
+
+  /**
+   * Finds the config object for a given guild id.
+   * If no config exists, creates a new one.
+   *
+   * @param id - The id of the guild
+   */
+  static async findOrCreate(id: Snowflake): Promise<GuildConfig> {
+    let config = await GuildConfig.findOne(id)
+    if (config) { return config }
+
+    config = await new GuildConfig(id)
+    config.save()
+
+    return config
   }
 }
