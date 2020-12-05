@@ -66,7 +66,7 @@ We welcome all contributors to Winnie.  Your pull requests will be reviewed by t
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details
+This project is licensed under the GNU General Public License, v3.0 - see the [LICENSE](LICENSE) file for details.  In particular, if you incorporate Winnie's source code into another project, you must release the source code of that project.
 
 ## Acknowledgments
 
