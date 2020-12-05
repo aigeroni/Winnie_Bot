@@ -9,6 +9,7 @@ const GuildCreateEvent: Event = {
     if (guildConfig) { return }
 
     guildConfig = new GuildConfig(guild.id)
+    guildConfig.save()
   },
 }
 

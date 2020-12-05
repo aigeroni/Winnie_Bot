@@ -46,7 +46,7 @@ export class GuildConfig extends BaseEntity {
     default: true,
     nullable: false,
   })
-  cross_guild = true
+  crossGuild = true
 
   /**
    * Whether or not summaries of challenges are automatically posted.
@@ -56,7 +56,7 @@ export class GuildConfig extends BaseEntity {
     default: true,
     nullable: false,
   })
-  auto_summaries = true
+  autoSummaries = true
 
   /**
    * The locale to use for messages sent to this guild
