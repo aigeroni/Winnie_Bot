@@ -28,13 +28,13 @@ export class createGuildConfigTable1606546432078 implements MigrationInterface {
           isNullable: true,
         },
         {
-          name: 'cross_guild',
+          name: 'crossGuild',
           type: 'boolean',
           isNullable: false,
           default: true,
         },
         {
-          name: 'auto_summaries',
+          name: 'autoSummaries',
           type: 'boolean',
           isNullable: false,
           default: true,

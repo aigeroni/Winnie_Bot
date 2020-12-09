@@ -12,7 +12,7 @@ module.exports = {
     'dist/src/models/**/*.js',
   ],
   'migrations': [
-    'dist/src/db/migration/**/*.js',
+    'dist/db/migration/**/*.js',
   ],
   'cli': {
     'entitiesDir': 'src/models',
