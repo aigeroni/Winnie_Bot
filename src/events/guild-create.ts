@@ -5,11 +5,7 @@ import { GuildConfig } from '../models'
 const GuildCreateEvent: Event = {
   name: 'guildCreate',
   handle: async (guild: Guild): Promise<void> => {
-    let guildConfig = await GuildConfig.findOne(guild.id)
-    if (guildConfig) { return }
-
-    guildConfig = new GuildConfig(guild.id)
-    guildConfig.save()
+    await GuildConfig.findOrCreate(guild.id)
   },
 }
 
