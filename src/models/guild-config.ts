@@ -29,6 +29,7 @@ export class GuildConfig extends BaseEntity {
    * The Discord ID of the channel in which announcements should be sent.
    */
   @Column({
+    name: 'announcements_channel_id',
     length: 30,
     type: 'varchar',
   })
@@ -38,6 +39,7 @@ export class GuildConfig extends BaseEntity {
    * Whether or not challenges created in this guild are automatically hidden
    */
   @Column({
+    name: 'cross_guild',
     default: true,
     type: 'bool',
   })
@@ -47,6 +49,7 @@ export class GuildConfig extends BaseEntity {
    * Whether or not summaries of challenges are automatically posted.
    */
   @Column({
+    name: 'auto_summaries',
     default: true,
     type: 'bool',
   })
