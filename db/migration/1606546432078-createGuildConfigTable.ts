@@ -22,19 +22,19 @@ export class createGuildConfigTable1606546432078 implements MigrationInterface {
           isNullable: false,
         },
         {
-          name: 'announcementsChannelId',
+          name: 'announcements_channel_id',
           type: 'varchar',
           length: '30',
           isNullable: true,
         },
         {
-          name: 'crossGuild',
+          name: 'cross_guild',
           type: 'boolean',
           isNullable: false,
           default: true,
         },
         {
-          name: 'autoSummaries',
+          name: 'auto_summaries',
           type: 'boolean',
           isNullable: false,
           default: true,
