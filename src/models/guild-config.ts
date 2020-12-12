@@ -27,6 +27,8 @@ export class GuildConfig extends BaseEntity {
 
   /**
    * The Discord ID of the channel in which announcements should be sent.
+   *
+   * Channel where Winnie sends daily goals and other announcements
    */
   @Column({
     name: 'announcements_channel_id',
