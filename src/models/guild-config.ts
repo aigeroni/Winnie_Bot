@@ -1,4 +1,5 @@
 import { BaseEntity, Column, Entity, PrimaryColumn } from 'typeorm'
+import { IANAZone } from 'luxon'
 import { Snowflake } from 'discord.js'
 
 /**
@@ -48,16 +49,6 @@ export class GuildConfig extends BaseEntity {
   crossGuild = true
 
   /**
-   * Whether or not summaries of challenges are automatically posted.
-   */
-  @Column({
-    name: 'auto_summaries',
-    default: true,
-    type: 'bool',
-  })
-  autoSummaries = true
-
-  /**
    * The locale to use for messages sent to this guild
    */
   @Column({
@@ -66,6 +57,20 @@ export class GuildConfig extends BaseEntity {
     type: 'varchar',
   })
   locale = 'en'
+
+  /**
+   * A default timezone for the guild.
+   *
+   * Takes the format of an IANA timezone identifier, examples:
+   * America/Winnipeg
+   * Australia/Perth
+   * Europe/Zurich
+   */
+  @Column({
+    length: 45,
+    type: 'varchar',
+  })
+  timezone?: IANAZone
 
   /**
    * Finds the config object for a given guild id.

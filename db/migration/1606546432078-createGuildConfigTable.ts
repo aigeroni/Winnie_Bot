@@ -34,10 +34,15 @@ export class createGuildConfigTable1606546432078 implements MigrationInterface {
           default: true,
         },
         {
-          name: 'auto_summaries',
-          type: 'boolean',
+          name: 'locale',
+          type: 'varchar',
+          length: '2',
           isNullable: false,
-          default: true,
+        },
+        {
+          name: 'timezone',
+          type: 'varchar',
+          length: '45',
         },
       ],
     })
