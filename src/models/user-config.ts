@@ -26,9 +26,32 @@ export class UserConfig extends BaseEntity {
    */
   @Column({
     length: 45,
+    nullable: true,
     type: 'varchar',
   })
   timezone?: IANAZone
+
+  /**
+   * The user's name on the NaNoWriMo site.
+   */
+  @Column({
+    name: 'nano_site_name',
+    nullable: true,
+    type: 'varchar',
+  })
+  nanoSiteName?: string
+
+  /**
+   * Whether or not challenges created by this user are automatically hidden.
+   *
+   * Can be overridden by GuildConfig#crossGuild
+   */
+  @Column({
+    name: 'cross_guild',
+    default: true,
+    type: 'bool',
+  })
+  crossGuild = true
 
   /**
    * Finds the config object for a given user id.
