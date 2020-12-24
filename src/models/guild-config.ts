@@ -3,6 +3,7 @@ import { BaseModel } from './base-model'
 import { Column, Entity, PrimaryColumn } from 'typeorm'
 import { IANAZone } from 'luxon'
 import { IsIn, IsOptional, Length, MaxLength } from 'class-validator'
+import { IsTimeZone } from './validators/time-zone'
 import { Snowflake } from 'discord.js'
 
 /**
@@ -61,6 +62,7 @@ export class GuildConfig extends BaseModel {
    */
   @Column({ type: 'varchar' })
   @IsOptional()
+  @IsTimeZone()
   timezone?: IANAZone
 
   /**
