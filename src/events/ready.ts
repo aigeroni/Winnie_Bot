@@ -1,10 +1,17 @@
-import I18n from '../core/i18n'
-import Logger from '../core/logger'
 import { Client } from 'discord.js'
-import { Event } from '../core/types'
+import { Event } from './event'
+import { I18n } from '../core/i18n'
+import { Logger } from '../core/logger'
 import { createConnection } from 'typeorm'
 
-const ReadyEvent: Event = {
+/**
+ * Handles the ready event, fired whenthe bot first connects to discord.
+ *
+ * Used for:
+ *  - setting Winnie_Bot's status
+ *  - establishing a database connection
+ */
+export const ReadyEvent: Event = {
   name: 'ready',
   handle: async (client: Client) => {
     try {
@@ -18,5 +25,3 @@ const ReadyEvent: Event = {
     client.user?.setActivity(activity)
   },
 }
-
-export default ReadyEvent

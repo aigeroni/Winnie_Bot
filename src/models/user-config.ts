@@ -10,10 +10,7 @@ export class UserConfig extends BaseEntity {
   /**
    * The Discord ID of the user this configuration object represents.
    */
-  @PrimaryColumn({
-    length: 30,
-    type: 'varchar',
-  })
+  @PrimaryColumn()
   id!: Snowflake
 
   /**
@@ -24,21 +21,13 @@ export class UserConfig extends BaseEntity {
    * Australia/Perth
    * Europe/Zurich
    */
-  @Column({
-    length: 45,
-    nullable: true,
-    type: 'varchar',
-  })
+  @Column({ type: 'varchar' })
   timezone?: IANAZone
 
   /**
    * The user's name on the NaNoWriMo site.
    */
-  @Column({
-    name: 'nano_site_name',
-    nullable: true,
-    type: 'varchar',
-  })
+  @Column({ name: 'nano_site_name' })
   nanoSiteName?: string
 
   /**
@@ -46,11 +35,7 @@ export class UserConfig extends BaseEntity {
    *
    * Can be overridden by GuildConfig#crossGuild
    */
-  @Column({
-    name: 'cross_guild',
-    default: true,
-    type: 'bool',
-  })
+  @Column({ name: 'cross_guild', type: 'bool' })
   crossGuild = true
 
   /**

@@ -4,7 +4,7 @@ import { Snowflake } from 'discord.js'
 /**
  * All the types of goals settable.
  */
-enum GoalTypes {
+export enum GoalTypes {
   LINES = 'lines',
   MINUTES = 'minutes',
   PAGES = 'pages',
@@ -15,7 +15,7 @@ enum GoalTypes {
  * Represents a goal users can set.
  */
 @Entity()
-class Goal extends BaseEntity {
+export class Goal extends BaseEntity {
   /**
    * The goal's id.
    */
@@ -27,7 +27,7 @@ class Goal extends BaseEntity {
    *
    * example: 5 pages
    */
-  @Column({ type: 'int' })
+  @Column()
   goal!: number
 
   /**
@@ -35,11 +35,7 @@ class Goal extends BaseEntity {
    *
    * Can be one of pages, words, minutes, or lines
    */
-  @Column({
-    name: 'goal_type',
-    type: 'enum',
-    enum: GoalTypes,
-  })
+  @Column({ name: 'goal_type', type: 'enum', enum: GoalTypes })
   goalType!: GoalTypes
 
   /**
@@ -47,20 +43,13 @@ class Goal extends BaseEntity {
    *
    * example: 3 out of 5 pages
    */
-  @Column({
-    type: 'int',
-    default: 0,
-  })
+  @Column({ type: 'int' })
   written = 0
 
   /**
    * The id of the user that set the goal.
    */
-  @Column({
-    name: 'owner_id',
-    length: 30,
-    type: 'varchar',
-  })
+  @Column({ name: 'owner_id' })
   ownerId!: Snowflake
 
   /**
@@ -68,27 +57,18 @@ class Goal extends BaseEntity {
    *
    * Used for sending messages about the goal's status later.
    */
-  @Column({
-    name: 'channel_id',
-    length: 30,
-    type: 'varchar',
-  })
+  @Column({ name: 'channel_id' })
   channelId!: Snowflake
 
-  @Column({
-    default: false,
-    type: 'bool',
-  })
+  /**
+   * Whether or not this goal has been canceled
+   */
+  @Column({ type: 'bool' })
   canceled = false
 
-  @Column({
-    default: false,
-    type: 'bool',
-  })
+  /**
+   * Whether or not this goal has been completed
+   */
+  @Column({ type: 'bool' })
   completed = false
-}
-
-export {
-  Goal,
-  GoalTypes,
 }

@@ -1,8 +1,7 @@
-import * as CommandHandler from './core/command-handler'
-import I18n from './core/i18n'
-import Logger from './core/logger'
-import events from './events'
 import { Client, ClientOptions } from 'discord.js'
+import { Events } from './events'
+import { I18n } from './core/i18n'
+import { Logger } from './core/logger'
 
 /**
  * Registers all the event listeners used by Winnie.
@@ -10,14 +9,12 @@ import { Client, ClientOptions } from 'discord.js'
  * @param client - The Discord.js client instance
  */
 function setupEvents(client: Client): void {
-  events.forEach((event) => {
+  Events.eventsList.forEach((event) => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const handle = async (...args: Array<any>) => await event.handle(...args, client)
     Logger.info(`Registering an handler for ${event.name} events.`)
     client.on(event.name, handle)
   })
-
-  client.on('message', (message) => CommandHandler.handleCommand(message))
 }
 
 /**

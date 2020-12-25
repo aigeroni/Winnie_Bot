@@ -1,6 +1,6 @@
-import I18n from '../core/i18n'
 import { BaseModel } from './base-model'
 import { Column, Entity, PrimaryColumn } from 'typeorm'
+import { I18n } from '../core/i18n'
 import { IANAZone } from 'luxon'
 import { IsIn, IsOptional, Length, MaxLength } from 'class-validator'
 import { IsTimeZone } from './validators/time-zone'
@@ -38,11 +38,7 @@ export class GuildConfig extends BaseModel {
   /**
    * Whether or not challenges created in this guild are automatically hidden
    */
-  @Column({
-    name: 'cross_guild',
-    default: true,
-    type: 'bool',
-  })
+  @Column({ name: 'cross_guild', type: 'bool' })
   crossGuild = true
 
   /**
