@@ -4,6 +4,7 @@
   "description": "Provides commands for Discord-based writing groups, including word wars, sprints and goals. Created for NaNoWriMo Melbourne Region",
   "main": "dist/src/index.js",
   "dependencies": {
+    "class-validator": "^0.12.2",
     "discord.js": "^12.4.0",
     "i18next": "^19.8.4",
     "i18next-fs-backend": "^1.0.7",

@@ -1,29 +1,28 @@
-import { BaseEntity, Column, Entity, PrimaryColumn } from 'typeorm'
+import I18n from '../core/i18n'
+import { BaseModel } from './base-model'
+import { Column, Entity, PrimaryColumn } from 'typeorm'
 import { IANAZone } from 'luxon'
+import { IsIn, IsOptional, Length, MaxLength } from 'class-validator'
+import { IsTimeZone } from './validators/time-zone'
 import { Snowflake } from 'discord.js'
 
 /**
  * Stores various settings specific to a guild.
  */
 @Entity()
-export class GuildConfig extends BaseEntity {
+export class GuildConfig extends BaseModel {
   /**
    * The Discord ID of the guild this configuration object represents.
    */
-  @PrimaryColumn({
-    length: 30,
-    type: 'varchar',
-  })
+  @PrimaryColumn({ type: 'varchar' })
+  @MaxLength(30)
   id!: Snowflake
 
   /**
    * The string which should be used as the command prefix for this guild
    */
-  @Column({
-    default: '!',
-    length: 3,
-    type: 'varchar',
-  })
+  @Column({ type: 'varchar' })
+  @Length(1, 3)
   prefix = '!'
 
   /**
@@ -31,11 +30,9 @@ export class GuildConfig extends BaseEntity {
    *
    * Channel where Winnie sends daily goals and other announcements
    */
-  @Column({
-    name: 'announcements_channel_id',
-    length: 30,
-    type: 'varchar',
-  })
+  @Column({ name: 'announcements_channel_id', type: 'varchar' })
+  @MaxLength(30)
+  @IsOptional()
   announcementsChannelId?: Snowflake
 
   /**
@@ -51,11 +48,8 @@ export class GuildConfig extends BaseEntity {
   /**
    * The locale to use for messages sent to this guild
    */
-  @Column({
-    default: 'en',
-    length: 2,
-    type: 'varchar',
-  })
+  @Column({ type: 'varchar' })
+  @IsIn(I18n.SUPPORTED_LANGUAGES)
   locale = 'en'
 
   /**
@@ -66,10 +60,9 @@ export class GuildConfig extends BaseEntity {
    * Australia/Perth
    * Europe/Zurich
    */
-  @Column({
-    length: 45,
-    type: 'varchar',
-  })
+  @Column({ type: 'varchar' })
+  @IsOptional()
+  @IsTimeZone()
   timezone?: IANAZone
 
   /**

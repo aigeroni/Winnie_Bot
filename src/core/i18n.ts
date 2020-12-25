@@ -5,6 +5,8 @@ import i18next from 'i18next'
  * Functionality related to localizing Winnie
  */
 export default class I18n {
+  static SUPPORTED_LANGUAGES = ['en', 'fr', 'hu', 'nl', 'sv']
+
   /**
    * Initializes the logger and sets default configurations
    */
@@ -17,7 +19,7 @@ export default class I18n {
       lng: 'en',
       ns: ['commands', 'winnie'],
       preload: ['en'],
-      supportedLngs: ['en', 'fr', 'hu', 'nl', 'sv'],
+      supportedLngs: this.SUPPORTED_LANGUAGES,
     })
   }
 
