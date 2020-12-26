@@ -1,7 +1,7 @@
-import { Client } from 'discord.js'
 import { Event } from './event'
 import { I18n } from '../core/i18n'
 import { Logger } from '../core/logger'
+import { WinnieClient } from '../core/winnie-client'
 import { createConnection } from 'typeorm'
 
 /**
@@ -13,7 +13,7 @@ import { createConnection } from 'typeorm'
  */
 export const ReadyEvent: Event = {
   name: 'ready',
-  handle: async (client: Client) => {
+  handle: async () => {
     try {
       await createConnection()
     } catch (error) {
@@ -22,6 +22,6 @@ export const ReadyEvent: Event = {
     }
 
     const activity = await I18n.translate('en', 'activity')
-    client.user?.setActivity(activity)
+    WinnieClient.client.user?.setActivity(activity)
   },
 }
