@@ -5,7 +5,7 @@ import { WinnieClient } from '../core/winnie-client'
 import { createConnection } from 'typeorm'
 
 /**
- * Handles the ready event, fired whenthe bot first connects to discord.
+ * Handles the ready event, fired when the bot first connects to discord.
  *
  * Used for:
  *  - setting Winnie_Bot's status

@@ -5,6 +5,7 @@ import { Snowflake } from 'discord.js'
  * All the types of goals settable.
  */
 export enum GoalTypes {
+  ITEMS = 'items',
   LINES = 'lines',
   MINUTES = 'minutes',
   PAGES = 'pages',
@@ -23,7 +24,7 @@ export class Goal extends BaseEntity {
   id!: number
 
   /**
-   * The quantity of the goal the user wants to reach.
+   * The progress towards completing the goal.
    *
    * example: 5 pages
    */
@@ -33,7 +34,7 @@ export class Goal extends BaseEntity {
   /**
    * The type of goal for which the user is aiming.
    *
-   * Can be one of pages, words, minutes, or lines
+   * Can be one of pages, words, minutes, lines, or items
    */
   @Column({ name: 'goal_type', type: 'enum', enum: GoalTypes })
   goalType!: GoalTypes

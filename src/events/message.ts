@@ -6,7 +6,7 @@ import { WinnieClient } from '../core/winnie-client'
 
 /**
  * Check the given message to see if the Winnie_Bot user was mentioned.
- * If so resonds to the message with a help message.
+ * If so responds to the message with a help message.
  *
  * @param message The message containing the message
  * @param client the Winnie_Bot instance
@@ -27,7 +27,7 @@ async function handleMention(message: Message): Promise<void> {
  * Handles the message event, fired whenever a user posts a new message.
  *
  * Used for:
- *  - Responsding to mentions with a help message
+ *  - Responding to mentions with a help message
  */
 export const MessageEvent: Event = {
   name: 'message',
