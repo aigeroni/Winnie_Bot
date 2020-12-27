@@ -11,7 +11,11 @@ const fileTransportOptions = (filename: string): Winston.transports.FileTranspor
   zippedArchive: true,
 })
 
-const logger = Winston.createLogger({
+const consoleTransport = process.env.NODE_ENV === 'production' ?
+  new Winston.transports.Console({ format: Winston.format.colorize()}) :
+  new Winston.transports.Console()
+
+export const Logger = Winston.createLogger({
   format: Winston.format.combine(
     Winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
     Winston.format.errors({ stack: true }),
@@ -20,6 +24,7 @@ const logger = Winston.createLogger({
     Winston.format.printf((info) => `${info.timestamp} ${info.level}: ${info.message}`),
   ),
   transports: [
+    consoleTransport,
     new Winston.transports.File(fileTransportOptions(logPath)),
   ],
   exceptionHandlers: [
@@ -28,9 +33,3 @@ const logger = Winston.createLogger({
   ],
   exitOnError: false,
 })
-
-if (process.env.NODE_ENV !== 'production') {
-  logger.add(new Winston.transports.Console({ format: Winston.format.colorize()}))
-}
-
-export default logger

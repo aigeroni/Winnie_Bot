@@ -1,21 +1,37 @@
-import I18n from '../core/i18n'
-import { Client, Message } from 'discord.js'
-import { Event } from '../core/types'
+import { Event } from './event'
 import { GuildConfig } from '../models'
+import { I18n } from '../core/i18n'
+import { Message } from 'discord.js'
+import { WinnieClient } from '../core/winnie-client'
 
-const MessageEvent: Event = {
-  name: 'message',
-  handle: async (message: Message, client: Client): Promise<void> => {
-    if (!client.user) { return }
-    if (!message.guild) { return }
-    if (!message.mentions.has(client.user?.id)) { return }
+/**
+ * Check the given message to see if the Winnie_Bot user was mentioned.
+ * If so responds to the message with a help message.
+ *
+ * @param message The message containing the message
+ * @param client the Winnie_Bot instance
+ */
+async function handleMention(message: Message): Promise<void> {
+  if (!WinnieClient.client.user) { return }
+  if (!message.guild) { return }
+  if (!message.mentions.has(WinnieClient.client.user?.id)) { return }
 
-    const guildConfig = await GuildConfig.findOrCreate(message.guild?.id)
-    if (!guildConfig) { return }
+  const guildConfig = await GuildConfig.findOrCreate(message.guild?.id)
+  if (!guildConfig) { return }
 
-    const response = await I18n.translate('en', 'mentionResponse', { prefix: guildConfig.prefix })
-    message.channel.send(response)
-  },
+  const response = await I18n.translate('en', 'mentionResponse', { prefix: guildConfig.prefix })
+  message.channel.send(response)
 }
 
-export default MessageEvent
+/**
+ * Handles the message event, fired whenever a user posts a new message.
+ *
+ * Used for:
+ *  - Responding to mentions with a help message
+ */
+export const MessageEvent: Event = {
+  name: 'message',
+  handle: async (message: Message): Promise<void> => {
+    handleMention(message)
+  },
+}

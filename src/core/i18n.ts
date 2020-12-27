@@ -4,7 +4,7 @@ import i18next from 'i18next'
 /**
  * Functionality related to localizing Winnie
  */
-export default class I18n {
+export class I18n {
   static SUPPORTED_LANGUAGES = ['en', 'fr', 'hu', 'nl', 'sv']
 
   /**
