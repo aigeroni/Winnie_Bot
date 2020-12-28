@@ -31,13 +31,6 @@ export class UserConfig extends BaseModel {
   timezone?: IANAZone
 
   /**
-   * The user's name on the NaNoWriMo site.
-   */
-  @Column({ name: 'nano_site_name' })
-  @IsOptional()
-  nanoSiteName?: string
-
-  /**
    * Whether or not challenges created by this user are automatically hidden.
    *
    * Can be overridden by GuildConfig#crossGuild
