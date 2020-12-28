@@ -1,16 +1,20 @@
-import { BaseEntity, Column, Entity, PrimaryColumn } from 'typeorm'
+import { BaseModel } from './base-model'
+import { Column, Entity, PrimaryColumn } from 'typeorm'
 import { IANAZone } from 'luxon'
+import { IsOptional, MaxLength } from 'class-validator'
+import { IsTimeZone } from './validators/time-zone'
 import { Snowflake } from 'discord.js'
 
 /**
  * Stores various settings specific to a user.
  */
 @Entity()
-export class UserConfig extends BaseEntity {
+export class UserConfig extends BaseModel {
   /**
    * The Discord ID of the user this configuration object represents.
    */
-  @PrimaryColumn()
+  @PrimaryColumn({ type: 'varchar' })
+  @MaxLength(30)
   id!: Snowflake
 
   /**
@@ -22,12 +26,15 @@ export class UserConfig extends BaseEntity {
    * Europe/Zurich
    */
   @Column({ type: 'varchar' })
+  @IsOptional()
+  @IsTimeZone()
   timezone?: IANAZone
 
   /**
    * The user's name on the NaNoWriMo site.
    */
   @Column({ name: 'nano_site_name' })
+  @IsOptional()
   nanoSiteName?: string
 
   /**
