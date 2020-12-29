@@ -2,9 +2,10 @@ import { BaseModel } from './base-model'
 import { Column, Entity, PrimaryColumn } from 'typeorm'
 import { I18n } from '../core/i18n'
 import { IANAZone } from 'luxon'
+import { IsChannelWithPermission } from './validators/channel-with-permission'
 import { IsIn, IsOptional, Length, MaxLength } from 'class-validator'
 import { IsTimeZone } from './validators/time-zone'
-import { Snowflake } from 'discord.js'
+import { Permissions, Snowflake } from 'discord.js'
 
 /**
  * Stores various settings specific to a guild.
@@ -31,6 +32,7 @@ export class GuildConfig extends BaseModel {
    * Channel where Winnie sends daily goals and other announcements
    */
   @Column({ name: 'announcements_channel_id', type: 'varchar' })
+  @IsChannelWithPermission(Permissions.FLAGS.SEND_MESSAGES)
   @MaxLength(30)
   @IsOptional()
   announcementsChannelId?: Snowflake
