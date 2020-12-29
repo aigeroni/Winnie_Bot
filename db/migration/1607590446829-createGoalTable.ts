@@ -11,7 +11,7 @@ export class createGoalTable1607590446829 implements MigrationInterface {
           isPrimary: true,
         },
         {
-          name: 'goal',
+          name: 'target',
           type: 'int',
         },
         {
@@ -20,7 +20,7 @@ export class createGoalTable1607590446829 implements MigrationInterface {
           enum: ['lines', 'minutes', 'pages', 'words'],
         },
         {
-          name: 'written',
+          name: 'progress',
           type: 'int',
         },
         {
@@ -34,12 +34,24 @@ export class createGoalTable1607590446829 implements MigrationInterface {
           length: '30',
         },
         {
-          name: 'canceled',
-          type: 'bool',
+          name: 'created_at',
+          type: 'timestamp',
+          isNullable: true,
         },
         {
-          name: 'completed',
-          type: 'bool',
+          name: 'updated_at',
+          type: 'timestamp',
+          isNullable: true,
+        },
+        {
+          name: 'canceled_at',
+          type: 'timestamp',
+          isNullable: true,
+        },
+        {
+          name: 'completed_at',
+          type: 'timestamp',
+          isNullable: true,
         },
       ],
     })
