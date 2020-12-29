@@ -63,14 +63,18 @@ export class Goal extends BaseModel {
   channelId!: Snowflake
 
   /**
-   * Whether or not this goal has been canceled
+   * Timestamp of when this goal was canceled.
+   *
+   * Null if not canceled
    */
-  @Column({ type: 'bool' })
-  canceled = false
+  @Column({ name: 'canceled_at' })
+  canceledAt?: Date
 
   /**
-   * Whether or not this goal has been completed
+   * Timestamp of when this goal was completed.
+   *
+   * Null if not completed
    */
-  @Column({ type: 'bool' })
-  completed = false
+  @Column({ name: 'completed_at' })
+  completedAt?: Date
 }
