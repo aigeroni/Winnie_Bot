@@ -19,10 +19,6 @@ export class createUserConfigTable1607791764966 implements MigrationInterface {
           length: '45',
         },
         {
-          name: 'nano_site_name',
-          type: 'varchar',
-        },
-        {
           name: 'cross_guild',
           type: 'boolean',
         },
