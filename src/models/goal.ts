@@ -37,7 +37,7 @@ export class Goal extends BaseEntity {
    * Can be one of pages, words, minutes, lines, or items
    */
   @Column({ name: 'goal_type', type: 'enum', enum: GoalTypes })
-  goalType!: GoalTypes
+  goalType: GoalTypes = GoalTypes.WORDS
 
   /**
    * The progress towards completing the goal.
