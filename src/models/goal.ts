@@ -1,4 +1,5 @@
-import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from 'typeorm'
+import { BaseModel } from './base-model'
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm'
 import { Snowflake } from 'discord.js'
 
 /**
@@ -16,7 +17,7 @@ export enum GoalTypes {
  * Represents a goal users can set.
  */
 @Entity()
-export class Goal extends BaseEntity {
+export class Goal extends BaseModel {
   /**
    * The goal's id.
    */
