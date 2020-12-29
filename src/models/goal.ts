@@ -24,12 +24,12 @@ export class Goal extends BaseEntity {
   id!: number
 
   /**
-   * The progress towards completing the goal.
+   * The target for the goal.
    *
    * example: 5 pages
    */
   @Column()
-  goal!: number
+  target!: number
 
   /**
    * The type of goal for which the user is aiming.
@@ -40,12 +40,12 @@ export class Goal extends BaseEntity {
   goalType!: GoalTypes
 
   /**
-   * The quantity of successfully goal elements.
+   * The progress towards completing the goal.
    *
    * example: 3 out of 5 pages
    */
   @Column({ type: 'int' })
-  written = 0
+  progess = 0
 
   /**
    * The id of the user that set the goal.

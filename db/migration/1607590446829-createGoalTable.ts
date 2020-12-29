@@ -11,7 +11,7 @@ export class createGoalTable1607590446829 implements MigrationInterface {
           isPrimary: true,
         },
         {
-          name: 'goal',
+          name: 'target',
           type: 'int',
         },
         {
@@ -20,7 +20,7 @@ export class createGoalTable1607590446829 implements MigrationInterface {
           enum: ['lines', 'minutes', 'pages', 'words'],
         },
         {
-          name: 'written',
+          name: 'progress',
           type: 'int',
         },
         {
