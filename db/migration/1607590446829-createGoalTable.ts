@@ -34,6 +34,16 @@ export class createGoalTable1607590446829 implements MigrationInterface {
           length: '30',
         },
         {
+          name: 'created_at',
+          type: 'timestamp',
+          isNullable: true,
+        },
+        {
+          name: 'updated_at',
+          type: 'timestamp',
+          isNullable: true,
+        },
+        {
           name: 'canceled_at',
           type: 'timestamp',
           isNullable: true,

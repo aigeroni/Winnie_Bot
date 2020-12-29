@@ -1,5 +1,5 @@
 import { BaseModel } from './base-model'
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm'
+import { BeforeInsert, BeforeUpdate, Column, Entity, PrimaryGeneratedColumn } from 'typeorm'
 import { Snowflake } from 'discord.js'
 
 /**
@@ -63,6 +63,18 @@ export class Goal extends BaseModel {
   channelId!: Snowflake
 
   /**
+   * The timestamp of when this Emote was created.
+   */
+  @Column({ name: 'created_at' })
+  createdAt!: Date
+
+  /**
+   * The timestamp of the most recent time this Emote was updated.
+   */
+  @Column({ name: 'updated_at' })
+  updatedAt?: Date
+
+  /**
    * Timestamp of when this goal was canceled.
    *
    * Null if not canceled
@@ -77,4 +89,24 @@ export class Goal extends BaseModel {
    */
   @Column({ name: 'completed_at' })
   completedAt?: Date
+
+  /**
+   * Listener for the beforeInsert event.
+   *
+   * Sets the created at timestamp.
+   */
+  @BeforeInsert()
+  onBeforeInsert(): void {
+    this.createdAt = new Date()
+  }
+
+  /**
+   * Listener for the beforeUpdate event.
+   *
+   * Sets the updated at timestamp.
+   */
+  @BeforeUpdate()
+  onBeforeUpdate(): void {
+    this.updatedAt = new Date()
+  }
 }
