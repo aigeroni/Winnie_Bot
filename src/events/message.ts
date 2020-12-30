@@ -47,6 +47,7 @@ async function handleCommand(message: Message, guildConfig: GuildConfig): Promis
   })
 
   if (!command) { return }
+  if (command.requiredPermissions && !message.member?.permissions.has(command.requiredPermissions)) { return }
 
   try {
     await command.execute(message, guildConfig)
