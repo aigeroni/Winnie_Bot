@@ -1,4 +1,4 @@
-import { Event } from './event'
+import { Event } from '../types/event'
 import { I18n } from '../core/i18n'
 import { Logger } from '../core/logger'
 import { WinnieClient } from '../core/winnie-client'
