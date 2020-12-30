@@ -1,4 +1,4 @@
-import { Event } from './event'
+import { Event } from '../types/event'
 import { GuildConfig } from '../models'
 import { I18n } from '../core/i18n'
 import { Message } from 'discord.js'
