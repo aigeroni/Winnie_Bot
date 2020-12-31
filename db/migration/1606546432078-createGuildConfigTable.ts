@@ -43,6 +43,7 @@ export class createGuildConfigTable1606546432078 implements MigrationInterface {
           name: 'timezone',
           type: 'varchar',
           length: '45',
+          isNullable: true,
         },
       ],
     })

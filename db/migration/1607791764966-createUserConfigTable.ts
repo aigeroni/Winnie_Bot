@@ -17,6 +17,7 @@ export class createUserConfigTable1607791764966 implements MigrationInterface {
           name: 'timezone',
           type: 'varchar',
           length: '45',
+          isNullable: true,
         },
         {
           name: 'cross_guild',
