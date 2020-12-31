@@ -25,9 +25,15 @@ export class UserConfig extends BaseModel {
    * Australia/Perth
    * Europe/Zurich
    */
-  @Column({ type: 'varchar' })
-  @IsOptional()
+  @Column({
+    type: 'varchar',
+    transformer: {
+      to: (value: IANAZone) => value?.name,
+      from: (value: string) => new IANAZone(value),
+    },
+  })
   @IsTimeZone()
+  @IsOptional()
   timezone?: IANAZone
 
   /**

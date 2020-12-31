@@ -1,9 +1,16 @@
 import { Command } from '../../types/command'
+import { ConfigSetCommand } from './set'
 import { GuildConfig } from '../../models'
 import { Message } from 'discord.js'
 
-declare const subcommands: Array<Command>
+const subcommands = [
+  ConfigSetCommand,
+]
 
+/**
+ * The config command is used for doing basic CRUD operations
+ * for user configuration
+ */
 export const ConfigCommand: Command = {
   name: 'config',
   execute: async (message: Message, guildConfig: GuildConfig) => {

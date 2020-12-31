@@ -1,3 +1,14 @@
 {
-  "defaultError": "**Unknown Error:** I'm sorry, I'm afraid I can't do that. This incident has been logged to the dashboard."
+  "defaultError": "**Unknown Error:** I'm sorry, I'm afraid I can't do that. This incident has been logged to the dashboard.",
+  "config": {
+    "set": {
+      "crossGuildSet": "Succesfully updated crossGuild setting to: `{{crossGuild}}`.",
+      "invalidCrossGuild": "Invalid value passed for crossGuild. Must be one of true/false.",
+      "invalidTimezone": "{{timezone}} is not a real timezone identifer.",
+      "noAttribute": "You need to provide an attribute to set.\n\nSee `{{prefix}}help config set` for more information.",
+      "notAnAttribute": "{{attribute}} is not a valid attribute name.\n\nSee `{{prefix}}help config set` for more information.",
+      "noValue": "You didn't provide a value to set {{attribute}} to.\n\nSee `{{prefix}}help config set` for more information.",
+      "timezoneSet": "You've successfully set your time zone to {{timezone}}"
+    }
+  }
 }
