@@ -1,0 +1,6 @@
+* [**Dawn E. Collett**](https://github.com/lisushka)
+* [**Jason E. Gillikin**](https://github.com/jegillikin)
+* [**Katie Macke**](https://github.com/asleepysheepy)
+* [**Lauren Jenkinson**](https://github.com/alxce)
+* [**Michael Pearson**](https://github.com/mipearson)
+* [**Robert W. McLeod**](https://github.com/RobFaie)
