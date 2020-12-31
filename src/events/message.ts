@@ -48,6 +48,7 @@ async function handleCommand(message: Message, guildConfig: GuildConfig): Promis
   try {
     await command.execute(message, guildConfig)
   } catch (error) {
+    message.reply(await I18n.translate(guildConfig.locale, 'commands:defaultError'))
     Logger.error(`An error occured executing the command \`${command.name}\`:\n${error}`)
   }
 }
