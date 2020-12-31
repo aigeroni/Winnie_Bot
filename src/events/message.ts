@@ -1,14 +1,10 @@
-import { Command } from '../types/command'
+import { Commands } from '../commands'
 import { Event } from '../types/event'
 import { GuildConfig } from '../models'
 import { I18n } from '../core/i18n'
 import { Logger } from '../core/logger'
 import { Message } from 'discord.js'
 import { WinnieClient } from '../core/winnie-client'
-
-declare const Commands: {
-  commandList: Array<Command>
-}
 
 /**
  * Check the given message to see if the Winnie_Bot user was mentioned.
@@ -73,6 +69,6 @@ export const MessageEvent: Event = {
     if (!guildConfig) { return }
 
     handleMention(message, guildConfig)
-    //handleCommand(message, guildConfig)
+    handleCommand(message, guildConfig)
   },
 }
