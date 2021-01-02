@@ -1,6 +1,14 @@
 {
   "defaultError": "**Unknown Error:** I'm sorry, I'm afraid I can't do that. This incident has been logged to the dashboard.",
   "config": {
+    "get": {
+      "crossGuildDisabled": "You have disabled posting your challenges across servers.",
+      "crossGuildEnabled": "You have enabled posting your challenges across servers",
+      "noAttribute": "You need to provide an attribute to see it's value.\n\nSee `{{prefix}}help config get` for more information.",
+      "notAnAttribute": "{{attribute}} is not a valid attribute name.\n\nSee `{{prefix}}help config get` for more information.",
+      "timezone": "Your timezone is currently set to {{timezone}}",
+      "timezoneNotSet": "you have not yet set a timezone\n\nyou can set one with `{{prefix}}help config set timezone <timezone>`."
+    },
     "set": {
       "crossGuildSet": "Succesfully updated crossGuild setting to: `{{crossGuild}}`.",
       "invalidCrossGuild": "Invalid value passed for crossGuild. Must be one of true/false.",
