@@ -34,6 +34,11 @@ export class I18n {
    */
   static async translate(language: string, key: string, interpolations?: Record<string, string | number | boolean>): Promise<string> {
     await i18next.changeLanguage(language)
-    return i18next.t(key, interpolations)
+    return i18next.t(key, {
+      interpolation: {
+        escapeValue: false,
+      },
+      ...interpolations,
+    })
   }
 }
