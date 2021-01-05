@@ -11,14 +11,6 @@ import { Message, PermissionResolvable } from 'discord.js'
  *
  * Command locale strings should always live in `/locales/{{lng}}/commands.json`
  * and the top level key of the localization object should be the command's name.
- *
- * REQUIRED KEYS
- * * `commands:{{comandName}}.usage` - A string describing the usage of a command.
- * * `commands:{{comandName}}.description` - A brief description of what the command does.
- *
- * OPTIONAL KEYS
- * * `commands:{{commandName}}.error` - A message to show to users if an error happens
- *      while the command is executing.
  */
 export interface Command {
   /**

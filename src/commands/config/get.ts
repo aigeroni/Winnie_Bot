@@ -4,7 +4,7 @@ import { I18n } from '../../core/i18n'
 import { Message } from 'discord.js'
 
 /**
- * Command used for updating user configuration
+ * Command used for reading user configuration
  */
 export const ConfigGetCommand: Command = {
   name: 'get',
@@ -45,7 +45,10 @@ export const ConfigGetCommand: Command = {
       }
       break
     case 'crossGuild':
-      message.reply(await I18n.translate(guildConfig.locale, `commands:config.get.crossGuild${userConfig.crossGuild ? 'Enabled' : 'Disabled'}`))
+      message.reply(await I18n.translate(
+        guildConfig.locale,
+        `commands:config.get.crossGuild${userConfig.crossGuild ? 'Enabled' : 'Disabled'}`
+      ))
       break
     default:
       message.reply(await I18n.translate(
