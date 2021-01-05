@@ -29,12 +29,12 @@ export class UserConfig extends BaseModel {
     type: 'varchar',
     transformer: {
       to: (value: IANAZone) => value?.name,
-      from: (value: string) => new IANAZone(value),
+      from: (value: string) => value === null ? null : new IANAZone(value),
     },
   })
   @IsTimeZone()
   @IsOptional()
-  timezone?: IANAZone
+  timezone?: IANAZone | null
 
   /**
    * Whether or not challenges created by this user are automatically hidden.

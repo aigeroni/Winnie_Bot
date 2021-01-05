@@ -9,6 +9,12 @@
       "timezone": "Your timezone is currently set to {{timezone}}",
       "timezoneNotSet": "you have not yet set a timezone\n\nyou can set one with `{{prefix}}help config set timezone <timezone>`."
     },
+    "reset": {
+      "crossGuild": "You've successfully reset your cross server preferences",
+      "noAttribute": "You need to provide an attribute to reset.\n\nSee `{{prefix}}help config resetet` for more information.",
+      "notAnAttribute": "{{attribute}} is not a valid attribute name.\n\nSee `{{prefix}}help config reset` for more information.",
+      "timezone": "You have successfully reset your timezone."
+    },
     "set": {
       "crossGuildSet": "Succesfully updated crossGuild setting to: `{{crossGuild}}`.",
       "invalidCrossGuild": "Invalid value passed for crossGuild. Must be one of true/false.",
