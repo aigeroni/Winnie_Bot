@@ -25,10 +25,16 @@ export class UserConfig extends BaseModel {
    * Australia/Perth
    * Europe/Zurich
    */
-  @Column({ type: 'varchar' })
-  @IsOptional()
+  @Column({
+    type: 'varchar',
+    transformer: {
+      to: (value: IANAZone) => value?.name,
+      from: (value: string) => value === null ? null : new IANAZone(value),
+    },
+  })
   @IsTimeZone()
-  timezone?: IANAZone
+  @IsOptional()
+  timezone?: IANAZone | null
 
   /**
    * Whether or not challenges created by this user are automatically hidden.
