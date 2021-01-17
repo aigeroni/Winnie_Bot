@@ -1,6 +1,24 @@
-# Winnie_Bot
+<div align="center">
+  <img src="https://cdn.discordapp.com/avatars/386676183791829002/7db6a3630cd239e8f666fb9f00a2cd83.png?size=1024" height="250" />
+  <h1>Winnie_Bot</h1>
 
-Winnie is a Discord bot for authors.  Winnie allows users to track goals, challenge each other to word wars and sprints, and get prompts to assist with their writing.
+  <a href="https://github.com/aigeroni/Winnie_Bot/blob/main/LICENSE">
+    <img src="https://img.shields.io/github/license/aigeroni/Winnie_Bot.svg?style=flat-square" alt="Github License" />
+  </a>
+  <a href="https://discordapp.com/api/oauth2/authorize?client_id=386676183791829002&permissions=0&scope=bot">
+    <img src="https://img.shields.io/badge/Add%20to%20your-server-7289DA.svg?style=flat-square" alt="Add to your server" />
+  </a>
+   <a href="https://discord.gg/mvZZMhK">
+    <img src="https://img.shields.io/badge/Join%20the%20community-Discord-7289DA.svg?style=flat-square" alt="Join Community Server" />
+  </a>
+
+  <br />
+  <br />
+
+  <p>Winnie is a Discord bot for authors. Winnie allows users to track goals, challenge each other to word wars and sprints, and get prompts to assist with their writing.</p>
+
+<hr />
+</div>
 
 ## Table of Contents
 
@@ -10,9 +28,20 @@ Winnie is a Discord bot for authors.  Winnie allows users to track goals, challe
     * [Requirements](#requirements)
     * [Setting up a Discord bot instance](#setting-up-a-discord-bot-instance)
     * [Inviting your instance of Winnie to your server](#inviting-your-instance-of-winnie-to-your-server)
+* [Using Winnie](#using-winnie)
+  * [Basic Features](#basic-features)
+  * [Commands](#commands)
 * [Dependencies and frameworks](#Dependencies-and-frameworks)
-* [Bug reports](#bug-reports)
 * [Contributing to Winnie](#contributing-to-winnie)
+  * [Bug reports](#bug-reports)
+  * [Translations](#translations)
+    * [Adding a new langauge](#adding-a-new-langauge)
+    * [Improving an existing language](#improving-an-existing-language)
+    * [Translation files explained](#translation-files-explained)
+  * [Developing Winnie](#developing-winnie)
+    * [Requirements](#requirements)
+    * [Running Winnie for local development](#running-winnie-for-local-development)
+    * [`package.json` scripts](#package.json-scripts)
 * [Authors](#authors)
 * [License](#license)
 * [Acknowledgments](#acknowledgments)
@@ -32,7 +61,7 @@ If you want to invite the public Winnie_Bot account to your server, go [here](ht
 
 * [Node.js](https://nodejs.org/en/)
 * [Yarn Package Manager](https://yarnpkg.com/)
-* [Docker](https://www.docker.com/)
+* [Docker](https://www.docker.com/)/[Docker Compose](https://docs.docker.com/compose/)
 
 #### Setting up a Discord bot instance
 
@@ -44,53 +73,144 @@ If you want to invite the public Winnie_Bot account to your server, go [here](ht
 
 #### Installation Instructions
 
-* Clone the Winnie_Bot repository onto your server.
-* Run `docker build .` to get package dependencies.
-* Set an environment variable with your bot token.
-* Run `bash tz-script.sh` to download the IANA timezone data.
-* Run `node index.js` to initialise Winnie.
+* TODO: Write this
 
 #### Inviting your instance of Winnie to your server
 
 Click the 'Generate OAuth2 URL' button in the Discord Developer pane to generate your invite URL.  Using the invite URL, you can invite your instance of Winnie to any Discord server on which you have administrator permissions.
 
+## Using Winnie
+
+### Basic features
+
+* TODO: Write this
+
+### Commands
+
+* TODO: Write this
+
 ## Dependencies and frameworks
 
+* [Class-Validator](https://github.com/typestack/class-validator) - Model validations
 * [Discord.js](https://discord.js.org) - Discord API for Node.js
 * [ESLint](https://eslint.org/) - Linting
-* [MongoDB](https://www.mongodb.com/) - Persistent storage
-* [mongoose](http://mongoosejs.com/) - MongoDB framework
-* [node-gameloop](https://www.npmjs.com/package/node-gameloop) - Timer
-* [timezone-js](https://www.npmjs.com/package/timezone-js) - Timezone management
-* [winston](https://www.npmjs.com/package/winston) - Log management
-
-## Bug reports
-
-Please report bugs by opening an [issue](https://github.com/lisushka/Winnie_Bot/issues) on GitHub.
+* [i18next](https://www.i18next.com/) - Internationalization 
+* [PostgreSQL](https://www.postgresql.org/) - Persistent storage
+* [TypeORM](https://typeorm.io/#/) - Database Interaction
+* [Winston](https://github.com/winstonjs/winston) - Log management
 
 ## Contributing to Winnie
 
 We welcome all contributors to Winnie.  Your pull requests will be reviewed by the authors prior to merging.  Please document your code, and play nicely with other contributors.
 
-## Authors
+### Bug reports
 
-* **Dawn E. Collett** - *Maintainer* - [GitHub](https://github.com/lisushka)
-* **Katie Macke** - *Development Team* - [GitHub](https://github.com/asleepysheepy)
-* **Robert W. McLeod** - *Server management assistance* - [GitHub](https://github.com/RobFaie)
-* **Lauren Jenkinson** - *Server management assistance* - [GitHub](https://github.com/alxce)
+Please report bugs by opening an [issue](https://github.com/lisushka/Winnie_Bot/issues) on GitHub.
+
+### Translations
+
+#### Adding a new langauge
+
+If you want to help translate Winnie into a language she does not currently support, please join our [community Discord](https://discord.gg/mvZZMhK) to get in touch with the team.
+
+#### Improving an existing language
+If you're looking to help improve the translations for an existing language you can follow these steps:
+
+<ol>
+  <li>
+    <a href="https://guides.github.com/activities/forking/">Fork</a> the Winnie_Bot repo and <a href="https://docs.github.com/en/.free-pro-team@latest/github/creating-cloning-and-archiving-repositories/cloning-a-repository">clone</a> it to your computer.
+  </li>
+  <li>
+    Open the file containing the messages you want to correct in your favorite text editor. For help finding the right translation file, see <a href="translation-files-explained">here</a>.
+    <br>
+    <em>Note: We reccommend a program like notepad++ or VS Code, please don't use Microsoft Word or another word processing application.</em>
+  </li>
+  <li>
+    The the string you want to change and make your changes.
+  </li>
+  <li>
+    <a href="https://github.com/git-guides/git-commit">Commit</a> your changes and <a href="https://github.com/git-guides/git-push">push</a> them to your fork.
+  </li>
+  <li>
+    Create a <a href="https://docs.github.com/en/free-pro-team@latest/desktop/contributing-and-collaborating-using-github-desktop/creating-an-issue-or-pull-request#creating-a-pull-request">pull request</a> back to Winnie with your changes.
+  </li>
+</ol>
+
+#### Translation files explained
+
+* `winnie.json` - Miscellanous translations that don't better fit in another file
+* `commands.json` - Command response messages
+
+### Developing Winnie
+
+#### Requirements
+* [Docker](https://www.docker.com/)/[Docker Compose](https://docs.docker.com/compose/)
+* [Node.js](https://nodejs.org/en/) 14.0 or higher
+* [Yarn](https://yarnpkg.com/)
+
+#### Running Winnie for local development
+
+<ol>
+  <li>
+    clone the repo and move into the directory
+    <br>
+    <pre>$ git clone https://github.com/aigeroni/Winnie_Bot.git winnie_bot && cd winnie_bot</pre>
+  </li>
+  <li>
+    Install dependencies with yarn 
+    <br>
+    <pre>$ yarn install</pre>
+  </li>
+  <li>
+    Create <code>.env</code> file
+    <br>
+    <pre>$ cp .env.sample .env</pre>
+  </li>
+  <li>
+    Setup your evironment variables in the <code>.env</code> file.
+  </li>
+  <li>
+    Start the docker processes 
+    <br>
+    <pre>$ yarn docker:local:up -d</pre>
+  </li>
+  <li>
+    Run the mirgations to set up the database
+    <br>
+    <pre>$ yarn typeorm migration:run</pre>
+  </li>
+  <li>
+    Start Winnie
+    <br>
+    <pre>$ yarn start</pre>
+  </li>
+</ol>
+
+#### package.json scripts
+
+* `yarn build` - Compiles Winnie's typescript code into plain JavaScript
+* `yarn docker:local:down` - Teardown local docker processes
+* `yarn docker:local:up` - Start up local docker processes
+* `yarn lint:all` - Run eslint over Winnie's code
+* `yarn lint:fix` - Run eslint over Winnie's code, ficing mistakes
+* `yarn start` - Compile Winnie and start up the bot process
+* `yarn typeorm` - Access Typeorm's CLI
+
+## Core Team
+
+| Dawn E. Collett | Jason E. Gillikin | Katie Macke |
+|---|---|---|
+| [![Dawn's Github](https://avatars1.githubusercontent.com/u/28942094?s=100&v=4)](https://github.com/lisushka) | [![Jason's Github](https://avatars2.githubusercontent.com/u/7763031?s=100&v=4)](https://github.com/jegillikin) | [![Katie's Github](https://avatars1.githubusercontent.com/u/12132647?s=100&v=4)](https://github.com/asleepysheepy) |
 
 ## License
 
 This project is licensed under the GNU General Public License, v3.0 - see the [LICENSE](LICENSE) file for details.  In particular, if you incorporate Winnie's source code into another project, you must release the source code of that project.
-
 ## Acknowledgments
 
 * Winnie is inspired by Timmy, ChatNaNo's IRC bot.  Timmy can be found at [utoxin/TimTheWordWarBot](https://github.com/utoxin/TimTheWordWarBot).
 * Prompts were brainstormed by NaNo's Australia::Melbourne region.
-
-Winnie's repository is located at [aigeroni/Winnie_Bot](https://github.com/aigeroni/Winnie_Bot).
-Winnie's avatar, 'Tiny Cities', was created by [Rachael Wheeler](http://www.rachaelw.com.au/).  Prints, notebooks, and other items featuring 'Tiny Cities' are available for purchase [here](https://www.redbubble.com/people/scorpiraw/works/33012468-tiny-cities).
+* Winnie's avatar, 'Tiny Cities', was created by [Rachael Wheeler](http://www.rachaelw.com.au/).  Prints, notebooks, and other items featuring 'Tiny Cities' are available for purchase [here](https://www.redbubble.com/people/scorpiraw/works/33012468-tiny-cities).
 
 ## Data Deletion
 
-Winnie only stores data that you provide to her, and your data is only stored under the unique identifier that Discord uses for your account.  If you wish to request deletion of your user data on the public Winnie_Bot instance, please contact dawn@dawnbug.com with your request.
+Winnie only stores data that you provide to her, and your data is only stored under the unique identifier that Discord uses for your account. If you wish to request deletion of your user data on the public Winnie_Bot instance, please contact dawn@dawnbug.com with your request.
