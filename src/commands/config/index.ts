@@ -1,14 +1,10 @@
 import { Command } from '../../types/command'
-import { ConfigGetCommand } from './get'
-import { ConfigResetCommand } from './reset'
-import { ConfigSetCommand } from './set'
+import { ConfigTimezoneCommand } from './timezone'
 import { GuildConfig } from '../../models'
 import { Message } from 'discord.js'
 
 const subcommands = [
-  ConfigGetCommand,
-  ConfigResetCommand,
-  ConfigSetCommand,
+  ConfigTimezoneCommand,
 ]
 
 /**

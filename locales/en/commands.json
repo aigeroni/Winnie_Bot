@@ -1,28 +1,22 @@
 {
   "defaultError": "**Unknown Error:** I'm sorry, I'm afraid I can't do that. This incident has been logged to the dashboard.",
   "config": {
-    "get": {
-      "crossGuildDisabled": "You have disabled posting your challenges across servers.",
-      "crossGuildEnabled": "You have enabled posting your challenges across servers",
-      "noAttribute": "You need to provide an attribute to see it's value.\n\nSee `{{prefix}}help config get` for more information.",
-      "notAnAttribute": "{{attribute}} is not a valid attribute name.\n\nSee `{{prefix}}help config get` for more information.",
-      "timezone": "Your timezone is currently set to {{timezone}}",
-      "timezoneNotSet": "you have not yet set a timezone\n\nyou can set one with `{{prefix}}help config set timezone <timezone>`."
+    "crossGuild": {
+      "enabled": "You have enabled posting your challenges across servers",
+      "disabled": "You have disabled posting your challenges across servers.",
+      "invalid": "Invalid value passed for crossGuild. Must be one of true/false.",
+      "noValue": "You didn't provide a value to set cross guild to.\n\nSee `{{prefix}}help config crossGuild` for more information.",
+      "successfullySet": "Succesfully updated crossGuild setting to: `{{crossGuild}}`."
     },
-    "reset": {
-      "crossGuild": "You've successfully reset your cross server preferences",
-      "noAttribute": "You need to provide an attribute to reset.\n\nSee `{{prefix}}help config resetet` for more information.",
-      "notAnAttribute": "{{attribute}} is not a valid attribute name.\n\nSee `{{prefix}}help config reset` for more information.",
-      "timezone": "You have successfully reset your timezone."
-    },
-    "set": {
-      "crossGuildSet": "Succesfully updated crossGuild setting to: `{{crossGuild}}`.",
-      "invalidCrossGuild": "Invalid value passed for crossGuild. Must be one of true/false.",
-      "invalidTimezone": "{{timezone}} is not a real timezone identifer.",
-      "noAttribute": "You need to provide an attribute to set.\n\nSee `{{prefix}}help config set` for more information.",
-      "notAnAttribute": "{{attribute}} is not a valid attribute name.\n\nSee `{{prefix}}help config set` for more information.",
-      "noValue": "You didn't provide a value to set {{attribute}} to.\n\nSee `{{prefix}}help config set` for more information.",
-      "timezoneSet": "You've successfully set your time zone to {{timezone}}"
+    "timezone": {
+      "get": "Your timezone is currently set to {{timezone}}",
+      "invalid": "{{timezone}} is not a real timezone identifer.",
+      "noCommand": "You need to provide an to run.\n\nSee `{{prefix}}help config timezone` for more information.",
+      "notSet": "You have not yet set a timezone\n\nyou can set one with `{{prefix}}help config set timezone <timezone>`.",
+      "noValue": "You didn't provide a timezone to set.\n\nSee `{{prefix}}help config set` for more information.",
+      "reset": "You have successfully reset your timezone.",
+      "set": "You've successfully set your time zone to {{timezone}}",
+      "unknownCommand": "I don't know that command, use `{{prefix}}help config timezone` for help."
     }
   }
 }
