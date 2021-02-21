@@ -58,10 +58,16 @@ export class GuildConfig extends BaseModel {
    * Australia/Perth
    * Europe/Zurich
    */
-  @Column({ type: 'varchar' })
-  @IsOptional()
+  @Column({
+    type: 'varchar',
+    transformer: {
+      to: (value: IANAZone) => value?.name,
+      from: (value: string) => value === null ? null : new IANAZone(value),
+    },
+  })
   @IsTimeZone()
-  timezone?: IANAZone
+  @IsOptional()
+  timezone?: IANAZone | null
 
   /**
    * Finds the config object for a given guild id.
