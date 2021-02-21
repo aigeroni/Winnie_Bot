@@ -1,9 +1,11 @@
 import { Command } from '../../types/command'
+import { ConfigCrossGuildCommand } from './cross-guild'
 import { ConfigTimezoneCommand } from './timezone'
 import { GuildConfig } from '../../models'
 import { Message } from 'discord.js'
 
 const subcommands = [
+  ConfigCrossGuildCommand,
   ConfigTimezoneCommand
 ]
 
