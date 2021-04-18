@@ -8,7 +8,7 @@ export interface Event {
    * This should always match an event name in the list here:
    * https://discord.js.org/#/docs/main/stable/class/Client
    */
-  name: string,
+  name: string
 
   /**
    * The function that processes an event.
@@ -17,5 +17,5 @@ export interface Event {
    *   depending on the event type. For a list of events and their props, see this list:
    *   https://discord.js.org/#/docs/main/stable/class/Client
    */
-  handle(...props: any[]): void, // eslint-disable-line @typescript-eslint/no-explicit-any
+  handle: (...props: any[]) => void
 }

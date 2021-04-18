@@ -19,7 +19,7 @@ export interface Command {
    * A command name should generally be in English and should succinctly
    * describe what the command does.
    */
-  name: string,
+  name: string
 
   /**
    * A list of strings that can be used to execute the command.
@@ -27,12 +27,12 @@ export interface Command {
    * This list should contain any strings (minus the name) the can
    * be used to run the command, including translations.
    */
-  aliases?: Array<string>,
+  aliases?: string[]
 
   /**
    * The permissions required to execute the command.
    */
-  requiredPermissions?: Array<PermissionResolvable>,
+  requiredPermissions?: PermissionResolvable[]
 
   /**
    * The function used to execute the command.
@@ -42,5 +42,5 @@ export interface Command {
    * @param message - The message which ran the command.
    * @param args - The arguments passed to the command
    */
-  execute(message: Message, guildConfig: GuildConfig): void,
+  execute: (message: Message, guildConfig: GuildConfig) => void
 }

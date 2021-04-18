@@ -29,8 +29,8 @@ export class UserConfig extends BaseModel {
     type: 'varchar',
     transformer: {
       to: (value: IANAZone) => value?.name,
-      from: (value: string) => value === null ? null : new IANAZone(value),
-    },
+      from: (value: string) => value === null ? null : new IANAZone(value)
+    }
   })
   @IsTimeZone()
   @IsOptional()
@@ -50,9 +50,9 @@ export class UserConfig extends BaseModel {
    *
    * @param id - The id of the user
    */
-  static async findOrCreate(id: Snowflake): Promise<UserConfig> {
+  static async findOrCreate (id: Snowflake): Promise<UserConfig> {
     let config = await UserConfig.findOne(id)
-    if (config) { return config }
+    if (config != null) { return config }
 
     config = new UserConfig()
     config.id = id

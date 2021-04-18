@@ -5,9 +5,9 @@ import { ReadyEvent } from './ready'
 const eventsList = [
   GuildCreateEvent,
   MessageEvent,
-  ReadyEvent,
+  ReadyEvent
 ]
 
 export const Events = {
-  eventsList,
+  eventsList
 }

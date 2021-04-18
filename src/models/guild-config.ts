@@ -69,9 +69,9 @@ export class GuildConfig extends BaseModel {
    *
    * @param id - The id of the guild
    */
-  static async findOrCreate(id: Snowflake): Promise<GuildConfig> {
+  static async findOrCreate (id: Snowflake): Promise<GuildConfig> {
     let config = await GuildConfig.findOne(id)
-    if (config) { return config }
+    if (config != null) { return config }
 
     config = new GuildConfig()
     config.id = id

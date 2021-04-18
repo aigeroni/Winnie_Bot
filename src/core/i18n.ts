@@ -4,13 +4,13 @@ import i18next from 'i18next'
 /**
  * Functionality related to localizing Winnie
  */
-export class I18n {
-  static SUPPORTED_LANGUAGES = ['en', 'fr', 'hu', 'nl', 'sv']
+export const I18n = {
+  SUPPORTED_LANGUAGES: ['en', 'fr', 'hu', 'nl', 'sv'],
 
   /**
    * Initializes the logger and sets default configurations
    */
-  static async init(): Promise<void> {
+  init: async (): Promise<void> => {
     await i18next.use(Backend).init({
       backend: { loadPath: './locales/{{lng}}/{{ns}}.json' },
       debug: process.env.NODE_ENV !== 'production',
@@ -19,9 +19,9 @@ export class I18n {
       lng: 'en',
       ns: ['commands', 'winnie'],
       preload: ['en'],
-      supportedLngs: this.SUPPORTED_LANGUAGES,
+      supportedLngs: I18n.SUPPORTED_LANGUAGES
     })
-  }
+  },
 
   /**
    * Translates localized strings by looking them up in the locale
@@ -32,13 +32,13 @@ export class I18n {
    * @param interpolations - Values to interpolate into localized strings
    * @returns The localized string
    */
-  static async translate(language: string, key: string, interpolations?: Record<string, string | number | boolean>): Promise<string> {
+  translate: async (language: string, key: string, interpolations?: Record<string, string | number | boolean>): Promise<string> => {
     await i18next.changeLanguage(language)
-    return i18next.t(key, {
+    return await i18next.t(key, {
       interpolation: {
-        escapeValue: false,
+        escapeValue: false
       },
-      ...interpolations,
+      ...interpolations
     })
   }
 }

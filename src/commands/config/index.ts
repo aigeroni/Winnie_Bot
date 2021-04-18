@@ -4,7 +4,7 @@ import { GuildConfig } from '../../models'
 import { Message } from 'discord.js'
 
 const subcommands = [
-  ConfigTimezoneCommand,
+  ConfigTimezoneCommand
 ]
 
 /**
@@ -18,15 +18,16 @@ export const ConfigCommand: Command = {
       .split(/ +/)[1] // Split the message, at spaces, into an array of strings and grab the second element
       ?.toLowerCase() // Convert the subcommand name to lowercase for case insensitive matching
 
-    if (!commandName) { return }
+    if (commandName == null) { return }
 
     const command = subcommands.find((command) => {
       return command.name === commandName || command.aliases?.includes(commandName)
     })
 
-    if (!command) { return }
-    if (command.requiredPermissions && !message.member?.permissions.has(command.requiredPermissions)) { return }
+    if (command == null) { return }
+    if (message.member == null) { return }
+    if ((command.requiredPermissions != null) && !message.member.permissions.has(command.requiredPermissions)) { return }
 
     await command.execute(message, guildConfig)
-  },
+  }
 }

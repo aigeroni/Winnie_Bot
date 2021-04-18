@@ -8,7 +8,7 @@ import { WinnieClient } from '../../core/winnie-client'
  *
  * @param validationOptions Options to pass into the validator.
  */
-export function IsChannelWithPermission(permission: PermissionResolvable, validationOptions?: ValidationOptions) {
+export function IsChannelWithPermission (permission: PermissionResolvable, validationOptions?: ValidationOptions) {
   // eslint-disable-next-line @typescript-eslint/ban-types
   return function (object: Object, propertyName: string): void {
     registerDecorator({
@@ -17,18 +17,23 @@ export function IsChannelWithPermission(permission: PermissionResolvable, valida
       propertyName: propertyName,
       options: validationOptions,
       validator: {
-        async validate(channelId: Snowflake): Promise<boolean> {
-          const channel = await WinnieClient.client.channels.fetch(channelId)
-          if (!channel) { return false }
+        async validate (channelId: Snowflake): Promise<boolean> {
+          let channel
+          try {
+            channel = await WinnieClient.client.channels.fetch(channelId)
+          } catch (error) {
+            return false
+          }
+
           if (!(channel instanceof GuildChannel)) { return false }
 
-          const guildChannel = channel as GuildChannel
+          const guildChannel = channel
           const winnieMember = guildChannel.guild.me
-          if (!winnieMember) { return false }
+          if (winnieMember == null) { return false }
 
           return guildChannel.permissionsFor(winnieMember)?.has(permission) ?? false
-        },
-      },
+        }
+      }
     })
   }
 }

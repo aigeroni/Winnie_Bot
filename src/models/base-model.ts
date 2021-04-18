@@ -9,12 +9,12 @@ export class BaseModel extends BaseEntity {
   /**
    * A list of all validation errors
    */
-  errors: Array<ValidationError> = []
+  errors: ValidationError[] = []
 
   /**
    * Runs the validations for the model.
    */
-  async validate(): Promise<this> {
+  async validate (): Promise<this> {
     this.errors = await validate(this)
     return this
   }
@@ -25,7 +25,7 @@ export class BaseModel extends BaseEntity {
    *
    * @param options Options for saving the record
    */
-  async save(options?: SaveOptions): Promise<this> {
+  async save (options?: SaveOptions): Promise<this> {
     await this.validate()
 
     if (this.errors.length <= 0) {

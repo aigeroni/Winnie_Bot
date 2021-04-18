@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner, Table } from 'typeorm'
 
 export class createUserConfigTable1607791764966 implements MigrationInterface {
-  public async up(queryRunner: QueryRunner): Promise<void> {
+  public async up (queryRunner: QueryRunner): Promise<void> {
     const userConfigTable = new Table({
       name: 'user_config',
       columns: [
@@ -11,25 +11,25 @@ export class createUserConfigTable1607791764966 implements MigrationInterface {
           length: '30',
           isPrimary: true,
           isUnique: true,
-          isNullable: false,
+          isNullable: false
         },
         {
           name: 'timezone',
           type: 'varchar',
           length: '45',
-          isNullable: true,
+          isNullable: true
         },
         {
           name: 'cross_guild',
-          type: 'boolean',
-        },
-      ],
+          type: 'boolean'
+        }
+      ]
     })
 
     await queryRunner.createTable(userConfigTable, true)
   }
 
-  public async down(queryRunner: QueryRunner): Promise<void> {
+  public async down (queryRunner: QueryRunner): Promise<void> {
     await queryRunner.dropTable('user_config')
   }
 }

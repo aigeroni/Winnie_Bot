@@ -6,7 +6,7 @@ import { ValidationOptions, registerDecorator } from 'class-validator'
  *
  * @param validationOptions Options to pass into the validator.
  */
-export function IsTimeZone(validationOptions?: ValidationOptions) {
+export function IsTimeZone (validationOptions?: ValidationOptions) {
   // eslint-disable-next-line @typescript-eslint/ban-types
   return function (object: Object, propertyName: string): void {
     registerDecorator({
@@ -15,10 +15,10 @@ export function IsTimeZone(validationOptions?: ValidationOptions) {
       propertyName: propertyName,
       options: validationOptions,
       validator: {
-        validate(timeZone: IANAZone): boolean {
+        validate (timeZone: IANAZone): boolean {
           return timeZone.isValid
-        },
-      },
+        }
+      }
     })
   }
 }

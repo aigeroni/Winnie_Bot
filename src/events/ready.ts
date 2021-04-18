@@ -17,11 +17,12 @@ export const ReadyEvent: Event = {
     try {
       await createConnection()
     } catch (error) {
-      Logger.error(`An error occured while connecting to the database: ${error}`)
+      const errorMessage: string = error.toString()
+      Logger.error(`An error occured while connecting to the database: ${errorMessage}`)
       process.exit()
     }
 
     const activity = await I18n.translate('en', 'activity')
     WinnieClient.client.user?.setActivity(activity)
-  },
+  }
 }
