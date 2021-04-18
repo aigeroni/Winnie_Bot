@@ -96,7 +96,7 @@ export class Goal extends BaseModel {
    * Sets the created at timestamp.
    */
   @BeforeInsert()
-  onBeforeInsert(): void {
+  onBeforeInsert (): void {
     this.createdAt = new Date()
   }
 
@@ -106,7 +106,7 @@ export class Goal extends BaseModel {
    * Sets the updated at timestamp.
    */
   @BeforeUpdate()
-  onBeforeUpdate(): void {
+  onBeforeUpdate (): void {
     this.updatedAt = new Date()
   }
 }

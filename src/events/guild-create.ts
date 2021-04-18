@@ -12,5 +12,5 @@ export const GuildCreateEvent: Event = {
   name: 'guildCreate',
   handle: async (guild: Guild): Promise<void> => {
     await GuildConfig.findOrCreate(guild.id)
-  },
+  }
 }

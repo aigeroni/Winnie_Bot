@@ -15,9 +15,9 @@ import { Message } from 'discord.js'
 const setTimezone = async (
   message: Message, guildConfig: GuildConfig, userConfig: UserConfig, timezone?: string
 ): Promise<void> => {
-  if (!timezone) {
-    message.reply(await I18n.translate(guildConfig.locale, 'commands:config.timezone.noValue', {
-      prefix: guildConfig.prefix,
+  if (timezone == null) {
+    await message.reply(await I18n.translate(guildConfig.locale, 'commands:config.timezone.noValue', {
+      prefix: guildConfig.prefix
     }))
     return
   }
@@ -26,10 +26,10 @@ const setTimezone = async (
   await userConfig.save()
 
   if (userConfig.errors.length > 0) {
-    message.reply(await I18n.translate(guildConfig.locale, 'commands:config.timezone.invalid', { timezone }))
+    await message.reply(await I18n.translate(guildConfig.locale, 'commands:config.timezone.invalid', { timezone }))
   } else {
-    message.reply(await I18n.translate(guildConfig.locale, 'commands:config.timezone.set', {
-      timezone: userConfig.timezone.name,
+    await message.reply(await I18n.translate(guildConfig.locale, 'commands:config.timezone.set', {
+      timezone: userConfig.timezone.name
     }))
   }
 }
@@ -44,37 +44,37 @@ export const ConfigTimezoneCommand: Command = {
     const commandArgs = message.content.split(/ +/).slice(2)
     const command = commandArgs.shift()
 
-    if (!command) {
-      message.reply(await I18n.translate(guildConfig.locale, 'commands:config.timezone.noCommand', {
-        prefix: guildConfig.prefix,
+    if (command == null) {
+      await message.reply(await I18n.translate(guildConfig.locale, 'commands:config.timezone.noCommand', {
+        prefix: guildConfig.prefix
       }))
       return
     }
 
     switch (command) {
-    case 'get':
-      if (userConfig.timezone) {
-        message.reply(await I18n.translate(guildConfig.locale, 'commands:config.timezone.get', {
-          timezone: userConfig.timezone.name,
+      case 'get':
+        if (userConfig.timezone != null) {
+          await message.reply(await I18n.translate(guildConfig.locale, 'commands:config.timezone.get', {
+            timezone: userConfig.timezone.name
+          }))
+        } else {
+          await message.reply(await I18n.translate(guildConfig.locale, 'commands:config.timezone.notSet', {
+            prefix: guildConfig.prefix
+          }))
+        }
+        break
+      case 'set':
+        await setTimezone(message, guildConfig, userConfig, commandArgs.shift())
+        break
+      case 'reset':
+        userConfig.timezone = null
+        await userConfig.save()
+        await message.reply(await I18n.translate(guildConfig.locale, 'commands:config.timezone.reset'))
+        break
+      default:
+        await message.reply(await I18n.translate(guildConfig.locale, 'commands:config.timezone.unknownCommand', {
+          prefix: guildConfig.prefix
         }))
-      } else {
-        message.reply(await I18n.translate(guildConfig.locale, 'commands:config.timezone.notSet', {
-          prefix: guildConfig.prefix,
-        }))
-      }
-      break
-    case 'set':
-      setTimezone(message, guildConfig, userConfig, commandArgs.shift())
-      break
-    case 'reset':
-      userConfig.timezone = null
-      await userConfig.save()
-      message.reply(await I18n.translate(guildConfig.locale, 'commands:config.timezone.reset'))
-      break
-    default:
-      message.reply(await I18n.translate(guildConfig.locale, 'commands:config.timezone.unknownCommand', {
-        prefix: guildConfig.prefix,
-      }))
     }
-  },
+  }
 }

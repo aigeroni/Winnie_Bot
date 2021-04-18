@@ -13,12 +13,12 @@ import { WinnieClient } from '../core/winnie-client'
  * @param message The message containing the message
  * @param client the Winnie_Bot instance
  */
-async function handleMention(message: Message, guildConfig: GuildConfig): Promise<void> {
-  if (!WinnieClient.client.user) { return }
+async function handleMention (message: Message, guildConfig: GuildConfig): Promise<void> {
+  if (WinnieClient.client.user == null) { return }
   if (!message.mentions.has(WinnieClient.client.user?.id)) { return }
 
   const response = await I18n.translate('en', 'mentionResponse', { prefix: guildConfig.prefix })
-  message.channel.send(response)
+  await message.channel.send(response)
 }
 
 /**
@@ -27,7 +27,7 @@ async function handleMention(message: Message, guildConfig: GuildConfig): Promis
  * @param message The message containing the message
  * @param guildConfig the Winnie_Bot instance
  */
-async function handleCommand(message: Message, guildConfig: GuildConfig): Promise<void> {
+async function handleCommand (message: Message, guildConfig: GuildConfig): Promise<void> {
   if (!message.content.startsWith(guildConfig.prefix)) { return }
 
   const commandName = message.content
@@ -36,20 +36,22 @@ async function handleCommand(message: Message, guildConfig: GuildConfig): Promis
     ?.slice(guildConfig.prefix.length) // Remove the command prefix from the command name
     ?.toLowerCase() // Convert the command name to lowercase for case insensitive matching
 
-  if (!commandName) { return }
+  if (commandName == null) { return }
 
   const command = Commands.commandList.find((command) => {
     return command.name === commandName || command.aliases?.includes(commandName)
   })
 
-  if (!command) { return }
-  if (command.requiredPermissions && !message.member?.permissions.has(command.requiredPermissions)) { return }
+  if (command == null) { return }
+  if (message.member == null) { return }
+  if ((command.requiredPermissions != null) && !message.member.permissions.has(command.requiredPermissions)) { return }
 
   try {
     await command.execute(message, guildConfig)
   } catch (error) {
-    message.reply(await I18n.translate(guildConfig.locale, 'commands:defaultError'))
-    Logger.error(`An error occured executing the command \`${command.name}\`:\n${error}`)
+    await message.reply(await I18n.translate(guildConfig.locale, 'commands:defaultError'))
+    const errorMessage: string = error.toString()
+    Logger.error(`An error occured executing the command \`${command.name}\`:\n${errorMessage}`)
   }
 }
 
@@ -63,13 +65,13 @@ async function handleCommand(message: Message, guildConfig: GuildConfig): Promis
 export const MessageEvent: Event = {
   name: 'message',
   handle: async (message: Message): Promise<void> => {
-    if (!message.guild) { return } // Ignore direct messages.
+    if (message.guild == null) { return } // Ignore direct messages.
     if (message.author.bot) { return } // Ignore messages from bots
 
     const guildConfig = await GuildConfig.findOrCreate(message.guild?.id)
-    if (!guildConfig) { return }
+    if (guildConfig == null) { return }
 
-    handleMention(message, guildConfig)
-    handleCommand(message, guildConfig)
-  },
+    await handleMention(message, guildConfig)
+    await handleCommand(message, guildConfig)
+  }
 }

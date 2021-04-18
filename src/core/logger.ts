@@ -1,19 +1,20 @@
+import path from 'path'
 import Winston from 'winston'
 
-const logPath = __dirname + '../../../logs/debug.log'
-const exceptionPath = __dirname + '../../../logs/exception.log'
+const logPath = path.join(__dirname, '..', '..', '..', 'logs', 'debug.log')
+const exceptionPath = path.join(__dirname, '..', '..', '..', 'logs', 'exception.log')
 
 const fileTransportOptions = (filename: string): Winston.transports.FileTransportOptions => ({
   filename,
   maxsize: 10 * 1024 * 1024,
   maxFiles: 25,
   tailable: true,
-  zippedArchive: true,
+  zippedArchive: true
 })
 
-const consoleTransport = process.env.NODE_ENV === 'production' ?
-  new Winston.transports.Console({ format: Winston.format.colorize()}) :
-  new Winston.transports.Console()
+const consoleTransport = process.env.NODE_ENV === 'production'
+  ? new Winston.transports.Console({ format: Winston.format.colorize() })
+  : new Winston.transports.Console()
 
 export const Logger = Winston.createLogger({
   format: Winston.format.combine(
@@ -21,15 +22,15 @@ export const Logger = Winston.createLogger({
     Winston.format.errors({ stack: true }),
     Winston.format.splat(),
     Winston.format.json(),
-    Winston.format.printf((info) => `${info.timestamp} ${info.level}: ${info.message}`),
+    Winston.format.printf((info) => `${info.timestamp as string} ${info.level}: ${info.message}`)
   ),
   transports: [
     consoleTransport,
-    new Winston.transports.File(fileTransportOptions(logPath)),
+    new Winston.transports.File(fileTransportOptions(logPath))
   ],
   exceptionHandlers: [
     new Winston.transports.Console(),
-    new Winston.transports.File(fileTransportOptions(exceptionPath)),
+    new Winston.transports.File(fileTransportOptions(exceptionPath))
   ],
-  exitOnError: false,
+  exitOnError: false
 })

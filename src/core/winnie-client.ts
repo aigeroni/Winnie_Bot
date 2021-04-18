@@ -15,8 +15,8 @@ class WinnieBotClient {
       'USER',
       'GUILD_MEMBER',
       'MESSAGE',
-      'REACTION',
-    ],
+      'REACTION'
+    ]
   }
 
   /**
@@ -27,7 +27,7 @@ class WinnieBotClient {
   /**
    * Creates a new instance of the Winnie_Bot client.
    */
-  constructor() {
+  constructor () {
     this.client = new DiscordJsClient(WinnieBotClient.clientOptions)
   }
 
@@ -35,8 +35,8 @@ class WinnieBotClient {
    * Attempts to login to Discord using a token provided through the
    * BOT_TOKEN environment variable.
    */
-  async login(): Promise<void> {
-    await this.client.login(process.env['BOT_TOKEN'])
+  async login (): Promise<void> {
+    await this.client.login(process.env.BOT_TOKEN)
   }
 
   /**
@@ -44,7 +44,7 @@ class WinnieBotClient {
    *
    * @param event The event to register
    */
-  registerEvent(event: Event): void {
+  registerEvent (event: Event): void {
     this.client.on(event.name, event.handle)
   }
 
@@ -53,7 +53,7 @@ class WinnieBotClient {
    *
    * @param events the list of events to register
    */
-  registerEvents(events: Array<Event>): void {
+  registerEvents (events: Event[]): void {
     events.forEach((event) => this.client.on(event.name, event.handle))
   }
 }

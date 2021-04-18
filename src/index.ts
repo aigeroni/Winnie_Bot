@@ -6,7 +6,7 @@ import { WinnieClient } from './core/winnie-client'
 /**
  * The main function that starts Winnie.
  */
-async function startWinnie(): Promise<void> {
+async function startWinnie (): Promise<void> {
   Logger.info('Welcome to Winnie_Bot!')
 
   await I18n.init()
@@ -24,6 +24,7 @@ async function startWinnie(): Promise<void> {
 }
 
 startWinnie().catch((error) => {
-  Logger.error(`Unable to start Winnie.\n${error}`)
+  const errorMessage: string = error.toString()
+  Logger.error(`Unable to start Winnie.\n${errorMessage}`)
   process.exit()
 })
