@@ -45,7 +45,7 @@ const setCrossGuild = async (
  * Command used for getting, setting, and resetting user cross guild settings
  */
 export const ConfigCrossGuildCommand: Command = {
-  name: 'crossGuild',
+  name: 'crossguild',
   execute: async (message: Message, guildConfig: GuildConfig) => {
     const userConfig = await UserConfig.findOrCreate(message.author.id)
     const commandArgs = message.content.split(/ +/).slice(2)

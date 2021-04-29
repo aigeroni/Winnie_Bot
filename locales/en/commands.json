@@ -2,20 +2,67 @@
   "defaultError": "**Unknown Error:** I'm sorry, I'm afraid I can't do that. This incident has been logged to the dashboard.",
   "config": {
     "crossGuild": {
-      "enabled": "You have enabled posting your challenges across servers",
+      "enabled": "You have enabled posting your challenges across servers.",
       "disabled": "You have disabled posting your challenges across servers.",
       "invalid": "Invalid value passed for crossGuild. Must be one of true/false.",
       "noValue": "You didn't provide a value to set cross guild to.\n\nSee `{{prefix}}help config crossGuild` for more information.",
       "successfullySet": "Succesfully updated crossGuild setting to: `{{crossGuild}}`."
     },
     "timezone": {
-      "get": "Your timezone is currently set to {{timezone}}",
+      "get": "Your timezone is currently set to {{timezone}}.",
       "invalid": "{{timezone}} is not a real timezone identifer.",
       "noCommand": "You need to provide an to run.\n\nSee `{{prefix}}help config timezone` for more information.",
       "notSet": "You have not yet set a timezone\n\nyou can set one with `{{prefix}}help config set timezone <timezone>`.",
       "noValue": "You didn't provide a timezone to set.\n\nSee `{{prefix}}help config set` for more information.",
+      "reset": "You have successfully unset your timezone.",
+      "set": "You've successfully set your time zone to {{timezone}}.",
+      "unknownCommand": "I don't know that command, use `{{prefix}}help config timezone` for help."
+    }
+  },
+  "server": {
+    "announcement": {
+      "get": "Announcements channel currently set to <#{{channel}}>.",
+      "invalid": "You didn't provide a vaild channel. Please make sure Winnie has permission to read and send messages in the channel you are trying to set.",
+      "noChannel": "You didn't provide a new channel to set. \n\nSee `{{prefix}}help config announcementChannel` for more information.",
+      "noCommand": "You need to provide a command to run.\n\nSee `{{prefix}}help config announcementChannel` for more information.",
+      "notSet": "You have not set announcements channel.\n\nSee `{{prefix}}help server announcementChannel set` to learn how to set a channel.",
+      "reset": "You have successfully unset your announcements channel.",
+      "set": "Announcements channel successfully set to <#{{channel}}>",
+      "unknownCommand": "I don't know that command, use `{{prefix}}help config announcementChannel` for help."
+    },
+    "crossGuild": {
+      "enabled": "You have enabled posting your challenges across servers.",
+      "disabled": "You have disabled posting your challenges across servers.",
+      "invalid": "Invalid value passed for crossGuild. Must be one of true/false.",
+      "noValue": "You didn't provide a value to set cross guild to.\n\nSee `{{prefix}}help server crossGuild` for more information.",
+      "successfullySet": "Succesfully updated crossGuild setting to: `{{crossGuild}}`."
+    },
+    "locale": {
+      "get": "Server locale currently set to: `{{locale}}`.",
+      "invalid": "{{locale}} is an invalide locale. Valid locales are `{{locales}}`.",
+      "noCommand": "You need to provide a command to run.\n\nSee `{{prefix}}help config locale` for more information.",
+      "noLocale": "You didn't provide a new locale to set. \n\nSee `{{prefix}}help config locale` for more information.",
+      "reset": "You have successfully reset the server locale. Your new locale is: `{{locale}}`.",
+      "set": "You have successfully set a new server locale. Your new locale is: `{{locale}}`.",
+      "unknownCommand": "I don't know that command, use `{{prefix}}help config locale` for help."
+    },
+    "prefix": {
+      "get": "The command prefix is currently set to: `{{prefix}}`.",
+      "invalid": "{{prefix}} is an invalid prefix. Prefixes must contain at least one (1) character and no more than three (3).",
+      "noCommand": "You need to provide a command to run.\n\nSee `{{prefix}}help config prefix` for more information.",
+      "noPrefix": "You didn't provide a new prefix to set. \n\nSee `{{prefix}}help config prefix` for more information.",
+      "reset": "You have successfully reset the command prefix. Your new prefix is: `{{prefix}}`.",
+      "set": "You have successfully set a new command prefix. Your new prefix is: `{{prefix}}`.",
+      "unknownCommand": "I don't know that command, use `{{prefix}}help config prefix` for help."
+    },
+    "timezone": {
+      "get": "Your timezone is currently set to {{timezone}}.",
+      "invalid": "{{timezone}} is not a real timezone identifer.",
+      "noCommand": "You need to provide a command to run.\n\nSee `{{prefix}}help config timezone` for more information.",
+      "notSet": "You have not yet set a timezone\n\nyou can set one with `{{prefix}}help config set timezone <timezone>`.",
+      "noValue": "You didn't provide a timezone to set.\n\nSee `{{prefix}}help config set` for more information.",
       "reset": "You have successfully reset your timezone.",
-      "set": "You've successfully set your time zone to {{timezone}}",
+      "set": "You've successfully set your time zone to {{timezone}}.",
       "unknownCommand": "I don't know that command, use `{{prefix}}help config timezone` for help."
     }
   }
