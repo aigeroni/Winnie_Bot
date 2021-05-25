@@ -1,20 +1,26 @@
 import { Command } from '../../types/command'
-import { ConfigCrossGuildCommand } from './cross-guild'
-import { ConfigTimezoneCommand } from './timezone'
 import { GuildConfig } from '../../models'
 import { Message } from 'discord.js'
+import { ServerAnnouncementsChannelCommand } from './announcements-channel'
+import { ServerCrossGuildCommand } from './cross-guild'
+import { ServerLocaleCommand } from './locale'
+import { ServerPrefixCommand } from './prefix'
+import { ServerTimezoneCommand } from './timezone'
 
 const subcommands = [
-  ConfigCrossGuildCommand,
-  ConfigTimezoneCommand
+  ServerAnnouncementsChannelCommand,
+  ServerCrossGuildCommand,
+  ServerLocaleCommand,
+  ServerPrefixCommand,
+  ServerTimezoneCommand
 ]
 
 /**
  * The config command is used for doing basic CRUD operations
- * for user configuration
+ * for guild configuration
  */
-export const ConfigCommand: Command = {
-  name: 'config',
+export const ServerConfigCommand: Command = {
+  name: 'server',
   execute: async (message: Message, guildConfig: GuildConfig) => {
     const commandName = message.content
       .split(/ +/)[1] // Split the message, at spaces, into an array of strings and grab the second element
@@ -28,7 +34,7 @@ export const ConfigCommand: Command = {
 
     if (command == null) { return }
     if (message.member == null) { return }
-    if ((command.requiredPermissions != null) && !message.member.permissions.has(command.requiredPermissions)) { return }
+    if (command.requiredPermissions != null && !message.member.permissions.has(command.requiredPermissions)) { return }
 
     await command.execute(message, guildConfig)
   }

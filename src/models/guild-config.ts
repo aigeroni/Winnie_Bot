@@ -12,6 +12,9 @@ import { Permissions, Snowflake } from 'discord.js'
  */
 @Entity()
 export class GuildConfig extends BaseModel {
+  static DEFAULT_PREFIX = '!'
+  static DEFAULT_LOCALE = 'en'
+
   /**
    * The Discord ID of the guild this configuration object represents.
    */
@@ -24,7 +27,7 @@ export class GuildConfig extends BaseModel {
    */
   @Column({ type: 'varchar' })
   @Length(1, 3)
-  prefix = '!'
+  prefix = GuildConfig.DEFAULT_PREFIX
 
   /**
    * The Discord ID of the channel in which announcements should be sent.
@@ -35,7 +38,7 @@ export class GuildConfig extends BaseModel {
   @IsChannelWithPermission(Permissions.FLAGS.SEND_MESSAGES)
   @MaxLength(30)
   @IsOptional()
-  announcementsChannelId?: Snowflake
+  announcementsChannelId?: Snowflake | null
 
   /**
    * Whether or not challenges created in this guild are automatically hidden
@@ -48,7 +51,7 @@ export class GuildConfig extends BaseModel {
    */
   @Column({ type: 'varchar' })
   @IsIn(I18n.SUPPORTED_LANGUAGES)
-  locale = 'en'
+  locale = GuildConfig.DEFAULT_LOCALE
 
   /**
    * A default timezone for the guild.
@@ -58,10 +61,16 @@ export class GuildConfig extends BaseModel {
    * Australia/Perth
    * Europe/Zurich
    */
-  @Column({ type: 'varchar' })
-  @IsOptional()
+  @Column({
+    type: 'varchar',
+    transformer: {
+      to: (value: IANAZone) => value?.name,
+      from: (value: string) => value === null ? null : new IANAZone(value)
+    }
+  })
   @IsTimeZone()
-  timezone?: IANAZone
+  @IsOptional()
+  timezone?: IANAZone | null
 
   /**
    * Finds the config object for a given guild id.
