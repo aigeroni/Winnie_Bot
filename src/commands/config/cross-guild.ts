@@ -15,7 +15,7 @@ const setCrossGuild = async (
   message: Message, guildConfig: GuildConfig, userConfig: UserConfig, crossGuild?: string
 ): Promise<void> => {
   if (crossGuild == null) {
-    await message.reply(await I18n.translate(guildConfig.locale, 'commands:config.set.noValue', {
+    await message.reply(await I18n.translate(guildConfig.locale, 'commands:config.crossGuild.noValue', {
       prefix: guildConfig.prefix
     }))
     return
@@ -26,16 +26,16 @@ const setCrossGuild = async (
   } else if (crossGuild.toLowerCase() === 'false') {
     userConfig.crossGuild = false
   } else {
-    await message.reply(await I18n.translate(guildConfig.locale, 'commands:config.set.invalidCrossGuild'))
+    await message.reply(await I18n.translate(guildConfig.locale, 'commands:config.crossGuild.invalid'))
     return
   }
 
   await userConfig.save()
 
   if (userConfig.errors.length > 0) {
-    await message.reply(await I18n.translate(guildConfig.locale, 'commands:config.set.invalidCrossGuild'))
+    await message.reply(await I18n.translate(guildConfig.locale, 'commands:config.crossGuild.invalid'))
   } else {
-    await message.reply(await I18n.translate(guildConfig.locale, 'commands:config.set.crossGuildSet', {
+    await message.reply(await I18n.translate(guildConfig.locale, 'commands:config.crossGuild.successfullySet', {
       crossGuild: userConfig.crossGuild
     }))
   }
@@ -62,7 +62,7 @@ export const ConfigCrossGuildCommand: Command = {
       case 'get':
         await message.reply(await I18n.translate(
           guildConfig.locale,
-        `commands:config.get.crossGuild${userConfig.crossGuild ? 'Enabled' : 'Disabled'}`
+        `commands:config.crossGuild.${userConfig.crossGuild ? 'enabled' : 'disabled'}`
         ))
         break
       case 'set':
