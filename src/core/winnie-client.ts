@@ -11,6 +11,9 @@ class WinnieBotClient {
    * https://discord.js.org/#/docs/main/stable/typedef/ClientOptions
    */
   static clientOptions: ClientOptions = {
+    intents: [
+      'GUILD_MESSAGES'
+    ],
     partials: [
       'USER',
       'GUILD_MEMBER',
