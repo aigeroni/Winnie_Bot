@@ -1,5 +1,5 @@
 import { GuildConfig } from '../models'
-import { Message, PermissionResolvable } from 'discord.js'
+import { ApplicationCommandData, CommandInteraction } from 'discord.js'
 
 /**
  * The shape of a command.
@@ -14,25 +14,14 @@ import { Message, PermissionResolvable } from 'discord.js'
  */
 export interface Command {
   /**
-   * The name of the command.
-   *
-   * A command name should generally be in English and should succinctly
-   * describe what the command does.
+   * The name of the command
    */
   name: string
 
   /**
-   * A list of strings that can be used to execute the command.
-   *
-   * This list should contain any strings (minus the name) the can
-   * be used to run the command, including translations.
+   * Builds the command data object that gets sent to discord when registering a command
    */
-  aliases?: string[]
-
-  /**
-   * The permissions required to execute the command.
-   */
-  requiredPermissions?: PermissionResolvable[]
+  commandData: (locale: string) => Promise<ApplicationCommandData>
 
   /**
    * The function used to execute the command.
@@ -40,7 +29,7 @@ export interface Command {
    * This function can be asynchronous.
    *
    * @param message - The message which ran the command.
-   * @param args - The arguments passed to the command
+   * @param guildConfig - The configuration object for the guild the command was run in
    */
-  execute: (message: Message, guildConfig: GuildConfig) => void
+  execute: (interaction: CommandInteraction, guildConfig: GuildConfig) => Promise<void>
 }

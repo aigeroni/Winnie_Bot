@@ -1,3 +1,4 @@
+import { CommandUtils } from '../commands/utils'
 import { Event } from '../types/event'
 import { GuildConfig } from '../models'
 import { I18n } from '../core/i18n'
@@ -19,6 +20,14 @@ async function handleMention (message: Message, guildConfig: GuildConfig): Promi
   await message.channel.send(response)
 }
 
+async function deployCommands (message: Message, guildConfig: GuildConfig): Promise<void> {
+  if (message.content !== '!deployWinnieCommands') { return }
+  if (process.env.USERS_WHO_CAN_DEPLOY == null) { return }
+  if (!process.env.USERS_WHO_CAN_DEPLOY.includes(message.author.id)) { return }
+
+  await CommandUtils.deployCommands(guildConfig)
+}
+
 /**
  * Handles the message event, fired whenever a user posts a new message.
  *
@@ -35,5 +44,6 @@ export const MessageEvent: Event = {
     if (guildConfig == null) { return }
 
     await handleMention(message, guildConfig)
+    await deployCommands(message, guildConfig)
   }
 }
