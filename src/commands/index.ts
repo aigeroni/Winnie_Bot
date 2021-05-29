@@ -1,14 +1,17 @@
 import { ApplicationCommandData } from 'discord.js'
 import { Command } from '../types/command'
 import { ConfigCommand } from './config'
+import { ServerCommand } from './server'
 
 const commandList: Command[] = [
-  ConfigCommand
+  ConfigCommand,
+  ServerCommand
 ]
 
 async function commandData (locale: string): Promise<ApplicationCommandData[]> {
   return [
-    await ConfigCommand.commandData(locale)
+    await ConfigCommand.commandData(locale),
+    await ServerCommand.commandData(locale)
   ]
 }
 
