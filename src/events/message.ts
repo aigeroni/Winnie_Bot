@@ -16,7 +16,7 @@ async function handleMention (message: Message, guildConfig: GuildConfig): Promi
   if (WinnieClient.client.user == null) { return }
   if (!message.mentions.has(WinnieClient.client.user?.id)) { return }
 
-  const response = await I18n.translate('en', 'mentionResponse', { prefix: guildConfig.prefix })
+  const response = await I18n.translate('en', 'mentionResponse')
   await message.channel.send(response)
 }
 

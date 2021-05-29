@@ -3,7 +3,7 @@ import { Column, Entity, PrimaryColumn } from 'typeorm'
 import { I18n } from '../core/i18n'
 import { IANAZone } from 'luxon'
 import { IsChannelWithPermission } from './validators/channel-with-permission'
-import { IsIn, IsOptional, Length, MaxLength } from 'class-validator'
+import { IsIn, IsOptional, MaxLength } from 'class-validator'
 import { IsTimeZone } from './validators/time-zone'
 import { Permissions, Snowflake } from 'discord.js'
 
@@ -12,7 +12,6 @@ import { Permissions, Snowflake } from 'discord.js'
  */
 @Entity()
 export class GuildConfig extends BaseModel {
-  static DEFAULT_PREFIX = '!'
   static DEFAULT_LOCALE = 'en'
 
   /**
@@ -21,13 +20,6 @@ export class GuildConfig extends BaseModel {
   @PrimaryColumn({ type: 'varchar' })
   @MaxLength(30)
   id!: Snowflake
-
-  /**
-   * The string which should be used as the command prefix for this guild
-   */
-  @Column({ type: 'varchar' })
-  @Length(1, 3)
-  prefix = GuildConfig.DEFAULT_PREFIX
 
   /**
    * The Discord ID of the channel in which announcements should be sent.
