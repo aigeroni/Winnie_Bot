@@ -1,22 +1,51 @@
 {
   "defaultError": "**Unknown Error:** I'm sorry, I'm afraid I can't do that. This incident has been logged to the dashboard.",
   "config": {
+    "description": "commands-config-description",
     "crossGuild": {
-      "enabled": "You have enabled posting your challenges across servers.",
-      "disabled": "You have disabled posting your challenges across servers.",
-      "invalid": "Invalid value passed for crossGuild. Must be one of true/false.",
-      "noValue": "You didn't provide a value to set cross guild to.\n\nSee `{{prefix}}help config crossGuild` for more information.",
-      "successfullySet": "Succesfully updated crossGuild setting to: `{{crossGuild}}`."
+      "description": "commands-config-crossGuild-description",
+      "get": {
+        "description": "commands-config-crossGuild-get-description",
+        "disabled": "commands-config-crossGuild-get-disabled",
+        "enabled": "commands-config-crossGuild-get-enabled"
+      },
+      "reset": {
+        "description": "commands-config-crossGuild-reset-description",
+        "error": "commands-config-crossGuild-reset-error",
+        "success": "commands-config-crossGuild-reset-success"
+      },
+      "set": {
+        "description": "commands-config-crossGuild-set-description",
+        "success": "commands-config-crossGuild-set-success {{crossGuild}}",
+        "error": "commands-config-crossGuild-set-error",
+        "args": {
+          "enabled": "commands-config-crossGuild-set-args-enabled"
+        }
+      }
     },
     "timezone": {
-      "get": "Your timezone is currently set to {{timezone}}.",
-      "invalid": "{{timezone}} is not a real timezone identifer.",
-      "noCommand": "You need to provide an to run.\n\nSee `{{prefix}}help config timezone` for more information.",
-      "notSet": "You have not yet set a timezone\n\nyou can set one with `{{prefix}}help config set timezone <timezone>`.",
-      "noValue": "You didn't provide a timezone to set.\n\nSee `{{prefix}}help config set` for more information.",
-      "reset": "You have successfully unset your timezone.",
-      "set": "You've successfully set your time zone to {{timezone}}.",
-      "unknownCommand": "I don't know that command, use `{{prefix}}help config timezone` for help."
+      "description": "commands-config-timezone-description",
+      "get": {
+        "description": "commands-config-timezone-get-description",
+        "success": "commands-config-timezone-get-success {{timezone}}",
+        "errors": {
+          "notSet": "commands-config-timezone-get-errors-notSet"
+        }
+      },
+      "reset": {
+        "description": "commands-config-timezone-reset-description",
+        "success": "commands-config-timezone-reset-success"
+      },
+      "set": {
+        "description": "commands-config-timezone-set-description",
+        "success": "commands-config-timezone-set-success {{timezone}}",
+        "args": {
+          "timezone": "commands-config-timezone-set-args-timezone"
+        },
+        "errors": {
+          "invalidValue": "commands-config-timezone-set-errors-invalidValue"
+        }
+      }
     }
   },
   "server": {

@@ -29,5 +29,5 @@ export interface SubCommand {
    * @param message - The message which ran the command.
    * @param guildConfig - The configuration object for the guild the command was run in
    */
-  execute: (interaction: CommandInteraction, guildConfig: GuildConfig) => void
+  execute: (interaction: CommandInteraction, guildConfig: GuildConfig) => Promise<void>
 }
