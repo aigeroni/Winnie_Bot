@@ -65,7 +65,7 @@ const tickTimer = gameloop.setGameLoop(async function(delta) {
         await tools.raptor(
             raptorRoll[0].guild.id,
             raptorRoll[0],
-            client.users.get(item),
+            client.users.cache.get(item),
             raptorRoll[1],
         );
       }
@@ -78,7 +78,7 @@ const tickTimer = gameloop.setGameLoop(async function(delta) {
       const wordGoal = ((50000/30) * (date.date)).toFixed(0);
       for (item in clist.announceChannel) {
         if (clist.announceChannel.hasOwnProperty(item)) {
-          const channel = client.channels.get(clist.announceChannel[item]);
+          const channel = client.channels.cache.get(clist.announceChannel[item]);
           channel.send(
               '**Day ' +
               date.date +
@@ -651,63 +651,67 @@ const cmdList = {
   },
 };
 
-client.on('message', async (msg) => {
-  // get prefix
-  let prefix = config.cmd_prefix['default'];
-  if (config.cmd_prefix[msg.guild.id]) {
-    prefix = config.cmd_prefix[msg.guild.id];
-  }
-  // run command
-  if (msg.isMentioned(client.user)) {
-    msg.channel.send(
-        'My name is Winnie, and I run challenges, track goals,' +
-        ' and provide other useful commands for writing.  I use the `' +
-        prefix +
-        '` prefix. Use `' +
-        prefix +
-        'help` for command information.',
-    );
-  }
-  if (
-    msg.author.id != client.user.id &&
-    msg.content.startsWith(prefix)
-  ) {
-    let sentMsg = 'Command Not Parsed';
-    const userEnteredText = msg.content.replace(/\s\s+/g, ' ');
-    const cmdData = userEnteredText
-        .split(' ')[0]
-        .substring(prefix.length)
-        .toLowerCase();
-    const suffix = userEnteredText.substring(
-        cmdData.length + prefix.length + 1,
-    );
-    const cmd = cmdList[cmdData];
-    if (cmdData === 'help') {
-      sentMsg = (help.buildHelpMsg(cmdList, prefix, suffix));
-      if (sentMsg.constructor === Array) {
-        msg.channel.send(msg.author + ', I sent you a DM.');
-        for (i = 0; i < sentMsg.length; i++) {
-          msg.author.send(sentMsg[i]);
-        }
-      } else {
-        msg.channel.send(sentMsg);
-      }
-    } else if (cmd) {
-      try {
-        sentMsg = await cmd.process(client, msg, prefix, suffix);
-      } catch (e) {
-        msg.channel.send('**Unknown Error:** I\'m sorry, I\'m afraid I' +
-          ' can\'t do that.  See log file for details.');
-        logger.info('Error %s: %s.', e, e.stack);
-      }
+try {
+  client.on('message', async (msg) => {
+    // get prefix
+    let prefix = config.cmd_prefix['default'];
+    if (config.cmd_prefix[msg.guild.id]) {
+      prefix = config.cmd_prefix[msg.guild.id];
     }
-    logger.info(
-        'User: ' + msg.author +
-        ' Command: ' + msg.content+
-        ' Response: ' + sentMsg,
-    );
-  }
-});
+    // run command
+    if (msg.isMentioned(client.user)) {
+      msg.channel.send(
+          'My name is Winnie, and I run challenges, track goals,' +
+          ' and provide other useful commands for writing.  I use the `' +
+          prefix +
+          '` prefix. Use `' +
+          prefix +
+          'help` for command information.',
+      );
+    }
+    if (
+      msg.author.id != client.user.id &&
+      msg.content.startsWith(prefix)
+    ) {
+      let sentMsg = 'Command Not Parsed';
+      const userEnteredText = msg.content.replace(/\s\s+/g, ' ');
+      const cmdData = userEnteredText
+          .split(' ')[0]
+          .substring(prefix.length)
+          .toLowerCase();
+      const suffix = userEnteredText.substring(
+          cmdData.length + prefix.length + 1,
+      );
+      const cmd = cmdList[cmdData];
+      if (cmdData === 'help') {
+        sentMsg = (help.buildHelpMsg(cmdList, prefix, suffix));
+        if (sentMsg.constructor === Array) {
+          msg.channel.send(msg.author + ', I sent you a DM.');
+          for (i = 0; i < sentMsg.length; i++) {
+            msg.author.send(sentMsg[i]);
+          }
+        } else {
+          msg.channel.send(sentMsg);
+        }
+      } else if (cmd) {
+        try {
+          sentMsg = await cmd.process(client, msg, prefix, suffix);
+        } catch (e) {
+          msg.channel.send('**Unknown Error:** I\'m sorry, I\'m afraid I' +
+            ' can\'t do that.  See log file for details.');
+          logger.info('Error %s: %s.', e, e.stack);
+        }
+      }
+      logger.info(
+          'User: ' + msg.author +
+          ' Command: ' + msg.content+
+          ' Response: ' + sentMsg,
+      );
+    }
+  });
+} catch (e) {
+  logger.info('Error %s: %s.', e, e.stack);
+}
 
 process.on('uncaughtException', function(e) {
   logger.error(

@@ -253,7 +253,7 @@ class ChallengeList {
    */
   async validateChannel(msg, update) {
     let returnMsg = '';
-    const channelObject = client.channels.get(update.slice(2, -1));
+    const channelObject = client.channels.cache.get(update.slice(2, -1));
     if (channelObject == undefined) {
       returnMsg = '**Error:**: ' + update + ' is not a valid channel.';
     } else if (channelObject.guild.me.permissionsIn(channelObject)

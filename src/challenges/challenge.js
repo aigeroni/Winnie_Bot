@@ -146,7 +146,7 @@ class Challenge {
     const returnMsg = this.displayName + ' (ID ' +
       this.objectID + ') has been cancelled. ';
     for (let i = 0; i < this.hookedChannels.length; i++) {
-      client.channels.get(this.hookedChannels[i]).send(returnMsg +
+      client.channels.cache.get(this.hookedChannels[i]).send(returnMsg +
         this.getUsers(this.hookedChannels[i]));
     }
     return returnMsg;
@@ -272,7 +272,7 @@ class Challenge {
     let userList = '';
     for (const user in this.joined) {
       if (this.joined[user].channelID == channel) {
-        userList += ' ' + client.users.get(user);
+        userList += ' ' + client.users.cache.get(user);
       }
     }
     return userList;
@@ -298,7 +298,7 @@ class Challenge {
    * @return {String} - The channel snowflake.
    */
   getChannel(channel) {
-    return client.channels.get(channel);
+    return client.channels.cache.get(channel);
   }
 }
 

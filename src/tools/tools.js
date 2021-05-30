@@ -300,10 +300,10 @@ class Tools {
     await users.forEach(function(user) {
       if (i < 10 || user._id.user == userID) {
         raptorMsg += '\n' + (i + 1) + '. *';
-        if (client.users.get(user._id.user) === undefined) {
+        if (client.users.cache.get(user._id.user) === undefined) {
           raptorMsg += 'Unknown User';
         } else {
-          raptorMsg += client.users.get(user._id.user).username;
+          raptorMsg += client.users.cache.get(user._id.user).username;
         }
         raptorMsg += ':* ' + user.count;
       }

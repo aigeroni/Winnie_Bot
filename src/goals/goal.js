@@ -31,7 +31,7 @@ class Goal {
     this.startTime = startTime;
     this.terminationTime = terminationTime;
     this.channelID = channelID;
-    this.channel = client.channels.get(this.channelID);
+    this.channel = client.channels.cache.get(this.channelID);
 
     const goalData = {
       authorID: this.authorID,

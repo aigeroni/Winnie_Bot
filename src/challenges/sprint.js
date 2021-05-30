@@ -211,7 +211,7 @@ class Sprint extends Challenge {
         const count = this.goal;
         const time = this.joined[user].timeTaken;
         if (time != undefined && this.channel.guild.id == summaryServer.id) {
-          userTotals += client.users.get(user) + ': ' +
+          userTotals += client.users.cache.get(user) + ': ' +
             this.userTotals(time, count);
         }
       }

@@ -163,7 +163,7 @@ class ChainWar extends War {
     for (const item in userObj) {
       if (item != 'channelID' && userObj[item][1] > 0) {
         if (first == true) {
-          returnMsg += client.users.get(user) + ': ';
+          returnMsg += client.users.cache.get(user) + ': ';
         } else {
           returnMsg += ', ';
         }
@@ -182,9 +182,9 @@ class ChainWar extends War {
   chainSummary(channel) {
     let returnMsg = '***Summary for ' + this.warName + ':***\n';
     let summaryData = '';
-    const summaryServer = client.channels.get(channel).guild;
+    const summaryServer = client.channels.cache.get(channel).guild;
     for (const user in this.chainTotal) {
-      if (client.channels.get(this.chainTotal[user]
+      if (client.channels.cache.get(this.chainTotal[user]
           .channelID).guild.id == summaryServer.id) {
         summaryData += this.chainByUser(user, this.chainTotal[user]) + '\n';
       }
