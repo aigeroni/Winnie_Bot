@@ -1,96 +1,105 @@
-import { Command } from '../../types/command'
+import { CommandInteraction } from 'discord.js'
 import { GuildConfig } from '../../models'
 import { I18n } from '../../core/i18n'
-import { Message } from 'discord.js'
+import { SubCommand } from '../../types/subcommand'
 
-/**
- * Command used for getting, setting, and resetting a guild's locale.
- */
-export const ServerLocaleCommand: Command = {
-  name: 'locale',
-  execute: async (message: Message, guildConfig: GuildConfig) => {
-    const commandArgs = message.content.split(/ +/).slice(2)
-    const command = commandArgs.shift()
+const NAME = 'locale'
 
-    if (command == null) {
-      await message.reply(await I18n.translate(guildConfig.locale, 'commands:server.locale.noCommand', {
-        prefix: guildConfig.prefix
-      }))
-      return
-    }
+export const ServerLocaleCommand: SubCommand = {
+  name: NAME,
+  commandData: async (locale: string) => ({
+    name: NAME,
+    description: await I18n.translate(locale, 'commands:server.locale.description'),
+    type: 'SUB_COMMAND_GROUP',
+    options: [
+      {
+        name: 'get',
+        description: await I18n.translate(locale, 'commands:server.locale.get.description'),
+        type: 'SUB_COMMAND'
+      },
+      {
+        name: 'reset',
+        description: await I18n.translate(locale, 'commands:server.locale.reset.description'),
+        type: 'SUB_COMMAND'
+      },
+      {
+        name: 'set',
+        description: await I18n.translate(locale, 'commands:server.locale.set.description'),
+        type: 'SUB_COMMAND',
+        options: [
+          {
+            name: 'locale',
+            description: await I18n.translate(locale, 'commands:server.locale.set.args.locale'),
+            type: 'STRING',
+            required: true,
+            choices: await Promise.all(I18n.SUPPORTED_LANGUAGES.map(async (locale) => {
+              return {
+                name: await I18n.translate(locale, 'winnie:locale.name'),
+                value: locale
+              }
+            }))
+          }
+        ]
+      }
+    ]
+  }),
 
-    switch (command) {
+  execute: async (interaction: CommandInteraction, guildConfig: GuildConfig) => {
+    const subcommandGroup = interaction.options[0]
+    const subcommand = subcommandGroup.options == null ? undefined : subcommandGroup.options[0]
+    if (subcommand == null) { return }
+
+    switch (subcommand.name) {
       case 'get':
-        await getLocale(message, guildConfig)
-        break
-      case 'set':
-        await setLocale(message, guildConfig, commandArgs.shift())
+        await get(interaction, guildConfig)
         break
       case 'reset':
-        await resetLocale(message, guildConfig)
+        await reset(interaction, guildConfig)
         break
-      default:
-        await message.reply(await I18n.translate(guildConfig.locale, 'commands:server.locale.unknownCommand', {
-          prefix: guildConfig.prefix
-        }))
+      case 'set':
+        await set(interaction, guildConfig)
+        break
     }
   }
 }
 
-/**
- * Gets the current locale for the guild.
- *
- * @param message The message which triggered the command.
- * @param guildConfig The configuration object for the guild.
- */
-async function getLocale (message: Message, guildConfig: GuildConfig): Promise<void> {
-  await message.reply(await I18n.translate(guildConfig.locale, 'commands:server.locale.get', {
-    locale: guildConfig.locale
+async function get (interaction: CommandInteraction, guildConfig: GuildConfig): Promise<void> {
+  await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:server.locale.get.success', {
+    locale: await I18n.translate(guildConfig.locale, 'winnie:locale.name')
   }))
 }
 
-/**
- * Sets a new locale for the guild.
- *
- * @param message The message which triggered the command.
- * @param guildConfig The configuration object for the guild.
- * @param prefix The new prefix to use for the guild
- */
-async function setLocale (message: Message, guildConfig: GuildConfig, locale?: string): Promise<void> {
-  if (locale == null) {
-    await message.reply(await I18n.translate(guildConfig.locale, 'commands:server.locale.noLocale'))
-    return
-  }
+async function reset (interaction: CommandInteraction, guildConfig: GuildConfig): Promise<void> {
+  guildConfig.locale = GuildConfig.DEFAULT_LOCALE
+  await guildConfig.save()
 
-  const oldLocale = guildConfig.locale
+  if (guildConfig.errors.length > 0) {
+    await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:server.locale.reset.error'))
+  } else {
+    await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:server.locale.reset.success', {
+      locale: await I18n.translate(guildConfig.locale, 'winnie:locale.name')
+    }))
+  }
+}
+
+async function set (interaction: CommandInteraction, guildConfig: GuildConfig): Promise<void> {
+  const subcommandGroup = interaction.options[0]
+  const subcommand = subcommandGroup.options == null ? undefined : subcommandGroup.options[0]
+  if (subcommand == null) { return }
+
+  const option = subcommand.options == null ? undefined : subcommand.options[0]
+  if (option == null) { return }
+
+  const locale = option.value as string
 
   guildConfig.locale = locale
   await guildConfig.save()
 
   if (guildConfig.errors.length > 0) {
-    guildConfig.locale = oldLocale
-    await message.reply(await I18n.translate(oldLocale, 'commands:server.locale.invalid', {
-      locale,
-      locales: I18n.SUPPORTED_LANGUAGES.toString()
-    }))
+    await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:server.locale.set.error'))
   } else {
-    await message.reply(await I18n.translate(guildConfig.locale, 'commands:server.locale.set', {
-      locale: guildConfig.locale
+    await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:server.locale.set.success', {
+      locale: await I18n.translate(guildConfig.locale, 'winnie:locale.name')
     }))
   }
-}
-
-/**
- * Reset the guild's command locale to the default.
- *
- * @param message The message which triggered the command.
- * @param guildConfig The configuration object for the guild.
- */
-async function resetLocale (message: Message, guildConfig: GuildConfig): Promise<void> {
-  guildConfig.locale = GuildConfig.DEFAULT_LOCALE
-  await guildConfig.save()
-
-  await message.reply(await I18n.translate(guildConfig.locale, 'commands:server.locale.reset', {
-    locale: guildConfig.locale
-  }))
 }

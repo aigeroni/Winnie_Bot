@@ -1,69 +1,139 @@
 {
   "defaultError": "**Unknown Error:** I'm sorry, I'm afraid I can't do that. This incident has been logged to the dashboard.",
   "config": {
+    "description": "commands-config-description",
     "crossGuild": {
-      "enabled": "You have enabled posting your challenges across servers.",
-      "disabled": "You have disabled posting your challenges across servers.",
-      "invalid": "Invalid value passed for crossGuild. Must be one of true/false.",
-      "noValue": "You didn't provide a value to set cross guild to.\n\nSee `{{prefix}}help config crossGuild` for more information.",
-      "successfullySet": "Succesfully updated crossGuild setting to: `{{crossGuild}}`."
+      "description": "commands-config-crossGuild-description",
+      "get": {
+        "description": "commands-config-crossGuild-get-description",
+        "disabled": "commands-config-crossGuild-get-disabled",
+        "enabled": "commands-config-crossGuild-get-enabled"
+      },
+      "reset": {
+        "description": "commands-config-crossGuild-reset-description",
+        "error": "commands-config-crossGuild-reset-error",
+        "success": "commands-config-crossGuild-reset-success"
+      },
+      "set": {
+        "description": "commands-config-crossGuild-set-description",
+        "success": "commands-config-crossGuild-set-success {{crossGuild}}",
+        "error": "commands-config-crossGuild-set-error",
+        "args": {
+          "enabled": "commands-config-crossGuild-set-args-enabled"
+        }
+      }
     },
     "timezone": {
-      "get": "Your timezone is currently set to {{timezone}}.",
-      "invalid": "{{timezone}} is not a real timezone identifer.",
-      "noCommand": "You need to provide an to run.\n\nSee `{{prefix}}help config timezone` for more information.",
-      "notSet": "You have not yet set a timezone\n\nyou can set one with `{{prefix}}help config set timezone <timezone>`.",
-      "noValue": "You didn't provide a timezone to set.\n\nSee `{{prefix}}help config set` for more information.",
-      "reset": "You have successfully unset your timezone.",
-      "set": "You've successfully set your time zone to {{timezone}}.",
-      "unknownCommand": "I don't know that command, use `{{prefix}}help config timezone` for help."
+      "description": "commands-config-timezone-description",
+      "get": {
+        "description": "commands-config-timezone-get-description",
+        "success": "commands-config-timezone-get-success {{timezone}}",
+        "errors": {
+          "notSet": "commands-config-timezone-get-errors-notSet"
+        }
+      },
+      "reset": {
+        "description": "commands-config-timezone-reset-description",
+        "success": "commands-config-timezone-reset-success"
+      },
+      "set": {
+        "description": "commands-config-timezone-set-description",
+        "success": "commands-config-timezone-set-success {{timezone}}",
+        "args": {
+          "timezone": "commands-config-timezone-set-args-timezone"
+        },
+        "errors": {
+          "invalidValue": "commands-config-timezone-set-errors-invalidValue"
+        }
+      }
     }
   },
   "server": {
-    "announcement": {
-      "get": "Announcements channel currently set to <#{{channel}}>.",
-      "invalid": "You didn't provide a vaild channel. Please make sure Winnie has permission to read and send messages in the channel you are trying to set.",
-      "noChannel": "You didn't provide a new channel to set. \n\nSee `{{prefix}}help config announcementChannel` for more information.",
-      "noCommand": "You need to provide a command to run.\n\nSee `{{prefix}}help config announcementChannel` for more information.",
-      "notSet": "You have not set announcements channel.\n\nSee `{{prefix}}help server announcementChannel set` to learn how to set a channel.",
-      "reset": "You have successfully unset your announcements channel.",
-      "set": "Announcements channel successfully set to <#{{channel}}>",
-      "unknownCommand": "I don't know that command, use `{{prefix}}help config announcementChannel` for help."
+    "description": "commands-server-description",
+    "announcementsChannel": {
+      "description": "commands-server-announcementsChannel-description",
+      "get": {
+        "description": "commands-server-announcementsChannel-get-description",
+        "success": "commands-server-announcementsChannel-get-success <#{{announcementsChannel}}>"
+      },
+      "reset": {
+        "description": "commands-server-announcementsChannel-reset-description",
+        "error": "commands-server-announcementsChannel-reset-error",
+        "success": "commands-server-announcementsChannel-reset-success"
+      },
+      "set": {
+        "description": "commands-server-announcementsChannel-set-description",
+        "success": "commands-server-announcementsChannel-set-success <#{{announcementsChannel}}>",
+        "args": {
+          "announcementsChannel": "commands-server-announcementsChannel-set-args-announcementsChannel"
+        },
+        "error": "commands-server-announcementsChannel-set-error"
+      }
     },
     "crossGuild": {
-      "enabled": "You have enabled posting your challenges across servers.",
-      "disabled": "You have disabled posting your challenges across servers.",
-      "invalid": "Invalid value passed for crossGuild. Must be one of true/false.",
-      "noValue": "You didn't provide a value to set cross guild to.\n\nSee `{{prefix}}help server crossGuild` for more information.",
-      "successfullySet": "Succesfully updated crossGuild setting to: `{{crossGuild}}`."
+      "description": "commands-server-crossGuild-description",
+      "get": {
+        "description": "commands-server-crossGuild-get-description",
+        "disabled": "commands-server-crossGuild-get-disabled",
+        "enabled": "commands-server-crossGuild-get-enabled"
+      },
+      "reset": {
+        "description": "commands-server-crossGuild-reset-description",
+        "error": "commands-server-crossGuild-reset-error",
+        "success": "commands-server-crossGuild-reset-success"
+      },
+      "set": {
+        "description": "commands-server-crossGuild-set-description",
+        "success": "commands-server-crossGuild-set-success {{crossGuild}}",
+        "error": "commands-server-crossGuild-set-error",
+        "args": {
+          "enabled": "commands-server-crossGuild-set-args-enabled"
+        }
+      }
     },
     "locale": {
-      "get": "Server locale currently set to: `{{locale}}`.",
-      "invalid": "{{locale}} is an invalide locale. Valid locales are `{{locales}}`.",
-      "noCommand": "You need to provide a command to run.\n\nSee `{{prefix}}help config locale` for more information.",
-      "noLocale": "You didn't provide a new locale to set. \n\nSee `{{prefix}}help config locale` for more information.",
-      "reset": "You have successfully reset the server locale. Your new locale is: `{{locale}}`.",
-      "set": "You have successfully set a new server locale. Your new locale is: `{{locale}}`.",
-      "unknownCommand": "I don't know that command, use `{{prefix}}help config locale` for help."
-    },
-    "prefix": {
-      "get": "The command prefix is currently set to: `{{prefix}}`.",
-      "invalid": "{{prefix}} is an invalid prefix. Prefixes must contain at least one (1) character and no more than three (3).",
-      "noCommand": "You need to provide a command to run.\n\nSee `{{prefix}}help config prefix` for more information.",
-      "noPrefix": "You didn't provide a new prefix to set. \n\nSee `{{prefix}}help config prefix` for more information.",
-      "reset": "You have successfully reset the command prefix. Your new prefix is: `{{prefix}}`.",
-      "set": "You have successfully set a new command prefix. Your new prefix is: `{{prefix}}`.",
-      "unknownCommand": "I don't know that command, use `{{prefix}}help config prefix` for help."
+      "description": "commands-server-locale-description",
+      "get": {
+        "description": "commands-server-locale-get-description",
+        "success": "commands-server-locale-get-success {{locale}}"
+      },
+      "reset": {
+        "description": "commands-server-locale-reset-description",
+        "error": "commands-server-locale-reset-error",
+        "success": "commands-server-locale-reset-success"
+      },
+      "set": {
+        "description": "commands-server-locale-set-description",
+        "success": "commands-server-locale-set-success {{locale}}",
+        "args": {
+          "locale": "commands-server-locale-set-args-locale"
+        },
+        "error": "commands-server-locale-set-error"
+      }
     },
     "timezone": {
-      "get": "Your timezone is currently set to {{timezone}}.",
-      "invalid": "{{timezone}} is not a real timezone identifer.",
-      "noCommand": "You need to provide a command to run.\n\nSee `{{prefix}}help config timezone` for more information.",
-      "notSet": "You have not yet set a timezone\n\nyou can set one with `{{prefix}}help config set timezone <timezone>`.",
-      "noValue": "You didn't provide a timezone to set.\n\nSee `{{prefix}}help config set` for more information.",
-      "reset": "You have successfully reset your timezone.",
-      "set": "You've successfully set your time zone to {{timezone}}.",
-      "unknownCommand": "I don't know that command, use `{{prefix}}help config timezone` for help."
+      "description": "commands-server-timezone-description",
+      "get": {
+        "description": "commands-server-timezone-get-description",
+        "success": "commands-server-timezone-get-success {{timezone}}",
+        "errors": {
+          "notSet": "commands-server-timezone-get-errors-notSet"
+        }
+      },
+      "reset": {
+        "description": "commands-server-timezone-reset-description",
+        "success": "commands-server-timezone-reset-success"
+      },
+      "set": {
+        "description": "commands-server-timezone-set-description",
+        "success": "commands-server-timezone-set-success {{timezone}}",
+        "args": {
+          "timezone": "commands-server-timezone-set-args-timezone"
+        },
+        "errors": {
+          "invalidValue": "commands-server-timezone-set-errors-invalidValue"
+        }
+      }
     }
   }
 }

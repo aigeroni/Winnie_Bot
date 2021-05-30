@@ -1,18 +1,16 @@
 import { GuildConfig } from '../models'
-import { ApplicationCommandData, CommandInteraction } from 'discord.js'
+import { ApplicationCommandOption, CommandInteraction } from 'discord.js'
 
 /**
- * The shape of a command.
+ * The shape of a subcommand.
  *
- * When creating a command, you should be sure to localize all strings
- * which the command will use. There are some localization keys that
- * are used internally by the command logic in Winnie. Some of these
- * keys are required.
+ * When creating a subcommand, you should be sure to localize all strings
+ * which the command will use.
  *
  * Command locale strings should always live in `/locales/{{lng}}/commands.json`
- * and the top level key of the localization object should be the command's name.
+ * and the top level key of the localization object should be the parents command's name.
  */
-export interface Command {
+export interface SubCommand {
   /**
    * The name of the command
    */
@@ -21,7 +19,7 @@ export interface Command {
   /**
    * Builds the command data object that gets sent to discord when registering a command
    */
-  commandData: (locale: string) => Promise<ApplicationCommandData>
+  commandData: (locale: string) => Promise<ApplicationCommandOption>
 
   /**
    * The function used to execute the command.

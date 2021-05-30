@@ -1,82 +1,99 @@
-import { Command } from '../../types/command'
+import { CommandInteraction } from 'discord.js'
 import { GuildConfig, UserConfig } from '../../models'
 import { I18n } from '../../core/i18n'
-import { Message } from 'discord.js'
+import { SubCommand } from '../../types/subcommand'
 
-/**
- * Updates the cross guild attribute.
- *
- * @param message The message from which the command was ran
- * @param guildConfig the config object for the current guild
- * @param userConfig the userConfig being modified
- * @param crossGuild the new value of the cross guild attribute
- */
-const setCrossGuild = async (
-  message: Message, guildConfig: GuildConfig, userConfig: UserConfig, crossGuild?: string
-): Promise<void> => {
-  if (crossGuild == null) {
-    await message.reply(await I18n.translate(guildConfig.locale, 'commands:config.crossGuild.noValue', {
-      prefix: guildConfig.prefix
-    }))
-    return
-  }
+const NAME = 'cross_guild'
 
-  if (crossGuild.toLowerCase() === 'true') {
-    userConfig.crossGuild = true
-  } else if (crossGuild.toLowerCase() === 'false') {
-    userConfig.crossGuild = false
-  } else {
-    await message.reply(await I18n.translate(guildConfig.locale, 'commands:config.crossGuild.invalid'))
-    return
-  }
+export const ConfigCrossGuildCommand: SubCommand = {
+  name: NAME,
+  commandData: async (locale: string) => ({
+    name: NAME,
+    description: await I18n.translate(locale, 'commands:config.crossGuild.description'),
+    type: 'SUB_COMMAND_GROUP',
+    options: [
+      {
+        name: 'get',
+        description: await I18n.translate(locale, 'commands:config.crossGuild.get.description'),
+        type: 'SUB_COMMAND'
+      },
+      {
+        name: 'reset',
+        description: await I18n.translate(locale, 'commands:config.crossGuild.reset.description'),
+        type: 'SUB_COMMAND'
+      },
+      {
+        name: 'set',
+        description: await I18n.translate(locale, 'commands:config.crossGuild.set.description'),
+        type: 'SUB_COMMAND',
+        options: [
+          {
+            name: 'enabled',
+            description: await I18n.translate(locale, 'commands:config.crossGuild.set.args.enabled'),
+            type: 'BOOLEAN',
+            required: true
+          }
+        ]
+      }
+    ]
+  }),
 
-  await userConfig.save()
+  execute: async (interaction: CommandInteraction, guildConfig: GuildConfig) => {
+    const subcommandGroup = interaction.options[0]
+    const subcommand = subcommandGroup.options == null ? undefined : subcommandGroup.options[0]
+    if (subcommand == null) { return }
 
-  if (userConfig.errors.length > 0) {
-    await message.reply(await I18n.translate(guildConfig.locale, 'commands:config.crossGuild.invalid'))
-  } else {
-    await message.reply(await I18n.translate(guildConfig.locale, 'commands:config.crossGuild.successfullySet', {
-      crossGuild: userConfig.crossGuild
-    }))
+    switch (subcommand.name) {
+      case 'get':
+        await get(interaction, guildConfig)
+        break
+      case 'reset':
+        await reset(interaction, guildConfig)
+        break
+      case 'set':
+        await set(interaction, guildConfig)
+        break
+    }
   }
 }
 
-/**
- * Command used for getting, setting, and resetting user cross guild settings
- */
-export const ConfigCrossGuildCommand: Command = {
-  name: 'crossguild',
-  execute: async (message: Message, guildConfig: GuildConfig) => {
-    const userConfig = await UserConfig.findOrCreate(message.author.id)
-    const commandArgs = message.content.split(/ +/).slice(2)
-    const command = commandArgs.shift()
+async function get (interaction: CommandInteraction, guildConfig: GuildConfig): Promise<void> {
+  const userConfig = await UserConfig.findOrCreate(interaction.user.id)
+  const key = userConfig.crossGuild ? 'enabled' : 'disabled'
 
-    if (command == null) {
-      await message.reply(await I18n.translate(guildConfig.locale, 'commands:config.crossGuild.noCommand', {
-        prefix: guildConfig.prefix
-      }))
-      return
-    }
+  await interaction.reply(await I18n.translate(guildConfig.locale, `commands:config.crossGuild.get.${key}`))
+}
 
-    switch (command) {
-      case 'get':
-        await message.reply(await I18n.translate(
-          guildConfig.locale,
-        `commands:config.crossGuild.${userConfig.crossGuild ? 'enabled' : 'disabled'}`
-        ))
-        break
-      case 'set':
-        await setCrossGuild(message, guildConfig, userConfig, commandArgs.shift())
-        break
-      case 'reset':
-        userConfig.crossGuild = true
-        await userConfig.save()
-        await message.reply(await I18n.translate(guildConfig.locale, 'commands:config.crossGuild.reset'))
-        break
-      default:
-        await message.reply(await I18n.translate(guildConfig.locale, 'commands:config.crossGuild.unknownCommand', {
-          prefix: guildConfig.prefix
-        }))
-    }
+async function reset (interaction: CommandInteraction, guildConfig: GuildConfig): Promise<void> {
+  const userConfig = await UserConfig.findOrCreate(interaction.user.id)
+  userConfig.crossGuild = true
+  await userConfig.save()
+
+  if (userConfig.errors.length > 0) {
+    await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:config.crossGuild.reset.error'))
+  } else {
+    await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:config.crossGuild.reset.success'))
+  }
+}
+
+async function set (interaction: CommandInteraction, guildConfig: GuildConfig): Promise<void> {
+  const subcommandGroup = interaction.options[0]
+  const subcommand = subcommandGroup.options == null ? undefined : subcommandGroup.options[0]
+  if (subcommand == null) { return }
+
+  const userConfig = await UserConfig.findOrCreate(interaction.user.id)
+  const option = subcommand.options == null ? undefined : subcommand.options[0]
+  if (option == null) { return }
+
+  // This should be a safe cast since the option type is defined as a boolean
+  userConfig.crossGuild = option.value as boolean
+  await userConfig.save()
+
+  if (userConfig.errors.length > 0) {
+    await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:config.crossGuild.set.error'))
+  } else {
+    await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:config.crossGuild.set.success', {
+      crossGuild: userConfig.crossGuild
+    }))
   }
 }

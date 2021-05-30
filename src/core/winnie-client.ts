@@ -1,4 +1,4 @@
-import { ClientOptions, Client as DiscordJsClient } from 'discord.js'
+import { ClientOptions, Client as DiscordJsClient, Intents } from 'discord.js'
 import { Event } from '../types/event'
 
 /**
@@ -11,6 +11,7 @@ class WinnieBotClient {
    * https://discord.js.org/#/docs/main/stable/typedef/ClientOptions
    */
   static clientOptions: ClientOptions = {
+    intents: Intents.NON_PRIVILEGED,
     partials: [
       'USER',
       'GUILD_MEMBER',

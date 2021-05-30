@@ -1,80 +1,106 @@
-import { Command } from '../../types/command'
+import { CommandInteraction } from 'discord.js'
 import { GuildConfig, UserConfig } from '../../models'
 import { I18n } from '../../core/i18n'
 import { IANAZone } from 'luxon'
-import { Message } from 'discord.js'
+import { SubCommand } from '../../types/subcommand'
 
-/**
- * Sets a new timezone for a user.
- *
- * @param message The message from which the command was ran
- * @param guildConfig the config object for the current guild
- * @param userConfig the userConfig being modified
- * @param timezone the new timezone
- */
-const setTimezone = async (
-  message: Message, guildConfig: GuildConfig, userConfig: UserConfig, timezone?: string
-): Promise<void> => {
-  if (timezone == null) {
-    await message.reply(await I18n.translate(guildConfig.locale, 'commands:config.timezone.noValue', {
-      prefix: guildConfig.prefix
-    }))
-    return
+const NAME = 'timezone'
+
+export const ConfigTimezoneCommand: SubCommand = {
+  name: NAME,
+  commandData: async (locale: string) => ({
+    name: NAME,
+    description: await I18n.translate(locale, 'commands:config.timezone.description'),
+    type: 'SUB_COMMAND_GROUP',
+    options: [
+      {
+        name: 'get',
+        description: await I18n.translate(locale, 'commands:config.timezone.get.description'),
+        type: 'SUB_COMMAND'
+      },
+      {
+        name: 'reset',
+        description: await I18n.translate(locale, 'commands:config.timezone.reset.description'),
+        type: 'SUB_COMMAND'
+      },
+      {
+        name: 'set',
+        description: await I18n.translate(locale, 'commands:config.timezone.set.description'),
+        type: 'SUB_COMMAND',
+        options: [
+          {
+            name: 'timezone',
+            description: await I18n.translate(locale, 'commands:config.timezone.set.args.timezone'),
+            type: 'STRING',
+            required: true
+          }
+        ]
+      }
+    ]
+  }),
+
+  execute: async (interaction: CommandInteraction, guildConfig: GuildConfig) => {
+    const subcommandGroup = interaction.options[0]
+    const subcommand = subcommandGroup.options == null ? undefined : subcommandGroup.options[0]
+    if (subcommand == null) { return }
+
+    switch (subcommand.name) {
+      case 'get':
+        await get(interaction, guildConfig)
+        break
+      case 'reset':
+        await reset(interaction, guildConfig)
+        break
+      case 'set':
+        await set(interaction, guildConfig)
+        break
+    }
   }
+}
 
-  userConfig.timezone = new IANAZone(timezone)
-  await userConfig.save()
+async function get (interaction: CommandInteraction, guildConfig: GuildConfig): Promise<void> {
+  const userConfig = await UserConfig.findOrCreate(interaction.user.id)
 
-  if (userConfig.errors.length > 0) {
-    await message.reply(await I18n.translate(guildConfig.locale, 'commands:config.timezone.invalid', { timezone }))
+  if (userConfig.timezone == null) {
+    await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:config.timezone.get.errors.notSet'))
   } else {
-    await message.reply(await I18n.translate(guildConfig.locale, 'commands:config.timezone.set', {
+    await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:config.timezone.get.success', {
       timezone: userConfig.timezone.name
     }))
   }
 }
 
-/**
- * Command used for getting, setting, and resetting user timezone settings
- */
-export const ConfigTimezoneCommand: Command = {
-  name: 'timezone',
-  execute: async (message: Message, guildConfig: GuildConfig) => {
-    const userConfig = await UserConfig.findOrCreate(message.author.id)
-    const commandArgs = message.content.split(/ +/).slice(2)
-    const command = commandArgs.shift()
+async function reset (interaction: CommandInteraction, guildConfig: GuildConfig): Promise<void> {
+  const userConfig = await UserConfig.findOrCreate(interaction.user.id)
+  userConfig.timezone = null
+  await userConfig.save()
 
-    if (command == null) {
-      await message.reply(await I18n.translate(guildConfig.locale, 'commands:config.timezone.noCommand', {
-        prefix: guildConfig.prefix
-      }))
-      return
-    }
+  if (userConfig.errors.length > 0) {
+    await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:config.timezone.reset.error'))
+  } else {
+    await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:config.timezone.reset.success'))
+  }
+}
 
-    switch (command) {
-      case 'get':
-        if (userConfig.timezone != null) {
-          await message.reply(await I18n.translate(guildConfig.locale, 'commands:config.timezone.get', {
-            timezone: userConfig.timezone.name
-          }))
-        } else {
-          await message.reply(await I18n.translate(guildConfig.locale, 'commands:config.timezone.notSet', {
-            prefix: guildConfig.prefix
-          }))
-        }
-        break
-      case 'set':
-        await setTimezone(message, guildConfig, userConfig, commandArgs.shift())
-        break
-      case 'reset':
-        userConfig.timezone = null
-        await userConfig.save()
-        await message.reply(await I18n.translate(guildConfig.locale, 'commands:config.timezone.reset'))
-        break
-      default:
-        await message.reply(await I18n.translate(guildConfig.locale, 'commands:config.timezone.unknownCommand', {
-          prefix: guildConfig.prefix
-        }))
-    }
+async function set (interaction: CommandInteraction, guildConfig: GuildConfig): Promise<void> {
+  const subcommandGroup = interaction.options[0]
+  const subcommand = subcommandGroup.options == null ? undefined : subcommandGroup.options[0]
+  if (subcommand == null) { return }
+
+  const userConfig = await UserConfig.findOrCreate(interaction.user.id)
+  const option = subcommand.options == null ? undefined : subcommand.options[0]
+  if (option == null) { return }
+
+  const timezone = option.value as string
+
+  userConfig.timezone = new IANAZone(timezone)
+  await userConfig.save()
+
+  if (userConfig.errors.length > 0) {
+    await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:config.timezone.set.error'))
+  } else {
+    await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:config.timezone.set.success', {
+      timezone: userConfig.timezone.name
+    }))
   }
 }
