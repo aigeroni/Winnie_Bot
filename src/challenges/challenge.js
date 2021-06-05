@@ -147,7 +147,7 @@ class Challenge {
       this.objectID + ') has been cancelled. ';
     for (let i = 0; i < this.hookedChannels.length; i++) {
       client.channels.cache.get(this.hookedChannels[i]).send(returnMsg +
-        this.getUsers(this.hookedChannels[i]));
+        this.getUsers(this.hookedChannels[i]).toString());
     }
     return returnMsg;
   }
