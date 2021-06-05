@@ -274,7 +274,7 @@ class Tools {
         if (client.guilds.cache.get(guild._id) === undefined) {
           raptorMsg += 'Unknown Server';
         } else {
-          raptorMsg += client.guilds.cache.get(guild._id.toString());
+          raptorMsg += client.guilds.cache.get(guild._id.name);
         }
         raptorMsg += ':* ' + guild.count;
       }
