@@ -686,7 +686,7 @@ try {
       if (cmdData === 'help') {
         sentMsg = (help.buildHelpMsg(cmdList, prefix, suffix));
         if (sentMsg.constructor === Array) {
-          msg.channel.send(msg.author + ', I sent you a DM.');
+          msg.channel.send(msg.author.toString()+ ', I sent you a DM.');
           for (i = 0; i < sentMsg.length; i++) {
             msg.author.send(sentMsg[i]);
           }
@@ -703,7 +703,7 @@ try {
         }
       }
       logger.info(
-          'User: ' + msg.author +
+          'User: ' + msg.author.toString()+
           ' Command: ' + msg.content+
           ' Response: ' + sentMsg,
       );

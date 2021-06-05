@@ -43,7 +43,7 @@ class Tools {
         prefix + 'target medium 15`.';
     } else {
       const goalTotal = (Math.ceil(Math.random() * 11) + base) * time;
-      returnMsg = msg.author + ', your target is **' + goalTotal + '**.';
+      returnMsg = msg.author.toString()+ ', your target is **' + goalTotal + '**.';
     }
     return returnMsg;
   }
@@ -55,7 +55,7 @@ class Tools {
    */
   getPrompt(msg) {
     const choiceID = Math.floor(Math.random() * prompts.PROMPT_LIST.length);
-    return msg.author +
+    return msg.author.toString()+
         ', your prompt is: **' +
         prompts.PROMPT_LIST[choiceID].trim() +
         '**';
@@ -68,11 +68,11 @@ class Tools {
    */
   chooseItem(msg, suffix) {
     if (suffix == '') {
-      return msg.author + ', I need something to choose from!';
+      return msg.author.toString()+ ', I need something to choose from!';
     } else {
       const items = suffix.split(',');
       const choiceID = Math.floor(Math.random() * items.length);
-      return msg.author +
+      return msg.author.toString()+
           ', from ' +
           suffix +
           ', I selected **' +
@@ -136,12 +136,12 @@ class Tools {
           {_id: msg.author.id},
           {$set: {siteName: suffix}},
       );
-      returnMsg = msg.author +
+      returnMsg = msg.author.toString()+
           ', your NaNo username has been set to `' +
           suffix +
           '`.';
     } else {
-      returnMsg = msg.author +
+      returnMsg = msg.author.toString()+
           ', I could not find the username `' +
           suffix +
           '` on the NaNo website!';
@@ -274,7 +274,7 @@ class Tools {
         if (client.guilds.cache.get(guild._id) === undefined) {
           raptorMsg += 'Unknown Server';
         } else {
-          raptorMsg += client.guilds.cache.get(guild._id);
+          raptorMsg += client.guilds.cache.get(guild._id.name);
         }
         raptorMsg += ':* ' + guild.count;
       }

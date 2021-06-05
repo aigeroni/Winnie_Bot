@@ -111,11 +111,11 @@ class Challenge {
   async join(user, channelID) {
     let returnMsg = '';
     if (user.id in this.joined) {
-      returnMsg = user +
+      returnMsg = user.toString() +
         ', you already have notifications enabled for this challenge.';
     } else {
       await this.submitUserData(user.id, channelID, undefined, undefined);
-      returnMsg = user + ', you have joined ' + this.displayName;
+      returnMsg = user.toString + ', you have joined ' + this.displayName;
     }
     return returnMsg;
   }

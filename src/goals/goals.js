@@ -31,7 +31,7 @@ class Goals {
       return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
     });
     if (suffix == '') {
-      returnMsg = msg.author + ', I need a timezone to set!';
+      returnMsg = msg.author.toString()+ ', I need a timezone to set!';
     } else if (!this.regionRegex.test(tz) || !mtz.tz.zone(tz)) {
       returnMsg = '**Error:** Winnie_Bot accepts IANA timezone identifiers' +
         ' only. These generally take the format of' +
@@ -43,7 +43,7 @@ class Goals {
       // add timezone to database, confirm
       dbc.dbUpdate('userDB', {_id: msg.author.id}, {$set: {timezone: tz}});
       returnMsg =
-        msg.author + ', you have set your timezone to **' + tz + '**.';
+        msg.author.toString()+ ', you have set your timezone to **' + tz + '**.';
     }
     return returnMsg;
   }
@@ -67,12 +67,12 @@ class Goals {
     }
     const user = await dbc.dbFind('userDB', {_id: msg.author.id});
     if (goal === undefined || goal == '') {
-      returnMsg = msg.author + ', I need a goal to set!';
+      returnMsg = msg.author.toString()+ ', I need a goal to set!';
     } else if (!Number.isInteger(Number(goal))) {
       returnMsg = '**Error:** Your goal must be a whole number. Example: `' +
           prefix + 'set 1667`.';
     } else if (msg.author.id in goallist.goalList) {
-      returnMsg = msg.author + ', you have already set a goal today. Use' +
+      returnMsg = msg.author.toString()+ ', you have already set a goal today. Use' +
           ' the update commands to record your progress.';
     } else if (!(
       goalType == 'lines' || goalType == 'pages' ||
@@ -81,7 +81,7 @@ class Goals {
       returnMsg = '**Error:** Goal type must be words, lines, pages,' +
           ' or minutes. Example: `' + prefix + 'set 50 lines`.';
     } else if (user == null || user.timezone == undefined) {
-      returnMsg = msg.author + ', you need to set your timezone before' +
+      returnMsg = msg.author.toString()+ ', you need to set your timezone before' +
           ' setting a daily goal. Use the `!timezone` command to do so.';
     } else {
       // get current time
@@ -98,7 +98,7 @@ class Goals {
           endTime.getTime(),
           msg.channel.id,
       );
-      returnMsg = msg.author +
+      returnMsg = msg.author.toString() +
         ', your goal for today is **' + goal + '** ' + goalType + '.';
     }
     return returnMsg;
@@ -117,14 +117,14 @@ class Goals {
     const args = suffix.split(' ');
     const goal = args.shift();
     if (suffix == '') {
-      returnMsg = msg.author + ', I need some progress to update!';
+      returnMsg = msg.author.toString()+ ', I need some progress to update!';
     } else if (!Number.isInteger(parseInt(goal))) {
       returnMsg = '**Error:** Your progress must be a whole number.' +
           ' Example: `' +
           prefix +
           'update 256`.';
     } else if (!(msg.author.id in goallist.goalList)) {
-      returnMsg = msg.author +
+      returnMsg = msg.author.toString()+
           ', you have not yet set a goal for today. Use `' +
           prefix +
           'set <goal>` to do so.';
@@ -150,13 +150,13 @@ class Goals {
       newType = 'words';
     }
     if (!(msg.author.id in goallist.goalList)) {
-      returnMsg = msg.author +
+      returnMsg = msg.author.toString()+
           ', you have not yet set a goal for today. Use `' +
           prefix +
           'set <goal>` to do so.';
     } else if (suffix === undefined || !(Number.isInteger(parseInt(newGoal)))) {
       goallist.goalList[msg.author.id].clearGoal();
-      returnMsg = msg.author + ', you have successfully reset your daily goal.';
+      returnMsg = msg.author.toString()+ ', you have successfully reset your daily goal.';
     } else if (newType == goallist.goalList[msg.author.id].goalType) {
       goallist.goalList[msg.author.id].goal = newGoal;
       returnMsg = this.goalData(msg.author);
@@ -175,7 +175,7 @@ class Goals {
   viewGoal(msg, prefix) {
     let returnMsg = '';
     if (!(msg.author.id in goallist.goalList)) {
-      returnMsg = msg.author +
+      returnMsg = msg.author.toString()+
           ', you have not yet set a goal for today. Use `' +
           prefix +
           'set <goal>` to do so.';

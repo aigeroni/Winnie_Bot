@@ -87,7 +87,7 @@ class Challenges {
       const timeTaken = (doneStamp - clist.running[suffix].startStamp) / 60000;
       clist.running[suffix]
           .submitUserData(msg.author.id, msg.channel.id, doneStamp, timeTaken);
-      returnMsg = msg.author + ', you completed the sprint in ' +
+      returnMsg = msg.author.toString()+ ', you completed the sprint in ' +
         timeTaken.toFixed(2) + ' minutes.';
     }
     return {returnMsg: returnMsg, raptorCheck: raptorCheck};
@@ -121,7 +121,7 @@ class Challenges {
       raptorCheck = true;
       clist.running[chalID].submitUserData(msg.author.id,
           msg.channel.id, wordsWritten, writtenType);
-      returnMsg = msg.author + ', your total of **' + wordsWritten +
+      returnMsg = msg.author.toString()+ ', your total of **' + wordsWritten +
         '** ' + writtenType + ' has been added to the summary.';
     }
     return {returnMsg: returnMsg, raptorCheck: raptorCheck};
@@ -142,7 +142,7 @@ class Challenges {
     } else if (!(chalID in clist.running)) {
       returnData = '**Error:** Challenge ' + chalID + ' does not exist!';
     } else if (clist.hiddenCheck(chalID, msg.guild.id)) {
-      returnData = msg.author + ', you do not have permission to ' +
+      returnData = msg.author.toString()+ ', you do not have permission to ' +
         command + ' this challenge.';
     } else {
       returnData = false;

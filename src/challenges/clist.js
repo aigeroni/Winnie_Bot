@@ -230,12 +230,12 @@ class ChallengeList {
       delete config.cmd_prefix[msg.guild.id];
       await dbc.dbUpdate(
           'configDB', {_id: msg.guild.id}, {$unset: {prefix: 1}});
-      returnMsg = msg.author + ', you have reset my prefix.';
+      returnMsg = msg.author.toString()+ ', you have reset my prefix.';
     } else if (update.length > 0 && update.length < 3) {
       config.cmd_prefix[msg.guild.id] = update;
       await dbc.dbUpdate(
           'configDB', {_id: msg.guild.id}, {$set: {prefix: update}});
-      returnMsg = msg.author +
+      returnMsg = msg.author.toString()+
         ', you have changed my prefix to `' +
         update +
         '`.';
@@ -264,7 +264,7 @@ class ChallengeList {
           {_id: msg.guild.id},
           {$set: {announce: channelObject.id}},
       );
-      returnMsg = msg.author +
+      returnMsg = msg.author.toString()+
           ', you have changed the announcements channel to ' +
           channelObject + '.';
     } else {
