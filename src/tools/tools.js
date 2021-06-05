@@ -113,7 +113,7 @@ class Tools {
       await dbc.dbUpdate('userDB', {_id: author.id}, {$inc: {raptorTotal: 1}});
       const channelRaptors = await dbc.dbFind('raptorDB', {_id: server});
       channel.send(
-          author +
+          author.toString() +
           ', you have hatched a raptor! Your server currently houses ' +
           channelRaptors.count +
           ' raptors.',
@@ -274,7 +274,7 @@ class Tools {
         if (client.guilds.cache.get(guild._id) === undefined) {
           raptorMsg += 'Unknown Server';
         } else {
-          raptorMsg += client.guilds.cache.get(guild._id.name);
+          raptorMsg += client.guilds.cache.get(guild._id.toString());
         }
         raptorMsg += ':* ' + guild.count;
       }

@@ -115,7 +115,7 @@ class Challenge {
         ', you already have notifications enabled for this challenge.';
     } else {
       await this.submitUserData(user.id, channelID, undefined, undefined);
-      returnMsg = user.toString + ', you have joined ' + this.displayName;
+      returnMsg = user.toString() + ', you have joined ' + this.displayName;
     }
     return returnMsg;
   }
@@ -127,13 +127,13 @@ class Challenge {
   async leave(user) {
     let returnMsg = '';
     if (!(user.id in this.joined)) {
-      returnMsg = user + ', you have not yet joined this challenge.';
+      returnMsg = user.toString() + ', you have not yet joined this challenge.';
     } else {
       delete this.joined[user.id];
       const dbData =
         {$set: {hookedChannels: this.hookedChannels, joined: this.joined}};
       await dbc.dbUpdate('challengeDB', {_id: this.objectID}, dbData);
-      returnMsg = user + ', you have left ' + this.displayName;
+      returnMsg = user.toString() + ', you have left ' + this.displayName;
     }
     return returnMsg;
   }

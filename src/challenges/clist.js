@@ -34,7 +34,7 @@ class ChallengeList {
     let listData = '';
     for (const i in this.running) {
       if (!(this.hiddenCheck(i, msg.guild.id))) {
-        const guildName = this.running[i].channel.guild.name;
+        const guildName = this.running[i].channel.guild.toString();
         nonHiddenTotal += 1;
         listData += this.buildChallengeData(i, guildName);
       }
@@ -137,7 +137,7 @@ class ChallengeList {
     if (user[field] == 'off') {
       type = 'off';
     }
-    returnMsg += author + ', you currently have ';
+    returnMsg += author.toString() + ', you currently have ';
     if (field == 'autoStatus') {
       returnMsg += 'automatic summaries';
     } else if (field == 'xStatus') {
@@ -169,7 +169,7 @@ class ChallengeList {
       fieldData = server[field];
     }
     if (update === undefined || update == '') {
-      returnMsg += '**' + msg.guild.name + ' ' + fieldOptions[field] +
+      returnMsg += '**' + msg.guild.toString() + ' ' + fieldOptions[field] +
         ':** ' + fieldData + '.';
     } else if (msg.member.permissions.has('ADMINISTRATOR')) {
       switch (field) {
@@ -203,12 +203,12 @@ class ChallengeList {
   async updateStatus(author, db, id, field, flag) {
     let returnMsg = '';
     if (!(flag == 'on' || flag == 'off')) {
-      returnMsg = author + ', use **on|off** to toggle preferences.';
+      returnMsg = author.toString() + ', use **on|off** to toggle preferences.';
     } else {
       const data = {$set: {}};
       data.$set = {[field]: flag};
       await dbc.dbUpdate(db, {_id: id}, data);
-      returnMsg = author + ', you have turned ';
+      returnMsg = author.toString() + ', you have turned ';
       if (field == 'autoStatus') {
         returnMsg += 'automatic summaries';
       } else if (field == 'xStatus') {

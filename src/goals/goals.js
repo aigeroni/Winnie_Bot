@@ -190,7 +190,7 @@ class Goals {
    * @return {String} - The message to send to the user.
    */
   goalData(author) {
-    return author +
+    return author.toString() +
       ', you have written **' +
       goallist.goalList[author.id].written +
       '** ' +
