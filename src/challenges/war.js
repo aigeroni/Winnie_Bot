@@ -215,7 +215,7 @@ class War extends Challenge {
    * @return {String} - The message to send to the user.
    */
   serverText(server, serverTotals) {
-    let serverText = '__' + client.guilds.get(server).name + '__:';
+    let serverText = '__' + client.guilds.cache.get(server).name + '__:';
     let firstType = true;
     for (const item in serverTotals[server]) {
       if (serverTotals[server][item][1] > 0) {

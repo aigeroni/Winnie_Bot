@@ -271,10 +271,10 @@ class Tools {
     await guilds.forEach(function(guild) {
       if (i < 10 || guild._id == guildID) {
         raptorMsg += '\n' + (i + 1) + '. *';
-        if (client.guilds.get(guild._id) === undefined) {
+        if (client.guilds.cache.get(guild._id) === undefined) {
           raptorMsg += 'Unknown Server';
         } else {
-          raptorMsg += client.guilds.get(guild._id);
+          raptorMsg += client.guilds.cache.get(guild._id);
         }
         raptorMsg += ':* ' + guild.count;
       }

@@ -243,7 +243,7 @@ class Sprint extends Challenge {
    * @return {String} - The message to send to the user.
    */
   serverText(server, serverTotals) {
-    let sprintText = '__' + client.guilds.get(server).name + '__:';
+    let sprintText = '__' + client.guilds.cache.get(server).name + '__:';
     sprintText += ' **' + serverTotals[server][0].toFixed(2) + '** minute';
     if (serverTotals[server][0] != 1) {
       sprintText += 's';
