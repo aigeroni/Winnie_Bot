@@ -659,7 +659,7 @@ try {
       prefix = config.cmd_prefix[msg.guild.id];
     }
     // run command
-    if (msg.mentions.has(client.user)) {
+    if (msg.mentions.users.has(client.user.id)) {
       msg.channel.send(
           'My name is Winnie, and I run challenges, track goals,' +
           ' and provide other useful commands for writing.  I use the `' +
