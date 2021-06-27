@@ -14,6 +14,16 @@ export enum GoalTypes {
 }
 
 /**
+ * All possible durations of goals.
+ */
+export enum GoalDurations {
+  DAILY = 'daily',
+  MONTHLY = 'monthly',
+  WEEKLY = 'weekly',
+  YEARLY = 'yearly'
+}
+
+/**
  * Represents a goal users can set.
  */
 @Entity()
@@ -47,6 +57,14 @@ export class Goal extends BaseModel {
    */
   @Column({ type: 'int' })
   progess = 0
+
+  /**
+   * The goals duration, how long the user has to complete their goal.
+   *
+   * Can be one of daily, monthly, weekly, or yearly
+   */
+  @Column({ name: 'goal_duration', type: 'enum', enum: GoalDurations })
+  goalDuration: GoalDurations = GoalDurations.DAILY
 
   /**
    * The id of the user that set the goal.
