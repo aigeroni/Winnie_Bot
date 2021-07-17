@@ -1,27 +1,7 @@
 import { BaseModel } from './base-model'
 import { BeforeInsert, BeforeUpdate, Column, Entity, PrimaryGeneratedColumn } from 'typeorm'
+import { GoalDurations, GoalTypes } from '../types/goals'
 import { Snowflake } from 'discord.js'
-
-/**
- * All the types of goals settable.
- */
-export enum GoalTypes {
-  ITEMS = 'items',
-  LINES = 'lines',
-  MINUTES = 'minutes',
-  PAGES = 'pages',
-  WORDS = 'words',
-}
-
-/**
- * All possible durations of goals.
- */
-export enum GoalDurations {
-  DAILY = 'daily',
-  MONTHLY = 'monthly',
-  WEEKLY = 'weekly',
-  YEARLY = 'yearly'
-}
 
 /**
  * Represents a goal users can set.
