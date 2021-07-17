@@ -1,7 +1,5 @@
-import { Event } from '../types/event'
-import { I18n } from '../core/i18n'
-import { Logger } from '../core/logger'
-import { WinnieClient } from '../core/winnie-client'
+import { Event } from '../types'
+import { I18n, Logger, WinnieClient } from '../core'
 import { createConnection } from 'typeorm'
 
 /**

@@ -1,9 +1,8 @@
 import { CommandUtils } from '../commands/utils'
-import { Event } from '../types/event'
+import { Event } from '../types'
 import { GuildConfig } from '../models'
-import { I18n } from '../core/i18n'
+import { I18n, WinnieClient } from '../core'
 import { Message } from 'discord.js'
-import { WinnieClient } from '../core/winnie-client'
 
 /**
  * Check the given message to see if the Winnie_Bot user was mentioned.

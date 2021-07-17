@@ -1,7 +1,7 @@
 import { CommandInteraction } from 'discord.js'
 import { GuildConfig } from '../../models'
-import { I18n } from '../../core/i18n'
-import { SubCommand } from '../../types/subcommand'
+import { I18n } from '../../core'
+import { SubCommand } from '../../types'
 
 const NAME = 'locale'
 

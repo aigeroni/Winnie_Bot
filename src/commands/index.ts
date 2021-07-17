@@ -1,5 +1,5 @@
 import { ApplicationCommandData } from 'discord.js'
-import { Command } from '../types/command'
+import { Command } from '../types'
 import { ConfigCommand } from './config'
 import { ServerCommand } from './server'
 

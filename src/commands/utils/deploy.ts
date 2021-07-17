@@ -1,4 +1,4 @@
-import { WinnieClient } from '../../core/winnie-client'
+import { WinnieClient } from '../../core'
 import { GuildConfig } from '../../models'
 import { Commands } from '..'
 

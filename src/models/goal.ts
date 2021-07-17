@@ -1,6 +1,6 @@
 import { BaseModel } from './base-model'
 import { BeforeInsert, BeforeUpdate, Column, Entity, PrimaryGeneratedColumn } from 'typeorm'
-import { GoalDurations, GoalTypes } from '../types/goals'
+import { GoalDurations, GoalTypes } from '../types'
 import { Snowflake } from 'discord.js'
 
 /**

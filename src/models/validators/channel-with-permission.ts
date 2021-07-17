@@ -1,6 +1,6 @@
 import { GuildChannel, PermissionResolvable, Snowflake } from 'discord.js'
 import { ValidationOptions, registerDecorator } from 'class-validator'
-import { WinnieClient } from '../../core/winnie-client'
+import { WinnieClient } from '../../core'
 
 /**
  * class-validator validator for validating whether a channel ID belongs to

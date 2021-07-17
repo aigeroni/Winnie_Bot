@@ -1,6 +1,6 @@
 import { BaseModel } from './base-model'
 import { Column, Entity, PrimaryColumn } from 'typeorm'
-import { I18n } from '../core/i18n'
+import { I18n } from '../core'
 import { IANAZone } from 'luxon'
 import { IsChannelWithPermission } from './validators/channel-with-permission'
 import { IsIn, IsOptional, MaxLength } from 'class-validator'
