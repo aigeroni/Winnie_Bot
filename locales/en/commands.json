@@ -80,6 +80,17 @@
         "goalAlreadyActive": "commands-goal-set-errors-goalAlreadyActive",
         "timezoneNotSet": "commands-goal-set-errors-timezoneNotSet"
       }
+    },
+    "update": {
+      "description": "commands-goal-update-description",
+      "args": {
+        "progress": "commands-goal-update-args-progress"
+      },
+      "errors": {
+        "couldNotUpdateGoal": "commands-goal-update-errors-couldNotUpdateGoal",
+        "noActiveGoal": "commands-goal-update-errors-noActiveGoal",
+        "updateMustBePositive": "commands-goal-update-errors-updateMustBePositive"
+      }
     }
   },
   "server": {

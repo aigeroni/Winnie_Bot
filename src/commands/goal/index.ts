@@ -4,6 +4,7 @@ import { CommandUtils } from '../utils'
 import { GoalInfoCommand } from './info'
 import { GoalOverwriteCommand } from './overwrite'
 import { GoalSetCommand } from './set'
+import { GoalUpdateCommand } from './update'
 import { GuildConfig } from '../../models'
 import { I18n } from '../../core'
 
@@ -12,7 +13,8 @@ const NAME = 'goal'
 const commands = [
   GoalInfoCommand,
   GoalOverwriteCommand,
-  GoalSetCommand
+  GoalSetCommand,
+  GoalUpdateCommand
 ]
 
 export const GoalCommand: Command = {
@@ -23,7 +25,8 @@ export const GoalCommand: Command = {
     options: [
       await GoalInfoCommand.commandData(locale),
       await GoalOverwriteCommand.commandData(locale),
-      await GoalSetCommand.commandData(locale)
+      await GoalSetCommand.commandData(locale),
+      await GoalUpdateCommand.commandData(locale)
     ]
   }),
   execute: async (interaction: CommandInteraction, guildConfig: GuildConfig) => {
