@@ -18,3 +18,11 @@ export enum GoalDurations {
   WEEKLY = 'weekly',
   YEARLY = 'yearly'
 }
+/**
+  * The options for creating a goal.
+  */
+export interface GoalCreateOptions {
+  target: number
+  type?: GoalTypes
+  duration?: GoalDurations
+}
