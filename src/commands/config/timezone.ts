@@ -1,8 +1,8 @@
 import { CommandInteraction } from 'discord.js'
 import { GuildConfig, UserConfig } from '../../models'
-import { I18n } from '../../core/i18n'
+import { I18n } from '../../core'
 import { IANAZone } from 'luxon'
-import { SubCommand } from '../../types/subcommand'
+import { SubCommand } from '../../types'
 
 const NAME = 'timezone'
 

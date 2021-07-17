@@ -1,7 +1,7 @@
 import { CommandInteraction } from 'discord.js'
 import { GuildConfig } from '../../models'
-import { SubCommand } from '../../types/subcommand'
-import { Logger } from '../../core/logger'
+import { SubCommand } from '../../types'
+import { Logger } from '../../core'
 
 /**
  * A generic, reusable execute function for the top level command handler of commands

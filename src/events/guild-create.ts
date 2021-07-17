@@ -1,4 +1,4 @@
-import { Event } from '../types/event'
+import { Event } from '../types'
 import { Guild } from 'discord.js'
 import { GuildConfig } from '../models'
 

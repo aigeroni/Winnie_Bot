@@ -1,7 +1,7 @@
-import { Event } from '../types/event'
+import { Event } from '../types'
 import { Interaction } from 'discord.js'
 import { Commands } from '../commands'
-import { Logger } from '../core/logger'
+import { Logger } from '../core'
 import { GuildConfig } from '../models'
 
 /**

@@ -1,5 +1,5 @@
 import { ClientOptions, Client as DiscordJsClient, Intents } from 'discord.js'
-import { Event } from '../types/event'
+import { Event } from '../types'
 
 /**
  * THE™ Winnie_Bot client!
