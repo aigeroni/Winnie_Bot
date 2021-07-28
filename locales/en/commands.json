@@ -50,6 +50,12 @@
   },
   "goal": {
     "description": "commands-goal-description",
+    "info": {
+      "description": "commands-goal-info-description",
+      "errors": {
+        "noActiveGoal": "commands-goal-info-errors-noActiveGoal"
+      }
+    },
     "set": {
       "description": "commands-goal-set-description",
       "success": "commands-goal-set-success\n\n{{goal}}",
