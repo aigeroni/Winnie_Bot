@@ -50,6 +50,14 @@
   },
   "goal": {
     "description": "commands-goal-description",
+    "cancel": {
+      "description": "commands-goal-cancel-description",
+      "success": "commands-goal-cancel-success",
+      "errors": {
+        "couldNotCancelGoal": "commands-goal-cancel-errors-couldNotCreateGoal",
+        "goalAlreadyActive": "commands-goal-cancel-errors-goalAlreadyActive"
+      }
+    },
     "info": {
       "description": "commands-goal-info-description",
       "errors": {

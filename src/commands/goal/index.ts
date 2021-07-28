@@ -1,6 +1,7 @@
 import { ApplicationCommandData, CommandInteraction } from 'discord.js'
 import { Command } from '../../types'
 import { CommandUtils } from '../utils'
+import { GoalCancelCommand } from './cancel'
 import { GoalInfoCommand } from './info'
 import { GoalOverwriteCommand } from './overwrite'
 import { GoalSetCommand } from './set'
@@ -11,6 +12,7 @@ import { I18n } from '../../core'
 const NAME = 'goal'
 
 const commands = [
+  GoalCancelCommand,
   GoalInfoCommand,
   GoalOverwriteCommand,
   GoalSetCommand,
@@ -23,6 +25,7 @@ export const GoalCommand: Command = {
     name: NAME,
     description: await I18n.translate(locale, 'commands:config.description'),
     options: [
+      await GoalCancelCommand.commandData(locale),
       await GoalInfoCommand.commandData(locale),
       await GoalOverwriteCommand.commandData(locale),
       await GoalSetCommand.commandData(locale),
