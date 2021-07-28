@@ -56,6 +56,17 @@
         "noActiveGoal": "commands-goal-info-errors-noActiveGoal"
       }
     },
+    "overwrite": {
+      "description": "commands-goal-overwrite-description",
+      "args": {
+        "progress": "commands-goal-overwrite-args-progress"
+      },
+      "errors": {
+        "couldNotOverwriteGoal": "commands-goal-overwrite-errors-couldNotOverwriteGoal",
+        "noActiveGoal": "commands-goal-overwrite-errors-noActiveGoal",
+        "overwriteMustNoBeNegative": "commands-goal-overwrite-errors-overwriteMustNoBeNegative"
+      }
+    },
     "set": {
       "description": "commands-goal-set-description",
       "success": "commands-goal-set-success\n\n{{goal}}",
