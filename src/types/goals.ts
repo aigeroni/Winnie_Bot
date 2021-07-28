@@ -1,3 +1,5 @@
+import { Snowflake } from 'discord.js'
+
 /**
  * All the types of goals settable.
  */
@@ -17,4 +19,15 @@ export enum GoalDurations {
   MONTHLY = 'monthly',
   WEEKLY = 'weekly',
   YEARLY = 'yearly'
+}
+
+/**
+  * The options for creating a goal.
+  */
+export interface GoalCreateOptions {
+  ownerId?: Snowflake
+  target: number
+  type?: GoalTypes
+  duration?: GoalDurations
+  channelId?: Snowflake
 }
