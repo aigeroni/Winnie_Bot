@@ -48,6 +48,23 @@
       }
     }
   },
+  "goal": {
+    "description": "commands-goal-description",
+    "set": {
+      "description": "commands-goal-set-description",
+      "success": "commands-goal-set-success\n\n{{goal}}",
+      "args": {
+        "duration": "commands-goal-set-args-description",
+        "target": "commands-goal-set-args-target",
+        "type": "commands-goal-set-args-type"
+      },
+      "errors": {
+        "couldNotCreateGoal": "commands-goal-set-errors-couldNotCreateGoal",
+        "goalAlreadyActive": "commands-goal-set-errors-goalAlreadyActive",
+        "timezoneNotSet": "commands-goal-set-errors-timezoneNotSet"
+      }
+    }
+  },
   "server": {
     "description": "commands-server-description",
     "announcementsChannel": {
