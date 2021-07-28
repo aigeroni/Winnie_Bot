@@ -1,9 +1,10 @@
 import { BaseModel } from './base-model'
 import { BeforeInsert, BeforeUpdate, Column, Entity, PrimaryGeneratedColumn } from 'typeorm'
-import { DateTime } from 'luxon'
+import { DateTime, Duration, Interval } from 'luxon'
 import { GoalDurations, GoalTypes } from '../types'
 import { IsChannelWithPermission } from './validators/channel-with-permission'
 import { IsNotEmpty, IsPositive, MaxLength, Min } from 'class-validator'
+import { I18n } from '../core'
 import { Permissions, Snowflake } from 'discord.js'
 
 /**
@@ -132,5 +133,80 @@ export class Goal extends BaseModel {
   @BeforeUpdate()
   onBeforeUpdate (): void {
     this.updatedAt = DateTime.local()
+  }
+
+  /**
+    * Gets the end date for the goal.
+    *
+    * If the goal has ended, returns the date it ended.
+    * If the goal is active, returns the expected end date.
+    *
+    * @returns The end date for the goal
+    */
+  endDate (): DateTime {
+    if (this.canceledAt != null) { return this.canceledAt }
+    if (this.completedAt != null) { return this.completedAt }
+
+    switch (this.goalDuration) {
+      case GoalDurations.DAILY:
+        return this.createdAt.endOf('day')
+      case GoalDurations.WEEKLY:
+        return this.createdAt.endOf('week')
+      case GoalDurations.MONTHLY:
+        return this.createdAt.endOf('month')
+      case GoalDurations.YEARLY:
+        return this.createdAt.endOf('year')
+    }
+  }
+
+  /**
+   * Return the time remaining until the goal is expected to end.
+   *
+   * If the goal has ended, the duration will be 0 minutes.
+   *
+   * @returns A Duration instance representing the time until the goal ends
+   */
+  timeRemaining (): Duration {
+    if (!this.active()) { return Duration.fromObject({ minutes: 0 }) }
+
+    const timeRemaining = Interval.fromDateTimes(DateTime.local(), this.endDate()).toDuration()
+    return timeRemaining.shiftTo('months', 'days', 'hours', 'minutes')
+  }
+
+  /**
+   * Checks if the goal is active.
+   * Active is defined as not completed and not canceled
+   *
+   * @returns true if the goal is active
+   */
+  active (): boolean {
+    return this.completedAt == null && this.canceledAt == null
+  }
+
+  /**
+   * Creates a localised string containing the details of the goal.
+   *
+   * @param locale The locale in which to print the string
+    * @returns A localised string representing the goal.
+    */
+  async print (locale: string): Promise<string> {
+    const detailsString = await I18n.translate(locale, 'goals:details', {
+      progress: await I18n.translate(locale, `goals:typesWithCount.${this.goalType}`, { count: this.progress }),
+      target: this.target,
+      type: await I18n.translate(locale, `goals:types.${this.goalType}`)
+    })
+
+    const timeRemaining = this.timeRemaining()
+    const timeString = await I18n.translate(locale, 'goals:timeRemaining', {
+      months: await I18n.translate(locale, 'goals:durationsWithCount.months', { count: Math.round(timeRemaining.months) }),
+      days: await I18n.translate(locale, 'goals:durationsWithCount.days', { count: Math.round(timeRemaining.days) }),
+      hours: await I18n.translate(locale, 'goals:durationsWithCount.hours', { count: Math.round(timeRemaining.hours) }),
+      minutes: await I18n.translate(locale, 'goals:durationsWithCount.minutes', { count: Math.round(timeRemaining.minutes) })
+    })
+
+    return await I18n.translate(locale, 'goals:goal', {
+      details: detailsString,
+      timeRemaining: timeString
+    })
   }
 }

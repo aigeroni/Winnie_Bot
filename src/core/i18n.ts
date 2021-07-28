@@ -17,7 +17,7 @@ export const I18n = {
       defaultNS: 'winnie',
       fallbackLng: ['en'],
       lng: 'en',
-      ns: ['commands', 'winnie'],
+      ns: ['commands', 'goals', 'winnie'],
       preload: ['en'],
       supportedLngs: I18n.SUPPORTED_LANGUAGES
     })
