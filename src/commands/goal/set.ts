@@ -15,13 +15,13 @@ export const GoalSetCommand: SubCommand = {
     options: [
       {
         name: 'target',
-        description: await I18n.translate(locale, 'commands:goals.set.args.target'),
+        description: await I18n.translate(locale, 'commands:goal.set.args.target'),
         type: 'INTEGER',
         required: true
       },
       {
         name: 'type',
-        description: await I18n.translate(locale, 'commands:goals.set.args.type'),
+        description: await I18n.translate(locale, 'commands:goal.set.args.type'),
         type: 'STRING',
         choices: Object.values(GoalTypes).map((type) => ({
           name: `${type.charAt(0).toUpperCase()}${type.slice(1)}`,
@@ -31,7 +31,7 @@ export const GoalSetCommand: SubCommand = {
       },
       {
         name: 'duration',
-        description: await I18n.translate(locale, 'commands:goals.set.args.duration'),
+        description: await I18n.translate(locale, 'commands:goal.set.args.duration'),
         type: 'STRING',
         choices: Object.values(GoalDurations).map((duration) => ({
           name: `${duration.charAt(0).toUpperCase()}${duration.slice(1)}`,
@@ -100,10 +100,10 @@ async function userHasNoTimezoneSet (interaction: CommandInteraction, guildConfi
 }
 
 /**
-   * Creates a new goal from the arguments passed to the command.
+   * Parses the arguments passed into the command.
    *
-   * @param subcommand Subcommand of the top-level command ran.
-   * @returns the new goal
+   * @param interaction The command that was ran
+   * @returns An object containing the parameters for creating the goal
    */
 function getGoalOptions (interaction: CommandInteraction): GoalCreateOptions {
   const subcommand = interaction.options[0]

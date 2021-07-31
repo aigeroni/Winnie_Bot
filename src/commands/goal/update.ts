@@ -16,7 +16,7 @@ export const GoalUpdateCommand: SubCommand = {
     options: [
       {
         name: 'progress',
-        description: await I18n.translate(locale, 'commands:goals.update.args.progress'),
+        description: await I18n.translate(locale, 'commands:goal.update.args.progress'),
         type: 'INTEGER',
         required: true
       }
