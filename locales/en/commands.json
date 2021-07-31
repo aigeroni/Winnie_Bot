@@ -48,6 +48,59 @@
       }
     }
   },
+  "goal": {
+    "description": "commands-goal-description",
+    "cancel": {
+      "description": "commands-goal-cancel-description",
+      "success": "commands-goal-cancel-success",
+      "errors": {
+        "couldNotCancelGoal": "commands-goal-cancel-errors-couldNotCreateGoal",
+        "goalAlreadyActive": "commands-goal-cancel-errors-goalAlreadyActive"
+      }
+    },
+    "info": {
+      "description": "commands-goal-info-description",
+      "errors": {
+        "noActiveGoal": "commands-goal-info-errors-noActiveGoal"
+      }
+    },
+    "overwrite": {
+      "description": "commands-goal-overwrite-description",
+      "args": {
+        "progress": "commands-goal-overwrite-args-progress"
+      },
+      "errors": {
+        "couldNotOverwriteGoal": "commands-goal-overwrite-errors-couldNotOverwriteGoal",
+        "noActiveGoal": "commands-goal-overwrite-errors-noActiveGoal",
+        "overwriteMustNoBeNegative": "commands-goal-overwrite-errors-overwriteMustNoBeNegative"
+      }
+    },
+    "set": {
+      "description": "commands-goal-set-description",
+      "success": "commands-goal-set-success\n\n{{goal}}",
+      "args": {
+        "duration": "commands-goal-set-args-description",
+        "target": "commands-goal-set-args-target",
+        "type": "commands-goal-set-args-type"
+      },
+      "errors": {
+        "couldNotCreateGoal": "commands-goal-set-errors-couldNotCreateGoal",
+        "goalAlreadyActive": "commands-goal-set-errors-goalAlreadyActive",
+        "timezoneNotSet": "commands-goal-set-errors-timezoneNotSet"
+      }
+    },
+    "update": {
+      "description": "commands-goal-update-description",
+      "args": {
+        "progress": "commands-goal-update-args-progress"
+      },
+      "errors": {
+        "couldNotUpdateGoal": "commands-goal-update-errors-couldNotUpdateGoal",
+        "noActiveGoal": "commands-goal-update-errors-noActiveGoal",
+        "updateMustBePositive": "commands-goal-update-errors-updateMustBePositive"
+      }
+    }
+  },
   "server": {
     "description": "commands-server-description",
     "announcementsChannel": {

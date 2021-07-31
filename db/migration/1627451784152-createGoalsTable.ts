@@ -7,7 +7,7 @@ export class createGoalTable1607590446829 implements MigrationInterface {
       columns: [
         {
           name: 'id',
-          type: 'int',
+          type: 'serial',
           isPrimary: true
         },
         {
@@ -18,6 +18,12 @@ export class createGoalTable1607590446829 implements MigrationInterface {
           name: 'goal_type',
           type: 'enum',
           enum: ['lines', 'minutes', 'pages', 'words']
+        },
+        {
+          name: 'goal_duration',
+          type: 'enum',
+          enum: ['daily', 'monthly', 'weekly', 'yearly'],
+          isNullable: false
         },
         {
           name: 'progress',
@@ -35,22 +41,22 @@ export class createGoalTable1607590446829 implements MigrationInterface {
         },
         {
           name: 'created_at',
-          type: 'timestamp',
+          type: 'varchar',
           isNullable: true
         },
         {
           name: 'updated_at',
-          type: 'timestamp',
+          type: 'varchar',
           isNullable: true
         },
         {
           name: 'canceled_at',
-          type: 'timestamp',
+          type: 'varchar',
           isNullable: true
         },
         {
           name: 'completed_at',
-          type: 'timestamp',
+          type: 'varchar',
           isNullable: true
         }
       ]
