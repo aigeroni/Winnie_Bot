@@ -1,0 +1,41 @@
+name: Release Bot
+
+on:
+  workflow_dispatch:
+  workflow_run:
+    workflows: ["Bot Build"]
+    branches: [main, main-2.0]
+    types: 
+      - completed
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [14.x]
+    steps:
+    - uses: actions/checkout@v1
+    - name: Install doctl
+      uses: digitalocean/action-doctl@v2
+      with:
+        token: ${{ secrets.DO_PAT }}
+    - name: Run terraform
+      run: cd ./terraform && terraform init && terraform plan -var="do_token=${DO_TOKEN}" -var="pvt_key=${PVT_KEY}" -var="pub_key=${PUB_KEY}" -out=winnie.plan && terraform apply winnie.plan
+      env:
+        DO_TOKEN: ${{ secrets.DO_PAT }}
+        PVT_KEY: ${{ secrets.SSH_KEY }}
+        PUB_KEY: ${{ secrets.SSH_KEY_PUB }}
+    - name: Save droplet IP address as env var
+      run: cd ./terraform && echo "SSH_HOST_IP=$(terraform output droplet_ip_address)" >> $GITHUB_ENV
+    - name: Clone, install deps, and start Winnie
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ env.SSH_HOST_IP }}
+        username: ${{ secrets.SSH_USERNAME }}
+        key: ${{ secrets.SSH_KEY }}
+        script: |
+          git clone git@github.com:aigeroni/Winnie_Bot
+          yarn install
+          yarn build
+          yarn start
