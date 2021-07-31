@@ -100,10 +100,10 @@ async function userHasNoTimezoneSet (interaction: CommandInteraction, guildConfi
 }
 
 /**
-   * Creates a new goal from the arguments passed to the command.
+   * Parses the arguments passed into the command.
    *
-   * @param subcommand Subcommand of the top-level command ran.
-   * @returns the new goal
+   * @param interaction The command that was ran
+   * @returns An object containing the parameters for creating the goal
    */
 function getGoalOptions (interaction: CommandInteraction): GoalCreateOptions {
   const subcommand = interaction.options[0]
