@@ -4,6 +4,7 @@ import { CommandUtils } from '../utils'
 import { GoalCancelCommand } from './cancel'
 import { GoalInfoCommand } from './info'
 import { GoalOverwriteCommand } from './overwrite'
+import { GoalResetCommand } from './reset'
 import { GoalSetCommand } from './set'
 import { GoalUpdateCommand } from './update'
 import { GuildConfig } from '../../models'
@@ -15,6 +16,7 @@ const commands = [
   GoalCancelCommand,
   GoalInfoCommand,
   GoalOverwriteCommand,
+  GoalResetCommand,
   GoalSetCommand,
   GoalUpdateCommand
 ]
@@ -28,6 +30,7 @@ export const GoalCommand: Command = {
       await GoalCancelCommand.commandData(locale),
       await GoalInfoCommand.commandData(locale),
       await GoalOverwriteCommand.commandData(locale),
+      await GoalResetCommand.commandData(locale),
       await GoalSetCommand.commandData(locale),
       await GoalUpdateCommand.commandData(locale)
     ]
