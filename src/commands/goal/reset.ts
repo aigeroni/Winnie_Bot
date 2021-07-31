@@ -16,13 +16,13 @@ export const GoalResetCommand: SubCommand = {
     options: [
       {
         name: 'target',
-        description: await I18n.translate(locale, 'commands:goals.reset.args.target'),
+        description: await I18n.translate(locale, 'commands:goal.reset.args.target'),
         type: 'INTEGER',
         required: false
       },
       {
         name: 'type',
-        description: await I18n.translate(locale, 'commands:goals.reset.args.type'),
+        description: await I18n.translate(locale, 'commands:goal.reset.args.type'),
         type: 'STRING',
         choices: Object.values(GoalTypes).map((type) => ({
           name: `${type.charAt(0).toUpperCase()}${type.slice(1)}`,
@@ -32,7 +32,7 @@ export const GoalResetCommand: SubCommand = {
       },
       {
         name: 'duration',
-        description: await I18n.translate(locale, 'commands:goals.reset.args.duration'),
+        description: await I18n.translate(locale, 'commands:goal.reset.args.duration'),
         type: 'STRING',
         choices: Object.values(GoalDurations).map((duration) => ({
           name: `${duration.charAt(0).toUpperCase()}${duration.slice(1)}`,
