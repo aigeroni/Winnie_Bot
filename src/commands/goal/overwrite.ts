@@ -16,7 +16,7 @@ export const GoalOverwriteCommand: SubCommand = {
     options: [
       {
         name: 'progress',
-        description: await I18n.translate(locale, 'commands:goals.overwrite.args.progress'),
+        description: await I18n.translate(locale, 'commands:goal.overwrite.args.progress'),
         type: 'INTEGER',
         required: true
       }
