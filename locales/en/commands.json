@@ -75,6 +75,19 @@
         "overwriteMustNoBeNegative": "commands-goal-overwrite-errors-overwriteMustNoBeNegative"
       }
     },
+    "reset": {
+      "description": "commands-goal-reset-description",
+      "success": "commands-goal-reset-success\n\n{{goal}}",
+      "args": {
+        "duration": "commands-goal-reset-args-description",
+        "target": "commands-goal-reset-args-target",
+        "type": "commands-goal-reset-args-type"
+      },
+      "errors": {
+        "couldNotCreateGoal": "commands-goal-reset-errors-couldNotCreateGoal",
+        "timezoneNotSet": "commands-goal-reset-errors-timezoneNotSet"
+      }
+    },
     "set": {
       "description": "commands-goal-set-description",
       "success": "commands-goal-set-success\n\n{{goal}}",
