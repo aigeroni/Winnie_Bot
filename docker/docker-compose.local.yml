@@ -4,7 +4,15 @@ services:
     container_name: postgres
     image: postgres
     volumes:
-      - ../data:/var/lib/postgresql/data
+      - ../data/postgres:/var/lib/postgresql/data
     ports:
       - "5432:5432"
     env_file: ../.env
+  redis:
+    container_name: redis
+    image: redis
+    command: redis-server --requirepass winnie_redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - ../data/redis:/var/lib/redis
