@@ -1,8 +1,8 @@
 import path from 'path'
 import Winston from 'winston'
 
-const logPath = path.join(__dirname, '..', '..', '..', 'logs', 'debug.log')
-const exceptionPath = path.join(__dirname, '..', '..', '..', 'logs', 'exception.log')
+const logPath = path.join(process.cwd(), 'logs', 'debug.log')
+const exceptionPath = path.join(process.cwd(), 'logs', 'exception.log')
 
 const fileTransportOptions = (filename: string): Winston.transports.FileTransportOptions => ({
   filename,
