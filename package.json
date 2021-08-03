@@ -2,7 +2,7 @@
   "name": "winnie_bot",
   "version": "2.0.0",
   "description": "Provides commands for Discord-based writing groups, including word wars, sprints and goals. Created for NaNoWriMo Melbourne Region",
-  "main": "dist/src/index.js",
+  "main": "src/index.ts",
   "dependencies": {
     "bullmq": "^1.40.1",
     "class-validator": "^0.12.2",
@@ -33,7 +33,8 @@
     "docker:local:up": "docker-compose -f docker/docker-compose.local.yml up",
     "lint": "ts-standard",
     "lint:fix": "ts-standard --fix",
-    "start": "tsc && node -r dotenv/config .",
+    "start": "tsc && node -r dotenv/config dist/src/index.js",
+    "start:worker:goal": "tsc && node -r dotenv/config dist/src/workers/goal-worker.js",
     "typeorm": "tsc && node -r dotenv/config ./node_modules/typeorm/cli.js"
   },
   "repository": {
