@@ -44,6 +44,16 @@ class WinnieBotClient {
   }
 
   /**
+   * Checks if the Winnie_Bot client is currently logged into discord
+   * and able to make requests against Discord's API.
+   *
+   * @returns true If Winnie is logged in to Discord
+   */
+  isLoggedIn (): boolean {
+    return this.client.isReady()
+  }
+
+  /**
    * Registers a new event handler with Winnie_Bot
    *
    * @param event The event to register

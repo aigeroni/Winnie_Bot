@@ -3,8 +3,8 @@ import { BeforeInsert, BeforeUpdate, Column, Entity, PrimaryGeneratedColumn } fr
 import { DateTime, Duration, Interval } from 'luxon'
 import { GoalDurations, GoalTypes } from '../types'
 import { IsChannelWithPermission } from './validators/channel-with-permission'
-import { IsNotEmpty, IsPositive, MaxLength, Min } from 'class-validator'
-import { I18n } from '../core'
+import { IsNotEmpty, IsPositive, MaxLength, Min, ValidateIf } from 'class-validator'
+import { I18n, WinnieClient } from '../core'
 import { Permissions, Snowflake } from 'discord.js'
 
 /**
@@ -76,6 +76,7 @@ export class Goal extends BaseModel {
    * Used for sending messages about the goal's status later.
    */
   @Column({ name: 'channel_id' })
+  @ValidateIf(() => WinnieClient.isLoggedIn())
   @IsChannelWithPermission(Permissions.FLAGS.SEND_MESSAGES)
   @MaxLength(30)
   channelId!: Snowflake
