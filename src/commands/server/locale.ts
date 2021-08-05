@@ -45,11 +45,10 @@ export const ServerLocaleCommand: SubCommand = {
   }),
 
   execute: async (interaction: CommandInteraction, guildConfig: GuildConfig) => {
-    const subcommandGroup = interaction.options[0]
-    const subcommand = subcommandGroup.options == null ? undefined : subcommandGroup.options[0]
+    const subcommand = interaction.options.getSubcommand()
     if (subcommand == null) { return }
 
-    switch (subcommand.name) {
+    switch (subcommand) {
       case 'get':
         await get(interaction, guildConfig)
         break
@@ -83,16 +82,7 @@ async function reset (interaction: CommandInteraction, guildConfig: GuildConfig)
 }
 
 async function set (interaction: CommandInteraction, guildConfig: GuildConfig): Promise<void> {
-  const subcommandGroup = interaction.options[0]
-  const subcommand = subcommandGroup.options == null ? undefined : subcommandGroup.options[0]
-  if (subcommand == null) { return }
-
-  const option = subcommand.options == null ? undefined : subcommand.options[0]
-  if (option == null) { return }
-
-  const locale = option.value as string
-
-  guildConfig.locale = locale
+  guildConfig.locale = interaction.options.getString('locale', true)
   await guildConfig.save()
 
   if (guildConfig.errors.length > 0) {

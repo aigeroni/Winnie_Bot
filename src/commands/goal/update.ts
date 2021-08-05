@@ -1,5 +1,4 @@
 import { CommandInteraction } from 'discord.js'
-import { CommandUtils } from '../utils'
 import { GuildConfig } from '../../models'
 import { GoalService } from '../../services'
 import { I18n } from '../../core'
@@ -51,14 +50,7 @@ export const GoalUpdateCommand: SubCommand = {
   * @returns The progress update if the number is valid, -1 if it's invalid
   */
 async function progressUpdate (interaction: CommandInteraction, locale: string): Promise<number> {
-  const subcommand = interaction.options[0]
-  const progressOption = subcommand.options?.find((option) => option.name === 'progress')
-  if (progressOption == null) {
-    await CommandUtils.printGenericError(interaction, locale)
-    return -1
-  }
-
-  const progressUpdate = progressOption.value as number
+  const progressUpdate = interaction.options.getInteger('progress', true)
 
   if (progressUpdate <= 0) {
     await interaction.reply(await I18n.translate(locale, 'commands:goal.update.errors.updateMustBePositive', {

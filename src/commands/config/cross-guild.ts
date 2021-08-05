@@ -39,11 +39,10 @@ export const ConfigCrossGuildCommand: SubCommand = {
   }),
 
   execute: async (interaction: CommandInteraction, guildConfig: GuildConfig) => {
-    const subcommandGroup = interaction.options[0]
-    const subcommand = subcommandGroup.options == null ? undefined : subcommandGroup.options[0]
+    const subcommand = interaction.options.getSubcommand()
     if (subcommand == null) { return }
 
-    switch (subcommand.name) {
+    switch (subcommand) {
       case 'get':
         await get(interaction, guildConfig)
         break
@@ -77,16 +76,8 @@ async function reset (interaction: CommandInteraction, guildConfig: GuildConfig)
 }
 
 async function set (interaction: CommandInteraction, guildConfig: GuildConfig): Promise<void> {
-  const subcommandGroup = interaction.options[0]
-  const subcommand = subcommandGroup.options == null ? undefined : subcommandGroup.options[0]
-  if (subcommand == null) { return }
-
   const userConfig = await UserConfig.findOrCreate(interaction.user.id)
-  const option = subcommand.options == null ? undefined : subcommand.options[0]
-  if (option == null) { return }
-
-  // This should be a safe cast since the option type is defined as a boolean
-  userConfig.crossGuild = option.value as boolean
+  userConfig.crossGuild = interaction.options.getBoolean('enabled', true)
   await userConfig.save()
 
   if (userConfig.errors.length > 0) {

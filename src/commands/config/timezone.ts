@@ -40,11 +40,10 @@ export const ConfigTimezoneCommand: SubCommand = {
   }),
 
   execute: async (interaction: CommandInteraction, guildConfig: GuildConfig) => {
-    const subcommandGroup = interaction.options[0]
-    const subcommand = subcommandGroup.options == null ? undefined : subcommandGroup.options[0]
+    const subcommand = interaction.options.getSubcommand()
     if (subcommand == null) { return }
 
-    switch (subcommand.name) {
+    switch (subcommand) {
       case 'get':
         await get(interaction, guildConfig)
         break
@@ -83,15 +82,8 @@ async function reset (interaction: CommandInteraction, guildConfig: GuildConfig)
 }
 
 async function set (interaction: CommandInteraction, guildConfig: GuildConfig): Promise<void> {
-  const subcommandGroup = interaction.options[0]
-  const subcommand = subcommandGroup.options == null ? undefined : subcommandGroup.options[0]
-  if (subcommand == null) { return }
-
   const userConfig = await UserConfig.findOrCreate(interaction.user.id)
-  const option = subcommand.options == null ? undefined : subcommand.options[0]
-  if (option == null) { return }
-
-  const timezone = option.value as string
+  const timezone = interaction.options.getString('timezone', true)
 
   userConfig.timezone = new IANAZone(timezone)
   await userConfig.save()
