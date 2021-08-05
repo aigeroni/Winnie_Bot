@@ -1,6 +1,6 @@
 import { CommandInteraction } from 'discord.js'
 import { Goal, GuildConfig } from '../../models'
-import { GoalCreateOptions, GoalDurations, GoalTypes, SubCommand } from '../../types'
+import { GoalDurations, GoalTypes, SubCommand } from '../../types'
 import { GoalService } from '../../services'
 import { I18n } from '../../core'
 import { DateTime } from 'luxon'
@@ -51,8 +51,7 @@ export const GoalResetCommand: SubCommand = {
 
     oldGoal.canceledAt = DateTime.local()
 
-    const resetOptions = getGoalOptions(interaction)
-    const newGoal = await createNewGoal(oldGoal, resetOptions)
+    const newGoal = await createNewGoal(interaction, oldGoal)
 
     await oldGoal.save()
 
@@ -74,32 +73,12 @@ export const GoalResetCommand: SubCommand = {
  * @param newGoalOptions The new goal options passed to the command
  * @returns The newly created goal.
  */
-async function createNewGoal (oldGoal: Goal, newGoalOptions: GoalCreateOptions): Promise<Goal> {
+async function createNewGoal (interaction: CommandInteraction, oldGoal: Goal): Promise<Goal> {
   return await GoalService.createGoal({
     ownerId: oldGoal.ownerId,
-    target: newGoalOptions.target ?? oldGoal.target,
-    type: newGoalOptions.type ?? oldGoal.goalType,
-    duration: newGoalOptions.duration ?? oldGoal.goalDuration,
-    channelId: newGoalOptions.channelId ?? oldGoal.channelId
+    target: interaction.options.getInteger('target') ?? oldGoal.target,
+    type: interaction.options.getString('type') as GoalTypes ?? oldGoal.goalType,
+    duration: interaction.options.getString('duration') as GoalDurations ?? oldGoal.goalDuration,
+    channelId: interaction.channel?.id ?? oldGoal.channelId
   })
-}
-
-/**
-   * Parses the arguments passed into the command.
-   *
-   * @param interaction The command that was ran
-   * @returns An object containing the parameters for creating the goal
-   */
-function getGoalOptions (interaction: CommandInteraction): GoalCreateOptions {
-  const subcommand = interaction.options[0]
-  const targetOption = subcommand.options?.find((option) => option.name === 'target')
-  const typeOption = subcommand.options?.find((option) => option.name === 'type')
-  const durationOption = subcommand.options?.find((option) => option.name === 'duration')
-
-  return {
-    channelId: interaction.channel?.id,
-    duration: durationOption?.value as GoalDurations,
-    target: targetOption?.value as number,
-    type: typeOption?.value as GoalTypes
-  }
 }

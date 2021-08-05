@@ -11,7 +11,10 @@ class WinnieBotClient {
    * https://discord.js.org/#/docs/main/stable/typedef/ClientOptions
    */
   static clientOptions: ClientOptions = {
-    intents: Intents.NON_PRIVILEGED,
+    intents: [
+      Intents.FLAGS.GUILDS
+      // Intents.FLAGS.GUILD_INTEGRATIONS
+    ],
     partials: [
       'USER',
       'GUILD_MEMBER',

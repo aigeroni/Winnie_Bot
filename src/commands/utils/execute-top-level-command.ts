@@ -16,16 +16,17 @@ async function executeTopLevelCommand (
   interaction: CommandInteraction,
   guildConfig: GuildConfig
 ): Promise<void> {
-  const subcommand = interaction.options[0]
+  const subcommand = interaction.options.getSubcommandGroup(false) ?? interaction.options.getSubcommand(false)
 
-  const command = commands.find((c) => c.name === subcommand.name)
+  const command = commands.find((c) => c.name === subcommand)
   if (command == null) { return }
 
   try {
     await command.execute(interaction, guildConfig)
   } catch (error) {
+    const subcommandName = subcommand != null ? `::${subcommand}` : ''
     const errorMessage: string = error.toString()
-    Logger.error(`An Error occured while executing the command ${interaction.commandName}::${subcommand.name}: ${errorMessage}`)
+    Logger.error(`An Error occured while executing the command ${interaction.commandName}${subcommandName}: ${errorMessage}`)
   }
 }
 

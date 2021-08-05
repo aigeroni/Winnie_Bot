@@ -106,16 +106,11 @@ async function userHasNoTimezoneSet (interaction: CommandInteraction, guildConfi
    * @returns An object containing the parameters for creating the goal
    */
 function getGoalOptions (interaction: CommandInteraction): GoalCreateOptions {
-  const subcommand = interaction.options[0]
-  const targetOption = subcommand.options?.find((option) => option.name === 'target')
-  const typeOption = subcommand.options?.find((option) => option.name === 'type')
-  const durationOption = subcommand.options?.find((option) => option.name === 'duration')
-
   return {
     channelId: interaction.channel?.id,
-    duration: durationOption?.value as GoalDurations,
+    duration: interaction.options.getString('duration') as GoalDurations,
     ownerId: interaction.user?.id,
-    target: targetOption?.value as number ?? 0,
-    type: typeOption?.value as GoalTypes
+    target: interaction.options.getInteger('target') ?? 0,
+    type: interaction.options.getString('type') as GoalTypes
   }
 }
