@@ -40,7 +40,12 @@ async function activeGoalForUser (userId: Snowflake): Promise<Goal | null> {
   }
 }
 
+async function allActive (): Promise<Goal[]> {
+  return await Goal.find({ where: { completedAt: null, canceledAt: null } })
+}
+
 export const GoalService = {
   activeGoalForUser,
+  allActive,
   createGoal
 }
