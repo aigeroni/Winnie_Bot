@@ -1,5 +1,7 @@
 import { ClientOptions, Client as DiscordJsClient, Intents } from 'discord.js'
 import { Event } from '../types'
+import { I18n } from './i18n'
+import { Logger } from './logger'
 
 /**
  * THE™ Winnie_Bot client!
@@ -33,6 +35,26 @@ class WinnieBotClient {
    */
   constructor () {
     this.client = new DiscordJsClient(WinnieBotClient.clientOptions)
+  }
+
+  /**
+ * The main function that starts Winnie.
+ */
+  async start (events: Event[]): Promise<void> {
+    Logger.info('Welcome to Winnie_Bot!')
+
+    await I18n.init()
+
+    Logger.info('Starting Winnie')
+    this.registerEvents(events)
+
+    try {
+      await this.login()
+      Logger.info('Successfully logged in to Discord.')
+    } catch (e) {
+      Logger.error('Unable to log in to discord, did you set your bot token?')
+      process.exit()
+    }
   }
 
   /**
