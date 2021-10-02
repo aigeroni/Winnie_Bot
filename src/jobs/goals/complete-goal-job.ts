@@ -1,4 +1,3 @@
-import { DateTime } from 'luxon'
 import { JobQueue } from '../../core'
 import { Goal } from '../../models'
 import { CompleteGoalJobData, WinnieJob } from '../../types'
@@ -12,8 +11,7 @@ export const CompleteGoalJob: WinnieJob<CompleteGoalJobData> = {
     const goal = await Goal.findOne({ where: { id: job.data.goalId } })
     if (goal == null) { throw new Error('Could not find goal with id') }
 
-    goal.completedAt = DateTime.local()
-    await goal.save()
+    await goal.complete()
 
     if (goal.errors.length > 0) { throw new Error('Could not mark goal as complete') }
 

@@ -3,7 +3,6 @@ import { Goal, GuildConfig } from '../../models'
 import { GoalDurations, GoalTypes, SubCommand } from '../../types'
 import { GoalService } from '../../services'
 import { I18n } from '../../core'
-import { DateTime } from 'luxon'
 
 const NAME = 'reset'
 
@@ -49,11 +48,8 @@ export const GoalResetCommand: SubCommand = {
       return
     }
 
-    oldGoal.canceledAt = DateTime.local()
-
+    await oldGoal.cancel()
     const newGoal = await createNewGoal(interaction, oldGoal)
-
-    await oldGoal.save()
 
     if (oldGoal.errors.length > 0 && newGoal.errors.length > 0) {
       await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:goal.reset.errors.couldNotResetGoal'))

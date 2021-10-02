@@ -185,6 +185,22 @@ export class Goal extends BaseModel {
   }
 
   /**
+   * Takes the current goal and makes it as complete.
+   */
+  async complete (): Promise<void> {
+    this.completedAt = DateTime.local()
+    await this.save()
+  }
+
+  /**
+   * Takes the current goal and makes it as canceled.
+   */
+  async cancel (): Promise<void> {
+    this.canceledAt = DateTime.local()
+    await this.save()
+  }
+
+  /**
    * Creates a localised string containing the details of the goal.
    *
    * @param locale The locale in which to print the string
