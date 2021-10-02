@@ -3,7 +3,6 @@ import { GuildConfig } from '../../models'
 import { GoalService } from '../../services'
 import { I18n } from '../../core'
 import { SubCommand } from '../../types'
-import { DateTime } from 'luxon'
 
 const NAME = 'cancel'
 
@@ -21,8 +20,8 @@ export const GoalCancelCommand: SubCommand = {
       return
     }
 
-    goal.canceledAt = DateTime.local()
-    await goal.save()
+    await goal.cancel()
+
     if (goal.errors.length > 0) {
       await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:goal.cancel.error.couldNotCancelGoal'))
     } else {
