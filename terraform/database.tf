@@ -24,4 +24,5 @@ resource "digitalocean_database_firewall" "winnie-db-firewall" {
 
 output "database-connection-uri" {
   value      = digitalocean_database_cluster.winnie-db-cluster.private_uri
+  sensitive  = true
 }
