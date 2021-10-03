@@ -117,13 +117,26 @@ export class Goal extends BaseModel {
   completedAt?: DateTime
 
   /**
+   * The anticipated time the goal will end, based on the creation time.
+   */
+  @Column({
+    name: 'expected_end_at',
+    transformer: {
+      ...dateTransformer,
+      from: (value: string) => DateTime.fromISO(value)
+    },
+    type: 'varchar'
+  })
+  expectedEndAt!: DateTime
+
+  /**
    * Listener for the beforeInsert event.
    *
    * Sets the created at timestamp.
    */
   @BeforeInsert()
   onBeforeInsert (): void {
-    this.createdAt = DateTime.local()
+    this.createdAt = DateTime.utc()
   }
 
   /**
@@ -133,7 +146,7 @@ export class Goal extends BaseModel {
    */
   @BeforeUpdate()
   onBeforeUpdate (): void {
-    this.updatedAt = DateTime.local()
+    this.updatedAt = DateTime.utc()
   }
 
   /**
@@ -148,16 +161,7 @@ export class Goal extends BaseModel {
     if (this.canceledAt != null) { return this.canceledAt }
     if (this.completedAt != null) { return this.completedAt }
 
-    switch (this.goalDuration) {
-      case GoalDurations.DAILY:
-        return this.createdAt.endOf('day')
-      case GoalDurations.WEEKLY:
-        return this.createdAt.endOf('week')
-      case GoalDurations.MONTHLY:
-        return this.createdAt.endOf('month')
-      case GoalDurations.YEARLY:
-        return this.createdAt.endOf('year')
-    }
+    return this.expectedEndAt
   }
 
   /**
@@ -170,7 +174,7 @@ export class Goal extends BaseModel {
   timeRemaining (): Duration {
     if (!this.active()) { return Duration.fromObject({ minutes: 0 }) }
 
-    const timeRemaining = Interval.fromDateTimes(DateTime.local(), this.endDate()).toDuration()
+    const timeRemaining = Interval.fromDateTimes(DateTime.utc(), this.endDate()).toDuration()
     return timeRemaining.shiftTo('months', 'days', 'hours', 'minutes')
   }
 
@@ -188,7 +192,7 @@ export class Goal extends BaseModel {
    * Takes the current goal and makes it as complete.
    */
   async complete (): Promise<void> {
-    this.completedAt = DateTime.local()
+    this.completedAt = DateTime.utc()
     await this.save()
   }
 
@@ -196,7 +200,7 @@ export class Goal extends BaseModel {
    * Takes the current goal and makes it as canceled.
    */
   async cancel (): Promise<void> {
-    this.canceledAt = DateTime.local()
+    this.canceledAt = DateTime.utc()
     await this.save()
   }
 
