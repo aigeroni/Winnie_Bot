@@ -1,11 +1,6 @@
 name: Release Bot
 
-on:
-  workflow_dispatch:
-  workflow_run:
-    workflows: ["Bot Build"]
-    types: 
-      - completed
+on: [push]
 
 jobs:
   build:
