@@ -3,7 +3,7 @@ data "digitalocean_ssh_key" "winnie-key" {
 }
 
 resource "digitalocean_droplet" "winnie-bot" {
-  image  = "debian-10-x64"
+  image  = "debian-11-x64"
   name   = "bot"
   region = "ams3"
   size   = "s-1vcpu-1gb"
