@@ -8,7 +8,7 @@ resource "digitalocean_droplet" "winnie-bot" {
   region = "ams3"
   size   = "s-1vcpu-1gb"
   ssh_keys = [
-    data.digitalocean_ssh_key.lexi.id
+    data.digitalocean_ssh_key.winnie-key.id
   ]
 }
 
