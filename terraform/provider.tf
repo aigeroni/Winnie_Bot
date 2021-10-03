@@ -5,6 +5,15 @@ terraform {
       version = "2.3.0"
     }
   }
+
+  backend "remote" {
+    hostname = "app.terraform.io"
+    organization = "aigeroni"
+
+    workspaces {
+      name = "Winnie_Bot"
+    }
+  }
 }
 
 provider "digitalocean" {
