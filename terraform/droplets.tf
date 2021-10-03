@@ -24,6 +24,6 @@ resource "digitalocean_firewall" "winnie-bot-firewall" {
   }
 }
 
-output "droplet_ip_address" {
+output "droplet-ip-address" {
   value      = digitalocean_droplet.bot.ipv4_address
 }

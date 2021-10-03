@@ -21,3 +21,7 @@ resource "digitalocean_database_firewall" "winnie-db-firewall" {
     value = digitalocean_droplet.winnie-bot.id
   }
 }
+
+output "database-connection-uri" {
+  value      = digitalocean_database_cluster.winnie-db-cluster.private_uri
+}
