@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
   workflow_run:
     workflows: ["Bot Build"]
-    branches: [main, main-2.0]
+    branches: [main, main-2.0, lisushka/infra-2.0]
     types: 
       - completed
 
