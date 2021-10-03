@@ -15,8 +15,8 @@ export function IsTimeZone (validationOptions?: ValidationOptions) {
       propertyName: propertyName,
       options: validationOptions,
       validator: {
-        validate (timeZone: IANAZone): boolean {
-          return timeZone.isValid
+        validate (timezone: IANAZone): boolean {
+          return timezone.isValid
         }
       }
     })
