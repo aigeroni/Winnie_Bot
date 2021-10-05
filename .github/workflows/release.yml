@@ -10,10 +10,9 @@ jobs:
         node-version: [14.x]
     steps:
     - uses: actions/checkout@v1
-    - name: Install doctl
-      uses: digitalocean/action-doctl@v2
+    - uses: hashicorp/setup-terraform@v1
       with:
-        token: ${{ secrets.DO_PAT }}
+        cli_config_credentials_token: ${{ secrets.TERRAFORM_API_TOKEN }}
     - name: Run terraform
       run: cd ./terraform && terraform init && terraform plan -var="do_token=${DO_TOKEN}" -var="pvt_key=${PVT_KEY}" -var="pub_key=${PUB_KEY}" -out=winnie.plan && terraform apply winnie.plan
       env:
