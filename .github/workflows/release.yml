@@ -18,7 +18,7 @@ jobs:
       env:
         DO_TOKEN: ${{ secrets.DO_PAT }}
     - name: Run terraform
-      run: cd ./terraform && terraform init && terraform plan && terraform apply
+      run: cd ./terraform && terraform init && terraform plan && terraform apply -auto-approve
     - name: Save droplet IP address as env var
       run: cd ./terraform && echo "SSH_HOST_IP=$(terraform output droplet-ip-address)" >> $GITHUB_ENV
     - name: Save private database connection string as env var
