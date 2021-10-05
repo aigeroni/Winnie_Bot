@@ -14,11 +14,9 @@ jobs:
       with:
         cli_config_credentials_token: ${{ secrets.TERRAFORM_API_TOKEN }}
     - name: Build tfvars file
-      run: cd ./terraform && printf "do_token = \"%s\"\n\pvt_key = "%s\"\n\pub_key = "%s\"\n" $DO_TOKEN $PVT_KEY $PUB_KEY > cd.auto.tfvars
+      run: cd ./terraform && printf "do_token = \"%s\"" $DO_TOKEN > cd.auto.tfvars
       env:
         DO_TOKEN: ${{ secrets.DO_PAT }}
-        PVT_KEY: ${{ secrets.SSH_KEY }}
-        PUB_KEY: ${{ secrets.SSH_KEY_PUB }}
     - name: Run terraform
       run: cd ./terraform && terraform init && terraform plan && terraform apply
     - name: Save droplet IP address as env var
