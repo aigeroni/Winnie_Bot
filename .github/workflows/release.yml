@@ -13,12 +13,14 @@ jobs:
     - uses: hashicorp/setup-terraform@v1
       with:
         cli_config_credentials_token: ${{ secrets.TERRAFORM_API_TOKEN }}
-    - name: Run terraform
-      run: cd ./terraform && terraform init && terraform plan -var="do_token=${DO_TOKEN}" -var="pvt_key=${PVT_KEY}" -var="pub_key=${PUB_KEY}" -out=winnie.plan && terraform apply winnie.plan
+    - name: Build tfvars file
+      run: printf "do_token = \"%s\"\n\pvt_key = "%s\"\n\pub_key = "%s\"\n" $DO_TOKEN $PVT_KEY $PUB_KEY > cd.auto.tfvars
       env:
         DO_TOKEN: ${{ secrets.DO_PAT }}
         PVT_KEY: ${{ secrets.SSH_KEY }}
         PUB_KEY: ${{ secrets.SSH_KEY_PUB }}
+    - name: Run terraform
+      run: cd ./terraform && terraform init && terraform plan && terraform apply
     - name: Save droplet IP address as env var
       run: cd ./terraform && echo "SSH_HOST_IP=$(terraform output droplet-ip-address)" >> $GITHUB_ENV
     - name: Save private database connection string as env var
