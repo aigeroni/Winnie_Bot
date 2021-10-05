@@ -22,7 +22,7 @@ jobs:
     - name: Save droplet IP address as env var
       run: cd ./terraform && echo SSH_HOST_IP=$(terraform output droplet-ip-address) >> $GITHUB_ENV
     - name: Save private database connection string as env var
-      run: cd ./terraform && echo "DB_CONNECTION_STRING=$(terraform output database-connection-uri)" >> $GITHUB_ENV
+      run: cd ./terraform && echo DB_CONNECTION_STRING=$(terraform output database-connection-uri) >> $GITHUB_ENV
     - name: Clone, install deps, and start Winnie
       uses: appleboy/ssh-action@master
       with:
