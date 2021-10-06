@@ -29,6 +29,7 @@ jobs:
         host: ${{ env.SSH_HOST_IP }}
         username: ${{ secrets.SSH_USERNAME }}
         key: ${{ secrets.SSH_KEY }}
+        port: 22
         script: |
           git clone git@github.com:aigeroni/Winnie_Bot
           yarn install
