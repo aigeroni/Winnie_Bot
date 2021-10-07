@@ -1,3 +1,4 @@
+import { DateTime } from 'luxon'
 import { JobQueue, Logger } from '../../core'
 import { GoalService } from '../../services'
 import { EnququeGoalsToCompleteJobData, WinnieJob } from '../../types'
@@ -18,9 +19,12 @@ export const EnququeGoalsToCompleteJob: WinnieJob<EnququeGoalsToCompleteJobData>
   enqueue: async (data) => { await JobQueue.queues.goalsQueue.add(NAME, data) },
   execute: async (job) => {
     const goals = await GoalService.allActive()
+
     const goalsToComplete = goals.filter((goal) => {
-      const timeLeft = job.data.time.minus(goal.endDate())
-      return timeLeft.millisecond < GOAL_COMPLETION_MARGIN
+      const enqueueAt = DateTime.fromISO(job.data.time)
+
+      const timeLeft = goal.endDate().diff(enqueueAt)
+      return timeLeft.milliseconds < GOAL_COMPLETION_MARGIN
     })
 
     goalsToComplete.forEach((goal) => {

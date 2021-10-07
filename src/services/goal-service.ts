@@ -44,7 +44,7 @@ async function activeGoalForUser (userId: Snowflake): Promise<Goal | null> {
 }
 
 async function allActive (): Promise<Goal[]> {
-  return await Goal.find({ where: { completedAt: null, canceledAt: null } })
+  return await Goal.find({ where: 'Goal.completed_at IS NULL AND Goal.canceled_at IS NULL' })
 }
 
 function estimateCompletionDate (timezone: IANAZone, goalDuration: GoalDurations): DateTime {

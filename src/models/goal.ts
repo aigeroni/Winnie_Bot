@@ -6,15 +6,7 @@ import { IsChannelWithPermission } from './validators/channel-with-permission'
 import { IsNotEmpty, IsPositive, MaxLength, Min, ValidateIf } from 'class-validator'
 import { I18n, WinnieClient } from '../core'
 import { Permissions, Snowflake } from 'discord.js'
-
-/**
-  * Typeorm transformer for converting ISO timestamps to
-  * DateTime objects from Luxon.
-  */
-const dateTransformer = {
-  to: (value: DateTime) => value?.toISO(),
-  from: (value: string) => value === null ? null : DateTime.fromISO(value)
-}
+import { DateTimeTransformer, NullableDateTimeTransformer } from './transformers/date-time'
 
 /**
  * Represents a goal users can set.
@@ -84,20 +76,15 @@ export class Goal extends BaseModel {
   /**
     * The timestamp of when this goal was created.
     */
-  @Column({
-    name: 'created_at',
-    transformer: {
-      ...dateTransformer,
-      from: (value: string) => DateTime.fromISO(value)
-    },
-    type: 'varchar'
-  })
+  @Column({ name: 'created_at', transformer: new DateTimeTransformer(), type: 'varchar' })
   createdAt!: DateTime
 
   /**
   * The timestamp of the most recent time this goal was updated.
+  *
+  * Null if the goal has never been updated.
   */
-  @Column({ name: 'updated_at', transformer: dateTransformer, type: 'varchar' })
+  @Column({ name: 'updated_at', transformer: new NullableDateTimeTransformer(), type: 'varchar' })
   updatedAt?: DateTime
 
   /**
@@ -105,7 +92,7 @@ export class Goal extends BaseModel {
  *
  * Null if not canceled
  */
-  @Column({ name: 'canceled_at', transformer: dateTransformer, type: 'varchar' })
+  @Column({ name: 'canceled_at', transformer: new NullableDateTimeTransformer(), type: 'varchar' })
   canceledAt?: DateTime
 
   /**
@@ -113,20 +100,13 @@ export class Goal extends BaseModel {
  *
  * Null if not completed
  */
-  @Column({ name: 'completed_at', transformer: dateTransformer, type: 'varchar' })
+  @Column({ name: 'completed_at', transformer: new NullableDateTimeTransformer(), type: 'varchar' })
   completedAt?: DateTime
 
   /**
    * The anticipated time the goal will end, based on the creation time.
    */
-  @Column({
-    name: 'expected_end_at',
-    transformer: {
-      ...dateTransformer,
-      from: (value: string) => DateTime.fromISO(value)
-    },
-    type: 'varchar'
-  })
+  @Column({ name: 'expected_end_at', transformer: new DateTimeTransformer(), type: 'varchar' })
   expectedEndAt!: DateTime
 
   /**

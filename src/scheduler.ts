@@ -4,7 +4,7 @@ import { Jobs } from './jobs'
 
 function scheduleEnququeGoalsToCompleteJob (): void {
   NodeCron.schedule('*/15 * * * *', () => {
-    Jobs.goalJobs.EnququeGoalsToCompleteJob.enqueue({ time: DateTime.local() }).catch(() => {})
+    Jobs.goalJobs.EnququeGoalsToCompleteJob.enqueue({ time: DateTime.utc().toISO() }).catch(() => {})
   })
 }
 
