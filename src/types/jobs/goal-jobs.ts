@@ -2,6 +2,6 @@ export interface CompleteGoalJobData {
   goalId: number
 }
 
-export interface EnququeGoalsToCompleteJobData {
+export interface EnqueueGoalsToCompleteJobData {
   time: string
 }

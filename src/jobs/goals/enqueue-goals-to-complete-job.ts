@@ -1,7 +1,7 @@
 import { DateTime } from 'luxon'
 import { JobQueue, Logger } from '../../core'
 import { GoalService } from '../../services'
-import { EnququeGoalsToCompleteJobData, WinnieJob } from '../../types'
+import { EnqueueGoalsToCompleteJobData, WinnieJob } from '../../types'
 import { CompleteGoalJob } from './complete-goal-job'
 
 /**
@@ -12,9 +12,9 @@ import { CompleteGoalJob } from './complete-goal-job'
  */
 const GOAL_COMPLETION_MARGIN = 900000
 
-const NAME = 'enquque_goals_to_complete_job'
+const NAME = 'enqueue_goals_to_complete_job'
 
-export const EnququeGoalsToCompleteJob: WinnieJob<EnququeGoalsToCompleteJobData> = {
+export const EnqueueGoalsToCompleteJob: WinnieJob<EnqueueGoalsToCompleteJobData> = {
   name: NAME,
   enqueue: async (data) => { await JobQueue.queues.goalsQueue.add(NAME, data) },
   execute: async (job) => {

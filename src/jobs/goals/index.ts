@@ -1,13 +1,13 @@
 import { CompleteGoalJob } from './complete-goal-job'
-import { EnququeGoalsToCompleteJob } from './enqueue-goals-to-complete-job'
+import { EnqueueGoalsToCompleteJob } from './enqueue-goals-to-complete-job'
 
 const all = [
   CompleteGoalJob,
-  EnququeGoalsToCompleteJob
+  EnqueueGoalsToCompleteJob
 ]
 
 export const goalJobs = {
   all,
   CompleteGoalJob,
-  EnququeGoalsToCompleteJob
+  EnqueueGoalsToCompleteJob
 }
