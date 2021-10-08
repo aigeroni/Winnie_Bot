@@ -1,0 +1,39 @@
+{
+  "goal": "{{details}}\n{{timeRemaining}}",
+  "details": "You have done {{progress}} of your {{target}}-{{type}} goal.",
+  "timeRemaining": "You have {{months}}, {{days}}, {{hours}}, and {{minutes}} to complete your goal.",
+  "durationsWithCount": {
+    "days": "{{count}} day",
+    "days_plural": "{{count}} days",
+    "hours": "{{count}} hour",
+    "hours_plural": "{{count}} hours",
+    "minutes": "{{count}} minute",
+    "minutes_plural": "{{count}} minutes",
+    "months": "{{count}} month",
+    "months_plural": "{{count}} months"
+  },
+  "typesWithCount": {
+    "items": "{{count}} item",
+    "items_plural": "{{count}} items",
+    "lines": "{{count}} line",
+    "lines_plural": "{{count}} lines",
+    "minutes": "{{count}} minute",
+    "minutes_plural": "{{count}} minutes",
+    "pages": "{{count}} page",
+    "pages_plural": "{{count}} pages",
+    "words": "{{count}} word",
+    "words_plural": "{{count}} words"
+  },
+  "types": {
+    "items": "item",
+    "items_plural": "items",
+    "lines": "line",
+    "lines_plural": "lines",
+    "minutes": "minute",
+    "minutes_plural": "minutes",
+    "pages": "page",
+    "pages_plural": "pages",
+    "words": "word",
+    "words_plural": "words"
+  }
+}

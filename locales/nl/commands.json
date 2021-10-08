@@ -1,0 +1,205 @@
+{
+  "defaultError": "**Unknown Error:** I'm sorry, I'm afraid I can't do that. This incident has been logged to the dashboard.",
+  "config": {
+    "description": "commands-config-description",
+    "crossGuild": {
+      "description": "commands-config-crossGuild-description",
+      "get": {
+        "description": "commands-config-crossGuild-get-description",
+        "disabled": "commands-config-crossGuild-get-disabled",
+        "enabled": "commands-config-crossGuild-get-enabled"
+      },
+      "reset": {
+        "description": "commands-config-crossGuild-reset-description",
+        "error": "commands-config-crossGuild-reset-error",
+        "success": "commands-config-crossGuild-reset-success"
+      },
+      "set": {
+        "description": "commands-config-crossGuild-set-description",
+        "success": "commands-config-crossGuild-set-success {{crossGuild}}",
+        "error": "commands-config-crossGuild-set-error",
+        "args": {
+          "enabled": "commands-config-crossGuild-set-args-enabled"
+        }
+      }
+    },
+    "timezone": {
+      "description": "commands-config-timezone-description",
+      "get": {
+        "description": "commands-config-timezone-get-description",
+        "success": "commands-config-timezone-get-success {{timezone}}",
+        "errors": {
+          "notSet": "commands-config-timezone-get-errors-notSet"
+        }
+      },
+      "reset": {
+        "description": "commands-config-timezone-reset-description",
+        "success": "commands-config-timezone-reset-success"
+      },
+      "set": {
+        "description": "commands-config-timezone-set-description",
+        "success": "commands-config-timezone-set-success {{timezone}}",
+        "args": {
+          "timezone": "commands-config-timezone-set-args-timezone"
+        },
+        "errors": {
+          "invalidValue": "commands-config-timezone-set-errors-invalidValue"
+        }
+      }
+    }
+  },
+  "goal": {
+    "description": "commands-goal-description",
+    "cancel": {
+      "description": "commands-goal-cancel-description",
+      "success": "commands-goal-cancel-success",
+      "errors": {
+        "couldNotCancelGoal": "commands-goal-cancel-errors-couldNotCreateGoal",
+        "goalAlreadyActive": "commands-goal-cancel-errors-goalAlreadyActive"
+      }
+    },
+    "info": {
+      "description": "commands-goal-info-description",
+      "errors": {
+        "noActiveGoal": "commands-goal-info-errors-noActiveGoal"
+      }
+    },
+    "overwrite": {
+      "description": "commands-goal-overwrite-description",
+      "args": {
+        "progress": "commands-goal-overwrite-args-progress"
+      },
+      "errors": {
+        "couldNotOverwriteGoal": "commands-goal-overwrite-errors-couldNotOverwriteGoal",
+        "noActiveGoal": "commands-goal-overwrite-errors-noActiveGoal",
+        "overwriteMustNoBeNegative": "commands-goal-overwrite-errors-overwriteMustNoBeNegative"
+      }
+    },
+    "reset": {
+      "description": "commands-goal-reset-description",
+      "success": "commands-goal-reset-success\n\n{{goal}}",
+      "args": {
+        "duration": "commands-goal-reset-args-description",
+        "target": "commands-goal-reset-args-target",
+        "type": "commands-goal-reset-args-type"
+      },
+      "errors": {
+        "couldNotCreateGoal": "commands-goal-reset-errors-couldNotCreateGoal",
+        "timezoneNotSet": "commands-goal-reset-errors-timezoneNotSet"
+      }
+    },
+    "set": {
+      "description": "commands-goal-set-description",
+      "success": "commands-goal-set-success\n\n{{goal}}",
+      "args": {
+        "duration": "commands-goal-set-args-description",
+        "target": "commands-goal-set-args-target",
+        "type": "commands-goal-set-args-type"
+      },
+      "errors": {
+        "couldNotCreateGoal": "commands-goal-set-errors-couldNotCreateGoal",
+        "goalAlreadyActive": "commands-goal-set-errors-goalAlreadyActive",
+        "timezoneNotSet": "commands-goal-set-errors-timezoneNotSet"
+      }
+    },
+    "update": {
+      "description": "commands-goal-update-description",
+      "args": {
+        "progress": "commands-goal-update-args-progress"
+      },
+      "errors": {
+        "couldNotUpdateGoal": "commands-goal-update-errors-couldNotUpdateGoal",
+        "noActiveGoal": "commands-goal-update-errors-noActiveGoal",
+        "updateMustBePositive": "commands-goal-update-errors-updateMustBePositive"
+      }
+    }
+  },
+  "server": {
+    "description": "commands-server-description",
+    "announcementsChannel": {
+      "description": "commands-server-announcementsChannel-description",
+      "get": {
+        "description": "commands-server-announcementsChannel-get-description",
+        "success": "commands-server-announcementsChannel-get-success <#{{announcementsChannel}}>"
+      },
+      "reset": {
+        "description": "commands-server-announcementsChannel-reset-description",
+        "error": "commands-server-announcementsChannel-reset-error",
+        "success": "commands-server-announcementsChannel-reset-success"
+      },
+      "set": {
+        "description": "commands-server-announcementsChannel-set-description",
+        "success": "commands-server-announcementsChannel-set-success <#{{announcementsChannel}}>",
+        "args": {
+          "announcementsChannel": "commands-server-announcementsChannel-set-args-announcementsChannel"
+        },
+        "error": "commands-server-announcementsChannel-set-error"
+      }
+    },
+    "crossGuild": {
+      "description": "commands-server-crossGuild-description",
+      "get": {
+        "description": "commands-server-crossGuild-get-description",
+        "disabled": "commands-server-crossGuild-get-disabled",
+        "enabled": "commands-server-crossGuild-get-enabled"
+      },
+      "reset": {
+        "description": "commands-server-crossGuild-reset-description",
+        "error": "commands-server-crossGuild-reset-error",
+        "success": "commands-server-crossGuild-reset-success"
+      },
+      "set": {
+        "description": "commands-server-crossGuild-set-description",
+        "success": "commands-server-crossGuild-set-success {{crossGuild}}",
+        "error": "commands-server-crossGuild-set-error",
+        "args": {
+          "enabled": "commands-server-crossGuild-set-args-enabled"
+        }
+      }
+    },
+    "locale": {
+      "description": "commands-server-locale-description",
+      "get": {
+        "description": "commands-server-locale-get-description",
+        "success": "commands-server-locale-get-success {{locale}}"
+      },
+      "reset": {
+        "description": "commands-server-locale-reset-description",
+        "error": "commands-server-locale-reset-error",
+        "success": "commands-server-locale-reset-success"
+      },
+      "set": {
+        "description": "commands-server-locale-set-description",
+        "success": "commands-server-locale-set-success {{locale}}",
+        "args": {
+          "locale": "commands-server-locale-set-args-locale"
+        },
+        "error": "commands-server-locale-set-error"
+      }
+    },
+    "timezone": {
+      "description": "commands-server-timezone-description",
+      "get": {
+        "description": "commands-server-timezone-get-description",
+        "success": "commands-server-timezone-get-success {{timezone}}",
+        "errors": {
+          "notSet": "commands-server-timezone-get-errors-notSet"
+        }
+      },
+      "reset": {
+        "description": "commands-server-timezone-reset-description",
+        "success": "commands-server-timezone-reset-success"
+      },
+      "set": {
+        "description": "commands-server-timezone-set-description",
+        "success": "commands-server-timezone-set-success {{timezone}}",
+        "args": {
+          "timezone": "commands-server-timezone-set-args-timezone"
+        },
+        "errors": {
+          "invalidValue": "commands-server-timezone-set-errors-invalidValue"
+        }
+      }
+    }
+  }
+}
