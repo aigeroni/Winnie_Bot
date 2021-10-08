@@ -3,9 +3,9 @@
   "config": {
     "description": "Configures Winnie_Bot to meet your needs.",
     "crossGuild": {
-      "description": "Controls whether challenges are visible to other servers.",
+      "description": "Controls whether your challenges are visible to other servers.",
       "get": {
-        "description": "Displays whether challenges are visible to other servers.",
+        "description": "Displays whether your challenges are visible to other servers.",
         "disabled": "Your challenges will **not** display on other servers.",
         "enabled": "Your challenges will display on other servers."
       },
@@ -115,9 +115,9 @@
     }
   },
   "server": {
-    "description": "commands-server-description",
+    "description": "Configures Winnie_Bot to meet your server's needs. Only usable by server admins slash people with `manage server` permissions but we will ask for clarification. From ostensibly competent devs.",
     "announcementsChannel": {
-      "description": "commands-server-announcementsChannel-description",
+      "description": "Chooses the channel which Winnie_Bot makes announcements to.",
       "get": {
         "description": "commands-server-announcementsChannel-get-description",
         "success": "commands-server-announcementsChannel-get-success <#{{announcementsChannel}}>"
@@ -137,67 +137,67 @@
       }
     },
     "crossGuild": {
-      "description": "commands-server-crossGuild-description",
+      "description": "Controls whether your server's challenges are visible to other servers.",
       "get": {
-        "description": "commands-server-crossGuild-get-description",
-        "disabled": "commands-server-crossGuild-get-disabled",
-        "enabled": "commands-server-crossGuild-get-enabled"
+        "description": "Displays whether your server's challenges are visible to other servers.",
+        "disabled": "Your server's challenges will **not** display on other servers.",
+        "enabled": "Your server's challenges will display on other servers."
       },
       "reset": {
-        "description": "commands-server-crossGuild-reset-description",
-        "error": "commands-server-crossGuild-reset-error",
-        "success": "commands-server-crossGuild-reset-success"
+        "description": "commands-config-crossGuild-reset-description",
+        "error": "commands-config-crossGuild-reset-error",
+        "success": "commands-config-crossGuild-reset-success"
       },
       "set": {
-        "description": "commands-server-crossGuild-set-description",
-        "success": "commands-server-crossGuild-set-success {{crossGuild}}",
-        "error": "commands-server-crossGuild-set-error",
+        "description": "commands-config-crossGuild-set-description",
+        "success": "commands-config-crossGuild-set-success {{crossGuild}}",
+        "error": "commands-config-crossGuild-set-error",
         "args": {
-          "enabled": "commands-server-crossGuild-set-args-enabled"
+          "enabled": "commands-config-crossGuild-set-args-enabled"
         }
       }
     },
     "locale": {
-      "description": "commands-server-locale-description",
+      "description": "Configures the language that Winnie_Bot uses in your server.",
       "get": {
-        "description": "commands-server-locale-get-description",
-        "success": "commands-server-locale-get-success {{locale}}"
+        "description": "Displays Winnie_Bot's current language.",
+        "success": "Winnie_Bot currently speaks {{locale}}."
       },
       "reset": {
-        "description": "commands-server-locale-reset-description",
-        "error": "commands-server-locale-reset-error",
-        "success": "commands-server-locale-reset-success"
+        "description": "Resets Winnie_Bot's current language to English.",
+        "error": "commands-server-locale-reset-error - Parlez vous Latin?",
+        "success": "You have reset Winnie_Bot's current language to English."
       },
       "set": {
-        "description": "commands-server-locale-set-description",
-        "success": "commands-server-locale-set-success {{locale}}",
+        "description": "Sets a new language for Winnie_Bot to speak.",
+        "success": "Winnie_Bot now speaks {{locale}}.",
         "args": {
-          "locale": "commands-server-locale-set-args-locale"
+          "locale": "An ISO 639-1 language code. Current options are `en` (English), `fr` (Français), `hu` (Magyar), `la` (Latina), `nl` (Nederlands), and `sv` (Svenska)."
         },
         "error": "commands-server-locale-set-error"
       }
     },
     "timezone": {
-      "description": "commands-server-timezone-description",
+      "description": "Sets, erases, or displays your server's timezone.",
       "get": {
-        "description": "commands-server-timezone-get-description",
-        "success": "commands-server-timezone-get-success {{timezone}}",
+        "description": "Displays your server's currently set timezone.",
+        "success": "Your server's current timezone is {{timezone}}.",
         "errors": {
-          "notSet": "commands-server-timezone-get-errors-notSet"
+          "notSet": "You have not set a server timezone yet. Use `/server timezone set` to set one."
         }
       },
       "reset": {
-        "description": "commands-server-timezone-reset-description",
-        "success": "commands-server-timezone-reset-success"
+        "description": "Erases your server's currently set timezone.",
+        "success": "You have successfully reset your server's timezone."
       },
       "set": {
-        "description": "commands-server-timezone-set-description",
-        "success": "commands-server-timezone-set-success {{timezone}}",
+        "description": "Sets or resets your server's timezone.",
+        "success": "You have successfully set your server's timezone to {{timezone}}.",
         "args": {
-          "timezone": "commands-server-timezone-set-args-timezone"
+          "timezone": "An IANA timezone identifier."
         },
         "errors": {
-          "invalidValue": "commands-server-timezone-set-errors-invalidValue"
+          "invalidValue": "**Error:** Winnie_Bot only accepts IANA timezone identifiers.These generally take the format of `Continent/Your_Areas_Largest_City` -- for example, `America/New_York`, `Australia/Sydney`, `Europe/London`, or `Asia/Tokyo`."
         }
       }
     }
