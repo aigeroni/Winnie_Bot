@@ -1,13 +1,13 @@
 {
   "defaultError": "**Unknown Error:** I'm sorry, I'm afraid I can't do that. This incident has been logged to the dashboard.",
   "config": {
-    "description": "commands-config-description",
+    "description": "Configures Winnie_Bot to meet your needs.",
     "crossGuild": {
-      "description": "commands-config-crossGuild-description",
+      "description": "Controls whether challenges are visible to other servers.",
       "get": {
-        "description": "commands-config-crossGuild-get-description",
-        "disabled": "commands-config-crossGuild-get-disabled",
-        "enabled": "commands-config-crossGuild-get-enabled"
+        "description": "Displays whether challenges are visible to other servers.",
+        "disabled": "Your challenges will **not** display on other servers.",
+        "enabled": "Your challenges will display on other servers."
       },
       "reset": {
         "description": "commands-config-crossGuild-reset-description",
@@ -49,67 +49,67 @@
     }
   },
   "goal": {
-    "description": "commands-goal-description",
+    "description": "Sets, updates, and resets your goals.",
     "cancel": {
-      "description": "commands-goal-cancel-description",
-      "success": "commands-goal-cancel-success",
+      "description": "Cancels your current goal.",
+      "success": "Your current goal has been cancelled.",
       "errors": {
         "couldNotCancelGoal": "commands-goal-cancel-errors-couldNotCreateGoal",
         "goalAlreadyActive": "commands-goal-cancel-errors-goalAlreadyActive"
       }
     },
     "info": {
-      "description": "commands-goal-info-description",
+      "description": "Reminds you of your current goal.",
       "errors": {
-        "noActiveGoal": "commands-goal-info-errors-noActiveGoal"
+        "noActiveGoal": "**Error**: You do not have an active goal."
       }
     },
     "overwrite": {
-      "description": "commands-goal-overwrite-description",
+      "description": "Replaces the progress on your goal with a new value.",
       "args": {
-        "progress": "commands-goal-overwrite-args-progress"
+        "progress": "Your progress towards your total goal."
       },
       "errors": {
         "couldNotOverwriteGoal": "commands-goal-overwrite-errors-couldNotOverwriteGoal",
-        "noActiveGoal": "commands-goal-overwrite-errors-noActiveGoal",
-        "overwriteMustNoBeNegative": "commands-goal-overwrite-errors-overwriteMustNoBeNegative"
+        "noActiveGoal": "**Error**: You have not yet set a goal. Use `/goal set` to set one.",
+        "overwriteMustNoBeNegative": "**Error**: Your progress towards your goal cannot be a negative number."
       }
     },
     "reset": {
-      "description": "commands-goal-reset-description",
-      "success": "commands-goal-reset-success\n\n{{goal}}",
+      "description": "Changes your current goal. Progress remains the same if the goal is of the same type.",
+      "success": "You have successfully reset your goal. \n\n{{goal}}",
       "args": {
-        "duration": "commands-goal-reset-args-description",
-        "target": "commands-goal-reset-args-target",
-        "type": "commands-goal-reset-args-type"
+        "duration": "`Daily`, `weekly`, `monthly`, or `yearly`. Defaults to daily.",
+        "target": "The total you plan to achieve.",
+        "type": "`Items`, `lines`, `minutes`, `pages`, `words`. Defaults to words."
       },
       "errors": {
         "couldNotCreateGoal": "commands-goal-reset-errors-couldNotCreateGoal",
-        "timezoneNotSet": "commands-goal-reset-errors-timezoneNotSet"
+        "timezoneNotSet": "**Error**: You have not set a timezone. Use `/config timezone set` to set one."
       }
     },
     "set": {
-      "description": "commands-goal-set-description",
-      "success": "commands-goal-set-success\n\n{{goal}}",
+      "description": "Sets a new goal.",
+      "success": "You have successfully set your goal. \n\n{{goal}}",
       "args": {
-        "duration": "commands-goal-set-args-description",
-        "target": "commands-goal-set-args-target",
-        "type": "commands-goal-set-args-type"
+        "duration": "`Daily`, `weekly`, `monthly`, or `yearly`. Defaults to daily.",
+        "target": "The total you plan to achieve.",
+        "type": "`Items`, `lines`, `minutes`, `pages`, `words`. Defaults to words."
       },
       "errors": {
         "couldNotCreateGoal": "commands-goal-set-errors-couldNotCreateGoal",
-        "goalAlreadyActive": "commands-goal-set-errors-goalAlreadyActive",
-        "timezoneNotSet": "commands-goal-set-errors-timezoneNotSet"
+        "goalAlreadyActive": "**Error**: You have already set a goal of this type. Use `/goal reset` to change it.",
+        "timezoneNotSet": "**Error**: You have not set a timezone. Use `/config timezone set` to set one."
       }
     },
     "update": {
-      "description": "commands-goal-update-description",
+      "description": "Updates progress on your goal.",
       "args": {
-        "progress": "commands-goal-update-args-progress"
+        "progress": "The amount to add to your current total."
       },
       "errors": {
         "couldNotUpdateGoal": "commands-goal-update-errors-couldNotUpdateGoal",
-        "noActiveGoal": "commands-goal-update-errors-noActiveGoal",
+        "noActiveGoal": "**Error**: You have not yet set a goal. Use `/goal set` to set one.",
         "updateMustBePositive": "commands-goal-update-errors-updateMustBePositive"
       }
     }
