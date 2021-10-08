@@ -43,7 +43,7 @@
           "timezone": "An IANA timezone identifier."
         },
         "errors": {
-          "invalidValue": "**Error:** Winnie_Bot only accepts IANA timezone identifiers.These generally take the format of `Continent/Your_Areas_Largest_City` -- for example, `America/New_York`, `Australia/Sydney`, `Europe/London`, or `Asia/Tokyo`."
+          "invalidValue": "**Error:** Winnie_Bot only accepts IANA timezone identifiers. These generally take the format of `Continent/Your_Areas_Largest_City` -- for example, `America/New_York`, `Australia/Sydney`, `Europe/London`, or `Asia/Tokyo`."
         }
       }
     }
@@ -72,16 +72,16 @@
       "errors": {
         "couldNotOverwriteGoal": "commands-goal-overwrite-errors-couldNotOverwriteGoal",
         "noActiveGoal": "**Error**: You have not yet set a goal. Use `/goal set` to set one.",
-        "overwriteMustNoBeNegative": "**Error**: Your progress towards your goal cannot be a negative number."
+        "overwriteMustNoBeNegative": "**Error**: Your total progress towards your goal cannot be a negative number."
       }
     },
     "reset": {
       "description": "Changes your current goal. Progress remains the same if the goal is of the same type.",
       "success": "You have successfully reset your goal. \n\n{{goal}}",
       "args": {
-        "duration": "`Daily`, `weekly`, `monthly`, or `yearly`. Defaults to daily.",
+        "duration": "`daily`, `weekly`, `monthly`, or `yearly`. Defaults to daily.",
         "target": "The total you plan to achieve.",
-        "type": "`Items`, `lines`, `minutes`, `pages`, `words`. Defaults to words."
+        "type": "`items`, `lines`, `minutes`, `pages`, `words`. Defaults to words."
       },
       "errors": {
         "couldNotCreateGoal": "commands-goal-reset-errors-couldNotCreateGoal",
@@ -92,9 +92,9 @@
       "description": "Sets a new goal.",
       "success": "You have successfully set your goal. \n\n{{goal}}",
       "args": {
-        "duration": "`Daily`, `weekly`, `monthly`, or `yearly`. Defaults to daily.",
+        "duration": "`daily`, `weekly`, `monthly`, or `yearly`. Defaults to daily.",
         "target": "The total you plan to achieve.",
-        "type": "`Items`, `lines`, `minutes`, `pages`, `words`. Defaults to words."
+        "type": "`items`, `lines`, `minutes`, `pages`, `words`. Defaults to words."
       },
       "errors": {
         "couldNotCreateGoal": "commands-goal-set-errors-couldNotCreateGoal",
@@ -144,16 +144,16 @@
         "enabled": "Your server's challenges will display on other servers."
       },
       "reset": {
-        "description": "commands-config-crossGuild-reset-description",
-        "error": "commands-config-crossGuild-reset-error",
-        "success": "commands-config-crossGuild-reset-success"
+        "description": "commands-server-crossGuild-reset-description",
+        "error": "commands-server-crossGuild-reset-error",
+        "success": "commands-server-crossGuild-reset-success"
       },
       "set": {
-        "description": "commands-config-crossGuild-set-description",
-        "success": "commands-config-crossGuild-set-success {{crossGuild}}",
-        "error": "commands-config-crossGuild-set-error",
+        "description": "commands-server-crossGuild-set-description",
+        "success": "commands-server-crossGuild-set-success {{crossGuild}}",
+        "error": "commands-server-crossGuild-set-error",
         "args": {
-          "enabled": "commands-config-crossGuild-set-args-enabled"
+          "enabled": "commands-server-crossGuild-set-args-enabled"
         }
       }
     },
