@@ -1,6 +1,6 @@
 {
   "goal": "{{details}}\n{{timeRemaining}}",
-  "details": "You have done {{progress}} of your {{target}}-{{type}} goal.",
+  "details": "You have done **{{progress}}** of your **{{target}}**-{{type}} goal.",
   "timeRemaining": "You have {{months}}, {{days}}, {{hours}}, and {{minutes}} to complete your goal.",
   "durationsWithCount": {
     "days": "{{count}} day",
