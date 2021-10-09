@@ -25,7 +25,7 @@ export const GoalSetCommand: SubCommand = {
         description: await I18n.translate(locale, 'commands:goal.set.args.type'),
         type: 'STRING',
         choices: Object.values(GoalTypes).map((type) => ({
-          name: `${type.charAt(0).toUpperCase()}${type.slice(1)}`,
+          name: type,
           value: type
         })),
         required: false
@@ -35,7 +35,7 @@ export const GoalSetCommand: SubCommand = {
         description: await I18n.translate(locale, 'commands:goal.set.args.duration'),
         type: 'STRING',
         choices: Object.values(GoalDurations).map((duration) => ({
-          name: `${duration.charAt(0).toUpperCase()}${duration.slice(1)}`,
+          name: duration,
           value: duration
         })),
         required: false
