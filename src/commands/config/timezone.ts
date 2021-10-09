@@ -61,7 +61,7 @@ async function get (interaction: CommandInteraction, guildConfig: GuildConfig): 
   const userConfig = await UserConfig.findOrCreate(interaction.user.id)
 
   if (userConfig.timezone == null) {
-    await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:config.timezone.get.errors.notSet'))
+    await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:config.timezone.get.error.notSet'))
   } else {
     await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:config.timezone.get.success', {
       timezone: userConfig.timezone.name

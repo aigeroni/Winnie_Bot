@@ -59,7 +59,7 @@ export const ServerTimezoneCommand: SubCommand = {
 
 async function get (interaction: CommandInteraction, guildConfig: GuildConfig): Promise<void> {
   if (guildConfig.timezone == null) {
-    await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:server.timezone.get.errors.notSet'))
+    await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:server.timezone.get.error.notSet'))
   } else {
     await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:server.timezone.get.success', {
       timezone: guildConfig.timezone.name

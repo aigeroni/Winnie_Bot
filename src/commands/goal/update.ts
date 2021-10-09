@@ -24,7 +24,7 @@ export const GoalUpdateCommand: SubCommand = {
   execute: async (interaction: CommandInteraction, guildConfig: GuildConfig) => {
     const goal = await GoalService.activeGoalForUser(interaction.user.id)
     if (goal == null) {
-      await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:goal.update.errors.noActiveGoal'))
+      await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:goal.update.error.noActiveGoal'))
       return
     }
 
@@ -34,7 +34,7 @@ export const GoalUpdateCommand: SubCommand = {
     goal.progress += newProgress
     await goal.save()
     if (goal.errors.length > 0) {
-      await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:goal.update.errors.couldNotUpdateGoal'))
+      await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:goal.update.error.couldNotUpdateGoal'))
     } else {
       await interaction.reply(await goal.print(guildConfig.locale))
     }
@@ -53,7 +53,7 @@ async function progressUpdate (interaction: CommandInteraction, locale: string):
   const progressUpdate = interaction.options.getInteger('progress', true)
 
   if (progressUpdate <= 0) {
-    await interaction.reply(await I18n.translate(locale, 'commands:goal.update.errors.updateMustBePositive', {
+    await interaction.reply(await I18n.translate(locale, 'commands:goal.update.error.updateMustBePositive', {
       progress: progressUpdate
     }))
     return -1

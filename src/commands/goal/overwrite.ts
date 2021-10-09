@@ -24,7 +24,7 @@ export const GoalOverwriteCommand: SubCommand = {
   execute: async (interaction: CommandInteraction, guildConfig: GuildConfig) => {
     const goal = await GoalService.activeGoalForUser(interaction.user.id)
     if (goal == null) {
-      await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:goal.overwrite.errors.noActiveGoal'))
+      await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:goal.overwrite.error.noActiveGoal'))
       return
     }
 
@@ -34,7 +34,7 @@ export const GoalOverwriteCommand: SubCommand = {
     goal.progress = newProgress
     await goal.save()
     if (goal.errors.length > 0) {
-      await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:goal.overwrite.errors.couldNotOverwriteGoal'))
+      await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:goal.overwrite.error.couldNotOverwriteGoal'))
     } else {
       await interaction.reply(await goal.print(guildConfig.locale))
     }
@@ -53,7 +53,7 @@ async function progressOverwrite (interaction: CommandInteraction, locale: strin
   const progressOverwrite = interaction.options.getInteger('progress', true)
 
   if (progressOverwrite < 0) {
-    await interaction.reply(await I18n.translate(locale, 'commands:goal.overwrite.errors.overwriteMustNotBeNegative', {
+    await interaction.reply(await I18n.translate(locale, 'commands:goal.overwrite.error.overwriteMustNotBeNegative', {
       progress: progressOverwrite
     }))
     return -1

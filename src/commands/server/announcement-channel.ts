@@ -58,7 +58,7 @@ export const ServerAnnouncementsChannelCommand: SubCommand = {
 
 async function get (interaction: CommandInteraction, guildConfig: GuildConfig): Promise<void> {
   if (guildConfig.announcementsChannelId == null) {
-    await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:server.announcementsChannel.get.errors.notSet'))
+    await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:server.announcementsChannel.get.error.notSet'))
   } else {
     await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:server.announcementsChannel.get.success', {
       announcementsChannel: guildConfig.announcementsChannelId
