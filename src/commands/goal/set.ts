@@ -49,8 +49,7 @@ export const GoalSetCommand: SubCommand = {
     const goal = await GoalService.createGoal(goalOptions)
 
     if (goal.errors.length > 0) {
-      await interaction.reply(`${goal.ownerId} -- ${goal.channelId}`)
-      // await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:goal.set.error.couldNotCreateGoal'))
+      await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:goal.set.error.couldNotCreateGoal'))
     } else {
       await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:goal.set.success', {
         goal: await goal.print(guildConfig.locale)
