@@ -91,10 +91,13 @@ Click the 'Generate OAuth2 URL' button in the Discord Developer pane to generate
 
 ## Dependencies and frameworks
 
+* [BullMQ](https://github.com/taskforcesh/bullmq) - Event Queue Management
 * [Class-Validator](https://github.com/typestack/class-validator) - Model validations
 * [Discord.js](https://discord.js.org) - Discord API for Node.js
 * [ESLint](https://eslint.org/) - Linting
-* [i18next](https://www.i18next.com/) - Internationalization 
+* [i18next](https://www.i18next.com/) - Internationalization
+* [Luxon](https://moment.github.io/luxon/#/) - Date/Time manipulation
+* [node-cron](https://nodecron.com/) - Job scheduling
 * [PostgreSQL](https://www.postgresql.org/) - Persistent storage
 * [TypeORM](https://typeorm.io/#/) - Database Interaction
 * [Winston](https://github.com/winstonjs/winston) - Log management
@@ -140,6 +143,7 @@ If you're looking to help improve the translations for an existing language you 
 
 * `winnie.json` - Miscellanous translations that don't better fit in another file
 * `commands.json` - Command response messages
+* `goals.json` - Goal related messages
 
 ### Developing Winnie
 
@@ -184,6 +188,11 @@ If you're looking to help improve the translations for an existing language you 
     <br>
     <pre>$ yarn start</pre>
   </li>
+  <li>
+    In seperate terminal windows start the job workers
+    <br>
+    <pre>$ yarn start:worker:goal</pre>
+  </li>
 </ol>
 
 #### package.json scripts
@@ -194,6 +203,7 @@ If you're looking to help improve the translations for an existing language you 
 * `yarn lint:all` - Run eslint over Winnie's code
 * `yarn lint:fix` - Run eslint over Winnie's code, ficing mistakes
 * `yarn start` - Compile Winnie and start up the bot process
+* `start:worker:goal` - Starts the goals worker, needed for goals to complete.
 * `yarn typeorm` - Access Typeorm's CLI
 
 ## Core Team
