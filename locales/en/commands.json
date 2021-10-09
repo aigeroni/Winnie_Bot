@@ -1,5 +1,10 @@
 {
   "defaultError": "**Unknown Error:** I'm sorry, I'm afraid I can't do that. This incident has been logged to the dashboard.",
+  "deploy": {
+    "error": "commands-deploy-error",
+    "success": "commands-deploy-success"
+  },
+
   "config": {
     "description": "Configures Winnie_Bot to meet your needs.",
     "crossGuild": {
@@ -49,6 +54,7 @@
       }
     }
   },
+
   "goal": {
     "description": "Sets, updates, and resets your goals.",
     "cancel": {
@@ -115,6 +121,7 @@
       }
     }
   },
+
   "server": {
     "description": "Configures Winnie_Bot to meet your server's needs. Requires Manage Server permissions.",
     "announcementsChannel": {
