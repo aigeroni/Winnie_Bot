@@ -197,7 +197,7 @@
           "timezone": "An IANA timezone identifier."
         },
         "error": {
-          "invalidValue": "**Error:** Winnie_Bot only accepts IANA timezone identifiers.These generally take the format of `Continent/Your_Areas_Largest_City` -- for example, `America/New_York`, `Australia/Sydney`, `Europe/London`, or `Asia/Tokyo`."
+          "invalidValue": "**Error:** Winnie_Bot only accepts IANA timezone identifiers. These generally take the format of `Continent/Your_Areas_Largest_City` -- for example, `America/New_York`, `Australia/Sydney`, `Europe/London`, or `Asia/Tokyo`."
         }
       }
     }
