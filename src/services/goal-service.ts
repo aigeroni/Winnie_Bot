@@ -1,5 +1,6 @@
+import { DateTime, IANAZone } from 'luxon'
 import { Goal } from '../models'
-import { GoalCreateOptions } from '../types'
+import { GoalCreateOptions, GoalDurations } from '../types'
 import { Snowflake } from 'discord.js'
 
 /**
@@ -16,6 +17,8 @@ async function createGoal (options: GoalCreateOptions): Promise<Goal> {
   if (options.channelId != null) { goal.channelId = options.channelId }
   if (options.duration != null) { goal.goalDuration = options.duration }
   if (options.type != null) { goal.goalType = options.type }
+
+  goal.expectedEndAt = estimateCompletionDate(options.timezone, goal.goalDuration)
 
   return await goal.save()
 }
@@ -40,7 +43,27 @@ async function activeGoalForUser (userId: Snowflake): Promise<Goal | null> {
   }
 }
 
+async function allActive (): Promise<Goal[]> {
+  return await Goal.find({ where: 'Goal.completed_at IS NULL AND Goal.canceled_at IS NULL' })
+}
+
+function estimateCompletionDate (timezone: IANAZone, goalDuration: GoalDurations): DateTime {
+  const startDate = DateTime.local().setZone(timezone)
+
+  switch (goalDuration) {
+    case GoalDurations.DAILY:
+      return startDate.endOf('day')
+    case GoalDurations.WEEKLY:
+      return startDate.endOf('week')
+    case GoalDurations.MONTHLY:
+      return startDate.endOf('month')
+    case GoalDurations.YEARLY:
+      return startDate.endOf('year')
+  }
+}
+
 export const GoalService = {
   activeGoalForUser,
+  allActive,
   createGoal
 }

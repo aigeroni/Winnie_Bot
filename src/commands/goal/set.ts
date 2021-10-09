@@ -3,6 +3,7 @@ import { GuildConfig, UserConfig } from '../../models'
 import { GoalCreateOptions, GoalDurations, GoalTypes, SubCommand } from '../../types'
 import { GoalService } from '../../services'
 import { I18n } from '../../core'
+import { IANAZone } from 'luxon'
 
 const NAME = 'set'
 
@@ -24,7 +25,7 @@ export const GoalSetCommand: SubCommand = {
         description: await I18n.translate(locale, 'commands:goal.set.args.type'),
         type: 'STRING',
         choices: Object.values(GoalTypes).map((type) => ({
-          name: `${type.charAt(0).toUpperCase()}${type.slice(1)}`,
+          name: type,
           value: type
         })),
         required: false
@@ -34,7 +35,7 @@ export const GoalSetCommand: SubCommand = {
         description: await I18n.translate(locale, 'commands:goal.set.args.duration'),
         type: 'STRING',
         choices: Object.values(GoalDurations).map((duration) => ({
-          name: `${duration.charAt(0).toUpperCase()}${duration.slice(1)}`,
+          name: duration,
           value: duration
         })),
         required: false
@@ -43,9 +44,11 @@ export const GoalSetCommand: SubCommand = {
   }),
   execute: async (interaction: CommandInteraction, guildConfig: GuildConfig) => {
     if (await userHasActiveGoal(interaction, guildConfig.locale)) { return }
-    if (await userHasNoTimezoneSet(interaction, guildConfig)) { return }
 
-    const goalOptions = getGoalOptions(interaction)
+    const goalTimezone = await userTimezone(interaction, guildConfig)
+    if (goalTimezone == null) { return }
+
+    const goalOptions = getGoalOptions(interaction, goalTimezone)
     const goal = await GoalService.createGoal(goalOptions)
 
     if (goal.errors.length > 0) {
@@ -80,36 +83,38 @@ async function userHasActiveGoal (interaction: CommandInteraction, locale: strin
 }
 
 /**
-  * Checks if the user who executed the command has a timezone set.
-  * If they do not have a timezone set, check if the guild has a timezone set.
+  * The timezone of the user who executed the command.
+  * If they do not have a timezone set, use the guild timezone.
   * If neither are set, prevent the user from creating a new goal.
   *
   * @param interaction The interaction that was executed
   * @param guildConfig The config object of the guild the interaction was run in.
   * @returns true if the user or guild does not have a timezone set.
   */
-async function userHasNoTimezoneSet (interaction: CommandInteraction, guildConfig: GuildConfig): Promise<boolean> {
+async function userTimezone (interaction: CommandInteraction, guildConfig: GuildConfig): Promise<IANAZone | null> {
   const userConfig = await UserConfig.findOne(interaction.user.id)
-
-  if (userConfig?.timezone != null) { return false }
-  if (guildConfig.timezone != null) { return false }
+  if (userConfig?.timezone != null) { return userConfig.timezone }
+  if (guildConfig.timezone != null) { return guildConfig.timezone }
 
   await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:goal.set.error.timezoneNotSet'))
-  return true
+  return null
 }
 
 /**
    * Parses the arguments passed into the command.
    *
    * @param interaction The command that was ran
+   * @param guildConfig The config object of the guild the interaction was run in.
+   * @param userConfig The config object of the user who ran the command.
    * @returns An object containing the parameters for creating the goal
    */
-function getGoalOptions (interaction: CommandInteraction): GoalCreateOptions {
+function getGoalOptions (interaction: CommandInteraction, timezone: IANAZone): GoalCreateOptions {
   return {
     channelId: interaction.channel?.id,
     duration: interaction.options.getString('duration') as GoalDurations,
     ownerId: interaction.user?.id,
     target: interaction.options.getInteger('target') ?? 0,
-    type: interaction.options.getString('type') as GoalTypes
+    type: interaction.options.getString('type') as GoalTypes,
+    timezone: timezone
   }
 }

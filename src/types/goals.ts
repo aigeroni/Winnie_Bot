@@ -1,4 +1,5 @@
 import { Snowflake } from 'discord.js'
+import { IANAZone } from 'luxon'
 
 /**
  * All the types of goals settable.
@@ -30,4 +31,5 @@ export interface GoalCreateOptions {
   type?: GoalTypes
   duration?: GoalDurations
   channelId?: Snowflake
+  timezone: IANAZone
 }

@@ -3,18 +3,10 @@ import { BeforeInsert, BeforeUpdate, Column, Entity, PrimaryGeneratedColumn } fr
 import { DateTime, Duration, Interval } from 'luxon'
 import { GoalDurations, GoalTypes } from '../types'
 import { IsChannelWithPermission } from './validators/channel-with-permission'
-import { IsNotEmpty, IsPositive, MaxLength, Min } from 'class-validator'
-import { I18n } from '../core'
+import { IsNotEmpty, IsPositive, MaxLength, Min, ValidateIf } from 'class-validator'
+import { I18n, WinnieClient } from '../core'
 import { Permissions, Snowflake } from 'discord.js'
-
-/**
-  * Typeorm transformer for converting ISO timestamps to
-  * DateTime objects from Luxon.
-  */
-const dateTransformer = {
-  to: (value: DateTime) => value?.toISO(),
-  from: (value: string) => value === null ? null : DateTime.fromISO(value)
-}
+import { DateTimeTransformer, NullableDateTimeTransformer } from './transformers/date-time'
 
 /**
  * Represents a goal users can set.
@@ -76,6 +68,7 @@ export class Goal extends BaseModel {
    * Used for sending messages about the goal's status later.
    */
   @Column({ name: 'channel_id' })
+  @ValidateIf(() => WinnieClient.isLoggedIn())
   @IsChannelWithPermission(Permissions.FLAGS.SEND_MESSAGES)
   @MaxLength(30)
   channelId!: Snowflake
@@ -83,20 +76,15 @@ export class Goal extends BaseModel {
   /**
     * The timestamp of when this goal was created.
     */
-  @Column({
-    name: 'created_at',
-    transformer: {
-      ...dateTransformer,
-      from: (value: string) => DateTime.fromISO(value)
-    },
-    type: 'varchar'
-  })
+  @Column({ name: 'created_at', transformer: new DateTimeTransformer(), type: 'varchar' })
   createdAt!: DateTime
 
   /**
   * The timestamp of the most recent time this goal was updated.
+  *
+  * Null if the goal has never been updated.
   */
-  @Column({ name: 'updated_at', transformer: dateTransformer, type: 'varchar' })
+  @Column({ name: 'updated_at', transformer: new NullableDateTimeTransformer(), type: 'varchar' })
   updatedAt?: DateTime
 
   /**
@@ -104,7 +92,7 @@ export class Goal extends BaseModel {
  *
  * Null if not canceled
  */
-  @Column({ name: 'canceled_at', transformer: dateTransformer, type: 'varchar' })
+  @Column({ name: 'canceled_at', transformer: new NullableDateTimeTransformer(), type: 'varchar' })
   canceledAt?: DateTime
 
   /**
@@ -112,8 +100,14 @@ export class Goal extends BaseModel {
  *
  * Null if not completed
  */
-  @Column({ name: 'completed_at', transformer: dateTransformer, type: 'varchar' })
+  @Column({ name: 'completed_at', transformer: new NullableDateTimeTransformer(), type: 'varchar' })
   completedAt?: DateTime
+
+  /**
+   * The anticipated time the goal will end, based on the creation time.
+   */
+  @Column({ name: 'expected_end_at', transformer: new DateTimeTransformer(), type: 'varchar' })
+  expectedEndAt!: DateTime
 
   /**
    * Listener for the beforeInsert event.
@@ -122,7 +116,7 @@ export class Goal extends BaseModel {
    */
   @BeforeInsert()
   onBeforeInsert (): void {
-    this.createdAt = DateTime.local()
+    this.createdAt = DateTime.utc()
   }
 
   /**
@@ -132,7 +126,7 @@ export class Goal extends BaseModel {
    */
   @BeforeUpdate()
   onBeforeUpdate (): void {
-    this.updatedAt = DateTime.local()
+    this.updatedAt = DateTime.utc()
   }
 
   /**
@@ -147,16 +141,7 @@ export class Goal extends BaseModel {
     if (this.canceledAt != null) { return this.canceledAt }
     if (this.completedAt != null) { return this.completedAt }
 
-    switch (this.goalDuration) {
-      case GoalDurations.DAILY:
-        return this.createdAt.endOf('day')
-      case GoalDurations.WEEKLY:
-        return this.createdAt.endOf('week')
-      case GoalDurations.MONTHLY:
-        return this.createdAt.endOf('month')
-      case GoalDurations.YEARLY:
-        return this.createdAt.endOf('year')
-    }
+    return this.expectedEndAt
   }
 
   /**
@@ -169,7 +154,7 @@ export class Goal extends BaseModel {
   timeRemaining (): Duration {
     if (!this.active()) { return Duration.fromObject({ minutes: 0 }) }
 
-    const timeRemaining = Interval.fromDateTimes(DateTime.local(), this.endDate()).toDuration()
+    const timeRemaining = Interval.fromDateTimes(DateTime.utc(), this.endDate()).toDuration()
     return timeRemaining.shiftTo('months', 'days', 'hours', 'minutes')
   }
 
@@ -181,6 +166,22 @@ export class Goal extends BaseModel {
    */
   active (): boolean {
     return this.completedAt == null && this.canceledAt == null
+  }
+
+  /**
+   * Takes the current goal and makes it as complete.
+   */
+  async complete (): Promise<void> {
+    this.completedAt = DateTime.utc()
+    await this.save()
+  }
+
+  /**
+   * Takes the current goal and makes it as canceled.
+   */
+  async cancel (): Promise<void> {
+    this.canceledAt = DateTime.utc()
+    await this.save()
   }
 
   /**
