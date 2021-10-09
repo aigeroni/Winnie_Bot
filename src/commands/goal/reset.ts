@@ -45,7 +45,7 @@ export const GoalResetCommand: SubCommand = {
   execute: async (interaction: CommandInteraction, guildConfig: GuildConfig) => {
     const oldGoal = await GoalService.activeGoalForUser(interaction.user.id)
     if (oldGoal == null) {
-      await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:goal.reset.errors.noActiveGoal'))
+      await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:goal.reset.error.noActiveGoal'))
       return
     }
 
@@ -56,7 +56,7 @@ export const GoalResetCommand: SubCommand = {
     await oldGoal.save()
 
     if (oldGoal.errors.length > 0 && newGoal.errors.length > 0) {
-      await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:goal.reset.errors.couldNotResetGoal'))
+      await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:goal.reset.error.couldNotResetGoal'))
     } else {
       await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:goal.reset.success', {
         goal: await newGoal.print(guildConfig.locale)

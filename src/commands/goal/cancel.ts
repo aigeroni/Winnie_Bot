@@ -17,14 +17,14 @@ export const GoalCancelCommand: SubCommand = {
   execute: async (interaction: CommandInteraction, guildConfig: GuildConfig) => {
     const goal = await GoalService.activeGoalForUser(interaction.user.id)
     if (goal == null) {
-      await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:goal.cancel.errors.noActiveGoal'))
+      await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:goal.cancel.error.noActiveGoal'))
       return
     }
 
     goal.canceledAt = DateTime.local()
     await goal.save()
     if (goal.errors.length > 0) {
-      await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:goal.cancel.errors.couldNotCancelGoal'))
+      await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:goal.cancel.error.couldNotCancelGoal'))
     } else {
       await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:goal.cancel.success'))
     }

@@ -49,8 +49,7 @@ export const GoalSetCommand: SubCommand = {
     const goal = await GoalService.createGoal(goalOptions)
 
     if (goal.errors.length > 0) {
-      await interaction.reply(`${goal.ownerId} -- ${goal.channelId}`)
-      // await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:goal.set.errors.couldNotCreateGoal'))
+      await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:goal.set.error.couldNotCreateGoal'))
     } else {
       await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:goal.set.success', {
         goal: await goal.print(guildConfig.locale)
@@ -71,7 +70,7 @@ async function userHasActiveGoal (interaction: CommandInteraction, locale: strin
   const goal = await GoalService.activeGoalForUser(interaction.user.id)
 
   if (goal != null) {
-    await interaction.reply(await I18n.translate(locale, 'commands:goal.set.errors.goalAlreadyActive', {
+    await interaction.reply(await I18n.translate(locale, 'commands:goal.set.error.goalAlreadyActive', {
       goal: await goal.print(locale)
     }))
     return true
@@ -95,7 +94,7 @@ async function userHasNoTimezoneSet (interaction: CommandInteraction, guildConfi
   if (userConfig?.timezone != null) { return false }
   if (guildConfig.timezone != null) { return false }
 
-  await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:goal.set.errors.timezoneNotSet'))
+  await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:goal.set.error.timezoneNotSet'))
   return true
 }
 

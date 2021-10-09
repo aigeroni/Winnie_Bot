@@ -16,7 +16,7 @@ export const GoalInfoCommand: SubCommand = {
   execute: async (interaction: CommandInteraction, guildConfig: GuildConfig) => {
     const goal = await GoalService.activeGoalForUser(interaction.user.id)
     if (goal == null) {
-      await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:goal.info.errors.noActiveGoal'))
+      await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:goal.info.error.noActiveGoal'))
       return
     }
 

@@ -28,7 +28,7 @@
       "get": {
         "description": "commands-config-timezone-get-description",
         "success": "commands-config-timezone-get-success {{timezone}}",
-        "errors": {
+        "error": {
           "notSet": "commands-config-timezone-get-errors-notSet"
         }
       },
@@ -42,7 +42,7 @@
         "args": {
           "timezone": "commands-config-timezone-set-args-timezone"
         },
-        "errors": {
+        "error": {
           "invalidValue": "commands-config-timezone-set-errors-invalidValue"
         }
       }
@@ -53,14 +53,14 @@
     "cancel": {
       "description": "commands-goal-cancel-description",
       "success": "commands-goal-cancel-success",
-      "errors": {
+      "error": {
         "couldNotCancelGoal": "commands-goal-cancel-errors-couldNotCreateGoal",
         "goalAlreadyActive": "commands-goal-cancel-errors-goalAlreadyActive"
       }
     },
     "info": {
       "description": "commands-goal-info-description",
-      "errors": {
+      "error": {
         "noActiveGoal": "commands-goal-info-errors-noActiveGoal"
       }
     },
@@ -69,7 +69,7 @@
       "args": {
         "progress": "commands-goal-overwrite-args-progress"
       },
-      "errors": {
+      "error": {
         "couldNotOverwriteGoal": "commands-goal-overwrite-errors-couldNotOverwriteGoal",
         "noActiveGoal": "commands-goal-overwrite-errors-noActiveGoal",
         "overwriteMustNoBeNegative": "commands-goal-overwrite-errors-overwriteMustNoBeNegative"
@@ -83,7 +83,7 @@
         "target": "commands-goal-reset-args-target",
         "type": "commands-goal-reset-args-type"
       },
-      "errors": {
+      "error": {
         "couldNotCreateGoal": "commands-goal-reset-errors-couldNotCreateGoal",
         "timezoneNotSet": "commands-goal-reset-errors-timezoneNotSet"
       }
@@ -96,7 +96,7 @@
         "target": "commands-goal-set-args-target",
         "type": "commands-goal-set-args-type"
       },
-      "errors": {
+      "error": {
         "couldNotCreateGoal": "commands-goal-set-errors-couldNotCreateGoal",
         "goalAlreadyActive": "commands-goal-set-errors-goalAlreadyActive",
         "timezoneNotSet": "commands-goal-set-errors-timezoneNotSet"
@@ -107,7 +107,7 @@
       "args": {
         "progress": "commands-goal-update-args-progress"
       },
-      "errors": {
+      "error": {
         "couldNotUpdateGoal": "commands-goal-update-errors-couldNotUpdateGoal",
         "noActiveGoal": "commands-goal-update-errors-noActiveGoal",
         "updateMustBePositive": "commands-goal-update-errors-updateMustBePositive"
@@ -182,7 +182,7 @@
       "get": {
         "description": "commands-server-timezone-get-description",
         "success": "commands-server-timezone-get-success {{timezone}}",
-        "errors": {
+        "error": {
           "notSet": "commands-server-timezone-get-errors-notSet"
         }
       },
@@ -196,7 +196,7 @@
         "args": {
           "timezone": "commands-server-timezone-set-args-timezone"
         },
-        "errors": {
+        "error": {
           "invalidValue": "commands-server-timezone-set-errors-invalidValue"
         }
       }
