@@ -110,7 +110,7 @@
       "error": {
         "couldNotUpdateGoal": "commands-goal-update-errors-couldNotUpdateGoal",
         "noActiveGoal": "commands-goal-update-errors-noActiveGoal",
-        "updateMustBePositive": "commands-goal-update-errors-updateMustBePositive"
+        "totalMustBePositive": "commands-goal-update-errors-totalMustBePositive"
       }
     }
   },

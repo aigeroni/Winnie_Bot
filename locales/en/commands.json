@@ -6,16 +6,16 @@
       "description": "Controls whether your challenges are visible to other servers.",
       "get": {
         "description": "Displays whether your challenges are visible to other servers.",
-        "disabled": "Your challenges will **not** display on other servers.",
-        "enabled": "Your challenges will display on other servers."
+        "disabled": "Your challenges **will not** display on other servers.",
+        "enabled": "Your challenges **will** display on other servers."
       },
       "reset": {
-        "description": "commands-config-crossGuild-reset-description",
-        "error": "commands-config-crossGuild-reset-error",
-        "success": "commands-config-crossGuild-reset-success"
+        "description": "Resets whether your challenges are visible to other servers.",
+        "error": "**Unknown Error**: Your challenge display preference cannot be reset (database validation error).",
+        "success": "Your challenge display preference has been reset.  Challenges **will** display on other servers."
       },
       "set": {
-        "description": "commands-config-crossGuild-set-description",
+        "description": "Sets whether your challenges are visible to other servers.",
         "success": "commands-config-crossGuild-set-success {{crossGuild}}",
         "error": "commands-config-crossGuild-set-error",
         "args": {
@@ -54,8 +54,8 @@
       "description": "Cancels your current goal.",
       "success": "Your current goal has been cancelled.",
       "error": {
-        "couldNotCancelGoal": "commands-goal-cancel-errors-couldNotCreateGoal",
-        "goalAlreadyActive": "commands-goal-cancel-errors-goalAlreadyActive"
+        "couldNotCancelGoal": "**Unknown Error**: Could not cancel goal (database validation error).",
+        "noActiveGoal": "**Error**: You do not have an active goal."
       }
     },
     "info": {
@@ -70,7 +70,7 @@
         "progress": "Your progress towards your total goal."
       },
       "error": {
-        "couldNotOverwriteGoal": "commands-goal-overwrite-errors-couldNotOverwriteGoal",
+        "couldNotOverwriteGoal": "**Unknown Error**: Could not update goal (database validation error).",
         "noActiveGoal": "**Error**: You have not yet set a goal. Use `/goal set` to set one.",
         "overwriteMustNoBeNegative": "**Error**: Your total progress towards your goal cannot be a negative number."
       }
@@ -84,7 +84,7 @@
         "type": "`items`, `lines`, `minutes`, `pages`, `words`. Defaults to words."
       },
       "error": {
-        "couldNotCreateGoal": "commands-goal-reset-errors-couldNotCreateGoal",
+        "couldNotResetGoal": "**Unknown Error**: Could not reset goal (database validation error).",
         "timezoneNotSet": "**Error**: You have not set a timezone. Use `/config timezone set` to set one."
       }
     },
@@ -97,7 +97,7 @@
         "type": "`items`, `lines`, `minutes`, `pages`, `words`. Defaults to words."
       },
       "error": {
-        "couldNotCreateGoal": "commands-goal-set-errors-couldNotCreateGoal",
+        "couldNotCreateGoal": "**Unknown Error**: Could not create goal (database validation error).",
         "goalAlreadyActive": "**Error**: You have already set a goal of this type. Use `/goal reset` to change it.",
         "timezoneNotSet": "**Error**: You have not set a timezone. Use `/config timezone set` to set one."
       }
@@ -108,9 +108,9 @@
         "progress": "The amount to add to your current total."
       },
       "error": {
-        "couldNotUpdateGoal": "commands-goal-update-errors-couldNotUpdateGoal",
+        "couldNotUpdateGoal": "**Unknown Error**: Could not update goal (database validation error).",
         "noActiveGoal": "**Error**: You have not yet set a goal. Use `/goal set` to set one.",
-        "updateMustBePositive": "commands-goal-update-errors-updateMustBePositive"
+        "totalMustBePositive": "**Error**: Your total progress towards your goal cannot be a negative number."
       }
     }
   },
@@ -140,20 +140,20 @@
       "description": "Controls whether your server's challenges are visible to other servers.",
       "get": {
         "description": "Displays whether your server's challenges are visible to other servers.",
-        "disabled": "Your server's challenges will **not** display on other servers.",
-        "enabled": "Your server's challenges will display on other servers."
+        "disabled": "Your server's challenges **will not** display on other servers.",
+        "enabled": "Your server's challenges **will** display on other servers."
       },
       "reset": {
-        "description": "commands-server-crossGuild-reset-description",
-        "error": "commands-server-crossGuild-reset-error",
-        "success": "commands-server-crossGuild-reset-success"
+        "description": "Resets whether your server's challenges are visible to other servers.",
+        "error": "**Unknown Error**: Your server's challenge display preference cannot be reset (database validation error).",
+        "success": "Your server's challenge display preference has been reset.  Challenges **will** display on other servers."
       },
       "set": {
-        "description": "commands-server-crossGuild-set-description",
-        "success": "commands-server-crossGuild-set-success {{crossGuild}}",
-        "error": "commands-server-crossGuild-set-error",
+        "description": "Sets whether your server's challenges are visible to other servers.",
+        "success": "commands-config-crossGuild-set-success {{crossGuild}}",
+        "error": "commands-config-crossGuild-set-error",
         "args": {
-          "enabled": "commands-server-crossGuild-set-args-enabled"
+          "enabled": "commands-config-crossGuild-set-args-enabled"
         }
       }
     },
@@ -174,7 +174,7 @@
         "args": {
           "locale": "An ISO 639-1 language code. Current options are `en` (English), `fr` (Français), `hu` (Magyar), `la` (Latina), `nl` (Nederlands), and `sv` (Svenska)."
         },
-        "error": "commands-server-locale-set-error"
+        "error": "**Error**: The locale that you are trying to set does not exist (database validation error)."
       }
     },
     "timezone": {
