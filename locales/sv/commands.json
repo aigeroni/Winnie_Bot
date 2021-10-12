@@ -174,7 +174,7 @@
         "description": "Sets a new language for Winnie_Bot to speak.",
         "success": "Winnie_Bot now speaks {{locale}}.",
         "args": {
-          "locale": "An ISO 639-1 language code. Current options are `en` (English), `fr` (Français), `hu` (Magyar), `la` (Latina), `nl` (Nederlands), and `sv` (Svenska)."
+          "locale": "An ISO 639-1 language code. Current options are `en` (English), `fr` (Français), `hu` (Magyar), `la` (Latina), `ms` (Bahasa Melayu), `nl` (Nederlands), and `sv` (Svenska)."
         },
         "error": "**Error**: The locale that you are trying to set does not exist (database validation error)."
       }
