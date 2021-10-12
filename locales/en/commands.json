@@ -119,21 +119,21 @@
     "announcementsChannel": {
       "description": "Chooses the channel which Winnie_Bot makes announcements to.",
       "get": {
-        "description": "commands-server-announcementsChannel-get-description",
-        "success": "commands-server-announcementsChannel-get-success <#{{announcementsChannel}}>"
+        "description": "Displays the current announcements channel.",
+        "success": "Winnie_Bot will currently post announcements to <#{{announcementsChannel}}>."
       },
       "reset": {
-        "description": "commands-server-announcementsChannel-reset-description",
-        "error": "commands-server-announcementsChannel-reset-error",
-        "success": "commands-server-announcementsChannel-reset-success"
+        "description": "Resets the announcements channel.",
+        "error": "**Unknown Error**: Could not reset announcements channel (database validation error).",
+        "success": "You have successfully reset the announcements channel."
       },
       "set": {
-        "description": "commands-server-announcementsChannel-set-description",
-        "success": "commands-server-announcementsChannel-set-success <#{{announcementsChannel}}>",
+        "description": "Sets the announcements channel.",
+        "success": "Winnie_Bot will now post announcements to <#{{announcementsChannel}}>.",
         "args": {
-          "announcementsChannel": "commands-server-announcementsChannel-set-args-announcementsChannel"
+          "announcementsChannel": "The channel that Winnie_Bot will post announcements to."
         },
-        "error": "commands-server-announcementsChannel-set-error"
+        "error": "**Unknown Error**: Could not set announcements channel (database validation error)."
       }
     },
     "crossGuild": {
@@ -165,7 +165,7 @@
       },
       "reset": {
         "description": "Resets Winnie_Bot's current language to English.",
-        "error": "commands-server-locale-reset-error - Parlez vous Latin?",
+        "error": "**Unknown Error**: Winnie doesn't know how to speak that language.  Parlez vous Latin? (database validation error)",
         "success": "You have reset Winnie_Bot's current language to English."
       },
       "set": {
