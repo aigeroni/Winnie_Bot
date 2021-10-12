@@ -79,9 +79,11 @@ async function set (interaction: CommandInteraction, guildConfig: GuildConfig): 
 
   if (guildConfig.errors.length > 0) {
     await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:server.crossGuild.set.error'))
-  } else if (guildConfig.crossGuild) {
-    await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:server.crossGuild.set.enabled'))
   } else {
-    await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:server.crossGuild.set.disabled'))
+    if (guildConfig.crossGuild) {
+      await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:server.crossGuild.set.enabled'))
+    } else {
+      await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:server.crossGuild.set.disabled'))
+    }
   }
 }
