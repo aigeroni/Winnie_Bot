@@ -53,7 +53,7 @@ async function progressUpdate (interaction: CommandInteraction, locale: string):
   const progressUpdate = interaction.options.getInteger('progress', true)
 
   if (progressUpdate <= 0) {
-    await interaction.reply(await I18n.translate(locale, 'commands:goal.update.error.updateMustBePositive', {
+    await interaction.reply(await I18n.translate(locale, 'commands:goal.update.error.totalMustBePositive', {
       progress: progressUpdate
     }))
     return -1
