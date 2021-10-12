@@ -5,7 +5,7 @@ import { GoalDurations, GoalTypes } from '../types'
 import { IsChannelWithPermission } from './validators/channel-with-permission'
 import { IsNotEmpty, IsPositive, MaxLength, Min, ValidateIf } from 'class-validator'
 import { I18n, WinnieClient } from '../core'
-import { Permissions, Snowflake } from 'discord.js'
+import { Guild, GuildChannel, Permissions, Snowflake } from 'discord.js'
 import { DateTimeTransformer, NullableDateTimeTransformer } from './transformers/date-time'
 
 /**
@@ -185,11 +185,28 @@ export class Goal extends BaseModel {
   }
 
   /**
+   * Gets the guild this goal was created in
+   *
+   * @returns The Guild object for the guild this goal was created in.
+   *          undefined if the guild was not able to be looked up.
+   */
+  async getGuild (): Promise<Guild | undefined> {
+    if (!WinnieClient.isLoggedIn()) { return }
+
+    const channel = await WinnieClient.client.channels.fetch(this.channelId)
+    if (channel == null) { return }
+
+    if (channel instanceof GuildChannel) {
+      return channel.guild
+    }
+  }
+
+  /**
    * Creates a localised string containing the details of the goal.
    *
    * @param locale The locale in which to print the string
-    * @returns A localised string representing the goal.
-    */
+   * @returns A localised string representing the goal.
+   */
   async print (locale: string): Promise<string> {
     const detailsString = await I18n.translate(locale, 'goals:details', {
       progress: await I18n.translate(locale, `goals:typesWithCount.${this.goalType}`, { count: this.progress }),
