@@ -1,39 +1,39 @@
 {
   "goal": "{{details}}\n{{timeRemaining}}",
-  "details": "You have done {{progress}} of your {{target}}-{{type}} goal.",
-  "timeRemaining": "You have {{months}}, {{days}}, {{hours}}, and {{minutes}} to complete your goal.",
+  "details": "Awak telah mencapai {{progress}} dari sasaran {{target}}-{{type}} awak.",
+  "timeRemaining": "Awak mempunyai {{months}}, {{days}}, {{hours}}, dan {{minutes}} untuk mencapai sasaran awak.",
   "durationsWithCount": {
-    "days": "{{count}} day",
-    "days_plural": "{{count}} days",
-    "hours": "{{count}} hour",
-    "hours_plural": "{{count}} hours",
-    "minutes": "{{count}} minute",
-    "minutes_plural": "{{count}} minutes",
-    "months": "{{count}} month",
-    "months_plural": "{{count}} months"
+    "days": "{{count}} hari",
+    "days_plural": "{{count}} hari",
+    "hours": "{{count}} jam",
+    "hours_plural": "{{count}} jam",
+    "minutes": "{{count}} minit",
+    "minutes_plural": "{{count}} minit",
+    "months": "{{count}} bulan",
+    "months_plural": "{{count}} bulan"
   },
   "typesWithCount": {
     "items": "{{count}} item",
-    "items_plural": "{{count}} items",
-    "lines": "{{count}} line",
-    "lines_plural": "{{count}} lines",
-    "minutes": "{{count}} minute",
-    "minutes_plural": "{{count}} minutes",
-    "pages": "{{count}} page",
-    "pages_plural": "{{count}} pages",
-    "words": "{{count}} word",
-    "words_plural": "{{count}} words"
+    "items_plural": "{{count}} item",
+    "lines": "{{count}} ayat",
+    "lines_plural": "{{count}} ayat",
+    "minutes": "{{count}} minit",
+    "minutes_plural": "{{count}} minit",
+    "pages": "{{count}} muka surat",
+    "pages_plural": "{{count}} muka surat",
+    "words": "{{count}} perkataan",
+    "words_plural": "{{count}} perkataan"
   },
   "types": {
     "items": "item",
-    "items_plural": "items",
-    "lines": "line",
-    "lines_plural": "lines",
-    "minutes": "minute",
-    "minutes_plural": "minutes",
-    "pages": "page",
-    "pages_plural": "pages",
-    "words": "word",
-    "words_plural": "words"
+    "items_plural": "item",
+    "lines": "ayat",
+    "lines_plural": "ayat",
+    "minutes": "minit",
+    "minutes_plural": "minit",
+    "pages": "muka surat",
+    "pages_plural": "muka surat",
+    "words": "perkataan",
+    "words_plural": "perkataan"
   }
 }
