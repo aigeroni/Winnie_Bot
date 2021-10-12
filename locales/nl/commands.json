@@ -1,203 +1,203 @@
 {
   "defaultError": "**Unknown Error:** I'm sorry, I'm afraid I can't do that. This incident has been logged to the dashboard.",
   "config": {
-    "description": "commands-config-description",
+    "description": "Configures Winnie_Bot to meet your needs.",
     "crossGuild": {
-      "description": "commands-config-crossGuild-description",
+      "description": "Controls whether your challenges are visible to other servers.",
       "get": {
-        "description": "commands-config-crossGuild-get-description",
-        "disabled": "commands-config-crossGuild-get-disabled",
-        "enabled": "commands-config-crossGuild-get-enabled"
+        "description": "Displays whether your challenges are visible to other servers.",
+        "disabled": "Your challenges **will not** display on other servers.",
+        "enabled": "Your challenges **will** display on other servers."
       },
       "reset": {
-        "description": "commands-config-crossGuild-reset-description",
-        "error": "commands-config-crossGuild-reset-error",
-        "success": "commands-config-crossGuild-reset-success"
+        "description": "Resets whether your challenges are visible to other servers.",
+        "error": "**Unknown Error**: Your challenge display preference cannot be reset (database validation error).",
+        "success": "Your challenge display preference has been reset.  Challenges **will** display on other servers."
       },
       "set": {
-        "description": "commands-config-crossGuild-set-description",
-        "success": "commands-config-crossGuild-set-success {{crossGuild}}",
-        "error": "commands-config-crossGuild-set-error",
+        "description": "Sets whether your challenges are visible to other servers.",
+        "success": "Your challenges **{{crossGuild}}** display on other servers.",
+        "error": "**Unknown Error**: Your challenge display preference cannot be set (database validation error).",
         "args": {
-          "enabled": "commands-config-crossGuild-set-args-enabled"
+          "enabled": "A boolean value for whether challenges should be visible in other servers (true for visible, false for hidden)."
         }
       }
     },
     "timezone": {
-      "description": "commands-config-timezone-description",
+      "description": "Sets, erases, or displays your timezone.",
       "get": {
-        "description": "commands-config-timezone-get-description",
-        "success": "commands-config-timezone-get-success {{timezone}}",
+        "description": "Displays your currently set timezone.",
+        "success": "Your current timezone is {{timezone}}.",
         "error": {
-          "notSet": "commands-config-timezone-get-errors-notSet"
+          "notSet": "You have not set a timezone yet. Use `/config timezone set` to set one."
         }
       },
       "reset": {
-        "description": "commands-config-timezone-reset-description",
-        "success": "commands-config-timezone-reset-success"
+        "description": "Erases your currently set timezone.",
+        "success": "You have successfully reset your timezone."
       },
       "set": {
-        "description": "commands-config-timezone-set-description",
-        "success": "commands-config-timezone-set-success {{timezone}}",
+        "description": "Sets or resets your timezone.",
+        "success": "You have successfully set your timezone to {{timezone}}.",
         "args": {
-          "timezone": "commands-config-timezone-set-args-timezone"
+          "timezone": "An IANA timezone identifier."
         },
         "error": {
-          "invalidValue": "commands-config-timezone-set-errors-invalidValue"
+          "invalidValue": "**Error:** Winnie_Bot only accepts IANA timezone identifiers. These generally take the format of `Continent/Your_Areas_Largest_City` -- for example, `America/New_York`, `Australia/Sydney`, `Europe/London`, or `Asia/Tokyo`."
         }
       }
     }
   },
   "goal": {
-    "description": "commands-goal-description",
+    "description": "Sets, updates, and resets your goals.",
     "cancel": {
-      "description": "commands-goal-cancel-description",
-      "success": "commands-goal-cancel-success",
+      "description": "Cancels your current goal.",
+      "success": "Your current goal has been cancelled.",
       "error": {
-        "couldNotCancelGoal": "commands-goal-cancel-errors-couldNotCreateGoal",
-        "goalAlreadyActive": "commands-goal-cancel-errors-goalAlreadyActive"
+        "couldNotCancelGoal": "**Unknown Error**: Could not cancel goal (database validation error).",
+        "noActiveGoal": "**Error**: You do not have an active goal."
       }
     },
     "info": {
-      "description": "commands-goal-info-description",
+      "description": "Reminds you of your current goal.",
       "error": {
-        "noActiveGoal": "commands-goal-info-errors-noActiveGoal"
+        "noActiveGoal": "**Error**: You do not have an active goal."
       }
     },
     "overwrite": {
-      "description": "commands-goal-overwrite-description",
+      "description": "Replaces the progress on your goal with a new value.",
       "args": {
-        "progress": "commands-goal-overwrite-args-progress"
+        "progress": "Your progress towards your total goal."
       },
       "error": {
-        "couldNotOverwriteGoal": "commands-goal-overwrite-errors-couldNotOverwriteGoal",
-        "noActiveGoal": "commands-goal-overwrite-errors-noActiveGoal",
-        "overwriteMustNoBeNegative": "commands-goal-overwrite-errors-overwriteMustNoBeNegative"
+        "couldNotOverwriteGoal": "**Unknown Error**: Could not update goal (database validation error).",
+        "noActiveGoal": "**Error**: You have not yet set a goal. Use `/goal set` to set one.",
+        "overwriteMustNoBeNegative": "**Error**: Your total progress towards your goal cannot be a negative number."
       }
     },
     "reset": {
-      "description": "commands-goal-reset-description",
-      "success": "commands-goal-reset-success\n\n{{goal}}",
+      "description": "Changes your current goal. Progress remains the same if the goal is of the same type.",
+      "success": "You have successfully reset your goal. \n\n{{goal}}",
       "args": {
-        "duration": "commands-goal-reset-args-description",
-        "target": "commands-goal-reset-args-target",
-        "type": "commands-goal-reset-args-type"
+        "duration": "`daily`, `weekly`, `monthly`, or `yearly`. Defaults to daily.",
+        "target": "The total you plan to achieve.",
+        "type": "`items`, `lines`, `minutes`, `pages`, `words`. Defaults to words."
       },
       "error": {
-        "couldNotCreateGoal": "commands-goal-reset-errors-couldNotCreateGoal",
-        "timezoneNotSet": "commands-goal-reset-errors-timezoneNotSet"
+        "couldNotResetGoal": "**Unknown Error**: Could not reset goal (database validation error).",
+        "timezoneNotSet": "**Error**: You have not set a timezone. Use `/config timezone set` to set one."
       }
     },
     "set": {
-      "description": "commands-goal-set-description",
-      "success": "commands-goal-set-success\n\n{{goal}}",
+      "description": "Sets a new goal.",
+      "success": "You have successfully set your goal. \n\n{{goal}}",
       "args": {
-        "duration": "commands-goal-set-args-description",
-        "target": "commands-goal-set-args-target",
-        "type": "commands-goal-set-args-type"
+        "duration": "`daily`, `weekly`, `monthly`, or `yearly`. Defaults to daily.",
+        "target": "The total you plan to achieve.",
+        "type": "`items`, `lines`, `minutes`, `pages`, `words`. Defaults to words."
       },
       "error": {
-        "couldNotCreateGoal": "commands-goal-set-errors-couldNotCreateGoal",
-        "goalAlreadyActive": "commands-goal-set-errors-goalAlreadyActive",
-        "timezoneNotSet": "commands-goal-set-errors-timezoneNotSet"
+        "couldNotCreateGoal": "**Unknown Error**: Could not create goal (database validation error).",
+        "goalAlreadyActive": "**Error**: You have already set a goal of this type. Use `/goal reset` to change it.",
+        "timezoneNotSet": "**Error**: You have not set a timezone. Use `/config timezone set` to set one."
       }
     },
     "update": {
-      "description": "commands-goal-update-description",
+      "description": "Updates progress on your goal.",
       "args": {
-        "progress": "commands-goal-update-args-progress"
+        "progress": "The amount to add to your current total."
       },
       "error": {
-        "couldNotUpdateGoal": "commands-goal-update-errors-couldNotUpdateGoal",
-        "noActiveGoal": "commands-goal-update-errors-noActiveGoal",
-        "totalMustBePositive": "commands-goal-update-errors-totalMustBePositive"
+        "couldNotUpdateGoal": "**Unknown Error**: Could not update goal (database validation error).",
+        "noActiveGoal": "**Error**: You have not yet set a goal. Use `/goal set` to set one.",
+        "totalMustBePositive": "**Error**: Your total progress towards your goal cannot be a negative number."
       }
     }
   },
   "server": {
-    "description": "commands-server-description",
+    "description": "Configures Winnie_Bot to meet your server's needs. Only usable by server admins slash people with `manage server` permissions but we will ask for clarification. From ostensibly competent devs.",
     "announcementsChannel": {
-      "description": "commands-server-announcementsChannel-description",
+      "description": "Chooses the channel which Winnie_Bot makes announcements to.",
       "get": {
-        "description": "commands-server-announcementsChannel-get-description",
-        "success": "commands-server-announcementsChannel-get-success <#{{announcementsChannel}}>"
+        "description": "Displays the current announcements channel.",
+        "success": "Winnie_Bot will currently post announcements to <#{{announcementsChannel}}>."
       },
       "reset": {
-        "description": "commands-server-announcementsChannel-reset-description",
-        "error": "commands-server-announcementsChannel-reset-error",
-        "success": "commands-server-announcementsChannel-reset-success"
+        "description": "Resets the announcements channel.",
+        "error": "**Unknown Error**: Could not reset announcements channel (database validation error).",
+        "success": "You have successfully reset the announcements channel."
       },
       "set": {
-        "description": "commands-server-announcementsChannel-set-description",
-        "success": "commands-server-announcementsChannel-set-success <#{{announcementsChannel}}>",
+        "description": "Sets the announcements channel.",
+        "success": "Winnie_Bot will now post announcements to <#{{announcementsChannel}}>.",
         "args": {
-          "announcementsChannel": "commands-server-announcementsChannel-set-args-announcementsChannel"
+          "announcementsChannel": "The channel that Winnie_Bot will post announcements to."
         },
-        "error": "commands-server-announcementsChannel-set-error"
+        "error": "**Unknown Error**: Could not set announcements channel (database validation error)."
       }
     },
     "crossGuild": {
-      "description": "commands-server-crossGuild-description",
+      "description": "Controls whether your server's challenges are visible to other servers.",
       "get": {
-        "description": "commands-server-crossGuild-get-description",
-        "disabled": "commands-server-crossGuild-get-disabled",
-        "enabled": "commands-server-crossGuild-get-enabled"
+        "description": "Displays whether your server's challenges are visible to other servers.",
+        "disabled": "Your server's challenges **will not** display on other servers.",
+        "enabled": "Your server's challenges **will** display on other servers."
       },
       "reset": {
-        "description": "commands-server-crossGuild-reset-description",
-        "error": "commands-server-crossGuild-reset-error",
-        "success": "commands-server-crossGuild-reset-success"
+        "description": "Resets whether your server's challenges are visible to other servers.",
+        "error": "**Unknown Error**: Your server's challenge display preference cannot be reset (database validation error).",
+        "success": "Your server's challenge display preference has been reset.  Challenges **will** display on other servers."
       },
       "set": {
-        "description": "commands-server-crossGuild-set-description",
-        "success": "commands-server-crossGuild-set-success {{crossGuild}}",
-        "error": "commands-server-crossGuild-set-error",
+        "description": "Sets whether your server's challenges are visible to other servers.",
+        "success": "Your server's challenges **{{crossGuild}}** display on other servers.",
+        "error": "**Unknown Error**: Your server's challenge display preference cannot be reset (database validation error).",
         "args": {
-          "enabled": "commands-server-crossGuild-set-args-enabled"
+          "enabled": "A boolean value for whether challenges should be visible in other servers (true for visible, false for hidden)."
         }
       }
     },
     "locale": {
-      "description": "commands-server-locale-description",
+      "description": "Configures the language that Winnie_Bot uses in your server.",
       "get": {
-        "description": "commands-server-locale-get-description",
-        "success": "commands-server-locale-get-success {{locale}}"
+        "description": "Displays Winnie_Bot's current language.",
+        "success": "Winnie_Bot currently speaks {{locale}}."
       },
       "reset": {
-        "description": "commands-server-locale-reset-description",
-        "error": "commands-server-locale-reset-error",
-        "success": "commands-server-locale-reset-success"
+        "description": "Resets Winnie_Bot's current language to English.",
+        "error": "**Unknown Error**: Winnie doesn't know how to speak that language.  Parlez vous Latin? (database validation error)",
+        "success": "You have reset Winnie_Bot's current language to English."
       },
       "set": {
-        "description": "commands-server-locale-set-description",
-        "success": "commands-server-locale-set-success {{locale}}",
+        "description": "Sets a new language for Winnie_Bot to speak.",
+        "success": "Winnie_Bot now speaks {{locale}}.",
         "args": {
-          "locale": "commands-server-locale-set-args-locale"
+          "locale": "An ISO 639-1 language code. Current options are `en` (English), `fr` (Français), `hu` (Magyar), `la` (Latina), `nl` (Nederlands), and `sv` (Svenska)."
         },
-        "error": "commands-server-locale-set-error"
+        "error": "**Error**: The locale that you are trying to set does not exist (database validation error)."
       }
     },
     "timezone": {
-      "description": "commands-server-timezone-description",
+      "description": "Sets, erases, or displays your server's timezone.",
       "get": {
-        "description": "commands-server-timezone-get-description",
-        "success": "commands-server-timezone-get-success {{timezone}}",
+        "description": "Displays your server's currently set timezone.",
+        "success": "Your server's current timezone is {{timezone}}.",
         "error": {
-          "notSet": "commands-server-timezone-get-errors-notSet"
+          "notSet": "You have not set a server timezone yet. Use `/server timezone set` to set one."
         }
       },
       "reset": {
-        "description": "commands-server-timezone-reset-description",
-        "success": "commands-server-timezone-reset-success"
+        "description": "Erases your server's currently set timezone.",
+        "success": "You have successfully reset your server's timezone."
       },
       "set": {
-        "description": "commands-server-timezone-set-description",
-        "success": "commands-server-timezone-set-success {{timezone}}",
+        "description": "Sets or resets your server's timezone.",
+        "success": "You have successfully set your server's timezone to {{timezone}}.",
         "args": {
-          "timezone": "commands-server-timezone-set-args-timezone"
+          "timezone": "An IANA timezone identifier."
         },
         "error": {
-          "invalidValue": "commands-server-timezone-set-errors-invalidValue"
+          "invalidValue": "**Error:** Winnie_Bot only accepts IANA timezone identifiers. These generally take the format of `Continent/Your_Areas_Largest_City` -- for example, `America/New_York`, `Australia/Sydney`, `Europe/London`, or `Asia/Tokyo`."
         }
       }
     }
