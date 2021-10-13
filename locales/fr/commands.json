@@ -1,83 +1,83 @@
 {
-  "defaultError": "**Unknown Error:** I'm sorry, I'm afraid I can't do that. This incident has been logged to the dashboard.",
+  "defaultError": "**Unknown Error:** Désolée, je ne peux pas faire ça. L'incident a été enregistré sur le tableau de bord.",
   "config": {
-    "description": "Configures Winnie_Bot to meet your needs.",
+    "description": "Configure Winnie_Bot pour répondre à tes besoins.",
     "crossGuild": {
-      "description": "Controls whether your challenges are visible to other servers.",
+      "description": "Vérifie que tes défis sont visibles sur les autres serveurs.",
       "get": {
-        "description": "Displays whether your challenges are visible to other servers.",
-        "disabled": "Your challenges **will not** display on other servers.",
-        "enabled": "Your challenges **will** display on other servers."
+        "description": "Indique si tes défis sont visibles sur les autres serveurs.",
+        "disabled": "Tes défis **ne seront pas** visibles sur les autres serveurs.",
+        "enabled": "Tes défis **seront** visibles sur les autres serveurs."
       },
       "reset": {
-        "description": "Resets whether your challenges are visible to other servers.",
-        "error": "**Unknown Error**: Your challenge display preference cannot be reset (database validation error).",
-        "success": "Your challenge display preference has been reset.  Challenges **will** display on other servers."
+        "description": "Réinitialise si tes défis sont visibles sur les autres serveurs.",
+        "error": "**ERREUR**: Tes préférences en matière de visibilité sur les autres serveurs ne peuvent être réinitialisées (erreur de validation de la base de données).",
+        "success": "Tes préférences en matière de visibilité de tes défis ont été réinitialisées. Les défis **seront** désormais visibles sur les autres serveurs."
       },
       "set": {
-        "description": "Sets whether your challenges are visible to other servers.",
-        "disabled": "Your challenges **will not** display on other servers.",
-        "enabled": "Your challenges **will** display on other servers.",
-        "error": "**Unknown Error**: Your challenge display preference cannot be set (database validation error).",
+        "description": "Définis si tes défis sont visibles sur les autres serveurs..",
+        "disabled": "Tes défis **ne seront pas** visibles sur les autres serveurs.",
+        "enabled": "Tes défis **seront** visibles sur les autres serveurs.",
+        "error": "**ERREUR**: Tes préférences en matière de visibilité sur les autres serveurs ne peuvent être définies (erreur de validation de la base de données).",
         "args": {
-          "enabled": "A boolean value for whether challenges should be visible in other servers (true for visible, false for hidden)."
+          "enabled": "Une valeur boléenne indiquant si les défis sont visibles sur les autres serveurs (true pour visibles, false pour cachés)."
         }
       }
     },
     "timezone": {
-      "description": "Sets, erases, or displays your timezone.",
+      "description": "Définis, supprime ou affiche ton fuseau horaire",
       "get": {
-        "description": "Displays your currently set timezone.",
-        "success": "Your current timezone is {{timezone}}.",
+        "description": "Affiche ton fuseau horaire actuel.",
+        "success": "Ton fuseau horaire actuel est {{timezone}}.",
         "error": {
-          "notSet": "You have not set a timezone yet. Use `/config timezone set` to set one."
+          "notSet": "Tu n'as pas encore configuré ton fuseau horaire. Utilise `/config timezone set` pour le faire."
         }
       },
       "reset": {
-        "description": "Erases your currently set timezone.",
-        "success": "You have successfully reset your timezone."
+        "description": "Supprime ton fuseau horaire actuel.",
+        "success": "Ton fuseau horaire a été réinitialisé avec succès."
       },
       "set": {
-        "description": "Sets or resets your timezone.",
-        "success": "You have successfully set your timezone to {{timezone}}.",
+        "description": "Définis ou réinitialise ton fuseau horaire.",
+        "success": "Tu as défini avec succès ton fuseau horaire sur {{timezone}}.",
         "args": {
-          "timezone": "An IANA timezone identifier."
+          "timezone": "Un identifiant de fuseau horaire IANA."
         },
         "error": {
-          "invalidValue": "**Error:** Winnie_Bot only accepts IANA timezone identifiers. These generally take the format of `Continent/Your_Areas_Largest_City` -- for example, `America/New_York`, `Australia/Sydney`, `Europe/London`, or `Asia/Tokyo`."
+          "invalidValue": "**ERREUR:** Winnie_Bot n'accepte que des identifiants de fuseau horaire IANA. Le format est généralement : `Continent/La_Plus_Grande_Ville_de_la_Région` -- par exemple, `Europe/Paris`, `Europe/Luxembourg`, `Europe/Brussels`, or `Europe/Zurich`."
         }
       }
     }
   },
   "goal": {
-    "description": "Sets, updates, and resets your goals.",
+    "description": "Définis, mets à jour ou réinitialise ton objectif.",
     "cancel": {
-      "description": "Cancels your current goal.",
-      "success": "Your current goal has been cancelled.",
+      "description": "Annule ton objectif actuel.",
+      "success": "Ton objectif actuel a été annulé avec succès.",
       "error": {
-        "couldNotCancelGoal": "**Unknown Error**: Could not cancel goal (database validation error).",
-        "noActiveGoal": "**Error**: You do not have an active goal."
+        "couldNotCancelGoal": "**ERREYR**: Impossible d'annuler l'objectif actuel (erreur de validation de la base de données).",
+        "noActiveGoal": "**ERREUR**: Tu n'as pas d'objectif actuellement."
       }
     },
     "info": {
-      "description": "Reminds you of your current goal.",
+      "description": "Rappelle votre objectif actuel",
       "error": {
-        "noActiveGoal": "**Error**: You do not have an active goal."
+        "noActiveGoal": "**ERREUR**: Tu n'as pas d'objectif actuellement."
       }
     },
     "overwrite": {
-      "description": "Replaces the progress on your goal with a new value.",
+      "description": "Remplace la progression de ton objectif par une nouvelle valeur.",
       "args": {
-        "progress": "Your progress towards your total goal."
+        "progress": "Ta progression quant à ton objectif total"
       },
       "error": {
-        "couldNotOverwriteGoal": "**Unknown Error**: Could not update goal (database validation error).",
-        "noActiveGoal": "**Error**: You have not yet set a goal. Use `/goal set` to set one.",
-        "overwriteMustNoBeNegative": "**Error**: Your total progress towards your goal cannot be a negative number."
+        "couldNotOverwriteGoal": "**ERREUR**: Impossible de mettre à jour l'objectif (erreur de validation de la base de données).",
+        "noActiveGoal": "**ERREUR**: Tu n'as pas encore défini d'objectif. Utilise `/goal set` pour le faire.",
+        "overwriteMustNoBeNegative": "**Error**: Ta progression totale quant à ton objectif ne peut être un nombre négatif."
       }
     },
     "reset": {
-      "description": "Changes your current goal. Progress remains the same if the goal is of the same type.",
+        "description": "Change ton objectif actuel. Ta progression ne change pas si ton nouvel objectif est du même type.",
       "success": "You have successfully reset your goal. \n\n{{goal}}",
       "args": {
         "duration": "`daily`, `weekly`, `monthly`, or `yearly`. Defaults to daily.",
