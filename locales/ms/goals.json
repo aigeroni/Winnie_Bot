@@ -1,7 +1,7 @@
 {
   "goal": "{{details}}\n{{timeRemaining}}",
-  "details": "Awak telah mencapai {{progress}} dari sasaran {{target}}-{{type}} awak.",
-  "timeRemaining": "Awak mempunyai {{months}}, {{days}}, {{hours}}, dan {{minutes}} untuk mencapai sasaran awak.",
+  "details": "Awak telah mencapai {{progress}} dari matlamat {{target}}-{{type}} awak.",
+  "timeRemaining": "Awak mempunyai {{months}}, {{days}}, {{hours}}, dan {{minutes}} untuk mencapai matlamat awak.",
   "durationsWithCount": {
     "days": "{{count}} hari",
     "days_plural": "{{count}} hari",
