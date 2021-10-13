@@ -153,7 +153,7 @@
         "description": "Sets whether your server's challenges are visible to other servers.",
         "disabled": "Your server's challenges **will not** display on other servers.",
         "enabled": "Your server's challenges **will** display on other servers.",
-        "error": "**Unknown Error**: Your server's challenge display preference cannot be reset (database validation error).",
+        "error": "**Unknown Error**: Your server's challenge display preference cannot be set (database validation error).",
         "args": {
           "enabled": "A boolean value for whether challenges should be visible in other servers (true for visible, false for hidden)."
         }
