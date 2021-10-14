@@ -116,7 +116,7 @@
     }
   },
   "server": {
-    "description": "Mengkonfigurasi Winnie_Bot untuk memenuhi keperluan pelayan awak. Hanya boleh digunakan oleh pentadbir pelayan atau orang yang mempunyai kebenaran `manage server` tetapi kami akan meminta penjelasan. Daripada pengaturcara yang kononya cekap.",
+    "description": "Mengkonfigurasi Winnie_Bot untuk memenuhi keperluan pelayan awak. Hanya boleh digunakan oleh orang yang mempunyai kebenaran `manage server`.",
     "announcementsChannel": {
       "description": "Memilih saluran di mana Winnie_Bot membuat pengumuman.",
       "get": {
