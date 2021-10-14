@@ -44,7 +44,7 @@
           "timezone": "Sebuah pengecam zon waktu IANA."
         },
         "error": {
-          "invalidValue": "**Ralat:** Winnie_Bot hanya menerima pengecam zon waktu IANA. Ini biasanya mempunyai format `Continent/Your_Areas_Largest_City` -- sebagai contoh, `America/New_York`, `Australia/Sydney`, `Europe/London`, atau `Asia/Tokyo`."
+          "invalidValue": "**Ralat:** Winnie_Bot hanya menerima pengecam zon waktu IANA. Ini biasanya mempunyai format `Continent/Your_Areas_Largest_City` -- sebagai contoh, `Asia/Kuala_Lumpur`, `Asia/Kuching`, `Asia/Singapore`, atau `America/New_York`."
         }
       }
     }
@@ -168,13 +168,13 @@
       "reset": {
         "description": "Menetapkan semula bahasa semasa Winnie_Bot ke Bahasa Inggeris.",
         "error": "**Ralat tidak diketahui**: Winnie tidak tahu bagaimana untuk bercakap dalam bahasa itu. Parlez vous Latin? (ralat pengesahan pangkalan data)",
-        "success": "You have reset Winnie_Bot's current language to English."
+        "success": "Awak telah menetapkan semula bahasa semasa Winnie_Bot's ke Bahasa Inggeris."
       },
       "set": {
         "description": "Menetapkan bahasa baharu untuk Winnie_Bot bercakap.",
         "success": "Winnie_Bot kini bercakap {{locale}}.",
         "args": {
-          "locale": "Sebuah kod bahasa ISO 639-1. Pilihan semasa ialah `en` (Bahasa Inggeris), `fr` (Bahasa Perancis), `hu` (Bahasa Magyar), `la` (Bahasa Latina), `ms` (Bahasa Melayu), `nl` (Bahasa Belanda), dan `sv` (Bahasa Sweden)."
+          "locale": "Sebuah kod bahasa ISO 639-1. Pilihan semasa ialah `en` (English), `fr` (Français), `hu` (Magyar), `la` (Latina), `ms` (Bahasa Melayu), `nl` (Nederlands), dan `sv` (Svenska)."
         },
         "error": "**Ralat**: Bahasa yang awak cuba tetapkan tidak wujud (ralat pengesahan pangkalan data)."
       }
@@ -199,7 +199,7 @@
           "timezone": "Sebuah pengecam zon waktu IANA."
         },
         "error": {
-          "invalidValue": "**Ralat:** Winnie_Bot hanya menerima pengecam zon waktu IANA. Ini biasanya mempunyai format `Continent/Your_Areas_Largest_City` -- sebagai contoh, `America/New_York`, `Australia/Sydney`, `Europe/London`, atau `Asia/Tokyo`."
+          "invalidValue": "**Ralat:** Winnie_Bot hanya menerima pengecam zon waktu IANA. Ini biasanya mempunyai format `Continent/Your_Areas_Largest_City` -- sebagai contoh, `Asia/Kuala_Lumpur`, `Asia/Kuching`, `Asia/Singapore`, atau `America/New_York`."
         }
       }
     }
