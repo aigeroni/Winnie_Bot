@@ -116,7 +116,7 @@
     }
   },
   "server": {
-    "description": "Configures Winnie_Bot to meet your server's needs. Only usable by server admins slash people with `manage server` permissions but we will ask for clarification. From ostensibly competent devs.",
+    "description": "Configures Winnie_Bot to meet your server's needs. Only usable by people with Manage Server permissions",
     "announcementsChannel": {
       "description": "Chooses the channel which Winnie_Bot makes announcements to.",
       "get": {
