@@ -30,7 +30,7 @@ jobs:
     - name: Clone, install deps, and start Winnie
       uses: appleboy/ssh-action@master
       with:
-        host: ${{ secrets.SSH_HOST_IP }}
+        host: ${{ env.SSH_HOST_IP }}
         username: ${{ secrets.SSH_USERNAME }}
         key: ${{ secrets.SSH_KEY }}
         port: 22
