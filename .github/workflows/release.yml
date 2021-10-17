@@ -22,9 +22,7 @@ jobs:
       run: cd ./terraform && terraform init && terraform plan && terraform apply -auto-approve
     - name: Save droplet IP address as env var
       id: ip
-      run: |
-        cd ./terraform
-        echo "::set-output name=ip::$(terraform output droplet-ip-address)"
+      run: cd ./terraform && echo SSH_HOST_IP=$(terraform output droplet-ip-address) | tr -d '"' >> $GITHUB_ENV
     - name: Print IP address
       run: echo ${{ steps.ip.outputs.ip }}
     - name: Save private database connection string as env var
@@ -32,7 +30,7 @@ jobs:
     - name: Clone, install deps, and start Winnie
       uses: appleboy/ssh-action@master
       with:
-        host: ${{ steps.ip.outputs.ip }}
+        host: ${{ secrets.SSH_HOST_IP }}
         username: ${{ secrets.SSH_USERNAME }}
         key: ${{ secrets.SSH_KEY }}
         port: 22
