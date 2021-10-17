@@ -24,6 +24,8 @@ jobs:
       run: |
         cd ./terraform
         echo "::set-output name=ip::$(terraform output droplet-ip-address)"
+    - name: Print IP address
+      run: echo ${{ steps.ip.outputs.ip }}
     - name: Save private database connection string as env var
       run: cd ./terraform && echo DB_CONNECTION_STRING=$(terraform output database-connection-uri) >> $GITHUB_ENV
     - name: Clone, install deps, and start Winnie
