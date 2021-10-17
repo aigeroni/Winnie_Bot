@@ -152,7 +152,7 @@ export class Goal extends BaseModel {
    * @returns A Duration instance representing the time until the goal ends
    */
   timeRemaining (): Duration {
-    if (!this.active()) { return Duration.fromObject({ minutes: 0 }) }
+    if (!this.isActive()) { return Duration.fromObject({ minutes: 0 }) }
 
     const timeRemaining = Interval.fromDateTimes(DateTime.utc(), this.endDate()).toDuration()
     return timeRemaining.shiftTo('months', 'days', 'hours', 'minutes')
@@ -164,8 +164,26 @@ export class Goal extends BaseModel {
    *
    * @returns true if the goal is active
    */
-  active (): boolean {
-    return this.completedAt == null && this.canceledAt == null
+  isActive (): boolean {
+    return !this.isCanceled() && !this.isCompleted()
+  }
+
+  /**
+   * Checks if the goal is completed.
+   *
+   * @returns true if the goal is completed
+   */
+  isCompleted (): boolean {
+    return this.completedAt == null
+  }
+
+  /**
+   * Checks if the goal is canceled.
+   *
+   * @returns true if the goal is canceled
+   */
+  isCanceled (): boolean {
+    return this.canceledAt == null
   }
 
   /**
