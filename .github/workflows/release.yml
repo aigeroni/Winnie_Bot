@@ -23,8 +23,6 @@ jobs:
     - name: Save droplet IP address as env var
       id: ip
       run: cd ./terraform && echo SSH_HOST_IP=$(terraform output droplet-ip-address) | tr -d '"' >> $GITHUB_ENV
-    - name: Print IP address
-      run: echo ${{ steps.ip.outputs.ip }}
     - name: Save private database connection string as env var
       run: cd ./terraform && echo DB_CONNECTION_STRING=$(terraform output database-connection-uri) >> $GITHUB_ENV
     - name: Clone, install deps, and start Winnie
@@ -35,7 +33,7 @@ jobs:
         key: ${{ secrets.SSH_KEY }}
         port: 22
         script: |
-          sudo apt install git -y
+          sudo apt-get install git -y
           git clone git@github.com:aigeroni/Winnie_Bot
           yarn install
           yarn build
