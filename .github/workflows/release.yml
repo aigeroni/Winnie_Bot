@@ -34,7 +34,7 @@ jobs:
         port: 22
         script: |
           sudo apt-get install git -y
-          git clone git@github.com:aigeroni/Winnie_Bot
+          git clone https://github.com/aigeroni/Winnie_Bot
           yarn install
           yarn build
           yarn start
