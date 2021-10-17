@@ -12,6 +12,7 @@ jobs:
     - uses: actions/checkout@v1
     - uses: hashicorp/setup-terraform@v1
       with:
+        terraform_wrapper: false
         cli_config_credentials_token: ${{ secrets.TERRAFORM_API_TOKEN }}
     - name: Build tfvars file
       run: cd ./terraform && printf "do_token = \"%s\"" $DO_TOKEN > cd.auto.tfvars
