@@ -20,7 +20,7 @@
         "enabled": "Your challenges **will** display on other servers.",
         "error": "**Unknown Error**: Your challenge display preference cannot be set (database validation error).",
         "args": {
-          "enabled": "A boolean value for whether challenges should be visible in other servers (true for visible, false for hidden)."
+          "enabled": "A boolean value for cross-server visibility (true for visible, false for hidden)."
         }
       }
     },
@@ -116,7 +116,7 @@
     }
   },
   "server": {
-    "description": "Configures Winnie_Bot to meet your server's needs. Only usable by people with Manage Server permissions",
+    "description": "Configures Winnie_Bot to meet your server's needs. Requires Manage Server permissions.",
     "announcementsChannel": {
       "description": "Chooses the channel which Winnie_Bot makes announcements to.",
       "get": {
@@ -155,7 +155,7 @@
         "enabled": "Your server's challenges **will** display on other servers.",
         "error": "**Unknown Error**: Your server's challenge display preference cannot be set (database validation error).",
         "args": {
-          "enabled": "A boolean value for whether challenges should be visible in other servers (true for visible, false for hidden)."
+          "enabled": "A boolean value for cross-server visibility (true for visible, false for hidden)."
         }
       }
     },
@@ -174,7 +174,7 @@
         "description": "Sets a new language for Winnie_Bot to speak.",
         "success": "Winnie_Bot now speaks {{locale}}.",
         "args": {
-          "locale": "An ISO 639-1 language code. Current options are `en` (English), `fr` (Français), `hu` (Magyar), `la` (Latina), `ms` (Bahasa Melayu), `nl` (Nederlands), and `sv` (Svenska)."
+          "locale": "An ISO 639-1 language code."
         },
         "error": "**Error**: The locale that you are trying to set does not exist (database validation error)."
       }
