@@ -1,5 +1,9 @@
 {
   "defaultError": "**Error incognitus occurrit:** Haec quaestio administratori relata est.",
+  "deploy": {
+    "error": "**Unknown Error**: Commands failed to deploy.",
+    "success": "Commands deployed successfully."
+  },
   "config": {
     "description": "Configurare Winnie_Bot ut obviam necessitates tuas.",
     "crossGuild": {

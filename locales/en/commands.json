@@ -1,8 +1,8 @@
 {
   "defaultError": "**Unknown Error:** I'm sorry, I'm afraid I can't do that. This incident has been logged to the dashboard.",
   "deploy": {
-    "error": "commands-deploy-error",
-    "success": "commands-deploy-success"
+    "error": "**Unknown Error**: Commands failed to deploy.",
+    "success": "Commands deployed successfully."
   },
 
   "config": {

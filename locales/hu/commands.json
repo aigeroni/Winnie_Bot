@@ -1,5 +1,9 @@
 {
   "defaultError": "**Unknown Error:** I'm sorry, I'm afraid I can't do that. This incident has been logged to the dashboard.",
+  "deploy": {
+    "error": "**Unknown Error**: Commands failed to deploy.",
+    "success": "Commands deployed successfully."
+  },
   "config": {
     "description": "Configures Winnie_Bot to meet your needs.",
     "crossGuild": {
