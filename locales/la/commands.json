@@ -116,7 +116,7 @@
     }
   },
   "server": {
-    "description": "Configurare Winnie_Bot ut obviam necessitates tuas. Administratoribus tantum -- **MANAGE SERVER** permissi.",
+    "description": "Configurare Winnie_Bot ut obviam necessitates tuas. **MANAGE SERVER** permissi.",
     "announcementsChannel": {
       "description": "Winnie_Bot hac via utitur pro nuntiis.",
       "get": {
@@ -174,7 +174,7 @@
         "description": "Elige novam linguam pro Winnie_Bot loqui.",
         "success": "Winnie_Bot nunc loquitur {{locale}}.",
         "args": {
-          "locale": "ISO 639-1 codex. Colligunt ex: `en` (English/lingua Anglica), `fr` (Français/lingua Gallica), `hu` (Magyar/lingua Hungarica), `la` (Latina/optimus lingua), `ms` (Bahasa Melayu/lingua Malaysia), `nl` (Nederlands/lingua Batavica), and `sv` (Svenska/lingua Suecica)."
+          "locale": "ISO 639-1 codex."
         },
         "error": "**Error occurrit**: Lingua quam elegisti non est. (Datorum frangitur. Superos clama!)."
       }
