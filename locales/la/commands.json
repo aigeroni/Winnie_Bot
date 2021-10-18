@@ -1,205 +1,205 @@
 {
-  "defaultError": "**Unknown Error:** I'm sorry, I'm afraid I can't do that. This incident has been logged to the dashboard.",
+  "defaultError": "**Error incognitus occurrit:** Haec quaestio administratori relata est.",
   "config": {
-    "description": "Configures Winnie_Bot to meet your needs.",
+    "description": "Configurare Winnie_Bot ut obviam necessitates tuas.",
     "crossGuild": {
-      "description": "Controls whether your challenges are visible to other servers.",
+      "description": "Alios coetus bella videre permittit.",
       "get": {
-        "description": "Displays whether your challenges are visible to other servers.",
-        "disabled": "Your challenges **will not** display on other servers.",
-        "enabled": "Your challenges **will** display on other servers."
+        "description": "Alios coetus bella videre permittit.",
+        "disabled": "Bella tua aliis **non** ostendentur.",
+        "enabled": "Bella tua aliis ostendentur."
       },
       "reset": {
-        "description": "Resets whether your challenges are visible to other servers.",
-        "error": "**Unknown Error**: Your challenge display preference cannot be reset (database validation error).",
-        "success": "Your challenge display preference has been reset.  Challenges **will** display on other servers."
+        "description": "Mutationes si aliae coetus bella tua videre possunt.",
+        "error": "**Error incognitus occurrit:** Mutatio esse non potest. Datorum frangitur. Superos clama!",
+        "success": "Mutatio successit. Bella tua aliis coetibus ostendent."
       },
       "set": {
-        "description": "Sets whether your challenges are visible to other servers.",
-        "disabled": "Your challenges **will not** display on other servers.",
-        "enabled": "Your challenges **will** display on other servers.",
-        "error": "**Unknown Error**: Your challenge display preference cannot be set (database validation error).",
+        "description": "Decernit si bella tua aliis coetibus inspiciuntur.",
+        "disabled": "Bella tua aliis **non** ostendentur.",
+        "enabled": "Bella tua aliis ostendentur.",
+        "error": "**Error incognitus occurrit:** Mutatio esse non potest. Datorum frangitur. Superos clama!",
         "args": {
-          "enabled": "A boolean value for whether challenges should be visible in other servers (true for visible, false for hidden)."
+          "enabled": "Verum (**true**) pro visibili; falsum (**false**) pro occultum."
         }
       }
     },
     "timezone": {
-      "description": "Sets, erases, or displays your timezone.",
+      "description": "Ponere et delere et ostendere tuam tempi zonam.",
       "get": {
-        "description": "Displays your currently set timezone.",
-        "success": "Your current timezone is {{timezone}}.",
+        "description": "Tempi zona ostendit.",
+        "success": "Tempi zona {{timezone}} est.",
         "error": {
-          "notSet": "You have not set a timezone yet. Use `/config timezone set` to set one."
+          "notSet": "Non est tempi zona. Utere `/config timezone set` id ponere."
         }
       },
       "reset": {
-        "description": "Erases your currently set timezone.",
-        "success": "You have successfully reset your timezone."
+        "description": "Tempi zona delet.",
+        "success": "Tempi zona deleta est."
       },
       "set": {
-        "description": "Sets or resets your timezone.",
-        "success": "You have successfully set your timezone to {{timezone}}.",
+        "description": "Tempi zona tua gignit vel mutat.",
+        "success": "Tempi zona {{timezone}} est.",
         "args": {
-          "timezone": "An IANA timezone identifier."
+          "timezone": "Vexillum IANA sequi debetis."
         },
         "error": {
-          "invalidValue": "**Error:** Winnie_Bot only accepts IANA timezone identifiers. These generally take the format of `Continent/Your_Areas_Largest_City` -- for example, `America/New_York`, `Australia/Sydney`, `Europe/London`, or `Asia/Tokyo`."
+          "invalidValue": "**Error occurrit:** Winnie_Bot IANA verba admittit. Ipsi tamquam `Continens/Maxima_Civitas` -- e.g., `America/New_York`, `Australia/Sydney`, `Europe/London`, or `Asia/Tokyo`."
         }
       }
     }
   },
   "goal": {
-    "description": "Sets, updates, and resets your goals.",
+    "description": "Ponere et delere et ostendere metam.",
     "cancel": {
-      "description": "Cancels your current goal.",
-      "success": "Your current goal has been cancelled.",
+      "description": "Delet metam.",
+      "success": "Metam deletum est.",
       "error": {
-        "couldNotCancelGoal": "**Unknown Error**: Could not cancel goal (database validation error).",
-        "noActiveGoal": "**Error**: You do not have an active goal."
+        "couldNotCancelGoal": "**Error incognitus occurrit:** Delere non potest. Datorum frangitur. Superos clama!",
+        "noActiveGoal": "**Error occurrit:** Metam non habes."
       }
     },
     "info": {
-      "description": "Reminds you of your current goal.",
+      "description": "Metam ostendit.",
       "error": {
-        "noActiveGoal": "**Error**: You do not have an active goal."
+        "noActiveGoal": "**Error occurrit:** Metam non habes."
       }
     },
     "overwrite": {
-      "description": "Replaces the progress on your goal with a new value.",
+      "description": "Progressum tuum cum novo numero substituit.",
       "args": {
-        "progress": "Your progress towards your total goal."
+        "progress": "Novus numerus. Profectum tuum mutat."
       },
       "error": {
-        "couldNotOverwriteGoal": "**Unknown Error**: Could not update goal (database validation error).",
-        "noActiveGoal": "**Error**: You have not yet set a goal. Use `/goal set` to set one.",
-        "overwriteMustNoBeNegative": "**Error**: Your total progress towards your goal cannot be a negative number."
+        "couldNotOverwriteGoal": "**Error incognitus occurrit:** Mutatio esse non potest. Datorum frangitur. Superos clama!",
+        "noActiveGoal": "**Error occurrit:** Metam non habes. Utere `/goal set` id ponere.",
+        "overwriteMustNoBeNegative": "**Error occurrit:** Numerus negativus esse non potest."
       }
     },
     "reset": {
-      "description": "Changes your current goal. Progress remains the same if the goal is of the same type.",
-      "success": "You have successfully reset your goal. \n\n{{goal}}",
+      "description": "Metam tibi mutat. Progressus idem manet, si meta eiusdem generis est.",
+      "success": "Metam mutasti. \n\n{{goal}}",
       "args": {
-        "duration": "`daily`, `weekly`, `monthly`, or `yearly`. Defaults to daily.",
-        "target": "The total you plan to achieve.",
-        "type": "`items`, `lines`, `minutes`, `pages`, `words`. Defaults to words."
+        "duration": "`daily`, `weekly`, `monthly`, or `yearly`. Defaltam ad cottidianam. Utere vocibus Anglicis.",
+        "target": "Quantum facies?",
+        "type": "`items`, `lines`, `minutes`, `pages`, `words`. Defaltam ad verba. Utere vocibus Anglicis."
       },
       "error": {
-        "couldNotResetGoal": "**Unknown Error**: Could not reset goal (database validation error).",
-        "timezoneNotSet": "**Error**: You have not set a timezone. Use `/config timezone set` to set one."
+        "couldNotResetGoal": "**Error incognitus occurrit:** Mutatio esse non potest. Datorum frangitur. Superos clama!",
+        "timezoneNotSet": "**Error occurrit:** Tempi zonam non posueris. Utere `/config timezone set` id ponere."
       }
     },
     "set": {
-      "description": "Sets a new goal.",
-      "success": "You have successfully set your goal. \n\n{{goal}}",
+      "description": "Novam metam ponit.",
+      "success": "Novam metam posuisti. Feles gaudent! \n\n{{goal}}",
       "args": {
-        "duration": "`daily`, `weekly`, `monthly`, or `yearly`. Defaults to daily.",
-        "target": "The total you plan to achieve.",
-        "type": "`items`, `lines`, `minutes`, `pages`, `words`. Defaults to words."
+        "duration": "`daily`, `weekly`, `monthly`, or `yearly`. Defaltam ad cottidianam. Utere vocibus Anglicis.",
+        "target": "Quantum facies?",
+        "type": "`items`, `lines`, `minutes`, `pages`, `words`. Defaltam ad verba. Utere vocibus Anglicis."
       },
       "error": {
-        "couldNotCreateGoal": "**Unknown Error**: Could not create goal (database validation error).",
-        "goalAlreadyActive": "**Error**: You have already set a goal of this type. Use `/goal reset` to change it.",
-        "timezoneNotSet": "**Error**: You have not set a timezone. Use `/config timezone set` to set one."
+        "couldNotCreateGoal": "**Error incognitus occurrit:** Mutatio esse non potest. Datorum frangitur. Superos clama!",
+        "goalAlreadyActive": "**Error occurrit:** Meta huius generis iam exstat. Utere `/goal reset` id mutatere.",
+        "timezoneNotSet": "**Error occurrit:** Tempi zonam non posueris. Utere `/config timezone set` id ponere."
       }
     },
     "update": {
-      "description": "Updates progress on your goal.",
+      "description": "Progressum tuum ad metam renovat.",
       "args": {
-        "progress": "The amount to add to your current total."
+        "progress": "Numerum addere ad totalis."
       },
       "error": {
-        "couldNotUpdateGoal": "**Unknown Error**: Could not update goal (database validation error).",
-        "noActiveGoal": "**Error**: You have not yet set a goal. Use `/goal set` to set one.",
-        "totalMustBePositive": "**Error**: Your total progress towards your goal cannot be a negative number."
+        "couldNotUpdateGoal": "**Error incognitus occurrit:** Mutatio esse non potest. Datorum frangitur. Superos clama!",
+        "noActiveGoal": "**Error occurrit:** Metam non habes. Utere `/goal set` id ponere.",
+        "totalMustBePositive": "**Error occurrit:** Numerus negativus esse non potest."
       }
     }
   },
   "server": {
-    "description": "Configures Winnie_Bot to meet your server's needs. Only usable by people with Manage Server permissions",
+    "description": "Configurare Winnie_Bot ut obviam necessitates tuas. Administratoribus tantum -- **MANAGE SERVER** permissi.",
     "announcementsChannel": {
-      "description": "Chooses the channel which Winnie_Bot makes announcements to.",
+      "description": "Winnie_Bot hac via utitur pro nuntiis.",
       "get": {
-        "description": "Displays the current announcements channel.",
-        "success": "Winnie_Bot will currently post announcements to <#{{announcementsChannel}}>."
+        "description": "Nomen Via Annuntiationes.",
+        "success": "Winnie_Bot in <#{{announcementsChannel}}> annuntiationes dices."
       },
       "reset": {
-        "description": "Resets the announcements channel.",
-        "error": "**Unknown Error**: Could not reset announcements channel (database validation error).",
-        "success": "You have successfully reset the announcements channel."
+        "description": "Delere via pro annuntiationibus.",
+        "error": "**Error incognitus occurrit:** Mutatio esse non potest. Datorum frangitur. Superos clama",
+        "success": "Prosperitas! Via remotus est."
       },
       "set": {
-        "description": "Sets the announcements channel.",
-        "success": "Winnie_Bot will now post announcements to <#{{announcementsChannel}}>.",
+        "description": "Colligunt via pro annuntiationibus.",
+        "success": "Winnie_Bot in <#{{announcementsChannel}}> annuntiationes dices.",
         "args": {
-          "announcementsChannel": "The channel that Winnie_Bot will post announcements to."
+          "announcementsChannel": "Nomen viae (**channel**) pro annuntiationibus."
         },
-        "error": "**Unknown Error**: Could not set announcements channel (database validation error)."
+        "error": "**Error incognitus occurrit:** Mutatio esse non potest. Datorum frangitur. Superos clama!"
       }
     },
     "crossGuild": {
-      "description": "Controls whether your server's challenges are visible to other servers.",
+      "description": "Alios coetus bella videre permittit, pro tota communitate.",
       "get": {
-        "description": "Displays whether your server's challenges are visible to other servers.",
-        "disabled": "Your server's challenges **will not** display on other servers.",
-        "enabled": "Your server's challenges **will** display on other servers."
+        "description": "Alios coetus bella videre permittit, pro tota communitate.",
+        "disabled": "Bella tua aliis **non** ostendentur, pro tota communitate.",
+        "enabled": "Bella tua aliis ostendentur, pro tota communitate."
       },
       "reset": {
-        "description": "Resets whether your server's challenges are visible to other servers.",
-        "error": "**Unknown Error**: Your server's challenge display preference cannot be reset (database validation error).",
-        "success": "Your server's challenge display preference has been reset.  Challenges **will** display on other servers."
+        "description": "Mutationes si aliae coetus bella tua videre possunt, pro tota communitate.",
+        "error": "**Error incognitus occurrit:** Mutatio esse non potest. Datorum frangitur. Superos clama!",
+        "success": "Mutatio successit. Bella tua aliis coetibus ostendent, pro tota communitate."
       },
       "set": {
-        "description": "Sets whether your server's challenges are visible to other servers.",
-        "disabled": "Your server's challenges **will not** display on other servers.",
-        "enabled": "Your server's challenges **will** display on other servers.",
-        "error": "**Unknown Error**: Your server's challenge display preference cannot be set (database validation error).",
+        "description": "Decernit si bella tua aliis coetibus inspiciuntur, pro tota communitate.",
+        "disabled": "Bella tua aliis **non** ostendentur, pro tota communitate.",
+        "enabled": "Bella tua aliis ostendentur, pro tota communitate.",
+        "error": "**Error incognitus occurrit:** Mutatio esse non potest. Datorum frangitur. Superos clama!",
         "args": {
-          "enabled": "A boolean value for whether challenges should be visible in other servers (true for visible, false for hidden)."
+          "enabled": "Verum (**true**) pro visibili; falsum (**false**) pro occultum."
         }
       }
     },
     "locale": {
-      "description": "Configures the language that Winnie_Bot uses in your server.",
+      "description": "Linguam eligit qua Winnie_Bot utitur in hac communitate.",
       "get": {
-        "description": "Displays Winnie_Bot's current language.",
-        "success": "Winnie_Bot currently speaks {{locale}}."
+        "description": "Linguam hodiernam ostendit.",
+        "success": "Winnie_Bot {{locale}} loquitur."
       },
       "reset": {
-        "description": "Resets Winnie_Bot's current language to English.",
-        "error": "**Unknown Error**: Winnie doesn't know how to speak that language.  Parlez vous Latin? (database validation error)",
-        "success": "You have reset Winnie_Bot's current language to English."
+        "description": "Pro tota communitate, linguam Anglicam mutat.",
+        "error": "**Error incognitus occurrit:** Winnie_Bot non loquitur lingua certa. Parlez vous Latin? (Datorum frangitur. Superos clama!)",
+        "success": "Winnie_Bot Anglice nunc loquitur."
       },
       "set": {
-        "description": "Sets a new language for Winnie_Bot to speak.",
-        "success": "Winnie_Bot now speaks {{locale}}.",
+        "description": "Elige novam linguam pro Winnie_Bot loqui.",
+        "success": "Winnie_Bot nunc loquitur {{locale}}.",
         "args": {
-          "locale": "An ISO 639-1 language code. Current options are `en` (English), `fr` (Français), `hu` (Magyar), `la` (Latina), `ms` (Bahasa Melayu), `nl` (Nederlands), and `sv` (Svenska)."
+          "locale": "ISO 639-1 codex. Colligunt ex: `en` (English/lingua Anglica), `fr` (Français/lingua Gallica), `hu` (Magyar/lingua Hungarica), `la` (Latina/optimus lingua), `ms` (Bahasa Melayu/lingua Malaysia), `nl` (Nederlands/lingua Batavica), and `sv` (Svenska/lingua Suecica)."
         },
-        "error": "**Error**: The locale that you are trying to set does not exist (database validation error)."
+        "error": "**Error occurrit**: Lingua quam elegisti non est. (Datorum frangitur. Superos clama!)."
       }
     },
     "timezone": {
-      "description": "Sets, erases, or displays your server's timezone.",
+      "description": "Ponere et delere et ostendere tuam tempi zonam -- pro tota communitate.",
       "get": {
-        "description": "Displays your server's currently set timezone.",
-        "success": "Your server's current timezone is {{timezone}}.",
+        "description": "Tempi zona pro tota communitate ostendit.",
+        "success": "Tempi zona pro tota communitate est {{timezone}}.",
         "error": {
-          "notSet": "You have not set a server timezone yet. Use `/server timezone set` to set one."
+          "notSet": "Non est tempi zona pro tota communitate. Utere `/server timezone set` id ponere."
         }
       },
       "reset": {
-        "description": "Erases your server's currently set timezone.",
-        "success": "You have successfully reset your server's timezone."
+        "description": "Tempi zona pro tota communitate delet.",
+        "success": "Tempi zona pro tota communitate deleta est."
       },
       "set": {
-        "description": "Sets or resets your server's timezone.",
-        "success": "You have successfully set your server's timezone to {{timezone}}.",
+        "description": "Tempi zona pro tota communitate gignit vel mutat.",
+        "success": "Tempi zona pro tota communitate est {{timezone}}.",
         "args": {
-          "timezone": "An IANA timezone identifier."
+          "timezone": "Vexillum IANA sequi debetis."
         },
         "error": {
-          "invalidValue": "**Error:** Winnie_Bot only accepts IANA timezone identifiers. These generally take the format of `Continent/Your_Areas_Largest_City` -- for example, `America/New_York`, `Australia/Sydney`, `Europe/London`, or `Asia/Tokyo`."
+          "invalidValue": "**Error occurrit:** Winnie_Bot IANA verba admittit. Ipsi tamquam `Continens/Maxima_Civitas` -- e.g., `America/New_York`, `Australia/Sydney`, `Europe/London`, or `Asia/Tokyo`."
         }
       }
     }
