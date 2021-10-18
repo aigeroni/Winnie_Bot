@@ -5,7 +5,7 @@
   <a href="https://github.com/aigeroni/Winnie_Bot/blob/main/LICENSE">
     <img src="https://img.shields.io/github/license/aigeroni/Winnie_Bot.svg?style=flat-square" alt="Github License" />
   </a>
-  <a href="https://discordapp.com/api/oauth2/authorize?client_id=386676183791829002&permissions=0&scope=bot">
+  <a href="https://discordapp.com/api/oauth2/authorize?client_id=386676183791829002&permissions=0&scope=bot%20applications.commands">
     <img src="https://img.shields.io/badge/Add%20to%20your-server-7289DA.svg?style=flat-square" alt="Add to your server" />
   </a>
    <a href="https://discord.gg/mvZZMhK">
