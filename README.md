@@ -53,7 +53,7 @@ If you want to run Winnie on your server, you can either invite the public Winni
 
 ### Inviting the public Winnie_Bot account
 
-If you want to invite the public Winnie_Bot account to your server, go [here](https://discordapp.com/api/oauth2/authorize?client_id=386676183791829002&permissions=0&scope=bot).
+If you want to invite the public Winnie_Bot account to your server, go [here](https://discordapp.com/api/oauth2/authorize?client_id=386676183791829002&permissions=0&scope=bot%20applications.commands).
 
 ### Setting up your own instance of Winnie
 
