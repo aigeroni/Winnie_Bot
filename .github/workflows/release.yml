@@ -33,7 +33,7 @@ jobs:
         key: ${{ secrets.SSH_KEY }}
         port: 22
         script: |
-          sudo apt-get install git -y
+          sudo apt-get update && sudo apt-get install git nodejs yarn -y
           git clone https://github.com/aigeroni/Winnie_Bot
           yarn install
           yarn build
