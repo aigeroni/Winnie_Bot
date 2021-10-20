@@ -33,12 +33,13 @@ jobs:
         key: ${{ secrets.SSH_KEY }}
         port: 22
         script: |
+          sudo apt-get remove cmdtest -y && sudo apt-get remove yarn -y
           sudo apt-get update && sudo apt-get install git nodejs yarn -y
+          sudo npm install -g yarn
           if [ ! -d Winnie_Bot ] ; then
             git clone https://github.com/aigeroni/Winnie_Bot Winnie_Bot
           fi
-          cd Winnie_Bot
-          git pull --no-rebase
+          cd Winnie_Bot && git pull --no-rebase && git checkout $GITHUB_SHA
           yarn install
           yarn build
           yarn start
