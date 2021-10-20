@@ -1,4 +1,4 @@
-name: Bot Build
+name: Build Bot
 
 on: [push]
 
