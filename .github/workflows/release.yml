@@ -33,8 +33,9 @@ jobs:
         key: ${{ secrets.SSH_KEY }}
         port: 22
         script: |
-          sudo apt-get remove cmdtest -y && sudo apt-get remove yarn -y
-          sudo apt-get update && sudo apt-get install git nodejs -y
+          sudo apt-get remove nodejs -y && sudo apt-get autoremove
+          sudo apt-get update && sudo apt-get install git -y
+          sudo curl -fsSL https://deb.nodesource.com/setup_16.x | sudo bash - && sudo apt install nodejs
           sudo npm install -g yarn
           if [ ! -d Winnie_Bot ] ; then
             git clone https://github.com/aigeroni/Winnie_Bot Winnie_Bot
