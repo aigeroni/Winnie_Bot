@@ -34,7 +34,11 @@ jobs:
         port: 22
         script: |
           sudo apt-get update && sudo apt-get install git nodejs yarn -y
-          git clone https://github.com/aigeroni/Winnie_Bot
+          if [ ! -d Winnie_Bot] ; then
+            git clone https://github.com/aigeroni/Winnie_Bot Winnie_Bot
+          fi
+          cd Winnie_Bot
+          git pull
           yarn install
           yarn build
           yarn start
