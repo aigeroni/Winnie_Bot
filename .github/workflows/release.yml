@@ -1,0 +1,50 @@
+name: Release Bot
+
+on:
+  workflow_dispatch:
+  workflow_run:
+    workflows: ["Build Bot"]
+    branches: [main-2.0]
+    types: 
+      - completed
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [16.x]
+    steps:
+    - uses: actions/checkout@v1
+    - uses: hashicorp/setup-terraform@v1
+      with:
+        terraform_wrapper: false
+        cli_config_credentials_token: ${{ secrets.TERRAFORM_API_TOKEN }}
+    - name: Build tfvars file
+      run: cd ./terraform && printf "do_token = \"%s\"" $DO_TOKEN > cd.auto.tfvars
+      env:
+        DO_TOKEN: ${{ secrets.DO_PAT }}
+    - name: Run terraform
+      run: cd ./terraform && terraform init && terraform plan && terraform apply -auto-approve
+    - name: Save droplet IP address as env var
+      id: ip
+      run: cd ./terraform && echo SSH_HOST_IP=$(terraform output droplet-ip-address) | tr -d '"' >> $GITHUB_ENV
+    - name: Save private database connection string as env var
+      run: cd ./terraform && echo DB_CONNECTION_STRING=$(terraform output database-connection-uri) >> $GITHUB_ENV
+    - name: Clone, install deps, and start Winnie
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ env.SSH_HOST_IP }}
+        username: ${{ secrets.SSH_USERNAME }}
+        key: ${{ secrets.SSH_KEY }}
+        port: 22
+        script: |
+          sudo apt-get update && sudo apt-get install git -y
+          sudo curl -fsSL https://deb.nodesource.com/setup_16.x | sudo bash - && sudo apt-get install nodejs -y
+          sudo npm install -g yarn
+          if [ ! -d Winnie_Bot ] ; then
+            git clone https://github.com/aigeroni/Winnie_Bot Winnie_Bot
+          fi
+          cd Winnie_Bot && git pull --no-rebase && git checkout $GITHUB_SHA
+          yarn install
+          yarn build
+          yarn start
