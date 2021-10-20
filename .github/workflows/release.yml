@@ -1,7 +1,12 @@
 name: Release Bot
 
-on: [push]
-
+on:
+  workflow_dispatch:
+  workflow_run:
+    workflows: ["Build Bot"]
+    branches: [main-2.0]
+    types: 
+      - completed
 jobs:
   build:
     runs-on: ubuntu-latest
