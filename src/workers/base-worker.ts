@@ -1,11 +1,13 @@
 import { Job, Worker } from 'bullmq'
-import { Logger, JobQueue } from '../core'
+import { Logger, JobQueue, WinnieClient } from '../core'
 import { WinnieJob } from '../types'
 
 export class BaseWorker {
   worker: Worker
 
   constructor (queueName: string, jobTypes: WinnieJob[]) {
+    WinnieClient.login().catch(() => {})
+
     this.worker = new Worker(queueName, this.handleJob(jobTypes), {
       connection: JobQueue.connectionOptions
     })

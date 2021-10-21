@@ -174,7 +174,7 @@ export class Goal extends BaseModel {
    * @returns true if the goal is completed
    */
   isCompleted (): boolean {
-    return this.completedAt == null
+    return this.completedAt != null
   }
 
   /**
@@ -183,7 +183,7 @@ export class Goal extends BaseModel {
    * @returns true if the goal is canceled
    */
   isCanceled (): boolean {
-    return this.canceledAt == null
+    return this.canceledAt != null
   }
 
   /**

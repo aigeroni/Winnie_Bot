@@ -6,7 +6,7 @@ import { Snowflake } from 'discord.js'
 /**
  * A model for keeping track of how many raptors a user has hatched in a given guild.
  */
-@Entity()
+@Entity({ name: 'raptors' })
 export class Raptor extends BaseModel {
   /**
    * The guild in which these raptors have been earned.
