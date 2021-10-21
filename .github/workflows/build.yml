@@ -23,4 +23,5 @@ jobs:
     - name: Run Checkov on IaC files
       uses: bridgecrewio/checkov-action@master
       with:
-        directory: terraform/
+        directory: terraform
+        framework: terraform
