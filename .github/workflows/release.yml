@@ -32,10 +32,15 @@ jobs:
       run: cd ./terraform && echo DB_CONNECTION_STRING=$(terraform output database-connection-uri) >> $GITHUB_ENV
     - name: Clone, install deps, and start Winnie
       uses: appleboy/ssh-action@master
+      env:
+        DISCORD_TOKEN: ${{ secrets.DISCORD_BOT_TOKEN }}
+        CONNECTION_STRING: ${{ env.DB_CONNECTION_STRING }}
+        GITHUB_SHA: ${{ github.sha }}
       with:
         host: ${{ env.SSH_HOST_IP }}
         username: ${{ secrets.SSH_USERNAME }}
         key: ${{ secrets.SSH_KEY }}
+        envs: DISCORD_TOKEN,CONNECTION_STRING,GITHUB_SHA
         port: 22
         script: |
           sudo apt-get update && sudo apt-get install git -y
