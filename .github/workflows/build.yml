@@ -20,3 +20,7 @@ jobs:
       run: yarn lint
     - name: Run TypeScript check
       run: yarn build
+    - name: Run Checkov on IaC files
+      uses: bridgecrewio/checkov-action@master
+      with:
+        directory: terraform/
