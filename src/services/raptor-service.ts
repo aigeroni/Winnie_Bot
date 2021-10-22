@@ -1,5 +1,6 @@
-import { Logger } from '../core'
-import { Goal, Raptor } from '../models'
+import { TextChannel } from 'discord.js'
+import { I18n, Logger, WinnieClient } from '../core'
+import { Goal, GuildConfig, Raptor } from '../models'
 import { GoalDurations } from '../types'
 
 async function awardRaptorForGoal (goal: Goal): Promise<void> {
@@ -29,16 +30,38 @@ async function awardRaptorForGoalDuration (goal: Goal): Promise<void> {
   switch (goal.goalDuration) {
     case GoalDurations.DAILY:
       await raptor.awardWhiteRaptor()
+      await announceRaptor(goal, raptor, 'goals:raptors.announceWhiteRaptor')
       break
     case GoalDurations.WEEKLY:
       await raptor.awardBlueRaptor()
+      await announceRaptor(goal, raptor, 'goals:raptors.announceBlueRaptor')
       break
     case GoalDurations.MONTHLY:
       await raptor.awardPurpleRaptor()
+      await announceRaptor(goal, raptor, 'goals:raptors.announcePurpleRaptor')
       break
     case GoalDurations.YEARLY:
       await raptor.awardOrangeRaptor()
+      await announceRaptor(goal, raptor, 'goals:raptors.announceOrangeRaptor')
       break
+  }
+}
+
+async function announceRaptor (goal: Goal, raptor: Raptor, messageKey: string): Promise<void> {
+  if (!WinnieClient.isLoggedIn()) { return }
+
+  const channel = (await WinnieClient.client.channels.fetch(goal.channelId)) as TextChannel
+  if (channel == null) { return }
+
+  const guildConfig = await GuildConfig.findOrCreate(raptor.guildId)
+  const message = await I18n.translate(guildConfig.locale, messageKey, {
+    user: `<@${raptor.userId}>`
+  })
+
+  try {
+    await channel.send(message)
+  } catch (error) {
+    Logger.error(`Unable to announce raptors in channel ${goal.channelId}`)
   }
 }
 
