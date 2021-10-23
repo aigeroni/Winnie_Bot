@@ -43,4 +43,5 @@ jobs:
           sudo npm install -g yarn
           sudo systemctl start redis
           rm -rf Winnie_Bot && git clone https://github.com/aigeroni/Winnie_Bot
-          cd Winnie_Bot && git checkout $GITHUB_SHA && ./start-winnie.sh
+          cd Winnie_Bot && git checkout $GITHUB_SHA
+          ./create-dotenv.sh && ./start-winnie.sh
