@@ -28,14 +28,17 @@ jobs:
     - name: Clone, install deps, and start Winnie
       uses: appleboy/ssh-action@master
       env:
-        DISCORD_TOKEN: ${{ secrets.DISCORD_BOT_TOKEN }}
-        CONNECTION_STRING: ${{ env.DB_CONNECTION_STRING }}
+        BOT_TOKEN: ${{ secrets.DISCORD_BOT_TOKEN }}
+        POSTGRES_CONNECTION_STRING: ${{ env.DB_CONNECTION_STRING }}
         GITHUB_SHA: ${{ github.sha }}
+        REDIS_HOST: localhost
+        REDIS_PORT: 6379
+        NODE_ENV: production
       with:
         host: ${{ env.SSH_HOST_IP }}
         username: ${{ secrets.SSH_USERNAME }}
         key: ${{ secrets.SSH_KEY }}
-        envs: DISCORD_TOKEN,CONNECTION_STRING,GITHUB_SHA
+        envs: BOT_TOKEN,POSTGRES_CONNECTION_STRING,GITHUB_SHA,REDIS_HOST,REDIS_PORT,NODE_ENV
         port: 22
         script: |
           sudo apt-get update && sudo apt-get install git redis-server -y
@@ -44,4 +47,4 @@ jobs:
           sudo systemctl start redis
           rm -rf Winnie_Bot && git clone https://github.com/aigeroni/Winnie_Bot
           cd Winnie_Bot && git checkout $GITHUB_SHA
-          ./create-dotenv.sh && ./start-winnie.sh
+          ./start-winnie.sh
