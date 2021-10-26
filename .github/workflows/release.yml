@@ -3,7 +3,7 @@ name: Release Bot
 on: [push]
 
 jobs:
-  build:
+  release:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -32,7 +32,7 @@ jobs:
           'REDIS_PORT=6379'
           'BOT_TOKEN="${{ secrets.DISCORD_BOT_TOKEN }}"'
           'NODE_ENV="production"'
-        ) | Set-Content .env
+        ) | Out-File .env -Force
         Get-Item .env | Format-List
       shell: pwsh
     - name: copy env file
