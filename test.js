@@ -2,9 +2,9 @@
 console.log("test");
 console.log("pwd: " + process.env.pwd)
 
-console.log(require('dotenv').config({
-    debug: process.env.DEBUG
-}));
+// console.log(require('dotenv').config({
+    // debug: process.env.DEBUG
+// }));
 
 
 if (process.env.POSTGRES_CONNECTION_STRING != "") {
