@@ -67,5 +67,6 @@ jobs:
           rm -rf Winnie_Bot && git clone https://github.com/aigeroni/Winnie_Bot
           cd Winnie_Bot && git checkout $GITHUB_SHA
           mv ../.env ./.env
+          rm .env.sample
           ls -la
           ./start-winnie.sh
