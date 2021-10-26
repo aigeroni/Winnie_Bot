@@ -47,5 +47,11 @@ jobs:
           sudo systemctl start redis
           rm -rf Winnie_Bot && git clone https://github.com/aigeroni/Winnie_Bot
           cd Winnie_Bot && git checkout $GITHUB_SHA
-          echo $REDIS_HOST
-          ./create-dotenv.sh && ./start-winnie.sh
+          cat << EOF > .env
+          POSTGRES_CONNECTION_STRING="$POSTGRES_CONNECTION_STRING"
+          REDIS_HOST="localhost"
+          REDIS_PORT=6379
+          BOT_TOKEN="$DISCORD_TOKEN"
+          NODE_ENV="production"
+          EOF
+          ./start-winnie.sh
