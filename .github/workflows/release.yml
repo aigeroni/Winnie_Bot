@@ -32,7 +32,7 @@ jobs:
           'REDIS_PORT=6379'
           'BOT_TOKEN="${{ secrets.DISCORD_BOT_TOKEN }}"'
           'NODE_ENV="production"'
-        ) | Out-File .env -Encoding utf8 -Force
+        ) | Out-File .env -Encoding utf8 -NoNewline -Force
         ls -la
       shell: pwsh
     - name: copy env file
