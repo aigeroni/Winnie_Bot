@@ -28,7 +28,7 @@ jobs:
     - run: |
         @(
           'POSTGRES_CONNECTION_STRING="${{ env.DB_CONNECTION_STRING }}"'
-          'TYPEORM_URL="${{ env.DB_CONNECTION_STRING }}"' -replace 'postgresql', 'postgres'
+          'TYPEORM_URL=${{ env.DB_CONNECTION_STRING }}' -replace 'postgresql', 'postgres'
           'REDIS_HOST="localhost"'
           'REDIS_PORT=6379'
           'BOT_TOKEN="${{ secrets.DISCORD_BOT_TOKEN }}"'
