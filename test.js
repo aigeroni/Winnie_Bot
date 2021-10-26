@@ -11,6 +11,10 @@ if (process.env.POSTGRES_CONNECTION_STRING != "") {
     console.log("POSTGRES_CONNECTION_STRING exists");
 }
 
+if (process.env.TYPEORM_URL != "") {
+    console.log("TYPEORM_URL exists");
+}
+
 if (process.env.REDIS_HOST != "") {
     console.log("REDIS_HOST exists: " + process.env.REDIS_HOST);
 }
