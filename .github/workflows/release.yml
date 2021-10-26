@@ -54,4 +54,5 @@ jobs:
           BOT_TOKEN="$DISCORD_TOKEN"
           NODE_ENV="production"
           EOF
+          echo .env
           ./start-winnie.sh
