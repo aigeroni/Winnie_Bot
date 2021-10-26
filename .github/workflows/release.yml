@@ -47,4 +47,5 @@ jobs:
           sudo systemctl start redis
           rm -rf Winnie_Bot && git clone https://github.com/aigeroni/Winnie_Bot
           cd Winnie_Bot && git checkout $GITHUB_SHA
+          echo REDIS_HOST
           ./create-dotenv.sh && ./start-winnie.sh
