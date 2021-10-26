@@ -35,7 +35,7 @@
     "lint:fix": "ts-standard --fix",
     "start": "tsc && node -r dotenv/config dist/src/index.js",
     "start:worker:goal": "tsc && node -r dotenv/config dist/src/workers/goal-worker.js",
-    "typeorm": "tsc && node -r dotenv/config ./node_modules/typeorm/cli.js dotenv_config_debug=true"
+    "typeorm": "tsc && node -r dotenv/config dotenv_config_debug=true ./node_modules/typeorm/cli.js"
   },
   "repository": {
     "type": "git",
