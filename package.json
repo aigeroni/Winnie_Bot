@@ -31,7 +31,7 @@
     "build": "tsc",
     "docker:local:down": "docker-compose -f docker/docker-compose.local.yml down",
     "docker:local:up": "docker-compose -f docker/docker-compose.local.yml up",
-    "dotenv:test": "tsc && node -r dotenv/config test.js dotenv_config_debug=true",
+    "dotenv:test": "tsc && node test.js",
     "lint": "ts-standard",
     "lint:fix": "ts-standard --fix",
     "start": "tsc && node -r dotenv/config dist/src/index.js",
