@@ -29,6 +29,7 @@ jobs:
         @(
           'POSTGRES_CONNECTION_STRING="${{ env.DB_CONNECTION_STRING }}"'
           'TYPEORM_URL="${{ env.DB_CONNECTION_STRING }}"'
+          'TYPEORM_CONNECTION="postgres"'
           'REDIS_HOST="localhost"'
           'REDIS_PORT=6379'
           'BOT_TOKEN="${{ secrets.DISCORD_BOT_TOKEN }}"'
