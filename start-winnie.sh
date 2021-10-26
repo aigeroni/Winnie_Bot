@@ -5,6 +5,7 @@ pwd
 ls -la
 
 yarn install && yarn build
+yarn dotenv:test
 yarn typeorm migration:run
 yarn start:worker:goal
 # yarn start:worker:challenge
