@@ -33,7 +33,7 @@ jobs:
           'BOT_TOKEN="${{ secrets.DISCORD_BOT_TOKEN }}"'
           'NODE_ENV="production"'
         ) | Out-File .env -Force
-        ls
+        ls -la
       shell: pwsh
     - name: copy env file
       uses: appleboy/scp-action@master
