@@ -3,7 +3,7 @@ name: Release Bot
 on: [push]
 
 jobs:
-  build:
+  release:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -25,6 +25,26 @@ jobs:
       run: cd ./terraform && echo SSH_HOST_IP=$(terraform output droplet-ip-address) | tr -d '"' >> $GITHUB_ENV
     - name: Save private database connection string as env var
       run: cd ./terraform && echo DB_CONNECTION_STRING=$(terraform output database-connection-uri) >> $GITHUB_ENV
+    - run: |
+        @(
+          'POSTGRES_CONNECTION_STRING="${{ env.DB_CONNECTION_STRING }}"'
+          'TYPEORM_URL=${{ env.DB_CONNECTION_STRING }}' -replace 'postgresql', 'postgres'
+          'REDIS_HOST="localhost"'
+          'REDIS_PORT=6379'
+          'BOT_TOKEN="${{ secrets.DISCORD_BOT_TOKEN }}"'
+          'NODE_ENV="production"'
+        ) | Out-File .env -Encoding utf8 -Force
+        ls -la
+      shell: pwsh
+    - name: copy env file
+      uses: appleboy/scp-action@master
+      with:
+        host: ${{ env.SSH_HOST_IP }}
+        username: ${{ secrets.SSH_USERNAME }}
+        key: ${{ secrets.SSH_KEY }}
+        port: 22
+        source: ".env"
+        target: "."
     - name: Clone, install deps, and start Winnie
       uses: appleboy/ssh-action@master
       env:
@@ -46,5 +66,8 @@ jobs:
           sudo npm install -g yarn
           sudo systemctl start redis
           rm -rf Winnie_Bot && git clone https://github.com/aigeroni/Winnie_Bot
-          cd Winnie_Bot && git checkout $GITHUB_SHA
+          cd Winnie_Bot && git -c "advice.detachedHead=false" checkout $GITHUB_SHA
+          mv ../.env ./.env
+          rm .env.sample
+          ls -la
           ./start-winnie.sh
