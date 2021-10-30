@@ -1,59 +1,59 @@
 {
-    "adventure": {
+    "adventure": [
 
-    },
-    "character": {
+    ],
+    "character": [
 
-    },
-    "children": {
+    ],
+    "children": [
 
-    },
-    "comedy": {
+    ],
+    "comedy": [
 
-    },
-    "contemporary": {
+    ],
+    "contemporary": [
 
-    },
-    "fantasy": {
+    ],
+    "fantasy": [
 
-    },
-    "folk": {
+    ],
+    "folk": [
     
-    },
-    "historical": {
+    ],
+    "historical": [
     
-    },
-    "horror": {
+    ],
+    "horror": [
 
-    },
-    "literary": {
+    ],
+    "literary": [
 
-    },
-    "lgbtq": {
+    ],
+    "lgbtq": [
 
-    },
-    "mystery": {
+    ],
+    "mystery": [
 
-    },
-    "plot": {
+    ],
+    "plot": [
 
-    },
-    "romance": {
+    ],
+    "romance": [
 
-    },
-    "scifi": {
+    ],
+    "scifi": [
 
-    },
-    "story": {
+    ],
+    "story": [
     
-    },
-    "supernatural": {
+    ],
+    "supernatural": [
     
-    },
-    "thriller": {
+    ],
+    "thriller": [
 
-    },
-    "world": {
+    ],
+    "world": [
 
-    }
+    ]
 }
