@@ -1,5 +1,7 @@
 export * from './chain-war'
+export * from './challenge-channel'
 export * from './challenge-controller'
+export * from './challenge-user'
 export * from './goal'
 export * from './guild-config'
 export * from './race'
