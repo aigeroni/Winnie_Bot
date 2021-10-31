@@ -24,14 +24,10 @@ import { Snowflake } from 'discord.js'
   controller.chainWar = chain
 
   if (options.channelId != null) {
-    const channel = new ChallengeChannel()
-    channel.challengeController = controller.id
-    channel.channelId = options.channelId
+    await addChannelToChallenge(options.channelId, controller.id)
   }
   if (options.join != null && options.ownerId != null) {
-    const user = new ChallengeUser()
-    user.challengeController = controller.id
-    user.userId = options.ownerId
+    await addUserToChallenge(options.ownerId, controller.id)
   }
 
   return await chain.save()
@@ -58,14 +54,10 @@ import { Snowflake } from 'discord.js'
   controller.race = race
 
   if (options.channelId != null) {
-    const channel = new ChallengeChannel()
-    channel.challengeController = controller.id
-    channel.channelId = options.channelId
+    await addChannelToChallenge(options.channelId, controller.id)
   }
   if (options.join != null && options.ownerId != null) {
-    const user = new ChallengeUser()
-    user.challengeController = controller.id
-    user.userId = options.ownerId
+    await addUserToChallenge(options.ownerId, controller.id)
   }
 
   return await race.save()
@@ -89,17 +81,43 @@ async function createWar (options: WarCreateOptions): Promise<War> {
   controller.war = war
 
   if (options.channelId != null) {
-    const channel = new ChallengeChannel()
-    channel.challengeController = controller.id
-    channel.channelId = options.channelId
+    await addChannelToChallenge(options.channelId, controller.id)
   }
   if (options.join != null && options.ownerId != null) {
-    const user = new ChallengeUser()
-    user.challengeController = controller.id
-    user.userId = options.ownerId
+    await addUserToChallenge(options.ownerId, controller.id)
   }
 
   return await war.save()
+}
+
+/**
+  * Creates a database link between a user and a challenge.
+  *
+  * @param userId The ID of the user to link
+  * @param controllerId The ID of the challenge to link in the controller table
+  * @returns a challenge/user link
+  */
+ async function addUserToChallenge (userId: Snowflake, controllerId: number): Promise<ChallengeUser> {
+  const challengeUser = new ChallengeUser()
+  challengeUser.challengeController = controllerId
+  challengeUser.userId = userId
+
+  return await challengeUser.save()
+}
+
+/**
+  * Creates a database link between a channel and a challenge.
+  *
+  * @param channelId The ID of the channel to link
+  * @param controllerId The ID of the challenge to link in the controller table
+  * @returns a challenge/channel link
+  */
+ async function addChannelToChallenge (channelId: Snowflake, controllerId: number): Promise<ChallengeChannel> {
+  const challengeChannel = new ChallengeChannel()
+  challengeChannel.challengeController = controllerId
+  challengeChannel.channelId = channelId
+
+  return await challengeChannel.save()
 }
 
 /**
