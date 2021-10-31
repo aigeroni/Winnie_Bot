@@ -35,8 +35,8 @@ export class GuildConfig extends BaseModel {
   /**
    * Whether or not challenges created in this guild are automatically hidden
    */
-  @Column({ name: 'cross_guild', type: 'bool' })
-  crossGuild = true
+  @Column({ name: 'cross_guild' })
+  crossGuild: boolean = true
 
   /**
    * The locale to use for messages sent to this guild

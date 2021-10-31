@@ -12,7 +12,7 @@ export abstract class Challenge extends Mission {
   /**
    * The challenge's name, used in challenge lists.
    */
-  @Column({ name: 'name' })
+  @Column()
   @MaxLength(150)
   // Cannot contain profanity
   // Cannot mention entities
@@ -22,8 +22,8 @@ export abstract class Challenge extends Mission {
   /**
    * Whether or not the challenge should show up in challenge lists.
    */
-  @Column({ name: 'visible' })
-  isVisible = true
+  @Column({ name: 'is_visible' })
+  isVisible: boolean = true
 
   /**
    * When the challenge should start
@@ -35,7 +35,7 @@ export abstract class Challenge extends Mission {
    * Whether of not the challenge has started
    */
   @Column({ name: 'has_started' })
-  hasStarted = false
+  hasStarted: boolean = false
 
   /**
    * The ID of the user that created the challenge.

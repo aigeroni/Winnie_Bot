@@ -41,8 +41,8 @@ export class UserConfig extends BaseModel {
    *
    * Can be overridden by GuildConfig#crossGuild
    */
-  @Column({ name: 'cross_guild', type: 'bool' })
-  crossGuild = true
+  @Column({ name: 'cross_guild' })
+  crossGuild: boolean = true
 
   /**
    * Finds the config object for a given user id.

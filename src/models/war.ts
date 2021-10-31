@@ -10,7 +10,7 @@ export class War extends Challenge {
    * default = 10 minutes
    */
   @Column({ name: 'duration' })
-  duration = 10
+  duration: number = 10
 
   /**
    * The chain war this war is a part of.

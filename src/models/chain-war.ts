@@ -19,8 +19,8 @@ export class ChainWar extends Challenge {
   /**
    * The total number of wars in the chain
    */
-  @Column()
-  numWars!: number
+  @Column({ name: 'number_of_wars' })
+  numberOfWars!: number
 
   /**
    * The current war in the chain.
@@ -37,14 +37,14 @@ export class ChainWar extends Challenge {
    *
    * default = 5 minutes
    */
-  @Column()
-  warMargin = 5
+  @Column({ name: 'war_margin' })
+  warMargin: number = 5
 
   /**
    * The list of wars that are a part of this chain war.
    */
   @OneToMany(() => War, war => war.chainWar)
-  wars: War[] = []
+  wars!: War[]
 
   /**
    * Challenge controller instance, contains the universal challenge id
@@ -59,6 +59,6 @@ export class ChainWar extends Challenge {
    * @returns Whether or not this chain war has additional wars
    */
   hasAnotherWar (): boolean {
-    return this.wars.length < this.numWars
+    return this.wars.length < this.numberOfWars
   }
 }

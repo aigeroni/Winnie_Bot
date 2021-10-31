@@ -30,7 +30,7 @@ export class Race extends Challenge {
    * default = 30 minutes
    */
   @Column({ name: 'time_out' })
-  timeOut = 30
+  timeOut: number = 30
 
   /**
    * Challenge controller instance, contains the universal challenge id

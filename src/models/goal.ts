@@ -36,9 +36,9 @@ export class Goal extends Mission {
    *
    * example: 3 out of 5 pages
    */
-  @Column({ type: 'int' })
+  @Column()
   @Min(0)
-  progress = 0
+  progress: number = 0
 
   /**
    * The goals duration, how long the user has to complete their goal.

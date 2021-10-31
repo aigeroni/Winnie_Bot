@@ -7,7 +7,7 @@ import { ChallengeChannel } from './challenge-channel'
 /**
  * Tracks universal challenge ids, unique across all challenge types.
  */
-@Entity({ name: 'challenge_controller' })
+@Entity({ name: 'challenges_controller' })
 export class ChallengeController extends BaseModel {
   /**
    * The universal challenge id
@@ -46,11 +46,11 @@ export class ChallengeController extends BaseModel {
    * A list of users currently joined to the challenge
    */
   @OneToMany(() => ChallengeUser, challengeUser => challengeUser.challengeController)
-  users: ChallengeUser[] = []
+  users!: ChallengeUser[]
 
   /**
    * A list of channels currently joined to the challenge
    */
   @OneToMany(() => ChallengeChannel, challengeChannel => challengeChannel.challengeController)
-  channels: ChallengeChannel[] = []
+  channels!: ChallengeChannel[]
 }
