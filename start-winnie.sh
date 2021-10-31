@@ -4,7 +4,7 @@ set -euxo pipefail
 pwd
 ls -la
 
-where yarn
+whereis yarn
 
 yarn install && yarn build
 yarn dotenv:test
