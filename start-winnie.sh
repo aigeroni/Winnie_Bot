@@ -8,7 +8,12 @@ whereis yarn
 
 yarn install && yarn build
 yarn dotenv:test
+
+cp ./services /lib/systemd/system
 yarn typeorm migration:run
-yarn start:worker:goal
-# yarn start:worker:challenge
-yarn start
+sudo systemctl enable goal-worker.service
+sudo systemctl enable challenge.service
+sudo systemctl enable app.service
+sudo systemctl start goal-worker.service
+sudo systemctl start challenge.service
+sudo systemctl start app.service
