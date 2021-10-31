@@ -15,6 +15,6 @@ cp ./services/*.service /lib/systemd/system/
 sudo systemctl enable goal-worker.service
 # sudo systemctl enable challenge-worker.service
 sudo systemctl enable app.service
-sudo systemctl start goal-worker.service
+systemctl status goal-worker.service
 # sudo systemctl start challenge-worker.service
-sudo systemctl start app.service
+systemctl status app.service
