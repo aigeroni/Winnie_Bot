@@ -36,7 +36,7 @@
     "lint:fix": "ts-standard --fix",
     "start": "tsc && node -r dotenv/config dist/src/index.js",
     "start:worker:goal": "tsc && node -r dotenv/config dist/src/workers/goal-worker.js",
-    "typeorm": "tsc && node -r dotenv/config ./node_modules/typeorm/cli.js"
+    "typeorm": "tsc && NODE_TLS_REJECT_UNAUTHORIZED='0' node -r dotenv/config ./node_modules/typeorm/cli.js"
   },
   "repository": {
     "type": "git",
