@@ -7,16 +7,22 @@ export const redisConnectionOptions = {
 }
 
 export const queueNames = {
-  goals: 'goals_queue'
+  goals: 'goals_queue',
+  challenges: 'challenges_queue'
 }
 
 const goalsQueue = new Queue(queueNames.goals, {
   connection: redisConnectionOptions
 })
 
+const challengesQueue = new Queue(queueNames.challenges, {
+  connection: redisConnectionOptions
+})
+
 export const JobQueue = {
   queues: {
-    goalsQueue
+    goalsQueue,
+    challengesQueue
   },
   queueNames,
   connectionOptions: redisConnectionOptions
