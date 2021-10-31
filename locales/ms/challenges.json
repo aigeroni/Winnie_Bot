@@ -1,0 +1,29 @@
+{
+  "start": "Your {{challenge_type}}, {{challenge_name}}, (ID {{id}}), starts in {{minutes}}.",
+  "status": "**{{id}}**: {{challenge_name}} {{data}}, {{server}}",
+  "summary": "",
+  "total": "Your total of **{{total}}** {{type}} has been added to the summary for {{challenge_name}} (ID {{id}}).",
+  "data": {
+    "chain": "({{current}}/{{count}}) ({{minutes}}, {{time_left}} remaining)",
+    "race": "({{words}}, {{minutes}}, {{time_left}} remaining)",
+    "war": "({{minutes}}, {{time_left}} remaining)"
+  },
+  "plurals": {
+    "minutes": "{{duration}} minute",
+    "minutes_plural": "{{duration}} minutes",
+    "words": "{{target}} word",
+    "words_plural": "{{target}} words"
+  },
+  "types": {
+    "items": "item",
+    "items_plural": "items",
+    "lines": "line",
+    "lines_plural": "lines",
+    "minutes": "minute",
+    "minutes_plural": "minutes",
+    "pages": "page",
+    "pages_plural": "pages",
+    "words": "word",
+    "words_plural": "words"
+  }
+}
