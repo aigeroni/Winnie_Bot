@@ -2,6 +2,7 @@
 Description=Main Winnie_Bot process
 
 [Service]
+WorkingDirectory=/home/root/Winnie_Bot
 Type=simple
 User=ubuntu
 ExecStart=/usr/bin/yarn start

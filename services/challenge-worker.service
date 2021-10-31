@@ -2,9 +2,10 @@
 Description=Winnie_Bot challenge worker
 
 [Service]
+WorkingDirectory=/home/root/Winnie_Bot
 Type=simple
 User=ubuntu
-ExecStart=/usr/bin/yarn /home/ubuntu/hello_env.js
+ExecStart=/usr/bin/yarn start:worker:challenge
 Restart=on-failure
 
 [Install]
