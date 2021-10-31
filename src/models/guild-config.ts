@@ -1,4 +1,4 @@
-import { BaseModel } from './base-model'
+import { BaseModel } from './bases/base-model'
 import { Column, Entity, PrimaryColumn } from 'typeorm'
 import { I18n } from '../core'
 import { IANAZone } from 'luxon'
@@ -35,8 +35,8 @@ export class GuildConfig extends BaseModel {
   /**
    * Whether or not challenges created in this guild are automatically hidden
    */
-  @Column({ name: 'cross_guild', type: 'bool' })
-  crossGuild = true
+  @Column({ name: 'cross_guild' })
+  crossGuild: boolean = true
 
   /**
    * The locale to use for messages sent to this guild
