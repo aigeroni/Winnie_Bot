@@ -6,7 +6,6 @@ console.log('pwd: ' + process.env.pwd)
 // debug: process.env.DEBUG
 // }))
 
-
 if (process.env.POSTGRES_CONNECTION_STRING !== '') {
   console.log('POSTGRES_CONNECTION_STRING exists')
 }
