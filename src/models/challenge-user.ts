@@ -1,7 +1,7 @@
 import { MaxLength } from 'class-validator'
 import { Snowflake } from 'discord.js'
 import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm'
-import { ChallengeController } from '.'
+import { ChallengeController } from './challenge-controller'
 import { ChallengeTotalTypes } from '../types'
 import { BaseModel } from './bases/base-model'
 

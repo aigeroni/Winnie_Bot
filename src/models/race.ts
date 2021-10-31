@@ -2,7 +2,7 @@ import { Challenge } from './bases/challenge'
 import { Column, Entity, OneToOne } from 'typeorm'
 import { IsNotEmpty, IsPositive } from 'class-validator'
 import { RaceTypes } from '../types'
-import { ChallengeController } from '.'
+import { ChallengeController } from './challenge-controller'
 
 @Entity({ name: 'races' })
 export class Race extends Challenge {

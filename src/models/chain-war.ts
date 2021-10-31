@@ -1,6 +1,7 @@
 import { Challenge } from './bases/challenge'
-import { Column, Entity, OneToOne } from 'typeorm'
+import { Column, Entity, JoinColumn, OneToMany, OneToOne } from 'typeorm'
 import { ChallengeController } from './challenge-controller'
+import { War } from './war'
 
 /**
  * Represents a chain war
@@ -22,10 +23,13 @@ export class ChainWar extends Challenge {
   numWars!: number
 
   /**
-   * The current war in the chain
+   * The current war in the chain.
+   *
+   * Null if the chain war is not active
    */
-  @Column()
-  currentWar!: number
+  @OneToOne(() => War)
+  @JoinColumn({ name: 'current_war_id' })
+  currentWar?: War
 
   /**
    * The amount of time, in minutes, between the end of one war
@@ -37,9 +41,24 @@ export class ChainWar extends Challenge {
   warMargin = 5
 
   /**
+   * The list of wars that are a part of this chain war.
+   */
+  @OneToMany(() => War, war => war.chainWar)
+  wars: War[] = []
+
+  /**
    * Challenge controller instance, contains the universal challenge id
    * as well as a list of users and channels joined to the challenge
    */
   @OneToOne(() => ChallengeController, challengeController => challengeController.war)
   universalId!: ChallengeController
+
+  /**
+   * Determines if there are additional wars in the chain.
+   *
+   * @returns Whether or not this chain war has additional wars
+   */
+  hasAnotherWar (): boolean {
+    return this.wars.length < this.numWars
+  }
 }

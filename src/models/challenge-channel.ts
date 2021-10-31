@@ -4,7 +4,7 @@ import { BaseModel } from './bases/base-model'
 import { IsChannelWithPermission } from './validators/channel-with-permission'
 import { ValidateIf, MaxLength } from 'class-validator'
 import { WinnieClient } from '../core'
-import { ChallengeController } from '.'
+import { ChallengeController } from './challenge-controller'
 
 /**
  * Represents a channel joined to a challenge.
