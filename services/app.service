@@ -1,0 +1,11 @@
+[Unit]
+Description=Main Winnie_Bot process
+
+[Service]
+Type=simple
+User=ubuntu
+ExecStart=/usr/bin/yarn start
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

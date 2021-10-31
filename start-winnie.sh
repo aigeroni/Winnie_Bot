@@ -4,6 +4,8 @@ set -euxo pipefail
 pwd
 ls -la
 
+where yarn
+
 yarn install && yarn build
 yarn dotenv:test
 yarn typeorm migration:run

@@ -1,0 +1,11 @@
+[Unit]
+Description=Winnie_Bot goal worker
+
+[Service]
+Type=simple
+User=ubuntu
+ExecStart=/usr/bin/yarn start:worker:goal
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

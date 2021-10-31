@@ -17,7 +17,7 @@
     "winston": "^3.2.1"
   },
   "devDependencies": {
-    "@tsconfig/node14": "^1.0.0",
+    "@tsconfig/node16": "^1.0.2",
     "@types/i18next-fs-backend": "^1.0.0",
     "@types/luxon": "^1.25.0",
     "@types/node": "^14.11.10",
@@ -34,8 +34,8 @@
     "dotenv:test": "tsc && node -r dotenv/config test.js",
     "lint": "ts-standard",
     "lint:fix": "ts-standard --fix",
-    "start": "tsc && nohup node -r dotenv/config dist/src/index.js",
-    "start:worker:goal": "tsc && nohup node -r dotenv/config dist/src/workers/goal-worker.js",
+    "start": "tsc && node -r dotenv/config dist/src/index.js",
+    "start:worker:goal": "tsc && node -r dotenv/config dist/src/workers/goal-worker.js",
     "typeorm": "tsc && NODE_TLS_REJECT_UNAUTHORIZED='0' node -r dotenv/config ./node_modules/typeorm/cli.js"
   },
   "repository": {

@@ -1,0 +1,11 @@
+[Unit]
+Description=Winnie_Bot challenge worker
+
+[Service]
+Type=simple
+User=ubuntu
+ExecStart=/usr/bin/yarn /home/ubuntu/hello_env.js
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
