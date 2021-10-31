@@ -69,4 +69,5 @@ jobs:
           cd Winnie_Bot && git -c "advice.detachedHead=false" checkout $GITHUB_SHA
           rm .env.sample
           mv /srv/.env /srv/winnie/Winnie_Bot
+          ls -la
           ./start-winnie.sh
