@@ -69,5 +69,5 @@ jobs:
           rm -rf Winnie_Bot && git clone https://github.com/aigeroni/Winnie_Bot
           cd Winnie_Bot && git -c "advice.detachedHead=false" checkout $GITHUB_SHA
           rm .env.sample
-          cp -r ../../.env /srv/winnie/Winnie_Bot
+          cp /srv/.env /srv/winnie/Winnie_Bot
           ./start-winnie.sh
