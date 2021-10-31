@@ -33,6 +33,7 @@
     "lint:fix": "ts-standard --fix",
     "start": "tsc && node -r dotenv/config dist/src/index.js",
     "start:worker:goal": "tsc && node -r dotenv/config dist/src/workers/goal-worker.js",
+    "start:worker:challenge": "tsc && node -r dotenv/config dist/src/workers/challenge-worker.js",
     "typeorm": "tsc && node -r dotenv/config ./node_modules/typeorm/cli.js"
   },
   "repository": {

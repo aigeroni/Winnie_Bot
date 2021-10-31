@@ -28,7 +28,7 @@ import { Snowflake } from 'discord.js'
     channel.challengeController = controller.id
     channel.channelId = options.channelId
   }
-  if (options.join != null) {
+  if (options.join != null && options.ownerId != null) {
     const user = new ChallengeUser()
     user.challengeController = controller.id
     user.userId = options.ownerId
@@ -62,7 +62,7 @@ import { Snowflake } from 'discord.js'
     channel.challengeController = controller.id
     channel.channelId = options.channelId
   }
-  if (options.join != null) {
+  if (options.join != null && options.ownerId != null) {
     const user = new ChallengeUser()
     user.challengeController = controller.id
     user.userId = options.ownerId
@@ -93,7 +93,7 @@ async function createWar (options: WarCreateOptions): Promise<War> {
     channel.challengeController = controller.id
     channel.channelId = options.channelId
   }
-  if (options.join != null) {
+  if (options.join != null && options.ownerId != null) {
     const user = new ChallengeUser()
     user.challengeController = controller.id
     user.userId = options.ownerId
@@ -102,9 +102,55 @@ async function createWar (options: WarCreateOptions): Promise<War> {
   return await war.save()
 }
 
-function getStartTime (delay): DateTime {
+/**
+  * Gets a challenge with a given ID.
+  *
+  * @param id The ID in the challenge controller table of the challenge to get
+  * @returns the challenge with that ID
+  */
+ async function getChallengeById (id: number): Promise<ChallengeController | null> {
+
+  const challenge = await ChallengeController.find({
+    where: { id: id }
+  })
+
+  if (challenge.length === 0) {
+    return null
+  } else {
+    return challenge[0]
+  }
+}
+
+// /**
+//   * Checks whether the given user has joined a war.
+//   *
+//   * @param userId The discord ID of the user to find the goal for
+//   */
+// async function userHasJoinedChallenge (userId: Snowflake): Promise<ChallengeController | null> {
+
+//   const userJoinedChallenges = await ChallengeController.find({
+//     where: {
+//       ChallengeUser: { ownerId: userId }
+//     },
+//     relations: [ "ChallengeUser" ]
+//   })
+
+//   const activeRaces = await Race.find(
+
+//   )
+
+//   const activeChallenges = userJoinedChallenges.filter((challengeController) => challengeController.isActive())
+
+//   if (activeChallenges.length === 0) {
+//     return null
+//   } else {
+//     return activeChallenges[0]
+//   }
+// }
+
+function getStartTime (delay: number): DateTime {
   const createTime = DateTime.local()
-  const difference = Duration(delay.minutes)
+  const difference = Duration.fromObject({minutes: delay})
   return createTime.plus(difference)
 }
 
