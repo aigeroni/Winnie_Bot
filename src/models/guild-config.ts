@@ -1,4 +1,4 @@
-import { BaseModel } from './base-model'
+import { BaseModel } from './bases/base-model'
 import { Column, Entity, PrimaryColumn } from 'typeorm'
 import { I18n } from '../core'
 import { IANAZone } from 'luxon'

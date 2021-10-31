@@ -1,4 +1,4 @@
-import { BaseModel } from './base-model'
+import { BaseModel } from './bases/base-model'
 import { Column, Entity, PrimaryColumn } from 'typeorm'
 import { IANAZone } from 'luxon'
 import { IsOptional, MaxLength } from 'class-validator'
