@@ -215,18 +215,18 @@
     "description": "Challenge yourself! Race to a certain number of words, or war for words in a given time.",
     "cancel": {
       "description": "Cancels a challenge.",
-      "success": "{{ challenge_name }} (ID {{ id }}) has been cancelled.",
+      "success": "{{ challengeName }} (ID {{ id }}) has been cancelled.",
       "args": {
         "id": "The ID of the challenge that you want to cancel."
       },
       "error": {
         "couldNotCancelChallenge": "**Unknown Error**: Could not cancel challenge {{ id }} (database validation error).",
-        "userIsNotOwner": "**Error**: Only the creator of {{ challenge_name }} (ID {{ id }}) can cancel the challenge."
+        "userIsNotOwner": "**Error**: Only the creator of {{ challengeName }} (ID {{ id }}) can cancel the challenge."
       }
     },
     "finish": {
       "description": "Sets your finish time for a race.",
-      "success": "You completed {{ challenge_name }} (ID {{ id }}) in {{ completion_time }} minutes.",
+      "success": "You completed {{ challengeName }} (ID {{ id }}) in {{ completionTime }} minutes.",
       "args": {
         "id": "The ID of the race that you just finished."
       },
@@ -240,7 +240,7 @@
     },
     "join": {
       "description": "Joins a challenge.",
-      "success": "You have joined {{ challenge_name }} (ID {{ id }}).",
+      "success": "You have joined {{ challengeName }} (ID {{ id }}).",
       "args": {
         "id": "The ID of the challenge that you want to join."
       },
@@ -252,7 +252,7 @@
     },
     "leave": {
       "description": "Leaves the challenge that you have joined.",
-      "success": "You have left {{ challenge_name }} ( ID {{ id }}).",
+      "success": "You have left {{ challengeName }} ( ID {{ id }}).",
       "error": {
         "couldNotLeaveChallenge": "**Unknown Error**: Could not leave challenge {{ id }} (database validation error)."
       }

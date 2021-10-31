@@ -1,12 +1,12 @@
 {
-  "start": "Your {{challenge_type}}, {{challenge_name}}, (ID {{id}}), starts in {{minutes}}.",
-  "status": "**{{id}}**: {{challenge_name}} {{data}}, {{server}}",
+  "start": "Your {{challengeType}}, {{challengeName}}, (ID {{id}}), starts in {{minutes}}.",
+  "status": "**{{id}}**: {{challengeName}} {{data}}, {{server}}",
   "summary": "",
-  "total": "Your total of **{{total}}** {{type}} has been added to the summary for {{challenge_name}} (ID {{id}}).",
+  "total": "Your total of **{{total}}** {{type}} has been added to the summary for {{challengeName}} (ID {{id}}).",
   "data": {
-    "chain": "({{current}}/{{count}}) ({{minutes}}, {{time_left}} remaining)",
-    "race": "({{words}}, {{minutes}}, {{time_left}} remaining)",
-    "war": "({{minutes}}, {{time_left}} remaining)"
+    "chain": "({{current}}/{{count}}) ({{minutes}}, {{timeLeft}} remaining)",
+    "race": "({{words}}, {{minutes}}, {{timeLeft}} remaining)",
+    "war": "({{minutes}}, {{timeLeft}} remaining)"
   },
   "plurals": {
     "minutes": "{{duration}} minute",
