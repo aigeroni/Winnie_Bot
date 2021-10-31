@@ -2,7 +2,7 @@ import { CommandInteraction } from 'discord.js'
 import { GuildConfig } from '../../models'
 import { ChallengeService } from '../../services'
 import { I18n } from '../../core'
-import { ChainCreateOptions, RaceCreateOptions, WarCreateOptions, GoalCreateOptions, RaceTypes, SubCommand } from '../../types'
+import { ChainWarCreateOptions, RaceCreateOptions, WarCreateOptions, RaceTypes, SubCommand } from '../../types'
 
 const NAME = 'start'
 
@@ -157,7 +157,7 @@ export const ChallengeStartCommand: SubCommand = {
 
 async function chain (interaction: CommandInteraction, guildConfig: GuildConfig): Promise<void> {
   const chainOptions = getChainOptions(interaction)
-  const challenge = await ChallengeService.createChain(chainOptions)
+  const challenge = await ChallengeService.createChainWar(chainOptions)
 
   if (challenge.errors.length > 0) {
     await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:challenge.start.chain.error.couldNotStartChain'))
@@ -196,7 +196,7 @@ async function war (interaction: CommandInteraction, guildConfig: GuildConfig): 
    * @param userConfig The config object of the user who ran the command.
    * @returns An object containing the parameters for creating the goal
    */
- function getChainOptions (interaction: CommandInteraction): ChainCreateOptions {
+function getChainOptions (interaction: CommandInteraction): ChainWarCreateOptions {
   return {
     channelId: interaction.channel?.id,
     delay: interaction.options.getInteger('delay') ?? 5,
@@ -204,7 +204,7 @@ async function war (interaction: CommandInteraction, guildConfig: GuildConfig): 
     join: interaction.options.getBoolean('join') ?? false,
     chainLength: interaction.options.getInteger('chain_length') ?? 10,
     ownerId: interaction.user?.id,
-    name: interaction.options.getString('type') ?? interaction.user?.name + "'s chain war",
+    name: interaction.options.getString('type') ?? `${interaction.user.username}'s chain war`,
     split: interaction.options.getInteger('split') ?? 5
   }
 }
@@ -217,15 +217,15 @@ async function war (interaction: CommandInteraction, guildConfig: GuildConfig): 
    * @param userConfig The config object of the user who ran the command.
    * @returns An object containing the parameters for creating the goal
    */
- function getRaceOptions (interaction: CommandInteraction): RaceCreateOptions {
+function getRaceOptions (interaction: CommandInteraction): RaceCreateOptions {
   return {
     channelId: interaction.channel?.id,
     delay: interaction.options.getInteger('delay') ?? 5,
     duration: interaction.options.getInteger('duration') ?? 30,
     join: interaction.options.getBoolean('join') ?? false,
     ownerId: interaction.user?.id,
-    name: interaction.options.getString('type') ?? interaction.user?.name + "'s race",
-    target: interaction.options.getInteger('target'),
+    name: interaction.options.getString('type') ?? `${interaction.user.username}'s race`,
+    target: interaction.options.getInteger('target') ?? 0,
     type: interaction.options.getString('type') as RaceTypes
   }
 }
@@ -238,13 +238,13 @@ async function war (interaction: CommandInteraction, guildConfig: GuildConfig): 
    * @param userConfig The config object of the user who ran the command.
    * @returns An object containing the parameters for creating the goal
    */
- function getWarOptions (interaction: CommandInteraction): WarCreateOptions {
+function getWarOptions (interaction: CommandInteraction): WarCreateOptions {
   return {
     channelId: interaction.channel?.id,
     delay: interaction.options.getInteger('delay') ?? 5,
     duration: interaction.options.getInteger('duration') ?? 10,
     join: interaction.options.getBoolean('join') ?? false,
     ownerId: interaction.user?.id,
-    name: interaction.options.getString('type') ?? interaction.user?.name + "'s war"
+    name: interaction.options.getString('type') ?? `${interaction.user.username}'s war`
   }
 }

@@ -3,6 +3,7 @@ import { Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn } from 
 import { ChainWar, Race, War } from '.'
 import { ChallengeUser } from './challenge-user'
 import { ChallengeChannel } from './challenge-channel'
+import { Challenge } from './bases/challenge'
 
 /**
  * Tracks universal challenge ids, unique across all challenge types.
@@ -53,4 +54,18 @@ export class ChallengeController extends BaseModel {
    */
   @OneToMany(() => ChallengeChannel, challengeChannel => challengeChannel.challengeController)
   channels!: ChallengeChannel[]
+
+  challenge (): Challenge | undefined {
+    if (this.chainWar != null) {
+      return this.chainWar
+    }
+
+    if (this.war != null) {
+      return this.war
+    }
+
+    if (this.race != null) {
+      return this.race
+    }
+  }
 }

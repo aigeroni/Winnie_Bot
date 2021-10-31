@@ -1,6 +1,14 @@
 import { DateTime, Duration } from 'luxon'
-import { ChainWar, Race, War, ChallengeController, ChallengeChannel, ChallengeUser } from '../models'
-import { ChainCreateOptions, RaceCreateOptions, WarCreateOptions } from '../types'
+import {
+  ChainWar,
+  Race,
+  War,
+  Challenge,
+  ChallengeController,
+  ChallengeChannel,
+  ChallengeUser
+} from '../models'
+import { ChainWarCreateOptions, RaceCreateOptions, WarCreateOptions } from '../types'
 import { Snowflake } from 'discord.js'
 
 /**
@@ -9,7 +17,7 @@ import { Snowflake } from 'discord.js'
   * @param options The details to use when creating the chain war
   * @returns the new chain war
   */
- async function createChain (options: ChainCreateOptions): Promise<ChainWar> {
+async function createChainWar (options: ChainWarCreateOptions): Promise<ChainWar> {
   const chain = new ChainWar()
   chain.numberOfWars = options.chainLength
 
@@ -39,14 +47,14 @@ import { Snowflake } from 'discord.js'
   * @param options The details to use when creating the race
   * @returns the new race
   */
- async function createRace (options: RaceCreateOptions): Promise<Race> {
+async function createRace (options: RaceCreateOptions): Promise<Race> {
   const race = new Race()
   race.target = options.target
 
   if (options.duration != null) { race.timeOut = options.duration }
   if (options.ownerId != null) { race.createdBy = options.ownerId }
   if (options.name != null) { race.name = options.name }
-  if (options.type != null) { race.targetType =options.type }
+  if (options.type != null) { race.targetType = options.type }
 
   race.startAt = getStartTime(options.delay)
 
@@ -97,7 +105,7 @@ async function createWar (options: WarCreateOptions): Promise<War> {
   * @param controllerId The ID of the challenge to link in the controller table
   * @returns a challenge/user link
   */
- async function addUserToChallenge (userId: Snowflake, controllerId: number): Promise<ChallengeUser> {
+async function addUserToChallenge (userId: Snowflake, controllerId: number): Promise<ChallengeUser> {
   const challengeUser = new ChallengeUser()
   challengeUser.challengeController = controllerId
   challengeUser.userId = userId
@@ -112,7 +120,7 @@ async function createWar (options: WarCreateOptions): Promise<War> {
   * @param controllerId The ID of the challenge to link in the controller table
   * @returns a challenge/channel link
   */
- async function addChannelToChallenge (channelId: Snowflake, controllerId: number): Promise<ChallengeChannel> {
+async function addChannelToChallenge (channelId: Snowflake, controllerId: number): Promise<ChallengeChannel> {
   const challengeChannel = new ChallengeChannel()
   challengeChannel.challengeController = controllerId
   challengeChannel.channelId = channelId
@@ -121,59 +129,45 @@ async function createWar (options: WarCreateOptions): Promise<War> {
 }
 
 /**
-  * Gets a challenge with a given ID.
+  * Gets the active challenge for the given user
   *
-  * @param id The ID in the challenge controller table of the challenge to get
-  * @returns the challenge with that ID
+  * @param userId The discord ID of the user to find the goal for
+  * @returns The user's active challenge, null if the don't have one
   */
- async function getChallengeById (id: number): Promise<ChallengeController | null> {
-
-  const challenge = await ChallengeController.find({
-    where: { id: id }
+async function activeChallengeForUser (userId: Snowflake): Promise<Challenge | null> {
+  const userJoinedChallenges = await ChallengeController.find({
+    where: { ChallengeUser: { ownerId: userId } },
+    relations: ['ChallengeUser']
   })
 
-  if (challenge.length === 0) {
+  const activeChallenges: Challenge[] = userJoinedChallenges.reduce(
+    (active: Challenge[], controller: ChallengeController): Challenge[] => {
+      const challenge = controller.challenge()
+      if (challenge == null) { return active }
+      if (!challenge.isActive()) { return active }
+
+      return [...active, challenge]
+    }, []
+  )
+
+  if (activeChallenges.length === 0) {
     return null
   } else {
-    return challenge[0]
+    return activeChallenges[0]
   }
 }
 
-// /**
-//   * Checks whether the given user has joined a war.
-//   *
-//   * @param userId The discord ID of the user to find the goal for
-//   */
-// async function userHasJoinedChallenge (userId: Snowflake): Promise<ChallengeController | null> {
-
-//   const userJoinedChallenges = await ChallengeController.find({
-//     where: {
-//       ChallengeUser: { ownerId: userId }
-//     },
-//     relations: [ "ChallengeUser" ]
-//   })
-
-//   const activeRaces = await Race.find(
-
-//   )
-
-//   const activeChallenges = userJoinedChallenges.filter((challengeController) => challengeController.isActive())
-
-//   if (activeChallenges.length === 0) {
-//     return null
-//   } else {
-//     return activeChallenges[0]
-//   }
-// }
-
 function getStartTime (delay: number): DateTime {
   const createTime = DateTime.local()
-  const difference = Duration.fromObject({minutes: delay})
+  const difference = Duration.fromObject({ minutes: delay })
   return createTime.plus(difference)
 }
 
 export const ChallengeService = {
-  createChain,
+  activeChallengeForUser,
+  addChannelToChallenge,
+  addUserToChallenge,
+  createChainWar,
   createRace,
   createWar
 }

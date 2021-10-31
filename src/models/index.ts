@@ -8,3 +8,5 @@ export * from './race'
 export * from './raptor'
 export * from './user-config'
 export * from './war'
+
+export * from './bases/challenge'

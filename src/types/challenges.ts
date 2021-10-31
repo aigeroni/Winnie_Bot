@@ -25,7 +25,7 @@ export enum ChallengeTotalTypes {
 /**
   * The options for creating a chain war.
   */
- export interface ChainCreateOptions {
+export interface ChainWarCreateOptions {
   channelId?: Snowflake
   delay: number
   duration: number
@@ -39,7 +39,7 @@ export enum ChallengeTotalTypes {
 /**
   * The options for creating a race.
   */
- export interface RaceCreateOptions {
+export interface RaceCreateOptions {
   channelId?: Snowflake
   delay: number
   duration: number
@@ -53,7 +53,7 @@ export enum ChallengeTotalTypes {
 /**
   * The options for creating a war.
   */
- export interface WarCreateOptions {
+export interface WarCreateOptions {
   channelId?: Snowflake
   delay: number
   duration: number

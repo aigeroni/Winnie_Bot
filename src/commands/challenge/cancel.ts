@@ -1,16 +1,16 @@
 import { CommandInteraction } from 'discord.js'
-import { GuildConfig } from '../../models'
-import { ChallengeService } from '../../services'
+import { ChallengeController, GuildConfig } from '../../models'
 import { I18n } from '../../core'
 import { SubCommand } from '../../types'
 
 const NAME = 'cancel'
 
 export const ChallengeCancelCommand: SubCommand = {
+  name: NAME,
   commandData: async (locale: string) => ({
     name: NAME,
     description: await I18n.translate(locale, 'commands:challenge.cancel.description'),
-    type: 'SUB_COMMAND_GROUP',
+    type: 'SUB_COMMAND',
     options: [
       {
         name: 'id',
@@ -22,7 +22,11 @@ export const ChallengeCancelCommand: SubCommand = {
   }),
 
   execute: async (interaction: CommandInteraction, guildConfig: GuildConfig) => {
-    const challenge = await ChallengeService.getChallengeById(interaction.options.getInteger('id'))
+    const challengeId = interaction.options.getInteger('id')
+    if (challengeId == null) { throw new Error() } // uh... yikes?
+
+    const challengeController = await ChallengeController.findOne({ where: { id: challengeId } })
+    const challenge = challengeController?.challenge()
     if (challenge == null) {
       await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:challenge.cancel.error.challengeDoesNotExist'))
       return
