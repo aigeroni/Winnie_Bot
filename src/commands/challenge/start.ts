@@ -1,6 +1,6 @@
 import { CommandInteraction } from 'discord.js'
 import { GuildConfig } from '../../models'
-import { ChainService, RaceService, WarService } from '../../services'
+import { ChallengeService } from '../../services'
 import { I18n } from '../../core'
 import { ChainCreateOptions, RaceCreateOptions, WarCreateOptions, GoalCreateOptions, RaceTypes, SubCommand } from '../../types'
 
@@ -157,7 +157,7 @@ export const ChallengeStartCommand: SubCommand = {
 
 async function chain (interaction: CommandInteraction, guildConfig: GuildConfig): Promise<void> {
   const chainOptions = getChainOptions(interaction)
-  const challenge = await ChainService.createChain(chainOptions)
+  const challenge = await ChallengeService.createChain(chainOptions)
 
   if (challenge.errors.length > 0) {
     await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:challenge.start.chain.error.couldNotStartChain'))
@@ -168,7 +168,7 @@ async function chain (interaction: CommandInteraction, guildConfig: GuildConfig)
 
 async function race (interaction: CommandInteraction, guildConfig: GuildConfig): Promise<void> {
   const raceOptions = getRaceOptions(interaction)
-  const challenge = await RaceService.createRace(raceOptions)
+  const challenge = await ChallengeService.createRace(raceOptions)
 
   if (challenge.errors.length > 0) {
     await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:challenge.start.race.error.couldNotStartRace'))
@@ -179,7 +179,7 @@ async function race (interaction: CommandInteraction, guildConfig: GuildConfig):
 
 async function war (interaction: CommandInteraction, guildConfig: GuildConfig): Promise<void> {
   const warOptions = getWarOptions(interaction)
-  const challenge = await WarService.createWar(warOptions)
+  const challenge = await ChallengeService.createWar(warOptions)
 
   if (challenge.errors.length > 0) {
     await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:challenge.start.war.error.couldNotStartWar'))
