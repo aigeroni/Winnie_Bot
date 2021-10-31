@@ -65,8 +65,8 @@ jobs:
           sudo npm install -g yarn
           sudo systemctl start redis
           cd /srv && mkdir winnie chmod 755 winnie && cd winnie
+          mv ../.env /srv/winnie/Winnie_Bot/.env
           rm -rf Winnie_Bot && git clone https://github.com/aigeroni/Winnie_Bot
           cd Winnie_Bot && git -c "advice.detachedHead=false" checkout $GITHUB_SHA
-          mv ../.env ./.env
           rm .env.sample
           ./start-winnie.sh
