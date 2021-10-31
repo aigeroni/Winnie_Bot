@@ -1,9 +1,10 @@
 import { Permissions, Snowflake } from 'discord.js'
-import { Column, Entity } from 'typeorm'
+import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm'
 import { BaseModel } from './bases/base-model'
 import { IsChannelWithPermission } from './validators/channel-with-permission'
 import { ValidateIf, MaxLength } from 'class-validator'
 import { WinnieClient } from '../core'
+import { ChallengeController } from '.'
 
 /**
  * Represents a channel joined to a challenge.
@@ -11,10 +12,11 @@ import { WinnieClient } from '../core'
 @Entity({ name: 'challenge_channels' })
 export class ChallengeChannel extends BaseModel {
   /**
-   * The universal challenge id
+   * The challenge controller
    */
-  @Column({ name: 'challenge_id', type: 'int' })
-  challengeId!: number
+  @ManyToOne(() => ChallengeController, challengeController => challengeController.channels)
+  @JoinColumn({ name: 'challenge_id' })
+  challengeController!: number
 
   /**
    * The channel's discord Id

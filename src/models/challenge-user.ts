@@ -1,6 +1,7 @@
 import { MaxLength } from 'class-validator'
 import { Snowflake } from 'discord.js'
-import { Column, Entity } from 'typeorm'
+import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm'
+import { ChallengeController } from '.'
 import { ChallengeTotalTypes } from '../types'
 import { BaseModel } from './bases/base-model'
 
@@ -10,10 +11,11 @@ import { BaseModel } from './bases/base-model'
 @Entity({ name: 'challenge_users' })
 export class ChallengeUser extends BaseModel {
   /**
-   * The universal challenge id
+   * The challenge controller
    */
-  @Column({ name: 'challenge_id', type: 'int' })
-  challengeId!: number
+  @ManyToOne(() => ChallengeController, challengeController => challengeController.users)
+  @JoinColumn({ name: 'challenge_id' })
+  challengeController!: number
 
   /**
    * The user's discord Id
