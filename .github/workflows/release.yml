@@ -64,13 +64,9 @@ jobs:
           sudo curl -fsSL https://deb.nodesource.com/setup_16.x | sudo bash - && sudo apt-get install nodejs -y
           sudo npm install -g yarn
           sudo systemctl start redis
-          rm -rf Winnie_Bot
-          cd /srv
-          ls -la
-          mkdir winnie && chmod 755 winnie && cd winnie
+          cd /srv && mkdir -p winnie && chmod 755 winnie && cd winnie
           rm -rf Winnie_Bot && git clone https://github.com/aigeroni/Winnie_Bot
           cd Winnie_Bot && git -c "advice.detachedHead=false" checkout $GITHUB_SHA
           mv /srv/.env .
           rm .env.sample
-          ls -la
           ./start-winnie.sh
