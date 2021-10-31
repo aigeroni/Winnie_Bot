@@ -4,7 +4,7 @@ Description=Winnie_Bot goal worker
 [Service]
 WorkingDirectory=/home/root/Winnie_Bot
 Type=simple
-User=ubuntu
+User=root
 ExecStart=/usr/bin/yarn start:worker:goal
 Restart=on-failure
 

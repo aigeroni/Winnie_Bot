@@ -4,7 +4,7 @@ Description=Main Winnie_Bot process
 [Service]
 WorkingDirectory=/home/root/Winnie_Bot
 Type=simple
-User=ubuntu
+User=root
 ExecStart=/usr/bin/yarn start
 Restart=on-failure
 
