@@ -2,7 +2,7 @@
 Description=Winnie_Bot goal worker
 
 [Service]
-WorkingDirectory=/home/root/Winnie_Bot
+WorkingDirectory=/srv/winnie/Winnie_Bot
 Type=simple
 User=root
 ExecStart=/usr/bin/yarn start:worker:goal
