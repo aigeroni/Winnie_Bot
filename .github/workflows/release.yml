@@ -66,7 +66,10 @@ jobs:
           sudo systemctl start redis
           rm -rf Winnie_Bot && git clone https://github.com/aigeroni/Winnie_Bot
           cd Winnie_Bot && git -c "advice.detachedHead=false" checkout $GITHUB_SHA
-          mv ../.env /srv/winnie/Winnie_Bot/.env
-          cd /srv && mkdir winnie && chmod 755 winnie && cd winnie
           rm .env.sample
+          mkdir /srv/winnie && chmod 755 winnie
+          mkdir /srv/winnie/Winnie_Bot
+          cp . /srv/winnie/Winnie_Bot
+          mv ../.env /srv/winnie/Winnie_Bot/.env
+          cd /srv/winnie/Winnie_Bot
           ./start-winnie.sh
