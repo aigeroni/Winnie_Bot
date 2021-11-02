@@ -1,5 +1,5 @@
 import { CommandInteraction } from 'discord.js'
-import { GuildConfig, ChallengeController } from '../../models'
+import { GuildConfig, ChallengeChannel, ChallengeController, ChallengeUser } from '../../models'
 import { ChallengeService } from '../../services'
 import { I18n } from '../../core'
 import { SubCommand } from '../../types'
@@ -38,10 +38,30 @@ export const ChallengeJoinCommand: SubCommand = {
       return
     }
 
-    await ChallengeService.addUserToChallenge(interaction.user.id, challengeId)
-    await ChallengeService.addChannelToChallenge(interaction.channelId, challengeId)
+    const userId = interaction.user.id
+    let userAdd = null
+    const challengeUser = await ChallengeUser.findOne({
+      where: { userId: userId, challengeController: challengeId }
+    })
+    if (challengeUser != null) {
+      userAdd = await challengeUser.uncancel()
+    } else {
+      userAdd = await ChallengeService.addUserToChallenge(userId, challengeId)
+    }
 
-    if (interaction.errors.length > 0) {
+    const channelId = interaction.channelId
+    let channelAdd = null
+    const challengeChannel = await ChallengeChannel.findOne({
+      where: { channelId: channelId, challengeController: challengeId }
+    })
+    if (challengeUser != null) {
+      channelAdd = challengeChannel
+    } else {
+      channelAdd = await ChallengeService.addChannelToChallenge(interaction.channelId, challengeId)
+    }
+
+    if (userAdd.errors.length > 0 ||
+      channelAdd.errors.length > 0) {
       await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:challenge.join.error.couldNotJoinChallenge'))
     } else {
       await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:challenge.join.success'))
