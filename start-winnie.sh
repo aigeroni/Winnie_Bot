@@ -18,4 +18,4 @@ sudo systemctl start goal-worker.service
 sudo systemctl start app.service
 systemctl status goal-worker.service
 # systemctl status challenge-worker.service
-systemctl status app.service
+journalctl -u app.service
