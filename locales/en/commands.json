@@ -235,6 +235,7 @@
         "challengeDoesNotExist": "**Error**: Challenge {{ id }} does not exist!",
         "challengeHasNotStarted": "**Error**: Challenge {{ id }} has not started yet!",
         "challengeIsWar": "You cannot set a finish time for a war.  Use `/challenge total` to set your total.",
+        "challengeTooOld": "**Error**: Challenge {{ id }} finished too long ago!",
         "couldNotFinishChallenge": "**Unknown Error**: Could not finish race {{ id }} (database validation error).",
         "noChallengeSpecified": "**Error**: I don't know which race to finish!  Use `/challenge finish` with an ID number to finish a specific race."
       }
@@ -314,7 +315,8 @@
         "challengeDoesNotExist": "**Error**: Challenge {{ id }} does not exist!",
         "challengeHasNotStarted": "**Error**: Challenge {{ id }} has not started yet!",
         "challengeIsRace": "**Error**: You cannot add a total to a race.  Use `/challenge finish` to complete a race.",
-        "couldNotFinishChallenge": "**Unknown Error**: Could not add a total for war {{ id }} (database validation error).",
+        "challengeTooOld": "**Error**: Challenge {{ id }} finished too long ago!",
+        "couldNotAddTotal": "**Unknown Error**: Could not add a total for war {{ id }} (database validation error).",
         "noChallengeSpecified": "**Error**: I don't know which war this total is for!  Use `/challenge total` with an ID number to post a total for a specific war."
       }
     }
