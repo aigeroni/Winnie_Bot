@@ -22,4 +22,6 @@ systemctl status goal-worker.service
 # systemctl status challenge-worker.service
 systemctl status app.service
 
+sleep 30
+
 journalctl -u app.service
