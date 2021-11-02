@@ -7,6 +7,11 @@ import { ChallengeController } from './challenge-controller'
 @Entity({ name: 'races' })
 export class Race extends Challenge {
   /**
+   * The challenge name as a localisation key.
+   */
+  challenge_type = 'race'
+
+  /**
    * The target for the race.
    *
    * example: 5 pages

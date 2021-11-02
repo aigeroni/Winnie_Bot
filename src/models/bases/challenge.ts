@@ -4,11 +4,17 @@ import { Column } from 'typeorm'
 import { Mission } from './mission'
 import { DateTime } from 'luxon'
 import { DateTimeTransformer } from '../transformers/date-time'
+import { I18n } from '../../core'
 
 /**
  * The base class for all challenges
  */
 export abstract class Challenge extends Mission {
+  /**
+   * The challenge name as a localisation key.
+   */
+  challenge_type!: string
+
   /**
    * The challenge's name, used in challenge lists.
    */
@@ -51,5 +57,9 @@ export abstract class Challenge extends Mission {
     this.hasStarted = true
 
     await this.save()
+  }
+
+  async challenge_name (locale: string): Promise<string> {
+    return await I18n.translate(locale, `challenges:challenge_types.${this.challenge_type}`)
   }
 }

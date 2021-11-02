@@ -10,6 +10,8 @@ import {
 } from '../models'
 import { ChainWarCreateOptions, RaceCreateOptions, WarCreateOptions } from '../types'
 import { Snowflake } from 'discord.js'
+import { Logger } from '../core'
+import { DiscordService } from '.'
 
 /**
   * Creates a new chain war from the arguments passed to the command.
@@ -158,6 +160,24 @@ async function activeChallengeForUser (userId: Snowflake): Promise<Challenge | n
   }
 }
 
+/**
+ * Sends a message to all the channels which are joined to a given challenge.
+ *
+ * @param challengeId the universal id of the challenge
+ * @param messageKey the localisation key of the message to send
+ */
+async function sendChallengeMessage (challengeId: number, messageKey: string): Promise<void> {
+  const challengeController = await ChallengeController.findOne({ where: { id: challengeId } })
+  if (challengeController == null) {
+    Logger.error(`Unable to send messages for challenge with id: ${challengeId}. The challenge could not be found.`)
+    return
+  }
+
+  challengeController.channels.forEach((channel) => {
+    DiscordService.sendMessageToChannel(channel.channelId, messageKey).catch(() => {})
+  })
+}
+
 function getStartTime (delay: number): DateTime {
   const createTime = DateTime.local()
   const difference = Duration.fromObject({ minutes: delay })
@@ -170,5 +190,6 @@ export const ChallengeService = {
   addUserToChallenge,
   createChainWar,
   createRace,
-  createWar
+  createWar,
+  sendChallengeMessage
 }

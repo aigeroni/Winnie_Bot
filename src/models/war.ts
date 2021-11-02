@@ -5,6 +5,11 @@ import { ChainWar, ChallengeController } from '.'
 @Entity({ name: 'wars' })
 export class War extends Challenge {
   /**
+   * The challenge name as a localisation key.
+   */
+  challenge_type = 'war'
+
+  /**
    * The amount of time, in minutes, the war should last.
    *
    * default = 10 minutes

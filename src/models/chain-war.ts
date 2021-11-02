@@ -9,6 +9,11 @@ import { War } from './war'
 @Entity({ name: 'chain_wars' })
 export class ChainWar extends Challenge {
   /**
+   * The challenge name.
+   */
+  challenge_type = 'chain_war'
+
+  /**
    * How long each war should last, in minutes.
    *
    * If not present, the default war length will be used
