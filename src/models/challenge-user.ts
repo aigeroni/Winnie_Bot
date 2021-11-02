@@ -46,17 +46,17 @@ export class ChallengeUser extends BaseModel {
   totalType!: RaceTypes
 
   /**
-  * Timestamp of when this mission was canceled.
+  * Timestamp of when the user left the challenge.
   *
-  * Null if not canceled
+  * Null if still joined
   */
   @Column({ name: 'canceled_at', transformer: new NullableDateTimeTransformer(), type: 'varchar' })
   canceledAt?: DateTime
 
   /**
-   * Checks if the mission is canceled.
-   *
-   * @returns true if the mission is canceled
+   * Checks if the user has left the challenge.
+   * 
+   * @returns true if the user has left
    */
   isCanceled (): boolean {
     return this.canceledAt != null
@@ -74,8 +74,17 @@ export class ChallengeUser extends BaseModel {
    * Rejoins the challenge after un-joining.
    */
   async rejoin (newChannelId: Snowflake): Promise<void> {
-    this.canceledAt = null
+    this.canceledAt = undefined
     this.channelId = newChannelId
+    await this.save()
+  }
+
+  /**
+   * Adds a total to the challenge.
+   */
+  async addTotal (total: number, totalType: RaceTypes) {
+    this.total = total
+    this.totalType = totalType
     await this.save()
   }
 }
