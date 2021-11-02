@@ -6,9 +6,11 @@ yarn dotenv:test
 yarn typeorm migration:run
 
 ls -la
-cd dist
+cd dist/src/models
 ls -la
-cd ..
+cd ../../db/migration
+ls -la
+cd ../../..
 
 cp ./services/*.service /lib/systemd/system/
 
