@@ -17,7 +17,7 @@ export class createGoalTable1607590446829 implements MigrationInterface {
         {
           name: 'goal_type',
           type: 'enum',
-          enum: ['lines', 'minutes', 'pages', 'words']
+          enum: ['items', 'lines', 'minutes', 'pages', 'words']
         },
         {
           name: 'goal_duration',
