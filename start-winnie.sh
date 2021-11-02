@@ -5,6 +5,11 @@ yarn install && yarn build
 yarn dotenv:test
 yarn typeorm migration:run
 
+ls -la
+cd dist
+ls -la
+cd ..
+
 cp ./services/*.service /lib/systemd/system/
 
 sudo systemctl stop goal-worker.service
