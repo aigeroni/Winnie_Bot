@@ -1,0 +1,12 @@
+[Unit]
+Description=Main Winnie_Bot process
+
+[Service]
+WorkingDirectory=/srv/winnie/Winnie_Bot
+Type=simple
+User=root
+ExecStart=/usr/bin/yarn start
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

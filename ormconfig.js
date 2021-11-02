@@ -1,11 +1,7 @@
 /* eslint no-undef: 0 */
 module.exports = {
   type: 'postgres',
-  host: 'localhost',
-  port: 5432,
-  username: process.env.POSTGRES_USER,
-  password: process.env.POSTGRES_PASSWORD,
-  database: process.env.POSTGRES_DB,
+  url: process.env.POSTGRES_CONNECTION_STRING,
   synchronize: false,
   logging: true,
   entities: [
