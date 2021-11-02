@@ -1,4 +1,4 @@
-import { BaseModel } from './base-model'
+import { BaseModel } from './bases/base-model'
 import { Column, Entity, PrimaryColumn } from 'typeorm'
 import { MaxLength, Min } from 'class-validator'
 import { Snowflake } from 'discord.js'
@@ -6,7 +6,7 @@ import { Snowflake } from 'discord.js'
 /**
  * A model for keeping track of how many raptors a user has hatched in a given guild.
  */
-@Entity()
+@Entity({ name: 'raptors' })
 export class Raptor extends BaseModel {
   /**
    * The guild in which these raptors have been earned.
@@ -31,45 +31,45 @@ export class Raptor extends BaseModel {
    *
    * Awarded for completing weekly goals.
    */
-  @Column({ name: 'blue_raptors', type: 'int' })
+  @Column({ name: 'blue_raptors' })
   @Min(0)
-  blue = 0
+  blue: number = 0
 
   /**
    * The number of green raptors this user has earned in this server
    *
    * Awarded for completing challenges.
    */
-  @Column({ name: 'green_raptors', type: 'int' })
+  @Column({ name: 'green_raptors' })
   @Min(0)
-  green = 0
+  green: number = 0
 
   /**
    * The number of orange raptors this user has earned in this server
    *
    * Awarded for completing yearly goals.
    */
-  @Column({ name: 'orange_raptors', type: 'int' })
+  @Column({ name: 'orange_raptors' })
   @Min(0)
-  orange = 0
+  orange: number = 0
 
   /**
    * The number of purple raptors this user has earned in this server
    *
    * Awarded for completing monthly goals.
    */
-  @Column({ name: 'purple_raptors', type: 'int' })
+  @Column({ name: 'purple_raptors' })
   @Min(0)
-  purple = 0
+  purple: number = 0
 
   /**
    * The number of white raptors this user has earned in this server
    *
    * Awarded for completing daily goals.
    */
-  @Column({ name: 'white_raptors', type: 'int' })
+  @Column({ name: 'white_raptors' })
   @Min(0)
-  white = 0
+  white: number = 0
 
   /**
    * Awards the user a new blue raptor
@@ -109,5 +109,17 @@ export class Raptor extends BaseModel {
   async awardWhiteRaptor (): Promise<void> {
     this.white += 1
     await this.save()
+  }
+
+  static async findOrCreate (userId: Snowflake, guildId: Snowflake): Promise<Raptor> {
+    let raptor = (await Raptor.find({ where: { userId, guildId } }))[0]
+    if (raptor != null) { return raptor }
+
+    raptor = new Raptor()
+    raptor.userId = userId
+    raptor.guildId = guildId
+    await raptor.save()
+
+    return raptor
   }
 }

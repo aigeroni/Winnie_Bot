@@ -1,6 +1,7 @@
-import { JobQueue } from '../../core'
+import { JobQueue, Logger } from '../../core'
 import { Goal } from '../../models'
 import { CompleteGoalJobData, WinnieJob } from '../../types'
+import { AwardRaptorForGoalJob } from './award-raptors-for-goal-job'
 
 const NAME = 'mark_goal_as_complete_job'
 
@@ -15,6 +16,8 @@ export const CompleteGoalJob: WinnieJob<CompleteGoalJobData> = {
 
     if (goal.errors.length > 0) { throw new Error('Could not mark goal as complete') }
 
-    // TODO: Enqueue AwardRaptorsJob
+    AwardRaptorForGoalJob.enqueue({ goalId: goal.id }).catch(() => {
+      Logger.error(`Unable to enqueue raptors job for goal with id ${goal.id}`)
+    })
   }
 }
