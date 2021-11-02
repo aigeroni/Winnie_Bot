@@ -2,7 +2,7 @@ import { CommandUtils } from '../commands/utils'
 import { Event } from '../types'
 import { GuildConfig } from '../models'
 import { I18n, WinnieClient } from '../core'
-import { Message } from 'discord.js'
+import { Message, Permissions } from 'discord.js'
 
 /**
  * Check the given message to see if the Winnie_Bot user was mentioned.
@@ -15,16 +15,25 @@ async function handleMention (message: Message, guildConfig: GuildConfig): Promi
   if (WinnieClient.client.user == null) { return }
   if (!message.mentions.has(WinnieClient.client.user?.id)) { return }
 
-  const response = await I18n.translate('en', 'mentionResponse')
+  const response = await I18n.translate(guildConfig.locale, 'mentionResponse')
   await message.channel.send(response)
 }
 
 async function deployCommands (message: Message, guildConfig: GuildConfig): Promise<void> {
   if (message.content !== '!deployWinnieCommands') { return }
-  if (process.env.USERS_WHO_CAN_DEPLOY == null) { return }
-  if (!process.env.USERS_WHO_CAN_DEPLOY.includes(message.author.id)) { return }
+  const author = message.member
+  if (author == null) { return }
 
-  await CommandUtils.deployCommands(guildConfig)
+  if (author.permissions.has(Permissions.FLAGS.ADMINISTRATOR)) {
+    try {
+      await CommandUtils.deployCommands(guildConfig)
+    } catch {
+      await message.reply(await I18n.translate(guildConfig.locale, 'commands:deploy.error'))
+      return
+    }
+
+    await message.reply(await I18n.translate(guildConfig.locale, 'commands:deploy.success'))
+  }
 }
 
 /**

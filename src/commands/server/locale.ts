@@ -2,7 +2,7 @@ import { CommandInteraction } from 'discord.js'
 import { GuildConfig } from '../../models'
 import { I18n } from '../../core'
 import { SubCommand } from '../../types'
-import { deployCommands } from '../utils/deploy'
+import { CommandUtils } from '../utils'
 
 const NAME = 'locale'
 
@@ -96,7 +96,7 @@ async function set (interaction: CommandInteraction, guildConfig: GuildConfig): 
   }))
 
   try {
-    await deployCommands(guildConfig)
+    await CommandUtils.deployCommands(guildConfig)
   } catch {
     await interaction.followUp(await I18n.translate(guildConfig.locale, 'commands:deploy.error'))
     return
