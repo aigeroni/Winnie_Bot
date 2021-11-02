@@ -35,6 +35,10 @@ jobs:
         @(
           'POSTGRES_CONNECTION_STRING="${{ env.DB_CONNECTION_STRING }}"'
           'TYPEORM_URL=${{ env.DB_CONNECTION_STRING }}' -replace 'postgresql', 'postgres'
+          'TYPEORM_ENTITIES="dist/src/models/**/*.js"'
+          'TYPEORM_ENTITIES_DIR="dist/src/models"'
+          'TYPEORM_MIGRATIONS="dist/db/migration/**/*.js"'
+          'TYPEORM_MIGRATIONS_DIR="dist/db/migration"'
           'REDIS_HOST="localhost"'
           'REDIS_PORT=6379'
           'BOT_TOKEN="${{ secrets.DISCORD_BOT_TOKEN }}"'
