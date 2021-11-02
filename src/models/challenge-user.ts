@@ -46,12 +46,20 @@ export class ChallengeUser extends BaseModel {
   totalType!: RaceTypes
 
   /**
-  * Timestamp of when the user left the challenge.
-  *
-  * Null if still joined
-  */
+    * Timestamp of when the user left the challenge.
+    *
+    * Null if still joined
+    */
   @Column({ name: 'canceled_at', transformer: new NullableDateTimeTransformer(), type: 'varchar' })
   canceledAt?: DateTime
+
+  /**
+    * Timestamp of when the challenge was finished. Only applicable to races.
+    *
+    * Null if not finished yet
+    */
+  @Column({ name: 'finished_at', transformer: new NullableDateTimeTransformer(), type: 'varchar' })
+  finishedAt?: DateTime
 
   /**
    * Checks if the user has left the challenge.
