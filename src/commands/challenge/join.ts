@@ -38,26 +38,26 @@ export const ChallengeJoinCommand: SubCommand = {
       return
     }
 
+    const channelId = interaction.channelId
+    let channelAdd = null
+    const challengeChannel = await ChallengeChannel.findOne({
+      where: { channelId: channelId, challengeController: challengeId }
+    })
+    if (challengeChannel != null) {
+      channelAdd = challengeChannel
+    } else {
+      channelAdd = await ChallengeService.addChannelToChallenge(interaction.channelId, challengeId)
+    }
+
     const userId = interaction.user.id
     let userAdd = null
     const challengeUser = await ChallengeUser.findOne({
       where: { userId: userId, challengeController: challengeId }
     })
     if (challengeUser != null) {
-      userAdd = await challengeUser.uncancel()
+      userAdd = await challengeUser.rejoin(channelId)
     } else {
-      userAdd = await ChallengeService.addUserToChallenge(userId, challengeId)
-    }
-
-    const channelId = interaction.channelId
-    let channelAdd = null
-    const challengeChannel = await ChallengeChannel.findOne({
-      where: { channelId: channelId, challengeController: challengeId }
-    })
-    if (challengeUser != null) {
-      channelAdd = challengeChannel
-    } else {
-      channelAdd = await ChallengeService.addChannelToChallenge(interaction.channelId, challengeId)
+      userAdd = await ChallengeService.addUserToChallenge(userId, challengeId, channelId)
     }
 
     if (userAdd.errors.length > 0 ||

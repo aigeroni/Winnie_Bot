@@ -2,7 +2,7 @@ import { MaxLength } from 'class-validator'
 import { Snowflake } from 'discord.js'
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm'
 import { ChallengeController } from './challenge-controller'
-import { ChallengeTotalTypes } from '../types'
+import { RaceTypes } from '../types'
 import { BaseModel } from './bases/base-model'
 import { DateTime } from 'luxon'
 import { NullableDateTimeTransformer } from './transformers/date-time'
@@ -27,6 +27,13 @@ export class ChallengeUser extends BaseModel {
   userId!: Snowflake
 
   /**
+   * The Discord ID of the channel which the user joined from
+   */
+  @Column()
+  @MaxLength(30)
+  channelId!: Snowflake
+
+  /**
    * The user's total for the challenge
    */
   @Column()
@@ -35,8 +42,8 @@ export class ChallengeUser extends BaseModel {
   /**
    * The type of the total.
    */
-  @Column({ name: 'total_type', type: 'enum', enum: ChallengeTotalTypes })
-  totalType!: ChallengeTotalTypes
+  @Column({ name: 'total_type', type: 'enum', enum: RaceTypes })
+  totalType!: RaceTypes
 
   /**
   * Timestamp of when this mission was canceled.
@@ -64,10 +71,11 @@ export class ChallengeUser extends BaseModel {
   }
 
   /**
-   * Uncancels the current join.
+   * Rejoins the challenge after un-joining.
    */
-  async uncancel (): Promise<void> {
+  async rejoin (newChannelId: Snowflake): Promise<void> {
     this.canceledAt = null
+    this.channelId = newChannelId
     await this.save()
   }
 }

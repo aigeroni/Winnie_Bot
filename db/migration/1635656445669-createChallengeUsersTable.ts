@@ -17,6 +17,11 @@ export class createChallengeUsersTable1635656445669 implements MigrationInterfac
           isPrimary: true
         },
         {
+          name: 'channel_id',
+          type: 'int',
+          isNullable: false
+        },
+        {
           name: 'total',
           type: 'int'
         },
