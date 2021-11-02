@@ -53,6 +53,7 @@ class WinnieBotClient {
       Logger.info('Successfully logged in to Discord.')
     } catch (e) {
       Logger.error('Unable to log in to discord, did you set your bot token?')
+      Logger.error(e)
       process.exit()
     }
   }
