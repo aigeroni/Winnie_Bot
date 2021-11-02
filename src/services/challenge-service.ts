@@ -36,7 +36,7 @@ async function createChainWar (options: ChainWarCreateOptions): Promise<ChainWar
   if (options.channelId != null) {
     await addChannelToChallenge(options.channelId, controller.id)
   }
-  if (options.join != null && options.ownerId != null) {
+  if (options.join != null && options.ownerId != null && options.channelId != null) {
     await addUserToChallenge(options.ownerId, controller.id, options.channelId)
   }
 
@@ -66,7 +66,7 @@ async function createRace (options: RaceCreateOptions): Promise<Race> {
   if (options.channelId != null) {
     await addChannelToChallenge(options.channelId, controller.id)
   }
-  if (options.join != null && options.ownerId != null) {
+  if (options.join != null && options.ownerId != null && options.channelId != null) {
     await addUserToChallenge(options.ownerId, controller.id, options.channelId)
   }
 
@@ -93,7 +93,7 @@ async function createWar (options: WarCreateOptions): Promise<War> {
   if (options.channelId != null) {
     await addChannelToChallenge(options.channelId, controller.id)
   }
-  if (options.join != null && options.ownerId != null) {
+  if (options.join != null && options.ownerId != null && options.channelId != null) {
     await addUserToChallenge(options.ownerId, controller.id, options.channelId)
   }
 
