@@ -23,7 +23,7 @@ if (process.env.REDIS_PORT !== '') {
 }
 
 if (process.env.BOT_TOKEN !== '') {
-  console.log('BOT_TOKEN exists.  Length: ' + process.env.BOT_TOKEN.length.toString() + ' First character: ' + process.env.BOT_TOKEN.charAt(0) + ' First character: ' + process.env.BOT_TOKEN.slice(-1))
+  console.log('BOT_TOKEN exists')
 }
 
 if (process.env.NODE_ENV !== '') {
