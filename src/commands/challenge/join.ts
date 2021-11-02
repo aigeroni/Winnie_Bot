@@ -43,28 +43,26 @@ export const ChallengeJoinCommand: SubCommand = {
     const challengeChannel = await ChallengeChannel.findOne({
       where: { channelId: channelId, challengeController: challengeId }
     })
-    if (challengeChannel != null) {
-      channelAdd = challengeChannel
-    } else {
+    if (challengeChannel == null) {
       channelAdd = await ChallengeService.addChannelToChallenge(interaction.channelId, challengeId)
+      if ( channelAdd.errors.length > 0) {
+        await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:challenge.join.error.couldNotJoinChallenge'))
+      }
     }
 
     const userId = interaction.user.id
-    let userAdd = null
     const challengeUser = await ChallengeUser.findOne({
       where: { userId: userId, challengeController: challengeId }
     })
     if (challengeUser != null) {
-      userAdd = await challengeUser.rejoin(channelId)
+      await challengeUser.rejoin(channelId)
     } else {
-      userAdd = await ChallengeService.addUserToChallenge(userId, challengeId, channelId)
+      const userAdd = await ChallengeService.addUserToChallenge(userId, challengeId, channelId)
+      if (userAdd.errors.length > 0 ) {
+        await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:challenge.join.error.couldNotJoinChallenge'))
+        return
+      }
     }
-
-    if (userAdd.errors.length > 0 ||
-      channelAdd.errors.length > 0) {
-      await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:challenge.join.error.couldNotJoinChallenge'))
-    } else {
-      await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:challenge.join.success'))
-    }
+    await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:challenge.join.success'))
   }
 }
