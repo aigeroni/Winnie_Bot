@@ -1,5 +1,5 @@
-import { JobQueue } from '../../core'
-import { ChainWar, ChallengeController, Race, War } from '../../models'
+import { I18n, JobQueue } from '../../core'
+import { ChainWar, ChallengeController, GuildConfig, Race, War } from '../../models'
 import { ChallengeService } from '../../services'
 import { StartChallengeJobData, WinnieJob } from '../../types'
 
@@ -31,19 +31,23 @@ export const StartChallengeJob: WinnieJob<StartChallengeJobData> = {
 }
 
 async function sendRaceMessages (challengeId: number, race: Race): Promise<void> {
-  await ChallengeService.sendChallengeMessage(challengeId, 'challenges:startRace', {
-    challengeName: race.name,
-    id: challengeId,
-    target: race.target,
-    type: race.targetType,
-    timeout: race.timeOut
+  await ChallengeService.sendChallengeMessage(challengeId, async (guildConfig: GuildConfig): Promise<string> => {
+    return await I18n.translate(guildConfig.locale, 'challenges:startRace', {
+      challengeName: race.name,
+      id: challengeId,
+      target: race.target,
+      type: await I18n.translate(guildConfig.locale, `challenges:types.${race.targetType}`, { count: race.target }),
+      timeout: await I18n.translate(guildConfig.locale, 'challenges:purals.minutes', { count: race.timeOut })
+    })
   })
 }
 
 async function sendWarMessages (challengeId: number, war: War | ChainWar): Promise<void> {
-  await ChallengeService.sendChallengeMessage(challengeId, 'challenges:startRace', {
-    challengeName: war.name,
-    id: challengeId,
-    duration: war.duration
+  await ChallengeService.sendChallengeMessage(challengeId, async (guildConfig: GuildConfig): Promise<string> => {
+    return await I18n.translate(guildConfig.locale, 'challenges:startRace', {
+      challengeName: war.name,
+      id: challengeId,
+      duration: await I18n.translate(guildConfig.locale, 'challenges:purals.minutes', { count: war.duration })
+    })
   })
 }
