@@ -11,12 +11,12 @@ export const ChallengeFinishCommand: SubCommand = {
   name: NAME,
   commandData: async (locale: string) => ({
     name: NAME,
-    description: await I18n.translate(locale, 'commands:challenge.cancel.description'),
+    description: await I18n.translate(locale, 'commands:challenge.finish.description'),
     type: 'SUB_COMMAND',
     options: [
       {
         name: 'id',
-        description: await I18n.translate(locale, 'commands:challenge.cancel.id.description'),
+        description: await I18n.translate(locale, 'commands:challenge.finish.args.id'),
         type: 'INTEGER',
         required: false
       }
@@ -51,7 +51,7 @@ async function canFinishRace (challenge: Challenge, interaction: CommandInteract
   }
 
   if (challenge.challenge_type !== 'race') { // check whether challenge is race
-    await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:challenge.finish.error.challengeIsRace'))
+    await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:challenge.finish.error.challengeIsNotRace'))
     return false
   }
 
@@ -61,7 +61,7 @@ async function canFinishRace (challenge: Challenge, interaction: CommandInteract
   }
 
   const race = challenge as Race
-  if ((race.startAt.plus(Duration.fromObject({ minutes: (race.timeOut + 720) })).diff(DateTime.utc())).milliseconds <= 0) { // check whether race finished more than 12 hours ago
+  if ((race.startAt.plus(Duration.fromObject({ minutes: (race.timeOut + 60) })).diff(DateTime.utc())).milliseconds <= 0) { // check whether race finished more than 12 hours ago
     await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:challenge.finish.error.challengeTooOld'))
   }
 
@@ -106,5 +106,5 @@ async function finishRace (challengeUser: ChallengeUser, race: Race, interaction
     return
   }
 
-  await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:challenge.total.error.couldNotAddTotal'))
+  await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:challenge.finish.error.couldNotFinishChallenge'))
 }

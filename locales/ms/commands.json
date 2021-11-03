@@ -233,7 +233,7 @@
       "error": {
         "challengeDoesNotExist": "**Error**: Challenge {{ id }} does not exist!",
         "challengeHasNotStarted": "**Error**: Challenge {{ id }} has not started yet!",
-        "challengeIsWar": "You cannot set a finish time for a war.  Use `/challenge total` to set your total.",
+        "challengeIsNotRace": "You can only set finish times for races.  Use `/challenge total` to set your total for a war.",
         "couldNotFinishChallenge": "**Unknown Error**: Could not finish race {{ id }} (database validation error).",
         "noChallengeSpecified": "**Error**: I don't know which race to finish!  Use `/challenge finish` with an ID number to finish a specific race."
       }
