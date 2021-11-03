@@ -35,5 +35,11 @@
     "pages_plural": "muka surat",
     "words": "perkataan",
     "words_plural": "perkataan"
+  },
+  "raptors": {
+    "announceWhiteRaptor": "{{user}}, you have hatched a white raptor!",
+    "announceBlueRaptor": "{{user}}, you have hatched a blue raptor!",
+    "announcePurpleRaptor": "{{user}}, you have hatched a purple raptor!",
+    "announceOrangeRaptor": "{{user}}, you have hatched a orange raptor!"
   }
 }
