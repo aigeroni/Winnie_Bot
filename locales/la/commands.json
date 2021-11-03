@@ -217,6 +217,8 @@
         "id": "The ID of the challenge that you want to cancel."
       },
       "error": {
+        "challengeDoesNotExist": "**Error**: Challenge {{ id }} does not exist!",
+        "challengeHasAlreadyStarted": "**Error**: Challenge {{ id }} has already started!",
         "couldNotCancelChallenge": "**Unknown Error**: Could not cancel challenge {{ id }} (database validation error).",
         "userIsNotOwner": "**Error**: Only the creator of {{ challengeName }} (ID {{ id }}) can cancel the challenge."
       }
