@@ -1,5 +1,10 @@
 {
   "defaultError": "**Unknown Error:** I'm sorry, I'm afraid I can't do that. This incident has been logged to the dashboard.",
+  "deploy": {
+    "error": "**Unknown Error**: Commands failed to deploy.",
+    "success": "Commands deployed successfully."
+  },
+
   "config": {
     "description": "Configures Winnie_Bot to meet your needs.",
     "crossGuild": {
@@ -20,7 +25,7 @@
         "enabled": "Your challenges **will** display on other servers.",
         "error": "**Unknown Error**: Your challenge display preference cannot be set (database validation error).",
         "args": {
-          "enabled": "A boolean value for whether challenges should be visible in other servers (true for visible, false for hidden)."
+          "enabled": "A boolean value for cross-server visibility (true for visible, false for hidden)."
         }
       }
     },
@@ -49,10 +54,14 @@
       }
     }
   },
+
   "goal": {
     "description": "Sets, updates, and resets your goals.",
     "cancel": {
       "description": "Cancels your current goal.",
+      "args": {
+        "duration": "`daily`, `weekly`, `monthly`, or `yearly`. Defaults to daily."
+      },
       "success": "Your current goal has been cancelled.",
       "error": {
         "couldNotCancelGoal": "**Unknown Error**: Could not cancel goal (database validation error).",
@@ -61,6 +70,9 @@
     },
     "info": {
       "description": "Reminds you of your current goal.",
+      "args": {
+        "duration": "`daily`, `weekly`, `monthly`, or `yearly`. Defaults to daily."
+      },
       "error": {
         "noActiveGoal": "**Error**: You do not have an active goal."
       }
@@ -68,6 +80,7 @@
     "overwrite": {
       "description": "Replaces the progress on your goal with a new value.",
       "args": {
+        "duration": "`daily`, `weekly`, `monthly`, or `yearly`. Defaults to daily.",
         "progress": "Your progress towards your total goal."
       },
       "error": {
@@ -106,6 +119,7 @@
     "update": {
       "description": "Updates progress on your goal.",
       "args": {
+        "duration": "`daily`, `weekly`, `monthly`, or `yearly`. Defaults to daily.",
         "progress": "The amount to add to your current total."
       },
       "error": {
@@ -115,8 +129,9 @@
       }
     }
   },
+
   "server": {
-    "description": "Configures Winnie_Bot to meet your server's needs. Only usable by people with Manage Server permissions",
+    "description": "Configures Winnie_Bot to meet your server's needs. Requires Manage Server permissions.",
     "announcementsChannel": {
       "description": "Chooses the channel which Winnie_Bot makes announcements to.",
       "get": {
@@ -155,7 +170,7 @@
         "enabled": "Your server's challenges **will** display on other servers.",
         "error": "**Unknown Error**: Your server's challenge display preference cannot be set (database validation error).",
         "args": {
-          "enabled": "A boolean value for whether challenges should be visible in other servers (true for visible, false for hidden)."
+          "enabled": "A boolean value for cross-server visibility (true for visible, false for hidden)."
         }
       }
     },
@@ -174,7 +189,7 @@
         "description": "Sets a new language for Winnie_Bot to speak.",
         "success": "Winnie_Bot now speaks {{locale}}.",
         "args": {
-          "locale": "An ISO 639-1 language code. Current options are `en` (English), `fr` (Français), `hu` (Magyar), `la` (Latina), `ms` (Bahasa Melayu), `nl` (Nederlands), and `sv` (Svenska)."
+          "locale": "An ISO 639-1 language code."
         },
         "error": "**Error**: The locale that you are trying to set does not exist (database validation error)."
       }

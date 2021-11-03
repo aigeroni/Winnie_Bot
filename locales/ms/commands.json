@@ -58,6 +58,9 @@
     "description": "Menetapkan, memadamkan, atau memaparkan matlamat awak.",
     "cancel": {
       "description": "Membatalkan matlamat semasa awak.",
+      "args": {
+        "duration": "`daily`, `weekly`, `monthly`, atau `yearly`. Tetapan asal ialah harian."
+      },
       "success": "Matlamat semasa awak telah dibatalkan.",
       "error": {
         "couldNotCancelGoal": "**Ralat tidak diketahui**: Tidak dapat membatalkan matlamat (ralat pengesahan pangkalan data).",
@@ -66,6 +69,9 @@
     },
     "info": {
       "description": "Mengingatkan awak tentang matlamat semasa awak.",
+      "args": {
+        "duration": "`daily`, `weekly`, `monthly`, atau `yearly`. Tetapan asal ialah harian."
+      },
       "error": {
         "noActiveGoal": "**Ralat**: Awak tidak mempunyai matlamat yang aktif."
       }
@@ -73,6 +79,7 @@
     "overwrite": {
       "description": "Menggantikan kemajuan matlamat awak dengan nilai baru.",
       "args": {
+        "duration": "`daily`, `weekly`, `monthly`, atau `yearly`. Tetapan asal ialah harian.",
         "progress": "Kemajuan matlamat keseluruhan awak."
       },
       "error": {
@@ -111,6 +118,7 @@
     "update": {
       "description": "Mengemas kini kemajuan matlamat awak.",
       "args": {
+        "duration": "`daily`, `weekly`, `monthly`, atau `yearly`. Tetapan asal ialah harian.",
         "progress": "Jumlah untuk ditambahkan ke jumlah semasa awak."
       },
       "error": {

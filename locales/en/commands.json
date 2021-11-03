@@ -59,6 +59,9 @@
     "description": "Sets, updates, and resets your goals.",
     "cancel": {
       "description": "Cancels your current goal.",
+      "args": {
+        "duration": "`daily`, `weekly`, `monthly`, or `yearly`. Defaults to daily."
+      },
       "success": "Your current goal has been cancelled.",
       "error": {
         "couldNotCancelGoal": "**Unknown Error**: Could not cancel goal (database validation error).",
@@ -67,6 +70,9 @@
     },
     "info": {
       "description": "Reminds you of your current goal.",
+      "args": {
+        "duration": "`daily`, `weekly`, `monthly`, or `yearly`. Defaults to daily."
+      },
       "error": {
         "noActiveGoal": "**Error**: You do not have an active goal."
       }
@@ -74,6 +80,7 @@
     "overwrite": {
       "description": "Replaces the progress on your goal with a new value.",
       "args": {
+        "duration": "`daily`, `weekly`, `monthly`, or `yearly`. Defaults to daily.",
         "progress": "Your progress towards your total goal."
       },
       "error": {
@@ -112,6 +119,7 @@
     "update": {
       "description": "Updates progress on your goal.",
       "args": {
+        "duration": "`daily`, `weekly`, `monthly`, or `yearly`. Defaults to daily.",
         "progress": "The amount to add to your current total."
       },
       "error": {
