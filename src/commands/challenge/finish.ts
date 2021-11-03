@@ -30,7 +30,6 @@ export const ChallengeFinishCommand: SubCommand = {
       if (activeChallenge == null) {
         // fail on not exist
         await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:challenge.total.error.noChallengeSpecified'))
-        return
       } else {
         await completeRace(activeChallenge, interaction, guildConfig)
       }
@@ -40,7 +39,6 @@ export const ChallengeFinishCommand: SubCommand = {
       if (challengeController.errors.length > 0) {
         // fail on not exist
         await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:challenge.total.error.challengeDoesNotExist'))
-        return
       } else {
         await completeRace(challengeController.challenge(), interaction, guildConfig)
       }
@@ -65,7 +63,6 @@ async function completeRace (challenge: Challenge, interaction: CommandInteracti
   const race = raceController.race
   if ((race.startAt.plus(Duration.fromObject({ minutes: (race.timeOut + 720) })).diff(DateTime.utc())).milliseconds <= 0) { // check whether race finished more than 12 hours ago
     await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:challenge.finish.error.challengeTooOld'))
-    return
   } else { // all possible error states have been checked, add the total
     // check whether we have a link between race and user, and create it if not
     const challengeUser = await ChallengeUser.findOne({

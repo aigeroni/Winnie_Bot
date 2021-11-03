@@ -36,7 +36,7 @@ export const ChallengeLeaveCommand: SubCommand = {
     const challengeUser = await ChallengeUser.findOne({
       where: { userId: userId, challengeController: challengeId }
     })
-    if (challengeUser == null || challengeUser.isCanceled) {
+    if (challengeUser == null || challengeUser.isCanceled()) {
       await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:challenge.leave.error.challengeDoesNotExist'))
       return
     }
