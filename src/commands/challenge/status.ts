@@ -15,7 +15,7 @@ export const ChallengeStatusCommand: SubCommand = {
     options: [
       {
         name: 'id',
-        description: await I18n.translate(locale, 'commands:challenge.status.id.description'),
+        description: await I18n.translate(locale, 'commands:challenge.status.args.id'),
         type: 'INTEGER',
         required: false
       }
@@ -24,7 +24,11 @@ export const ChallengeStatusCommand: SubCommand = {
 
   execute: async (interaction: CommandInteraction, guildConfig: GuildConfig) => {
     const challenge = await ChallengeService.getChallengeFromCommand(interaction, guildConfig)
-    if (challenge == null) { return }
+    if (challenge == null) {
+      await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:challenge.status.error.challengeDoesNotExist'))
+    } else if (challenge.errors.length > 0) {
+      await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:challenge.status.error.couldNotGetStatus'))
+    }
 
     await printStatus(challenge, interaction, guildConfig)
   }
