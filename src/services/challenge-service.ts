@@ -10,8 +10,8 @@ import {
   GuildConfig
 } from '../models'
 import { ChainWarCreateOptions, RaceCreateOptions, WarCreateOptions } from '../types'
-import { Snowflake } from 'discord.js'
-import { Logger } from '../core'
+import { CommandInteraction, Snowflake } from 'discord.js'
+import { I18n, Logger } from '../core'
 import { DiscordService } from '.'
 
 /**
@@ -179,6 +179,28 @@ async function sendChallengeMessage (challengeId: number, getMessage: (guildConf
   })
 }
 
+async function getChallengeFromCommand (interaction: CommandInteraction, guildConfig: GuildConfig): Promise<Challenge | undefined> {
+  const challengeId = interaction.options.getInteger('id')
+  let challenge: Challenge | undefined
+
+  if (challengeId == null) {
+    challenge = await ChallengeService.activeChallengeForUser(interaction.user.id)
+
+    if (challenge == null) {
+      await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:challenge.general.error.noChallengeSpecified'))
+    }
+  } else {
+    challenge = (await ChallengeController.findOne({ where: { id: interaction.options.getInteger('id') } }))?.challenge()
+  }
+
+  if (challenge == null) {
+    await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:challenge.general.error.challengeDoesNotExist'))
+    return
+  }
+
+  return challenge
+}
+
 function getStartTime (delay: number): DateTime {
   const createTime = DateTime.local()
   const difference = Duration.fromObject({ minutes: delay })
@@ -192,5 +214,6 @@ export const ChallengeService = {
   createChainWar,
   createRace,
   createWar,
+  getChallengeFromCommand,
   sendChallengeMessage
 }

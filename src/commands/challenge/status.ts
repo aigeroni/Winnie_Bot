@@ -1,5 +1,5 @@
 import { CommandInteraction } from 'discord.js'
-import { Challenge, GuildConfig, ChallengeController } from '../../models'
+import { Challenge, GuildConfig } from '../../models'
 import { ChallengeService } from '../../services'
 import { I18n } from '../../core'
 import { SubCommand } from '../../types'
@@ -23,24 +23,8 @@ export const ChallengeStatusCommand: SubCommand = {
   }),
 
   execute: async (interaction: CommandInteraction, guildConfig: GuildConfig) => {
-    const challengeId = interaction.options.getInteger('id')
-    let challenge: Challenge | undefined
-
-    if (challengeId == null) {
-      challenge = await ChallengeService.activeChallengeForUser(interaction.user.id)
-
-      if (challenge == null) {
-        await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:challenge.total.error.noChallengeSpecified'))
-        return
-      }
-    } else {
-      challenge = (await ChallengeController.findOne({ where: { id: interaction.options.getInteger('id') } }))?.challenge()
-    }
-
-    if (challenge == null) {
-      await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:challenge.total.error.challengeDoesNotExist'))
-      return
-    }
+    const challenge = await ChallengeService.getChallengeFromCommand(interaction, guildConfig)
+    if (challenge == null) { return }
 
     await printStatus(challenge, interaction, guildConfig)
   }
