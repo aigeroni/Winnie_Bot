@@ -21,7 +21,7 @@ jobs:
         terraform_wrapper: false
         cli_config_credentials_token: ${{ secrets.TERRAFORM_API_TOKEN }}
     - name: Build tfvars file
-      run: cd ./terraform && printf "do_token = \"%s\"\ntest_ip_address = \"%s\" $DO_TOKEN $TEST_IP > cd.auto.tfvars
+      run: cd ./terraform && printf "do_token = \"%s\"\ntest_ip_address = \"%s\"" $DO_TOKEN $TEST_IP > cd.auto.tfvars
       env:
         DO_TOKEN: ${{ secrets.DO_PAT }}
         TEST_IP: ${{ secrets.TEST_IP }}
