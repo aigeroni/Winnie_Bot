@@ -1,8 +1,10 @@
 import { CommandInteraction } from 'discord.js'
-import { GuildConfig } from '../../models'
+import { Jobs } from '../../jobs'
+import { Challenge, GuildConfig } from '../../models'
 import { ChallengeService } from '../../services'
 import { I18n } from '../../core'
-import { ChainWarCreateOptions, RaceCreateOptions, WarCreateOptions, RaceTypes, SubCommand } from '../../types'
+import { ChainWarCreateOptions, RaceCreateOptions, WarCreateOptions, RaceTypes, SubCommand, StartChallengeJobData } from '../../types'
+
 
 const NAME = 'start'
 
@@ -164,6 +166,9 @@ async function chain (interaction: CommandInteraction, guildConfig: GuildConfig)
   } else {
     await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:challenge.start.chain.success'))
   }
+
+  const challengeJobData = getJobData(challenge)
+  Jobs.challengeJobs.StartChallengeJob.enqueue(challengeJobData).catch(async () => {await I18n.translate(guildConfig.locale, 'commands:challenge.start.race.error.couldNotStartRace')})
 }
 
 async function race (interaction: CommandInteraction, guildConfig: GuildConfig): Promise<void> {
@@ -175,6 +180,9 @@ async function race (interaction: CommandInteraction, guildConfig: GuildConfig):
   } else {
     await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:challenge.start.race.success'))
   }
+
+  const challengeJobData = getJobData(challenge)
+  Jobs.challengeJobs.StartChallengeJob.enqueue(challengeJobData).catch(async () => {await I18n.translate(guildConfig.locale, 'commands:challenge.start.race.error.couldNotStartRace')})
 }
 
 async function war (interaction: CommandInteraction, guildConfig: GuildConfig): Promise<void> {
@@ -186,6 +194,9 @@ async function war (interaction: CommandInteraction, guildConfig: GuildConfig): 
   } else {
     await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:challenge.start.war.success'))
   }
+
+  const challengeJobData = getJobData(challenge)
+  Jobs.challengeJobs.StartChallengeJob.enqueue(challengeJobData).catch(async () => {await I18n.translate(guildConfig.locale, 'commands:challenge.start.race.error.couldNotStartRace')})
 }
 
 /**
@@ -246,5 +257,19 @@ function getWarOptions (interaction: CommandInteraction): WarCreateOptions {
     join: interaction.options.getBoolean('join') ?? false,
     ownerId: interaction.user?.id,
     name: interaction.options.getString('type') ?? `${interaction.user.username}'s war`
+  }
+}
+
+/**
+   * Parses the arguments passed into the command.
+   *
+   * @param interaction The command that was ran
+   * @param guildConfig The config object of the guild the interaction was run in.
+   * @param userConfig The config object of the user who ran the command.
+   * @returns An object containing the parameters for creating the goal
+   */
+ function getJobData (challenge: Challenge): StartChallengeJobData {
+  return {
+    challengeId: challenge.id
   }
 }
