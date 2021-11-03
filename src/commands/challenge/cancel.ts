@@ -14,7 +14,7 @@ export const ChallengeCancelCommand: SubCommand = {
     options: [
       {
         name: 'id',
-        description: await I18n.translate(locale, 'commands:challenge.cancel.id.description'),
+        description: await I18n.translate(locale, 'commands:challenge.cancel.args.id'),
         type: 'INTEGER',
         required: true
       }
