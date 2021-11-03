@@ -14,6 +14,7 @@ import { Message, Permissions } from 'discord.js'
 async function handleMention (message: Message, guildConfig: GuildConfig): Promise<void> {
   if (WinnieClient.client.user == null) { return }
   if (!message.mentions.has(WinnieClient.client.user?.id)) { return }
+  Logger.info('Winnie successfully registered mention')
 
   const response = await I18n.translate(guildConfig.locale, 'mentionResponse')
   await message.channel.send(response)
@@ -44,13 +45,18 @@ async function deployCommands (message: Message, guildConfig: GuildConfig): Prom
 export const MessageEvent: Event = {
   name: 'message',
   handle: async (message: Message): Promise<void> => {
+    Logger.info('entered message handler')
     if (message.guild == null) { return } // Ignore direct messages.
     if (message.author.bot) { return } // Ignore messages from bots
 
+    Logger.info('attempting to create guild config')
     const guildConfig = await GuildConfig.findOrCreate(message.guild?.id)
+    Logger.info('created guild config')
     if (guildConfig == null) { return }
 
+    Logger.info('handling mention')
     await handleMention(message, guildConfig)
+    Logger.info('deploying commands')
     await deployCommands(message, guildConfig)
   }
 }
