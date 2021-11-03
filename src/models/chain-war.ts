@@ -19,7 +19,7 @@ export class ChainWar extends Challenge {
    * If not present, the default war length will be used
    */
   @Column()
-  duration?: number
+  duration: number = 10
 
   /**
    * The total number of wars in the chain
