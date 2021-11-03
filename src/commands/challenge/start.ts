@@ -21,37 +21,37 @@ export const ChallengeStartCommand: SubCommand = {
         options: [
           {
             name: 'chain_length',
-            description: await I18n.translate(locale, 'commands:challenge.start.chain.length.description'),
+            description: await I18n.translate(locale, 'commands:challenge.start.chain.args.length'),
             type: 'INTEGER',
             required: true
           },
           {
             name: 'delay',
-            description: await I18n.translate(locale, 'commands:challenge.start.chain.delay.description'),
+            description: await I18n.translate(locale, 'commands:challenge.start.chain.args.delay'),
             type: 'INTEGER',
             required: false
           },
           {
             name: 'duration',
-            description: await I18n.translate(locale, 'commands:challenge.start.chain.duration.description'),
+            description: await I18n.translate(locale, 'commands:challenge.start.chain.args.duration'),
             type: 'INTEGER',
             required: false
           },
           {
             name: 'join',
-            description: await I18n.translate(locale, 'commands:challenge.start.chain.join.description'),
+            description: await I18n.translate(locale, 'commands:challenge.start.chain.args.join'),
             type: 'BOOLEAN',
             required: false
           },
           {
             name: 'name',
-            description: await I18n.translate(locale, 'commands:challenge.start.chain.name.description'),
+            description: await I18n.translate(locale, 'commands:challenge.start.chain.args.name'),
             type: 'STRING',
             required: false
           },
           {
             name: 'split',
-            description: await I18n.translate(locale, 'commands:challenge.start.chain.split.description'),
+            description: await I18n.translate(locale, 'commands:challenge.start.chain.args.split'),
             type: 'INTEGER',
             required: false
           }
@@ -64,37 +64,37 @@ export const ChallengeStartCommand: SubCommand = {
         options: [
           {
             name: 'delay',
-            description: await I18n.translate(locale, 'commands:challenge.start.race.delay.description'),
+            description: await I18n.translate(locale, 'commands:challenge.start.race.args.delay'),
             type: 'INTEGER',
             required: false
           },
           {
             name: 'duration',
-            description: await I18n.translate(locale, 'commands:challenge.start.race.duration.description'),
+            description: await I18n.translate(locale, 'commands:challenge.start.race.args.duration'),
             type: 'INTEGER',
             required: false
           },
           {
             name: 'join',
-            description: await I18n.translate(locale, 'commands:challenge.start.race.join.description'),
+            description: await I18n.translate(locale, 'commands:challenge.start.race.args.join'),
             type: 'BOOLEAN',
             required: false
           },
           {
             name: 'name',
-            description: await I18n.translate(locale, 'commands:challenge.start.race.name.description'),
+            description: await I18n.translate(locale, 'commands:challenge.start.race.args.name'),
             type: 'STRING',
             required: false
           },
           {
             name: 'target',
-            description: await I18n.translate(locale, 'commands:challenge.start.race.target.description'),
+            description: await I18n.translate(locale, 'commands:challenge.start.race.args.target'),
             type: 'INTEGER',
             required: true
           },
           {
             name: 'type',
-            description: await I18n.translate(locale, 'commands:challenge.start.race.type.description'),
+            description: await I18n.translate(locale, 'commands:challenge.start.race.args.type'),
             type: 'STRING',
             choices: Object.values(RaceTypes).map((type) => ({
               name: type,
@@ -111,25 +111,25 @@ export const ChallengeStartCommand: SubCommand = {
         options: [
           {
             name: 'delay',
-            description: await I18n.translate(locale, 'commands:challenge.start.war.delay.description'),
+            description: await I18n.translate(locale, 'commands:challenge.start.war.args.delay'),
             type: 'INTEGER',
             required: false
           },
           {
             name: 'duration',
-            description: await I18n.translate(locale, 'commands:challenge.start.war.duration.description'),
+            description: await I18n.translate(locale, 'commands:challenge.start.war.args.duration'),
             type: 'INTEGER',
             required: false
           },
           {
             name: 'join',
-            description: await I18n.translate(locale, 'commands:challenge.start.war.join.description'),
+            description: await I18n.translate(locale, 'commands:challenge.start.war.args.join'),
             type: 'BOOLEAN',
             required: false
           },
           {
             name: 'name',
-            description: await I18n.translate(locale, 'commands:challenge.start.war.name.description'),
+            description: await I18n.translate(locale, 'commands:challenge.start.war.args.name'),
             type: 'STRING',
             required: false
           }
@@ -212,7 +212,7 @@ function getChainOptions (interaction: CommandInteraction): ChainWarCreateOption
     delay: interaction.options.getInteger('delay') ?? 5,
     duration: interaction.options.getInteger('duration') ?? 10,
     join: interaction.options.getBoolean('join') ?? false,
-    chainLength: interaction.options.getInteger('chain_length') ?? 10,
+    chainLength: interaction.options.getInteger('chain_length') ?? 0,
     ownerId: interaction.user?.id,
     name: interaction.options.getString('type') ?? `${interaction.user.username}'s chain war`,
     split: interaction.options.getInteger('split') ?? 5
