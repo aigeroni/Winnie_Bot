@@ -89,7 +89,7 @@ async function set (interaction: CommandInteraction, guildConfig: GuildConfig): 
   await userConfig.save()
 
   if (userConfig.errors.length > 0) {
-    await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:config.timezone.set.error'))
+    await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:config.timezone.set.error.invalidValue'))
   } else {
     await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:config.timezone.set.success', {
       timezone: userConfig.timezone.name

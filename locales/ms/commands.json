@@ -1,6 +1,5 @@
 {
   "defaultError": "**Ralat tidak diketahui:** Minta maaf, saya tidak dapat berbuat demikian. Kejadian ini telah dilogkan ke dashboard.",
-  
   "deploy": {
     "error": "**Unknown Error**: Commands failed to deploy.",
     "success": "Commands deployed successfully."
