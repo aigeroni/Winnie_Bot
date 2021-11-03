@@ -19,7 +19,7 @@
         "success": "Tes préférences en matière de visibilité de tes défis ont été réinitialisées. Les défis **seront** désormais visibles sur les autres serveurs."
       },
       "set": {
-        "description": "Définis si tes défis sont visibles sur les autres serveurs..",
+        "description": "Définis si tes défis sont visibles sur les autres serveurs.",
         "disabled": "Tes défis **ne seront pas** visibles sur les autres serveurs.",
         "enabled": "Tes défis **seront** visibles sur les autres serveurs.",
         "error": "**ERREUR**: Tes préférences en matière de visibilité sur les autres serveurs ne peuvent être définies (erreur de validation de la base de données).",
