@@ -72,30 +72,34 @@ async function setTotal (challenge: Challenge, interaction: CommandInteraction, 
 
   // we need the war, so get the controller and then the war
   const warController = await ChallengeController.findOne({ where: { id: challenge.id } })
-  const war = warController.war
-  if (war !== undefined) {
-    if ((war.startAt.plus(Duration.fromObject({ minutes: (war.duration + 720) })).diff(DateTime.utc())).milliseconds <= 0) { // check whether war finished more than 12 hours ago
-      await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:challenge.total.error.challengeTooOld'))
-    } else { // all possible error states have been checked, add the total
-      // check whether we have a link between war and user, and create it if not
-      const challengeUser = await ChallengeUser.findOne({
-        where: { userId: interaction.user.id, challengeController: warController.id }
-      })
-      if (challengeUser == null) {
-        const challengeUser = await ChallengeService.addUserToChallenge(interaction.user.id, warController.id, interaction.channel.id)
-        if (challengeUser.errors.length > 0) {
-          await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:challenge.total.error.couldNotAddTotal'))
-          return
+  if (warController !== undefined) {
+    const war = warController.war
+    if (war !== undefined) {
+      if ((war.startAt.plus(Duration.fromObject({ minutes: (war.duration + 720) })).diff(DateTime.utc())).milliseconds <= 0) { // check whether war finished more than 12 hours ago
+        await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:challenge.total.error.challengeTooOld'))
+      } else { // all possible error states have been checked, add the total
+        // check whether we have a link between war and user, and create it if not
+        const challengeUser = await ChallengeUser.findOne({
+          where: { userId: interaction.user.id, challengeController: warController.id }
+        })
+        if (challengeUser == null) {
+          const challengeUser = await ChallengeService.addUserToChallenge(interaction.user.id, warController.id, interaction.channel.id)
+          if (challengeUser.errors.length > 0) {
+            await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:challenge.total.error.couldNotAddTotal'))
+            return
+          }
         }
+        // update total in database
+        challengeUser.total = interaction.options.getNumber('total')
+        // update total type
+        challengeUser.totalType = interaction.options.getString('type') as RaceTypes
+        // return success message
+        await interaction.reply(await I18n.translate(guildConfig.locale, 'challenge:total'))
       }
-      // update total in database
-      challengeUser.total = interaction.options.getNumber('total')
-      // update total type
-      challengeUser.totalType = interaction.options.getString('type') as RaceTypes
-      // return success message
-      await interaction.reply(await I18n.translate(guildConfig.locale, 'challenge:total'))
+    } else {
+      await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:challenge.total.error.couldNotAddTotal'))
     }
   } else {
-    throw new Error() // uh... yikes?
+    await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:challenge.total.error.couldNotAddTotal'))
   }
 }

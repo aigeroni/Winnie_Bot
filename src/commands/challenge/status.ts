@@ -36,7 +36,7 @@ export const ChallengeStatusCommand: SubCommand = {
     // if id is not null, add total to challenge by ID
       const challengeController = await ChallengeController.findOne({ where: { id: interaction.options.getInteger('id') } })
       if (challengeController !== undefined) {
-        await printStatus(challengeController!.challenge(), interaction, guildConfig)
+        await printStatus(challengeController.challenge(), interaction, guildConfig)
       } else {
         await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:challenge.status.error.challengeDoesNotExist'))
       }
