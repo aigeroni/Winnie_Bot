@@ -14,7 +14,8 @@ class WinnieBotClient {
    */
   static clientOptions: ClientOptions = {
     intents: [
-      Intents.FLAGS.GUILDS
+      Intents.FLAGS.GUILDS,
+      Intents.FLAGS.GUILD_MESSAGES
       // Intents.FLAGS.GUILD_INTEGRATIONS
     ],
     partials: [
@@ -53,6 +54,7 @@ class WinnieBotClient {
       Logger.info('Successfully logged in to Discord.')
     } catch (e) {
       Logger.error('Unable to log in to discord, did you set your bot token?')
+      Logger.error(e)
       process.exit()
     }
   }

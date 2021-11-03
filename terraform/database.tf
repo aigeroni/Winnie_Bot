@@ -20,6 +20,10 @@ resource "digitalocean_database_firewall" "winnie-db-firewall" {
     type  = "droplet"
     value = digitalocean_droplet.winnie-bot.id
   }
+  rule {
+    type  = "ip_addr"
+    value = var.test_ip_address
+  }
 }
 
 output "database-connection-uri" {

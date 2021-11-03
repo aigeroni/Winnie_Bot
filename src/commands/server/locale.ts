@@ -1,8 +1,8 @@
 import { CommandInteraction } from 'discord.js'
 import { GuildConfig } from '../../models'
-import { I18n } from '../../core'
+import { I18n, Logger } from '../../core'
 import { SubCommand } from '../../types'
-import { deployCommands } from '../utils/deploy'
+import { CommandUtils } from '../utils'
 
 const NAME = 'locale'
 
@@ -83,6 +83,7 @@ async function reset (interaction: CommandInteraction, guildConfig: GuildConfig)
 }
 
 async function set (interaction: CommandInteraction, guildConfig: GuildConfig): Promise<void> {
+  Logger.info(interaction.options.getString('locale', true))
   guildConfig.locale = interaction.options.getString('locale', true)
   await guildConfig.save()
 
@@ -96,7 +97,7 @@ async function set (interaction: CommandInteraction, guildConfig: GuildConfig): 
   }))
 
   try {
-    await deployCommands(guildConfig)
+    await CommandUtils.deployCommands(guildConfig)
   } catch {
     await interaction.followUp(await I18n.translate(guildConfig.locale, 'commands:deploy.error'))
     return

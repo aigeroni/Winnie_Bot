@@ -1,7 +1,7 @@
 import { Event } from '../types'
 import { Guild } from 'discord.js'
 import { GuildConfig } from '../models'
-import { deployCommands } from '../commands/utils/deploy'
+import { CommandUtils } from '../commands/utils'
 
 /**
  * Handles the guildCreate event, fired whenever Winnie_Bot joins a new guild.
@@ -14,6 +14,6 @@ export const GuildCreateEvent: Event = {
   name: 'guildCreate',
   handle: async (guild: Guild): Promise<void> => {
     const guildConfig = await GuildConfig.findOrCreate(guild.id)
-    await deployCommands(guildConfig)
+    await CommandUtils.deployCommands(guildConfig)
   }
 }
