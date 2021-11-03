@@ -1,7 +1,7 @@
 {
   "startsIn": "Your {{challengeType}}, {{challengeName}}, (ID {{id}}), starts in {{minutes}}.",
-  "startWar": "{{ challengeName }} (ID {{ id }}, {{ duration }} minutes) starts now!\n\n{{joinedUsers}}",
-  "startRace": "{{ challengeName }} (ID {{ id }}) starts now! Race to {{ target }} {{ type }}! (times out in {{ timeout }} minutes)\n\n{{ joined_users }}",
+  "startWar": "{{ challengeName }} (ID {{ id }}, {{ duration }}) starts now!\n\n{{joinedUsers}}",
+  "startRace": "{{ challengeName }} (ID {{ id }}) starts now! Race to {{ target }} {{ type }}! (times out in {{ timeout }})\n\n{{ joined_users }}",
   "status": "**{{id}}**: {{challengeName}} {{data}}, {{server}}",
   "summary": "",
   "total": "Your total of **{{total}}** {{type}} has been added to the summary for {{challengeName}} (ID {{id}}).",
