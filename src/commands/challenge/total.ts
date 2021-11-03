@@ -40,13 +40,12 @@ export const ChallengeTotalCommand: SubCommand = {
   }),
 
   execute: async (interaction: CommandInteraction, guildConfig: GuildConfig) => {
-    if (interaction.options.getInteger('id') == null ) {
+    if (interaction.options.getInteger('id') == null) {
       // if id is null, add total to joined challenge
       const activeChallenge = await ChallengeService.activeChallengeForUser(interaction.user.id)
       if (activeChallenge == null) {
         // fail on not exist
         await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:challenge.total.error.noChallengeSpecified'))
-        return
       } else {
         await setTotal(activeChallenge, interaction, guildConfig)
       }
@@ -56,7 +55,6 @@ export const ChallengeTotalCommand: SubCommand = {
       if (challengeController.errors.length > 0) {
         // fail on not exist
         await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:challenge.total.error.challengeDoesNotExist'))
-        return
       } else {
         await setTotal(challengeController.challenge(), interaction, guildConfig)
       }
@@ -67,13 +65,10 @@ export const ChallengeTotalCommand: SubCommand = {
 async function setTotal(challenge: Challenge, interaction: CommandInteraction, guildConfig: GuildConfig): Promise<void> {
   if (challenge.isCanceled()) { // check whether challenge has been cancelled
     await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:challenge.total.error.challengeDoesNotExist'))
-    return
-  } else if (challenge.challenge_type == 'race') { // check whether challenge is race
+  } else if (challenge.challenge_type === 'race') { // check whether challenge is race
     await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:challenge.total.error.challengeIsRace'))
-    return
   } else if (!(challenge.hasStarted)) { // check whether the challenge has started
     await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:challenge.total.error.challengeHasNotStarted'))
-    return
   }
   
   // we need the war, so get the controller and then the war
@@ -84,9 +79,9 @@ async function setTotal(challenge: Challenge, interaction: CommandInteraction, g
     return
   } else { // all possible error states have been checked, add the total
     // check whether we have a link between war and user, and create it if not
-    let challengeUser = await ChallengeUser.findOne({
+    const challengeUser = await ChallengeUser.findOne({
       where: { userId: interaction.user.id, challengeController: warController.id }
-    })
+    } )
     if (challengeUser == null) {
       const challengeUser = await ChallengeService.addUserToChallenge(interaction.user.id, warController.id, interaction.channel.id)
       if (challengeUser.errors.length > 0 ) {
