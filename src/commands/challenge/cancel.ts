@@ -33,7 +33,7 @@ export const ChallengeCancelCommand: SubCommand = {
     } else if (challenge.hasStarted) {
       await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:challenge.cancel.error.challengeHasAlreadyStarted'))
       return
-    } else if (challenge.createdBy != interaction.user.id) {
+    } else if (challenge.createdBy !== interaction.user.id) {
       await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:challenge.cancel.error.userIsNotOwner'))
       return
     }

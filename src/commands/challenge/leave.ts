@@ -3,7 +3,6 @@ import { ChallengeController, ChallengeUser, GuildConfig } from '../../models'
 import { I18n } from '../../core'
 import { SubCommand } from '../../types'
 import { ChallengeService } from '../../services'
-import { InteractionResponseTypes } from 'discord.js/typings/enums'
 
 const NAME = 'leave'
 
