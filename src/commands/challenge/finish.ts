@@ -4,6 +4,7 @@ import { I18n } from '../../core'
 import { SubCommand } from '../../types'
 import { ChallengeService } from '../../services'
 import { DateTime, Duration } from 'luxon'
+import { ESTALE } from 'constants'
 
 const NAME = 'finish'
 
@@ -36,7 +37,9 @@ export const ChallengeFinishCommand: SubCommand = {
     } else {
       // if id is not null, add total to challenge by ID
       const challengeController = await ChallengeController.findOne({ where: { id: interaction.options.getInteger('id') } })
-      if (challengeController.errors.length > 0) {
+      if (challengeController == undefined) {
+        throw new Error() // uh... yikes?
+      } else if (challengeController.errors.length > 0) {
         // fail on not exist
         await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:challenge.total.error.challengeDoesNotExist'))
       } else {
