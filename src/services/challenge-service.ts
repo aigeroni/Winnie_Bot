@@ -166,7 +166,7 @@ async function activeChallengeForUser (userId: Snowflake): Promise<Challenge | n
  * @param challengeId the universal id of the challenge
  * @param messageKey the localisation key of the message to send
  */
-async function sendChallengeMessage (challengeId: number, messageKey: string): Promise<void> {
+async function sendChallengeMessage (challengeId: number, messageKey: string, interpolations?: Record<string, string | number | boolean>): Promise<void> {
   const challengeController = await ChallengeController.findOne({ where: { id: challengeId } })
   if (challengeController == null) {
     Logger.error(`Unable to send messages for challenge with id: ${challengeId}. The challenge could not be found.`)
@@ -174,7 +174,7 @@ async function sendChallengeMessage (challengeId: number, messageKey: string): P
   }
 
   challengeController.channels.forEach((channel) => {
-    DiscordService.sendMessageToChannel(channel.channelId, messageKey).catch(() => {})
+    DiscordService.sendMessageToChannel(channel.channelId, messageKey, interpolations).catch(() => {})
   })
 }
 

@@ -13,14 +13,14 @@ async function getGuildFromChannel (channelId: Snowflake): Promise<Guild | undef
   }
 }
 
-async function sendMessageToChannel (channelId: Snowflake, messageKey: string): Promise<void> {
+async function sendMessageToChannel (channelId: Snowflake, messageKey: string, interpolations?: Record<string, string | number | boolean>): Promise<void> {
   const guild = await getGuildFromChannel(channelId)
   const channel = (await WinnieClient.client.channels.fetch(channelId)) as TextChannel
   if (guild == null || channel == null) { return }
 
   const guildConfig = await GuildConfig.findOrCreate(guild.id)
 
-  const message = await I18n.translate(guildConfig.locale, messageKey)
+  const message = await I18n.translate(guildConfig.locale, messageKey, interpolations)
   await channel.send(message)
 }
 
