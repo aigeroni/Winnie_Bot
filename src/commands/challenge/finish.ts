@@ -36,10 +36,10 @@ export const ChallengeFinishCommand: SubCommand = {
     } else {
       // if id is not null, add total to challenge by ID
       const challengeController = await ChallengeController.findOne({ where: { id: interaction.options.getInteger('id') } })
-      if (challengeController === undefined) {
-        await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:challenge.total.error.challengeDoesNotExist'))
-      } else {
+      if (challengeController !== undefined) {
         await completeRace(challengeController.challenge(), interaction, guildConfig)
+      } else {
+        await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:challenge.total.error.challengeDoesNotExist'))
       }
     }
   }
