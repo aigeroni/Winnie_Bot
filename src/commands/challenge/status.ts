@@ -10,12 +10,12 @@ export const ChallengeStatusCommand: SubCommand = {
   name: NAME,
   commandData: async (locale: string) => ({
     name: NAME,
-    description: await I18n.translate(locale, 'commands:challenge.join.description'),
+    description: await I18n.translate(locale, 'commands:challenge.status.description'),
     type: 'SUB_COMMAND',
     options: [
       {
         name: 'id',
-        description: await I18n.translate(locale, 'commands:challenge.join.id.description'),
+        description: await I18n.translate(locale, 'commands:challenge.status.id.description'),
         type: 'INTEGER',
         required: false
       }
@@ -28,7 +28,7 @@ export const ChallengeStatusCommand: SubCommand = {
       const activeChallenge = await ChallengeService.activeChallengeForUser(interaction.user.id)
       if (activeChallenge == null) {
         // fail on not exist
-        await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:challenge.total.error.noChallengeSpecified'))
+        await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:challenge.status.error.noChallengeSpecified'))
         return
       } else {
         await printStatus(activeChallenge, interaction, guildConfig)
@@ -38,7 +38,7 @@ export const ChallengeStatusCommand: SubCommand = {
     const challengeController = await ChallengeController.findOne({ where: { id: interaction.options.getInteger('id') } })
       if (challengeController.errors.length > 0) {
           // fail on not exist
-          await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:challenge.total.error.challengeDoesNotExist'))
+          await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:challenge.status.error.challengeDoesNotExist'))
           return
       } else {
         await printStatus(challengeController.challenge(), interaction, guildConfig)
@@ -49,7 +49,7 @@ export const ChallengeStatusCommand: SubCommand = {
 
 async function printStatus(challenge: Challenge, interaction: CommandInteraction, guildConfig: GuildConfig): Promise<void> {
   if (challenge.isCanceled()) { // check whether challenge has been cancelled
-    await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:challenge.total.error.challengeDoesNotExist'))
+    await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:challenge.status.error.challengeDoesNotExist'))
     return
   } else {
     await interaction.reply(await I18n.translate(guildConfig.locale, 'challenges:status'))
