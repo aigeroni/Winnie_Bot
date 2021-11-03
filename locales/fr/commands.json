@@ -44,7 +44,7 @@
           "timezone": "Un identifiant de fuseau horaire IANA."
         },
         "error": {
-          "invalidValue": "**ERREUR:** Winnie_Bot n'accepte que des identifiants de fuseau horaire IANA. Le format est généralement : `Continent/La_Plus_Grande_Ville_de_la_Région` -- par exemple, `Europe/Paris`, `Europe/Luxembourg`, `Europe/Brussels`, or `Europe/Zurich`."
+          "invalidValue": "**ERREUR:** Winnie_Bot n'accepte que des identifiants de fuseau horaire IANA. Le format est généralement : `Continent/La_Plus_Grande_Ville_de_la_Région` -- par exemple, `Europe/Paris`, `Europe/Luxembourg`, `Europe/Brussels`, `Europe/Zurich`, or `America/Montreal`."
         }
       }
     }
@@ -55,7 +55,7 @@
       "description": "Annule ton objectif actuel.",
       "success": "Ton objectif actuel a été annulé avec succès.",
       "error": {
-        "couldNotCancelGoal": "**ERREYR**: Impossible d'annuler l'objectif actuel (erreur de validation de la base de données).",
+        "couldNotCancelGoal": "**ERREUR**: Impossible d'annuler l'objectif actuel (erreur de validation de la base de données).",
         "noActiveGoal": "**ERREUR**: Tu n'as pas d'objectif actuellement."
       }
     },
@@ -73,7 +73,7 @@
       "error": {
         "couldNotOverwriteGoal": "**ERREUR**: Impossible de mettre à jour l'objectif (erreur de validation de la base de données).",
         "noActiveGoal": "**ERREUR**: Tu n'as pas encore défini d'objectif. Utilise `/goal set` pour le faire.",
-        "overwriteMustNoBeNegative": "**Error**: Ta progression totale quant à ton objectif ne peut être un nombre négatif."
+        "overwriteMustNoBeNegative": "**ERREUR**: Ta progression totale quant à ton objectif ne peut être un nombre négatif."
       }
     },
     "reset": {
