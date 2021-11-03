@@ -19,12 +19,16 @@ export const StartChallengeJob: WinnieJob<StartChallengeJobData> = {
     if (challenge.errors.length > 0) {
       throw new Error(`An error occured starting challenge with id: ${challenge.id}`)
     } else {
-      if (challenge.challenge_type === 'race') {
-        await sendRaceMessages(challengeId, challenge as Race)
-      } else if (challenge.challenge_type === 'war') {
-        await sendWarMessages(challengeId, challenge as War)
-      } else if (challenge.challenge_type === 'chain_war') {
-        await sendWarMessages(challengeId, challenge as ChainWar)
+      switch (challenge.challenge_type) {
+        case 'race':
+          await sendRaceMessages(challengeId, challenge as Race)
+          break
+        case 'war':
+          await sendWarMessages(challengeId, challenge as War)
+          break
+        case 'chain_war':
+          await sendWarMessages(challengeId, challenge as ChainWar)
+          break
       }
     }
   }
