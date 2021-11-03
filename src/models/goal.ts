@@ -1,24 +1,18 @@
-import { BaseModel } from './base-model'
-import { BeforeInsert, BeforeUpdate, Column, Entity, PrimaryGeneratedColumn } from 'typeorm'
+import { Column, Entity } from 'typeorm'
 import { DateTime, Duration, Interval } from 'luxon'
 import { GoalDurations, GoalTypes } from '../types'
 import { IsChannelWithPermission } from './validators/channel-with-permission'
 import { IsNotEmpty, IsPositive, MaxLength, Min, ValidateIf } from 'class-validator'
 import { I18n, WinnieClient } from '../core'
-import { Permissions, Snowflake } from 'discord.js'
-import { DateTimeTransformer, NullableDateTimeTransformer } from './transformers/date-time'
+import { Guild, GuildChannel, Permissions, Snowflake } from 'discord.js'
+import { DateTimeTransformer } from './transformers/date-time'
+import { Mission } from './bases/mission'
 
 /**
  * Represents a goal users can set.
  */
 @Entity({ name: 'goals' })
-export class Goal extends BaseModel {
-  /**
-   * The goal's id.
-   */
-  @PrimaryGeneratedColumn()
-  id!: number
-
+export class Goal extends Mission {
   /**
    * The target for the goal.
    *
@@ -42,9 +36,9 @@ export class Goal extends BaseModel {
    *
    * example: 3 out of 5 pages
    */
-  @Column({ type: 'int' })
+  @Column()
   @Min(0)
-  progress = 0
+  progress: number = 0
 
   /**
    * The goals duration, how long the user has to complete their goal.
@@ -74,60 +68,10 @@ export class Goal extends BaseModel {
   channelId!: Snowflake
 
   /**
-    * The timestamp of when this goal was created.
-    */
-  @Column({ name: 'created_at', transformer: new DateTimeTransformer(), type: 'varchar' })
-  createdAt!: DateTime
-
-  /**
-  * The timestamp of the most recent time this goal was updated.
-  *
-  * Null if the goal has never been updated.
-  */
-  @Column({ name: 'updated_at', transformer: new NullableDateTimeTransformer(), type: 'varchar' })
-  updatedAt?: DateTime
-
-  /**
- * Timestamp of when this goal was canceled.
- *
- * Null if not canceled
- */
-  @Column({ name: 'canceled_at', transformer: new NullableDateTimeTransformer(), type: 'varchar' })
-  canceledAt?: DateTime
-
-  /**
- * Timestamp of when this goal was completed.
- *
- * Null if not completed
- */
-  @Column({ name: 'completed_at', transformer: new NullableDateTimeTransformer(), type: 'varchar' })
-  completedAt?: DateTime
-
-  /**
    * The anticipated time the goal will end, based on the creation time.
    */
   @Column({ name: 'expected_end_at', transformer: new DateTimeTransformer(), type: 'varchar' })
   expectedEndAt!: DateTime
-
-  /**
-   * Listener for the beforeInsert event.
-   *
-   * Sets the created at timestamp.
-   */
-  @BeforeInsert()
-  onBeforeInsert (): void {
-    this.createdAt = DateTime.utc()
-  }
-
-  /**
-   * Listener for the beforeUpdate event.
-   *
-   * Sets the updated at timestamp.
-   */
-  @BeforeUpdate()
-  onBeforeUpdate (): void {
-    this.updatedAt = DateTime.utc()
-  }
 
   /**
     * Gets the end date for the goal.
@@ -152,44 +96,35 @@ export class Goal extends BaseModel {
    * @returns A Duration instance representing the time until the goal ends
    */
   timeRemaining (): Duration {
-    if (!this.active()) { return Duration.fromObject({ minutes: 0 }) }
+    if (!this.isActive()) { return Duration.fromObject({ minutes: 0 }) }
 
     const timeRemaining = Interval.fromDateTimes(DateTime.utc(), this.endDate()).toDuration()
     return timeRemaining.shiftTo('months', 'days', 'hours', 'minutes')
   }
 
   /**
-   * Checks if the goal is active.
-   * Active is defined as not completed and not canceled
+   * Gets the guild this goal was created in
    *
-   * @returns true if the goal is active
+   * @returns The Guild object for the guild this goal was created in.
+   *          undefined if the guild was not able to be looked up.
    */
-  active (): boolean {
-    return this.completedAt == null && this.canceledAt == null
-  }
+  async getGuild (): Promise<Guild | undefined> {
+    if (!WinnieClient.isLoggedIn()) { return }
 
-  /**
-   * Takes the current goal and makes it as complete.
-   */
-  async complete (): Promise<void> {
-    this.completedAt = DateTime.utc()
-    await this.save()
-  }
+    const channel = await WinnieClient.client.channels.fetch(this.channelId)
+    if (channel == null) { return }
 
-  /**
-   * Takes the current goal and makes it as canceled.
-   */
-  async cancel (): Promise<void> {
-    this.canceledAt = DateTime.utc()
-    await this.save()
+    if (channel instanceof GuildChannel) {
+      return channel.guild
+    }
   }
 
   /**
    * Creates a localised string containing the details of the goal.
    *
    * @param locale The locale in which to print the string
-    * @returns A localised string representing the goal.
-    */
+   * @returns A localised string representing the goal.
+   */
   async print (locale: string): Promise<string> {
     const detailsString = await I18n.translate(locale, 'goals:details', {
       progress: await I18n.translate(locale, `goals:typesWithCount.${this.goalType}`, { count: this.progress }),

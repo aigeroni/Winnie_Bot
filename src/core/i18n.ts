@@ -5,7 +5,7 @@ import i18next from 'i18next'
  * Functionality related to localizing Winnie
  */
 export const I18n = {
-  SUPPORTED_LANGUAGES: ['en', 'fr', 'hu', 'nl', 'sv'],
+  SUPPORTED_LANGUAGES: ['en', 'fr', 'hu', 'la', 'ms', 'nl', 'sv'],
 
   /**
    * Initializes the logger and sets default configurations
@@ -17,7 +17,7 @@ export const I18n = {
       defaultNS: 'winnie',
       fallbackLng: ['en'],
       lng: 'en',
-      ns: ['commands', 'goals', 'winnie'],
+      ns: ['challenges', 'commands', 'goals', 'prompts', 'winnie'],
       preload: ['en'],
       supportedLngs: I18n.SUPPORTED_LANGUAGES
     })

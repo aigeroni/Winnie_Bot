@@ -5,7 +5,7 @@ import { ValidationError, validate } from 'class-validator'
  * A base class for all Winnie_Bot models containing some
  * common functionality.
  */
-export class BaseModel extends BaseEntity {
+export abstract class BaseModel extends BaseEntity {
   /**
    * A list of all validation errors
    */

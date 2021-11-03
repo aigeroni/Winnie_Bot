@@ -1,206 +1,318 @@
 {
-  "defaultError": "**Unknown Error:** I'm sorry, I'm afraid I can't do that. This incident has been logged to the dashboard.",
+  "defaultError": "**Ralat tidak diketahui:** Minta maaf, saya tidak dapat berbuat demikian. Kejadian ini telah dilogkan ke dashboard.",
+  
+  "deploy": {
+    "error": "**Unknown Error**: Commands failed to deploy.",
+    "success": "Commands deployed successfully."
+  },
   "config": {
-    "description": "Configures Winnie_Bot to meet your needs.",
+    "description": "Mengkonfigurasi Winnie_Bot untuk memenuhi keperluan awak.",
     "crossGuild": {
-      "description": "Controls whether your challenges are visible to other servers.",
+      "description": "Mengawal sama ada cabaran awak dapat dilihat oleh pelayan lain.",
       "get": {
-        "description": "Displays whether your challenges are visible to other servers.",
-        "disabled": "Your challenges **will not** display on other servers.",
-        "enabled": "Your challenges **will** display on other servers."
+        "description": "Memaparkan sama ada cabaran awak dapat dilihat oleh pelayan lain.",
+        "disabled": "Cabaran awak **tidak akan** dipaparkan di pelayan lain.",
+        "enabled": "Cabaran awak **akan** dipaparkan di pelayan lain."
       },
       "reset": {
-        "description": "Resets whether your challenges are visible to other servers.",
-        "error": "**Unknown Error**: Your challenge display preference cannot be reset (database validation error).",
-        "success": "Your challenge display preference has been reset.  Challenges **will** display on other servers."
+        "description": "Menetapkan semula sama ada cabaran awak dapat dilihat oleh pelayan lain.",
+        "error": "**Ralat tidak diketahui**: Pilihan paparan cabaran awak tidak dapat ditetapkan semula (ralat pengesahan pangkalan data).",
+        "success": "Pilihan paparan cabaran awak telah ditetapkan semula.  Cabaran **akan** dipaparkan di pelayan lain."
       },
       "set": {
-        "description": "Sets whether your challenges are visible to other servers.",
-        "disabled": "Your challenges **will not** display on other servers.",
-        "enabled": "Your challenges **will** display on other servers.",
-        "error": "**Unknown Error**: Your challenge display preference cannot be set (database validation error).",
+        "description": "Tetapkan sama ada cabaran awak dapat dilihat oleh pelayan lain.",
+        "disabled": "Cabaran awak **tidak akan** dipaparkan di pelayan lain.",
+        "enabled": "Cabaran awak **akan** dipaparkan di pelayan lain.",
+        "error": "**Ralat tidak diketahui**: Pilihan paparan cabaran awak tidak dapat ditetapkan (ralat pengesahan pangkalan data).",
         "args": {
-          "enabled": "A boolean value for whether challenges should be visible in other servers (true for visible, false for hidden)."
+          "enabled": "Nilai boolean untuk sama ada cabaran dapat dilihat di pelayan lain (benar untuk dapat dilihat, palsu untuk tersembunyi)."
         }
       }
     },
     "timezone": {
-      "description": "Sets, erases, or displays your timezone.",
+      "description": "Menetapkan, memadamkan, atau memaparkan zon waktu awak.",
       "get": {
-        "description": "Displays your currently set timezone.",
-        "success": "Your current timezone is {{timezone}}.",
+        "description": "Memaparkan zon waktu semasa awak yang telah ditetapkan.",
+        "success": "Zon waktu semasa awak ialah {{timezone}}.",
         "error": {
-          "notSet": "You have not set a timezone yet. Use `/config timezone set` to set one."
+          "notSet": "Awak belum menetapkan zon waktu. Guna `/config timezone set` untuk menetapkan satu."
         }
       },
       "reset": {
-        "description": "Erases your currently set timezone.",
-        "success": "You have successfully reset your timezone."
+        "description": "Memadamkan zon waktu semasa awak yang telah ditetapkan.",
+        "success": "Awak berjaya menetapkan semula zon waktu awak."
       },
       "set": {
-        "description": "Sets or resets your timezone.",
-        "success": "You have successfully set your timezone to {{timezone}}.",
+        "description": "Menetapkan atau menetapkan semula zon waktu awak.",
+        "success": "Awak berjaya menetapkan zon waktu awak ke {{timezone}}.",
         "args": {
-          "timezone": "An IANA timezone identifier."
+          "timezone": "Sebuah pengecam zon waktu IANA."
         },
         "error": {
-          "invalidValue": "**Error:** Winnie_Bot only accepts IANA timezone identifiers. These generally take the format of `Continent/Your_Areas_Largest_City` -- for example, `America/New_York`, `Australia/Sydney`, `Europe/London`, or `Asia/Tokyo`."
+          "invalidValue": "**Ralat:** Winnie_Bot hanya menerima pengecam zon waktu IANA. Ini biasanya mempunyai format `Continent/Your_Areas_Largest_City` -- sebagai contoh, `Asia/Kuala_Lumpur`, `Asia/Kuching`, `Asia/Singapore`, atau `America/New_York`."
         }
       }
     }
   },
   "goal": {
-    "description": "Sets, updates, and resets your goals.",
+    "description": "Menetapkan, memadamkan, atau memaparkan matlamat awak.",
     "cancel": {
-      "description": "Cancels your current goal.",
-      "success": "Your current goal has been cancelled.",
+      "description": "Membatalkan matlamat semasa awak.",
+      "success": "Matlamat semasa awak telah dibatalkan.",
       "error": {
-        "couldNotCancelGoal": "**Unknown Error**: Could not cancel goal (database validation error).",
-        "noActiveGoal": "**Error**: You do not have an active goal."
+        "couldNotCancelGoal": "**Ralat tidak diketahui**: Tidak dapat membatalkan matlamat (ralat pengesahan pangkalan data).",
+        "noActiveGoal": "**Ralat**: Awak tidak mempunyai matlamat yang aktif."
       }
     },
     "info": {
-      "description": "Reminds you of your current goal.",
+      "description": "Mengingatkan awak tentang matlamat semasa awak.",
       "error": {
-        "noActiveGoal": "**Error**: You do not have an active goal."
+        "noActiveGoal": "**Ralat**: Awak tidak mempunyai matlamat yang aktif."
       }
     },
     "overwrite": {
-      "description": "Replaces the progress on your goal with a new value.",
+      "description": "Menggantikan kemajuan matlamat awak dengan nilai baru.",
       "args": {
-        "progress": "Your progress towards your total goal."
+        "progress": "Kemajuan matlamat keseluruhan awak."
       },
       "error": {
-        "couldNotOverwriteGoal": "**Unknown Error**: Could not update goal (database validation error).",
-        "noActiveGoal": "**Error**: You have not yet set a goal. Use `/goal set` to set one.",
-        "overwriteMustNoBeNegative": "**Error**: Your total progress towards your goal cannot be a negative number."
+        "couldNotOverwriteGoal": "**Ralat tidak diketahui**: Tidak dapat mengemas kini matlamat (ralat pengesahan pangkalan data).",
+        "noActiveGoal": "**Ralat**: Awak belum menetapkan matlamat. Guna `/goal set` untuk menetapkan satu.",
+        "overwriteMustNoBeNegative": "**Ralat**: Kemajuan keseluruhan matlamat awak tidak boleh menjadi angka negatif."
       }
     },
     "reset": {
-      "description": "Changes your current goal. Progress remains the same if the goal is of the same type.",
-      "success": "You have successfully reset your goal. \n\n{{goal}}",
+      "description": "Menukar matlamat semasa awak. Kemajuan akan kekal sama jika jenis matlamat adalah sama.",
+      "success": "Awak berjaya menetapkan semula matlamat awak. \n\n{{goal}}",
       "args": {
-        "duration": "`daily`, `weekly`, `monthly`, or `yearly`. Defaults to daily.",
-        "target": "The total you plan to achieve.",
-        "type": "`items`, `lines`, `minutes`, `pages`, `words`. Defaults to words."
+        "duration": "`daily`, `weekly`, `monthly`, atau `yearly`. Tetapan asal ialah harian.",
+        "target": "Jumlah yang awak rancang untuk mencapai.",
+        "type": "`items`, `lines`, `minutes`, `pages`, `words`. Tetapan asal ialah perkataan."
       },
       "error": {
-        "couldNotResetGoal": "**Unknown Error**: Could not reset goal (database validation error).",
-        "timezoneNotSet": "**Error**: You have not set a timezone. Use `/config timezone set` to set one."
+        "couldNotResetGoal": "**Ralat tidak diketahui**: Tidak dapat menetapkan semula matlamat (ralat pengesahan pangkalan data).",
+        "timezoneNotSet": "**Ralat**: Awak belum menetapkan zon waktu. Guna `/config timezone set` untuk menetapkan satu."
       }
     },
     "set": {
-      "description": "Sets a new goal.",
-      "success": "You have successfully set your goal. \n\n{{goal}}",
+      "description": "Menetapkan matlamat baru.",
+      "success": "Awak berjaya menetapkan matlamat awak. \n\n{{goal}}",
       "args": {
-        "duration": "`daily`, `weekly`, `monthly`, or `yearly`. Defaults to daily.",
-        "target": "The total you plan to achieve.",
-        "type": "`items`, `lines`, `minutes`, `pages`, `words`. Defaults to words."
+        "duration": "`daily`, `weekly`, `monthly`, atau `yearly`. Tetapan asal ialah harian.",
+        "target": "Jumlah yang awak rancang untuk mencapai.",
+        "type": "`items`, `lines`, `minutes`, `pages`, `words`. Tetapan asal ialah perkataan."
       },
       "error": {
-        "couldNotCreateGoal": "**Unknown Error**: Could not create goal (database validation error).",
-        "goalAlreadyActive": "**Error**: You have already set a goal of this type. Use `/goal reset` to change it.",
-        "timezoneNotSet": "**Error**: You have not set a timezone. Use `/config timezone set` to set one."
+        "couldNotCreateGoal": "**Ralat tidak diketahui**: Tidak dapat membuat matlamat (ralat pengesahan pangkalan data).",
+        "goalAlreadyActive": "**Ralat**: Awak sudah menetapkan matlamat jenis ini. Guna `/goal reset` untuk mengubahnya.",
+        "timezoneNotSet": "**Ralat**: Awak belum menetapkan zon waktu. Guna `/config timezone set` untuk menetapkan satu."
       }
     },
     "update": {
-      "description": "Updates progress on your goal.",
+      "description": "Mengemas kini kemajuan matlamat awak.",
       "args": {
-        "progress": "The amount to add to your current total."
+        "progress": "Jumlah untuk ditambahkan ke jumlah semasa awak."
       },
       "error": {
-        "couldNotUpdateGoal": "**Unknown Error**: Could not update goal (database validation error).",
-        "noActiveGoal": "**Error**: You have not yet set a goal. Use `/goal set` to set one.",
-        "totalMustBePositive": "**Error**: Your total progress towards your goal cannot be a negative number."
+        "couldNotUpdateGoal": "**Ralat tidak diketahui**: Tidak dapat mengemas kini matlamat (ralat pengesahan pangkalan data).",
+        "noActiveGoal": "**Ralat**: Awak belum menetapkan matlamat. Guna `/goal set` untuk menetapkan satu.",
+        "totalMustBePositive": "**Ralat**: Kemajuan keseluruhan matlamat awak tidak boleh menjadi angka negatif."
       }
     }
   },
   "server": {
-    "description": "Configures Winnie_Bot to meet your server's needs. Only usable by server admins slash people with `manage server` permissions but we will ask for clarification. From ostensibly competent devs.",
+    "description": "Mengkonfigurasi Winnie_Bot untuk memenuhi keperluan pelayan awak. Hanya boleh digunakan oleh orang yang mempunyai kebenaran `manage server`.",
     "announcementsChannel": {
-      "description": "Chooses the channel which Winnie_Bot makes announcements to.",
+      "description": "Memilih saluran di mana Winnie_Bot membuat pengumuman.",
       "get": {
-        "description": "Displays the current announcements channel.",
-        "success": "Winnie_Bot will currently post announcements to <#{{announcementsChannel}}>."
+        "description": "Memaparkan saluran pengumuman semasa.",
+        "success": "Winnie_Bot kini akan menghantar pengumuman ke <#{{announcementsChannel}}>."
       },
       "reset": {
-        "description": "Resets the announcements channel.",
-        "error": "**Unknown Error**: Could not reset announcements channel (database validation error).",
-        "success": "You have successfully reset the announcements channel."
+        "description": "Menetapkan semula saluran pengumuman.",
+        "error": "**Ralat tidak diketahui**: Tidak dapat menetapkan semula saluran pengumuman (ralat pengesahan pangkalan data).",
+        "success": "Awak berjaya menetapkan semula saluran pengumuman."
       },
       "set": {
-        "description": "Sets the announcements channel.",
-        "success": "Winnie_Bot will now post announcements to <#{{announcementsChannel}}>.",
+        "description": "Menetapkan saluran pengumuman.",
+        "success": "Winnie_Bot kini akan menghantar pengumuman ke <#{{announcementsChannel}}>.",
         "args": {
-          "announcementsChannel": "The channel that Winnie_Bot will post announcements to."
+          "announcementsChannel": "Saluran yang Winnie_Bot akan menghantar pengumuman ke."
         },
-        "error": "**Unknown Error**: Could not set announcements channel (database validation error)."
+        "error": "**Ralat tidak diketahui**: Tidak dapat menetapkan saluran pengumuman (ralat pengesahan pangkalan data)."
       }
     },
     "crossGuild": {
-      "description": "Controls whether your server's challenges are visible to other servers.",
+      "description": "Mengawal sama ada cabaran pelayan awak dapat dilihat oleh pelayan lain.",
       "get": {
-        "description": "Displays whether your server's challenges are visible to other servers.",
-        "disabled": "Your server's challenges **will not** display on other servers.",
-        "enabled": "Your server's challenges **will** display on other servers."
+        "description": "Memaparkan sama ada cabaran pelayan awak dapat dilihat oleh pelayan lain.",
+        "disabled": "Cabaran pelayan awak **tidak akan** dipaparkan di pelayan lain.",
+        "enabled": "Cabaran pelayan awak **akan** dipaparkan di pelayan lain."
       },
       "reset": {
-        "description": "Resets whether your server's challenges are visible to other servers.",
-        "error": "**Unknown Error**: Your server's challenge display preference cannot be reset (database validation error).",
-        "success": "Your server's challenge display preference has been reset.  Challenges **will** display on other servers."
+        "description": "Menetapkan semula sama ada cabaran pelayan awak dapat dilihat oleh pelayan lain.",
+        "error": "**Ralat tidak diketahui**: Pilihan paparan cabaran pelayan awak tidak dapat ditetapkan semula (ralat pengesahan pangkalan data).",
+        "success": "Pilihan paparan cabaran pelayan awak telah diset semula.  Cabaran **akan** dipaparkan di pelayan lain."
       },
       "set": {
-        "description": "Sets whether your server's challenges are visible to other servers.",
-        "disabled": "Your server's challenges **will not** display on other servers.",
-        "enabled": "Your server's challenges **will** display on other servers.",
-        "error": "**Unknown Error**: Your server's challenge display preference cannot be set (database validation error).",
+        "description": "Tetapkan sama ada cabaran pelayan awak dapat dilihat oleh pelayan lain.",
+        "disabled": "Cabaran pelayan awak **tidak akan** dipaparkan di pelayan lain.",
+        "enabled": "Cabaran pelayan awak **akan** dipaparkan di pelayan lain.",
+        "error": "**Ralat tidak diketahui**: Pilihan paparan cabaran pelayan awak tidak dapat ditetapkan (ralat pengesahan pangkalan data).",
         "args": {
-          "enabled": "A boolean value for whether challenges should be visible in other servers (true for visible, false for hidden)."
+          "enabled": "Nilai boolean untuk sama ada cabaran dapat dilihat di pelayan lain (benar untuk dapat dilihat, palsu untuk tersembunyi)."
         }
       }
     },
     "locale": {
-      "description": "Configures the language that Winnie_Bot uses in your server.",
+      "description": "Mengkonfigurasi bahasa yang Winnie_Bot guna di pelayan awak.",
       "get": {
-        "description": "Displays Winnie_Bot's current language.",
-        "success": "Winnie_Bot currently speaks {{locale}}."
+        "description": "Memaparkan bahasa semasa Winnie_Bot.",
+        "success": "Winnie_Bot kini bercakap {{locale}}."
       },
       "reset": {
-        "description": "Resets Winnie_Bot's current language to English.",
-        "error": "**Unknown Error**: Winnie doesn't know how to speak that language.  Parlez vous Latin? (database validation error)",
-        "success": "You have reset Winnie_Bot's current language to English."
+        "description": "Menetapkan semula bahasa semasa Winnie_Bot ke Bahasa Inggeris.",
+        "error": "**Ralat tidak diketahui**: Winnie tidak tahu bagaimana untuk bercakap dalam bahasa itu. Parlez vous Latin? (ralat pengesahan pangkalan data)",
+        "success": "Awak telah menetapkan semula bahasa semasa Winnie_Bot's ke Bahasa Inggeris."
       },
       "set": {
-        "description": "Sets a new language for Winnie_Bot to speak.",
-        "success": "Winnie_Bot now speaks {{locale}}.",
+        "description": "Menetapkan bahasa baharu untuk Winnie_Bot bercakap.",
+        "success": "Winnie_Bot kini bercakap {{locale}}.",
         "args": {
-          "locale": "An ISO 639-1 language code. Current options are `en` (English), `fr` (Français), `hu` (Magyar), `la` (Latina), `ms` (Bahasa Melayu), `nl` (Nederlands), and `sv` (Svenska)."
+          "locale": "Sebuah kod bahasa ISO 639-1. Pilihan semasa ialah `en` (English), `fr` (Français), `hu` (Magyar), `la` (Latina), `ms` (Bahasa Melayu), `nl` (Nederlands), dan `sv` (Svenska)."
         },
-        "error": "**Error**: The locale that you are trying to set does not exist (database validation error)."
+        "error": "**Ralat**: Bahasa yang awak cuba tetapkan tidak wujud (ralat pengesahan pangkalan data)."
       }
     },
     "timezone": {
-      "description": "Sets, erases, or displays your server's timezone.",
+      "description": "Menetapkan, memadamkan, atau memaparkan zon waktu pelayan awak.",
       "get": {
-        "description": "Displays your server's currently set timezone.",
-        "success": "Your server's current timezone is {{timezone}}.",
+        "description": "Memaparkan zon waktu semasa pelayan awak yang ditetapkan.",
+        "success": "Zon waktu semasa pelayan awak ialah {{timezone}}.",
         "error": {
-          "notSet": "You have not set a server timezone yet. Use `/server timezone set` to set one."
+          "notSet": "Awak belum menetapkan zon waktu pelayan. Guna `/server timezone set` untuk menetapkan satu."
         }
       },
       "reset": {
-        "description": "Erases your server's currently set timezone.",
-        "success": "You have successfully reset your server's timezone."
+        "description": "Memadamkan zon waktu semasa pelayan awak yang telah ditetapkan.",
+        "success": "Awak berjaya menetapkan semula zon waktu pelayan anda."
       },
       "set": {
-        "description": "Sets or resets your server's timezone.",
-        "success": "You have successfully set your server's timezone to {{timezone}}.",
+        "description": "Menetapkan atau menetapkan semula zon waktu pelayan awak.",
+        "success": "Awak berjaya menetapkan zon waktu pelayan anda ke {{timezone}}.",
         "args": {
-          "timezone": "An IANA timezone identifier."
+          "timezone": "Sebuah pengecam zon waktu IANA."
         },
         "error": {
-          "invalidValue": "**Error:** Winnie_Bot only accepts IANA timezone identifiers. These generally take the format of `Continent/Your_Areas_Largest_City` -- for example, `America/New_York`, `Australia/Sydney`, `Europe/London`, or `Asia/Tokyo`."
+          "invalidValue": "**Ralat:** Winnie_Bot hanya menerima pengecam zon waktu IANA. Ini biasanya mempunyai format `Continent/Your_Areas_Largest_City` -- sebagai contoh, `Asia/Kuala_Lumpur`, `Asia/Kuching`, `Asia/Singapore`, atau `America/New_York`."
         }
+      }
+    }
+  },
+  "challenge": {
+    "description": "Challenge yourself! Race to a certain number of words, or war for words in a given time.",
+    "cancel": {
+      "description": "Cancels a challenge.",
+      "success": "{{ challengeName }} (ID {{ id }}) has been cancelled.",
+      "args": {
+        "id": "The ID of the challenge that you want to cancel."
+      },
+      "error": {
+        "couldNotCancelChallenge": "**Unknown Error**: Could not cancel challenge {{ id }} (database validation error).",
+        "userIsNotOwner": "**Error**: Only the creator of {{ challengeName }} (ID {{ id }}) can cancel the challenge."
+      }
+    },
+    "finish": {
+      "description": "Sets your finish time for a race.",
+      "success": "You completed {{ challengeName }} (ID {{ id }}) in {{ completionTime }} minutes.",
+      "args": {
+        "id": "The ID of the race that you just finished."
+      },
+      "error": {
+        "challengeDoesNotExist": "**Error**: Challenge {{ id }} does not exist!",
+        "challengeHasNotStarted": "**Error**: Challenge {{ id }} has not started yet!",
+        "challengeIsWar": "You cannot set a finish time for a war.  Use `/challenge total` to set your total.",
+        "couldNotFinishChallenge": "**Unknown Error**: Could not finish race {{ id }} (database validation error).",
+        "noChallengeSpecified": "**Error**: I don't know which race to finish!  Use `/challenge finish` with an ID number to finish a specific race."
+      }
+    },
+    "join": {
+      "description": "Joins a challenge.",
+      "success": "You have joined {{ challengeName }} (ID {{ id }}).",
+      "args": {
+        "id": "The ID of the challenge that you want to join."
+      },
+      "error": {
+        "challengeDoesNotExist": "**Error**: Challenge {{ id }} does not exist!",
+        "challengeAlreadyJoined": "**Error**: You have already joined challenge {{ id }}, and cannot join another.",
+        "couldNotJoinChallenge": "**Unknown Error**: Could not join challenge {{ id }} (database validation error)."
+      }
+    },
+    "leave": {
+      "description": "Leaves the challenge that you have joined.",
+      "success": "You have left {{ challengeName }} ( ID {{ id }}).",
+      "error": {
+        "couldNotLeaveChallenge": "**Unknown Error**: Could not leave challenge {{ id }} (database validation error)."
+      }
+    },
+    "list": {
+      "description": "Lists all running challenges.",
+      "args": {
+      },
+      "error": {
+        "couldNotListChallenges": "**Unknown Error**: Could not list challenges (database validation error)."
+      }
+    },
+    "start": {
+      "description": "Creates a new challenge.",
+      "args": {
+        "duration": "`daily`, `weekly`, `monthly`, or `yearly`. Defaults to daily.",
+        "target": "The total you plan to achieve.",
+        "type": "`items`, `lines`, `minutes`, `pages`, `words`. Defaults to words."
+      },
+      "error": {
+        "challengeNameHasMentions": "**Error**: Challenge names cannot contain Discord objects (users, roles, channels, etc).",
+        "challengeNameHasProfanity": "**Error**: Challenge names cannot contain profanity.",
+        "challengeNameHasURL": "**Error**: Challenge names cannot contain URLs.",
+        "challengeNameTooLong": "**Error**: Challenge names must be 150 characters or less.",
+        "couldNotStartChallenge": "**Unknown Error**: Could not start a new challenge (database validation error)."
+      }
+    },
+    "status": {
+      "description": "Displays the current status of a challenge.",
+      "args": {
+        "id": "The ID of the challenge that you want to see the status of."
+      },
+      "error": {
+        "challengeDoesNotExist": "**Error**: Challenge {{ id }} does not exist!",
+        "couldNotGetStatus": "**Unknown Error**: Could not get status of challenge {{ id }} (database validation error)."
+      }      
+    },
+    "summary": {
+      "description": "Prints the summary of a challenge.",
+      "args": {
+        "id": "The ID of the challenge that you want the summary for."
+      },
+      "error": {
+        "challengeDoesNotExist": "**Error**: Challenge {{ id }} does not exist!",
+        "challengeIsActive": "**Error**: Challenge {{ id }} is still running!",
+        "challengeNotStarted": "**Error**: Challenge {{ id }} has not started yet!",
+        "couldNotPrintSummary": "**Unknown Error**: Could not print summary for challenge {{ id }} (database validation error)."
+      }
+    },
+    "total": {
+      "description": "Adds your total for a war or chain war.",
+      "args": {
+        "id": "The ID of the war that you want to post a total for.",
+        "total": "The number of words that you wrote (or things that you did) during the war.",
+        "type": "`items`, `lines`, `minutes`, `pages`, `words`. Defaults to words."
+      },
+      "error": {
+        "challengeDoesNotExist": "**Error**: Challenge {{ id }} does not exist!",
+        "challengeHasNotStarted": "**Error**: Challenge {{ id }} has not started yet!",
+        "challengeIsRace": "**Error**: You cannot add a total to a race.  Use `/challenge finish` to complete a race.",
+        "couldNotFinishChallenge": "**Unknown Error**: Could not add a total for war {{ id }} (database validation error).",
+        "noChallengeSpecified": "**Error**: I don't know which war this total is for!  Use `/challenge total` with an ID number to post a total for a specific war."
       }
     }
   }

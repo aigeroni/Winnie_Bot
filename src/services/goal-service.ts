@@ -34,7 +34,7 @@ async function activeGoalForUser (userId: Snowflake): Promise<Goal | null> {
     order: { createdAt: 'DESC' } // is this right???
   })
 
-  const activeGoals = userGoals.filter((goal) => goal.active())
+  const activeGoals = userGoals.filter((goal) => goal.isActive())
 
   if (activeGoals.length === 0) {
     return null

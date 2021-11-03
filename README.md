@@ -5,7 +5,7 @@
   <a href="https://github.com/aigeroni/Winnie_Bot/blob/main/LICENSE">
     <img src="https://img.shields.io/github/license/aigeroni/Winnie_Bot.svg?style=flat-square" alt="Github License" />
   </a>
-  <a href="https://discordapp.com/api/oauth2/authorize?client_id=386676183791829002&permissions=0&scope=bot">
+  <a href="https://discordapp.com/api/oauth2/authorize?client_id=386676183791829002&permissions=0&scope=bot%20applications.commands">
     <img src="https://img.shields.io/badge/Add%20to%20your-server-7289DA.svg?style=flat-square" alt="Add to your server" />
   </a>
    <a href="https://discord.gg/mvZZMhK">
@@ -53,7 +53,7 @@ If you want to run Winnie on your server, you can either invite the public Winni
 
 ### Inviting the public Winnie_Bot account
 
-If you want to invite the public Winnie_Bot account to your server, go [here](https://discordapp.com/api/oauth2/authorize?client_id=386676183791829002&permissions=0&scope=bot).
+If you want to invite the public Winnie_Bot account to your server, go [here](https://discordapp.com/api/oauth2/authorize?client_id=386676183791829002&permissions=0&scope=bot%20applications.commands).
 
 ### Setting up your own instance of Winnie
 

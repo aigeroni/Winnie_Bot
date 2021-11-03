@@ -2,6 +2,7 @@ import { CommandInteraction } from 'discord.js'
 import { GuildConfig } from '../../models'
 import { I18n } from '../../core'
 import { SubCommand } from '../../types'
+import { CommandUtils } from '../utils'
 
 const NAME = 'locale'
 
@@ -87,9 +88,19 @@ async function set (interaction: CommandInteraction, guildConfig: GuildConfig): 
 
   if (guildConfig.errors.length > 0) {
     await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:server.locale.set.error'))
-  } else {
-    await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:server.locale.set.success', {
-      locale: await I18n.translate(guildConfig.locale, 'winnie:locale.name')
-    }))
+    return
   }
+
+  await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:server.locale.set.success', {
+    locale: await I18n.translate(guildConfig.locale, 'winnie:locale.name')
+  }))
+
+  try {
+    await CommandUtils.deployCommands(guildConfig)
+  } catch {
+    await interaction.followUp(await I18n.translate(guildConfig.locale, 'commands:deploy.error'))
+    return
+  }
+
+  await interaction.followUp(await I18n.translate(guildConfig.locale, 'commands:deploy.success'))
 }

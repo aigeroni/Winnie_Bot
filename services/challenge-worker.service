@@ -1,0 +1,12 @@
+[Unit]
+Description=Winnie_Bot challenge worker
+
+[Service]
+WorkingDirectory=/srv/winnie/Winnie_Bot
+Type=simple
+User=root
+ExecStart=/usr/bin/yarn start:worker:challenge
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
