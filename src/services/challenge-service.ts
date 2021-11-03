@@ -138,7 +138,7 @@ async function addChannelToChallenge (channelId: Snowflake, controllerId: number
   * @param userId The discord ID of the user to find the goal for
   * @returns The user's active challenge, null if the don't have one
   */
-async function activeChallengeForUser (userId: Snowflake): Promise<Challenge | null> {
+async function activeChallengeForUser (userId: Snowflake): Promise<Challenge | undefined> {
   const userJoinedChallenges = await ChallengeController.find({
     where: { ChallengeUser: { ownerId: userId } },
     relations: ['ChallengeUser']
@@ -155,10 +155,10 @@ async function activeChallengeForUser (userId: Snowflake): Promise<Challenge | n
   )
 
   if (activeChallenges.length === 0) {
-    return null
-  } else {
-    return activeChallenges[0]
+    return
   }
+
+  return activeChallenges[0]
 }
 
 /**

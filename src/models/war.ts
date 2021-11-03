@@ -1,6 +1,7 @@
 import { Challenge } from './bases/challenge'
 import { Column, Entity, JoinColumn, ManyToOne, OneToOne } from 'typeorm'
 import { ChainWar, ChallengeController } from '.'
+import { DateTime, Duration } from 'luxon'
 
 @Entity({ name: 'wars' })
 export class War extends Challenge {
@@ -32,4 +33,13 @@ export class War extends Challenge {
    */
   @OneToOne(() => ChallengeController, challengeController => challengeController.war)
   universalId!: ChallengeController
+
+  olderThanTwelveHours (): boolean {
+    const now = DateTime.utc()
+
+    const twelveHoursFromEnd = Duration.fromObject({ minutes: this.duration + 720 })
+    const twelveHoursFromStart = this.startAt.plus(twelveHoursFromEnd)
+
+    return (twelveHoursFromStart.diff(now)).milliseconds <= 0
+  }
 }

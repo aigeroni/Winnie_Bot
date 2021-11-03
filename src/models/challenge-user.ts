@@ -95,4 +95,16 @@ export class ChallengeUser extends BaseModel {
     this.totalType = totalType
     await this.save()
   }
+
+  static async findOrCreate (userId: Snowflake, challengeId: number): Promise<ChallengeUser> {
+    const challengeUsers = await ChallengeUser.find({ where: { userId, challengeId } })
+    if (challengeUsers.length > 0) { return challengeUsers[0] }
+
+    const challengeUser = new ChallengeUser()
+    challengeUser.userId = userId
+    challengeUser.challengeController = challengeId
+    await challengeUser.save()
+
+    return challengeUser
+  }
 }
