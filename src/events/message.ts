@@ -1,7 +1,7 @@
 import { CommandUtils } from '../commands/utils'
 import { Event } from '../types'
 import { GuildConfig } from '../models'
-import { I18n, WinnieClient } from '../core'
+import { I18n, Logger, WinnieClient } from '../core'
 import { Message, Permissions } from 'discord.js'
 
 /**
@@ -20,7 +20,6 @@ async function handleMention (message: Message, guildConfig: GuildConfig): Promi
 }
 
 async function deployCommands (message: Message, guildConfig: GuildConfig): Promise<void> {
-  if (message.content !== '!deployWinnieCommands') { return }
   const author = message.member
   if (author == null) { return }
 
