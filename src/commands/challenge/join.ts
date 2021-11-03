@@ -45,7 +45,7 @@ export const ChallengeJoinCommand: SubCommand = {
     })
     if (challengeChannel == null) {
       channelAdd = await ChallengeService.addChannelToChallenge(interaction.channelId, challengeId)
-      if ( channelAdd.errors.length > 0) {
+      if (channelAdd.errors.length > 0) {
         await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:challenge.join.error.couldNotJoinChallenge'))
       }
     }
@@ -58,7 +58,7 @@ export const ChallengeJoinCommand: SubCommand = {
       await challengeUser.rejoin(channelId)
     } else {
       const userAdd = await ChallengeService.addUserToChallenge(userId, challengeId, channelId)
-      if (userAdd.errors.length > 0 ) {
+      if (userAdd.errors.length > 0) {
         await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:challenge.join.error.couldNotJoinChallenge'))
         return
       }

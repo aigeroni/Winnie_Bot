@@ -63,7 +63,7 @@ export class ChallengeUser extends BaseModel {
 
   /**
    * Checks if the user has left the challenge.
-   * 
+   *
    * @returns true if the user has left
    */
   isCanceled (): boolean {
@@ -90,7 +90,7 @@ export class ChallengeUser extends BaseModel {
   /**
    * Adds a total to the challenge.
    */
-  async addTotal (total: number, totalType: RaceTypes) {
+  async addTotal (total: number, totalType: RaceTypes): Promise<void> {
     this.total = total
     this.totalType = totalType
     await this.save()
