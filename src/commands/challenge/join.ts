@@ -15,7 +15,7 @@ export const ChallengeJoinCommand: SubCommand = {
     options: [
       {
         name: 'id',
-        description: await I18n.translate(locale, 'commands:challenge.join.id.description'),
+        description: await I18n.translate(locale, 'commands:challenge.join.args.id'),
         type: 'INTEGER',
         required: true
       }
@@ -34,7 +34,7 @@ export const ChallengeJoinCommand: SubCommand = {
 
     const challengeController = await ChallengeController.findOne({ where: { id: challengeId } })
     if (challengeController == null) {
-      await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:challenge.cancel.error.challengeDoesNotExist'))
+      await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:challenge.join.error.challengeDoesNotExist'))
       return
     }
 
