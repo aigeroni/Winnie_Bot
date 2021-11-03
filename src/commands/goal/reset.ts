@@ -79,7 +79,7 @@ async function userTimezone (interaction: CommandInteraction, guildConfig: Guild
   if (userConfig?.timezone != null) { return userConfig.timezone }
   if (guildConfig.timezone != null) { return guildConfig.timezone }
 
-  await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:goal.set.errors.timezoneNotSet'))
+  await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:goal.set.error.timezoneNotSet'))
   return null
 }
 
