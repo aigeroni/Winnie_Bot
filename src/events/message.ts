@@ -13,7 +13,6 @@ import { Message, Permissions } from 'discord.js'
  */
 async function handleMention (message: Message, guildConfig: GuildConfig): Promise<void> {
   if (WinnieClient.client.user == null) { return }
-  Logger.info('bypassed null check')
   if (!message.mentions.has(WinnieClient.client.user?.id)) { return }
   Logger.info('Winnie successfully registered mention')
 
@@ -54,7 +53,6 @@ export const MessageEvent: Event = {
     const guildConfig = await GuildConfig.findOrCreate(message.guild?.id)
     if (guildConfig == null) { return }
 
-    Logger.info('handling mention')
     await handleMention(message, guildConfig)
   }
 }
