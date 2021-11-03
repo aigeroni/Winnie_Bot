@@ -120,7 +120,7 @@
     }
   },
   "server": {
-    "description": "Configures Winnie_Bot to meet your server's needs. Requires Manage Server permissions",
+    "description": "Configures Winnie_Bot to meet your server's needs. Requires Manage Server permissions.",
     "announcementsChannel": {
       "description": "Chooses the channel which Winnie_Bot makes announcements to.",
       "get": {
@@ -159,7 +159,7 @@
         "enabled": "Your server's challenges **will** display on other servers.",
         "error": "**Unknown Error**: Your server's challenge display preference cannot be set (database validation error).",
         "args": {
-          "enabled": "A boolean value cross-server visibility (true for visible, false for hidden)."
+          "enabled": "A boolean value for cross-server visibility (true for visible, false for hidden)."
         }
       }
     },

@@ -120,7 +120,7 @@
     }
   },
   "server": {
-    "description": "Configures Winnie_Bot to meet your server's needs. Requires Manage Server permissions",
+    "description": "Configures Winnie_Bot to meet your server's needs. Requires Manage Server permissions.",
     "announcementsChannel": {
       "description": "Chooses the channel which Winnie_Bot makes announcements to.",
       "get": {
