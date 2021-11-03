@@ -28,9 +28,9 @@ export const ChallengeStatusCommand: SubCommand = {
       await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:challenge.status.error.challengeDoesNotExist'))
     } else if (challenge.errors.length > 0) {
       await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:challenge.status.error.couldNotGetStatus'))
+    } else {
+      await printStatus(challenge, interaction, guildConfig)
     }
-
-    await printStatus(challenge, interaction, guildConfig)
   }
 }
 
