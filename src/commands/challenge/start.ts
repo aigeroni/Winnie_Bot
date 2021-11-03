@@ -5,7 +5,6 @@ import { ChallengeService } from '../../services'
 import { I18n } from '../../core'
 import { ChainWarCreateOptions, RaceCreateOptions, WarCreateOptions, RaceTypes, SubCommand, StartChallengeJobData } from '../../types'
 
-
 const NAME = 'start'
 
 export const ChallengeStartCommand: SubCommand = {
@@ -168,7 +167,7 @@ async function chain (interaction: CommandInteraction, guildConfig: GuildConfig)
   }
 
   const challengeJobData = getJobData(challenge)
-  Jobs.challengeJobs.StartChallengeJob.enqueue(challengeJobData).catch(async () => {await I18n.translate(guildConfig.locale, 'commands:challenge.start.race.error.couldNotStartRace')})
+  Jobs.challengeJobs.StartChallengeJob.enqueue(challengeJobData).catch(async () => { await I18n.translate(guildConfig.locale, 'commands:challenge.start.chain.error.couldNotStartChain') })
 }
 
 async function race (interaction: CommandInteraction, guildConfig: GuildConfig): Promise<void> {
@@ -182,7 +181,7 @@ async function race (interaction: CommandInteraction, guildConfig: GuildConfig):
   }
 
   const challengeJobData = getJobData(challenge)
-  Jobs.challengeJobs.StartChallengeJob.enqueue(challengeJobData).catch(async () => {await I18n.translate(guildConfig.locale, 'commands:challenge.start.race.error.couldNotStartRace')})
+  Jobs.challengeJobs.StartChallengeJob.enqueue(challengeJobData).catch(async () => { await I18n.translate(guildConfig.locale, 'commands:challenge.start.race.error.couldNotStartRace') })
 }
 
 async function war (interaction: CommandInteraction, guildConfig: GuildConfig): Promise<void> {
@@ -196,7 +195,7 @@ async function war (interaction: CommandInteraction, guildConfig: GuildConfig): 
   }
 
   const challengeJobData = getJobData(challenge)
-  Jobs.challengeJobs.StartChallengeJob.enqueue(challengeJobData).catch(async () => {await I18n.translate(guildConfig.locale, 'commands:challenge.start.race.error.couldNotStartRace')})
+  Jobs.challengeJobs.StartChallengeJob.enqueue(challengeJobData).catch(async () => { await I18n.translate(guildConfig.locale, 'commands:challenge.start.war.error.couldNotStartWar') })
 }
 
 /**
@@ -268,7 +267,7 @@ function getWarOptions (interaction: CommandInteraction): WarCreateOptions {
    * @param userConfig The config object of the user who ran the command.
    * @returns An object containing the parameters for creating the goal
    */
- function getJobData (challenge: Challenge): StartChallengeJobData {
+function getJobData (challenge: Challenge): StartChallengeJobData {
   return {
     challengeId: challenge.id
   }

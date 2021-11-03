@@ -1,5 +1,5 @@
 import { CommandInteraction } from 'discord.js'
-import { ChallengeController, Challenge, ChallengeUser, GuildConfig, Race } from '../../models'
+import { ChallengeController, Challenge, ChallengeUser, GuildConfig } from '../../models'
 import { I18n } from '../../core'
 import { SubCommand } from '../../types'
 import { ChallengeService } from '../../services'
@@ -24,7 +24,7 @@ export const ChallengeFinishCommand: SubCommand = {
   }),
 
   execute: async (interaction: CommandInteraction, guildConfig: GuildConfig) => {
-    if (interaction.options.getInteger('id') == null ) {
+    if (interaction.options.getInteger('id') == null) {
       // if id is null, add total to joined challenge
       const activeChallenge = await ChallengeService.activeChallengeForUser(interaction.user.id)
       if (activeChallenge == null) {
@@ -48,32 +48,32 @@ export const ChallengeFinishCommand: SubCommand = {
   }
 }
 
-async function completeRace(challenge: Challenge, interaction: CommandInteraction, guildConfig: GuildConfig): Promise<void> {
+async function completeRace (challenge: Challenge, interaction: CommandInteraction, guildConfig: GuildConfig): Promise<void> {
   if (challenge.isCanceled()) { // check whether challenge has been cancelled
     await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:challenge.total.error.challengeDoesNotExist'))
     return
-  } else if (challenge.challenge_type != 'race') { // check whether challenge is race
+  } else if (challenge.challenge_type !== 'race') { // check whether challenge is race
     await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:challenge.total.error.challengeIsRace'))
     return
   } else if (!(challenge.hasStarted)) { // check whether the challenge has started
     await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:challenge.total.error.challengeHasNotStarted'))
     return
   }
-  
+
   // we need the race, so get the controller and then the race
   const raceController = await ChallengeController.findOne({ where: { id: challenge.id } })
   const race = raceController.race
-  if ((race.startAt.plus(Duration.fromObject({minutes: (race.timeOut + 720)})).diff(DateTime.utc())).milliseconds <= 0) { // check whether race finished more than 12 hours ago
+  if ((race.startAt.plus(Duration.fromObject({ minutes: (race.timeOut + 720) })).diff(DateTime.utc())).milliseconds <= 0) { // check whether race finished more than 12 hours ago
     await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:challenge.finish.error.challengeTooOld'))
     return
   } else { // all possible error states have been checked, add the total
     // check whether we have a link between race and user, and create it if not
-    let challengeUser = await ChallengeUser.findOne({
+    const challengeUser = await ChallengeUser.findOne({
       where: { userId: interaction.user.id, challengeController: raceController.id }
     })
     if (challengeUser == null) {
       const challengeUser = await ChallengeService.addUserToChallenge(interaction.user.id, raceController.id, interaction.channel.id)
-      if (challengeUser.errors.length > 0 ) {
+      if (challengeUser.errors.length > 0) {
         await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:challenge.finish.error.couldNotFinishChallenge'))
         return
       }
