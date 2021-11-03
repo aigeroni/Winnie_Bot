@@ -20,8 +20,6 @@ resource "digitalocean_database_firewall" "winnie-db-firewall" {
     type  = "droplet"
     value = digitalocean_droplet.winnie-bot.id
   }
-
-  cluster_id = digitalocean_database_cluster.winnie-db-cluster.id
   rule {
     type  = "ip_addr"
     value = var.test_ip_address
