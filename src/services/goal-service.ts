@@ -28,9 +28,9 @@ async function createGoal (options: GoalCreateOptions): Promise<Goal> {
   *
   * @param userId The discord ID of the user to find the goal for
   */
-async function activeGoalForUser (userId: Snowflake): Promise<Goal | null> {
+async function activeGoalForUser (userId: Snowflake, goalDuration: GoalDurations): Promise<Goal | null> {
   const userGoals = await Goal.find({
-    where: { ownerId: userId },
+    where: { ownerId: userId, goal_duration: goalDuration },
     order: { createdAt: 'DESC' } // is this right???
   })
 
