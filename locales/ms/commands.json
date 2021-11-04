@@ -24,7 +24,7 @@
         "enabled": "Cabaran awak **akan** dipaparkan di pelayan lain.",
         "error": "**Ralat tidak diketahui**: Pilihan paparan cabaran awak tidak dapat ditetapkan (ralat pengesahan pangkalan data).",
         "args": {
-          "enabled": "Nilai boolean untuk sama ada cabaran dapat dilihat di pelayan lain (benar untuk dapat dilihat, palsu untuk tersembunyi)."
+          "enabled": "Nilai boolean sama ada cabaran dapat dilihat di pelayan lain (benar untuk dapat dilihat, palsu untuk tersembunyi)."
         }
       }
     },
@@ -120,7 +120,7 @@
     }
   },
   "server": {
-    "description": "Mengkonfigurasi Winnie_Bot untuk memenuhi keperluan pelayan awak. Hanya boleh digunakan oleh orang yang mempunyai kebenaran `manage server`.",
+    "description": "Mengkonfigurasi Winnie_Bot untuk keperluan pelayan. Hanya boleh digunakan oleh orang yang mempunyai kebenaran `manage server`.",
     "announcementsChannel": {
       "description": "Memilih saluran di mana Winnie_Bot membuat pengumuman.",
       "get": {
@@ -159,7 +159,7 @@
         "enabled": "Cabaran pelayan awak **akan** dipaparkan di pelayan lain.",
         "error": "**Ralat tidak diketahui**: Pilihan paparan cabaran pelayan awak tidak dapat ditetapkan (ralat pengesahan pangkalan data).",
         "args": {
-          "enabled": "Nilai boolean untuk sama ada cabaran dapat dilihat di pelayan lain (benar untuk dapat dilihat, palsu untuk tersembunyi)."
+          "enabled": "Nilai boolean sama ada cabaran dapat dilihat di pelayan lain (benar untuk dapat dilihat, palsu untuk tersembunyi)."
         }
       }
     },
