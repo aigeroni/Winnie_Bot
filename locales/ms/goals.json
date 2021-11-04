@@ -37,9 +37,9 @@
     "words_plural": "perkataan"
   },
   "raptors": {
-    "announceWhiteRaptor": "{{user}}, you have hatched a white raptor!",
-    "announceBlueRaptor": "{{user}}, you have hatched a blue raptor!",
-    "announcePurpleRaptor": "{{user}}, you have hatched a purple raptor!",
-    "announceOrangeRaptor": "{{user}}, you have hatched a orange raptor!"
+    "announceWhiteRaptor": "{{user}}, awak telah menetas seekor raptor putih!",
+    "announceBlueRaptor": "{{user}}, awak telah menetas seekor raptor biru!",
+    "announcePurpleRaptor": "{{user}}, awak telah menetas seekor raptor ungu!",
+    "announceOrangeRaptor": "{{user}}, awak telah menetas seekor raptor oren!"
   }
 }
