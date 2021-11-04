@@ -7,7 +7,7 @@ const NAME = 'start_challenge_job'
 
 export const StartChallengeJob: WinnieJob<StartChallengeJobData> = {
   name: NAME,
-  enqueue: async (data) => { await JobQueue.queues.challengesQueue.add(NAME, data) },
+  enqueue: async (data, delay) => { await JobQueue.queues.challengesQueue.add(NAME, data, { delay }) },
   execute: async (job) => {
     const challengeId = job.data.challengeId
     const challenge = (await ChallengeController.findOne({ where: { id: challengeId } }))?.challenge()

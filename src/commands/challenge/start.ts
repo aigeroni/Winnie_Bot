@@ -166,8 +166,12 @@ async function chain (interaction: CommandInteraction, guildConfig: GuildConfig)
     await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:challenge.start.chain.success'))
   }
 
-  const challengeJobData = getJobData(challenge)
-  Jobs.challengeJobs.StartChallengeJob.enqueue(challengeJobData).catch(async () => { await I18n.translate(guildConfig.locale, 'commands:challenge.start.chain.error.couldNotStartChain') })
+  try {
+    const challengeJobData = getJobData(challenge)
+    await Jobs.challengeJobs.StartChallengeJob.enqueue(challengeJobData, chainOptions.delay)
+  } catch {
+    await interaction.followUp(await I18n.translate(guildConfig.locale, 'commands:challenge.start.chain.error.couldNotStartChain'))
+  }
 }
 
 async function race (interaction: CommandInteraction, guildConfig: GuildConfig): Promise<void> {
@@ -180,8 +184,12 @@ async function race (interaction: CommandInteraction, guildConfig: GuildConfig):
     await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:challenge.start.race.success'))
   }
 
-  const challengeJobData = getJobData(challenge)
-  Jobs.challengeJobs.StartChallengeJob.enqueue(challengeJobData).catch(async () => { await I18n.translate(guildConfig.locale, 'commands:challenge.start.race.error.couldNotStartRace') })
+  try {
+    const challengeJobData = getJobData(challenge)
+    await Jobs.challengeJobs.StartChallengeJob.enqueue(challengeJobData, raceOptions.delay)
+  } catch {
+    await interaction.followUp(await I18n.translate(guildConfig.locale, 'commands:challenge.start.race.error.couldNotStartRace'))
+  }
 }
 
 async function war (interaction: CommandInteraction, guildConfig: GuildConfig): Promise<void> {
@@ -194,8 +202,12 @@ async function war (interaction: CommandInteraction, guildConfig: GuildConfig): 
     await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:challenge.start.war.success'))
   }
 
-  const challengeJobData = getJobData(challenge)
-  Jobs.challengeJobs.StartChallengeJob.enqueue(challengeJobData).catch(async () => { await I18n.translate(guildConfig.locale, 'commands:challenge.start.war.error.couldNotStartWar') })
+  try {
+    const challengeJobData = getJobData(challenge)
+    await Jobs.challengeJobs.StartChallengeJob.enqueue(challengeJobData, warOptions.delay)
+  } catch {
+    await interaction.followUp(await I18n.translate(guildConfig.locale, 'commands:challenge.start.war.error.couldNotStartWar'))
+  }
 }
 
 /**
@@ -209,7 +221,7 @@ async function war (interaction: CommandInteraction, guildConfig: GuildConfig): 
 function getChainOptions (interaction: CommandInteraction): ChainWarCreateOptions {
   return {
     channelId: interaction.channel?.id,
-    delay: interaction.options.getInteger('delay') ?? 5,
+    delay: getDelay(interaction.options.getInteger('delay')),
     duration: interaction.options.getInteger('duration') ?? 10,
     join: interaction.options.getBoolean('join') ?? false,
     chainLength: interaction.options.getInteger('chain_length') ?? 0,
@@ -230,7 +242,7 @@ function getChainOptions (interaction: CommandInteraction): ChainWarCreateOption
 function getRaceOptions (interaction: CommandInteraction): RaceCreateOptions {
   return {
     channelId: interaction.channel?.id,
-    delay: interaction.options.getInteger('delay') ?? 5,
+    delay: getDelay(interaction.options.getInteger('delay')),
     duration: interaction.options.getInteger('duration') ?? 30,
     join: interaction.options.getBoolean('join') ?? false,
     ownerId: interaction.user?.id,
@@ -251,7 +263,7 @@ function getRaceOptions (interaction: CommandInteraction): RaceCreateOptions {
 function getWarOptions (interaction: CommandInteraction): WarCreateOptions {
   return {
     channelId: interaction.channel?.id,
-    delay: interaction.options.getInteger('delay') ?? 5,
+    delay: getDelay(interaction.options.getInteger('delay')),
     duration: interaction.options.getInteger('duration') ?? 10,
     join: interaction.options.getBoolean('join') ?? false,
     ownerId: interaction.user?.id,
@@ -271,4 +283,16 @@ function getJobData (challenge: Challenge): StartChallengeJobData {
   return {
     challengeId: challenge.id
   }
+}
+
+/**
+ * Gets the delay before starting a challenge, in milliseconds
+ *
+ * @param delayMinnutes
+ * @returns The delay in milliseconds
+ */
+function getDelay (delayMinnutes: number | null): number {
+  if (delayMinnutes == null) { return 300000 } // 5 minutes
+
+  return delayMinnutes * 60 * 1000
 }
