@@ -29,7 +29,8 @@ async function deployCommands (message: Message, guildConfig: GuildConfig): Prom
   if (author.permissions.has(Permissions.FLAGS.ADMINISTRATOR)) {
     try {
       await CommandUtils.deployCommands(guildConfig)
-    } catch {
+    } catch (error) {
+      Logger.error(error)
       await message.reply(await I18n.translate(guildConfig.locale, 'commands:deploy.error'))
       return
     }

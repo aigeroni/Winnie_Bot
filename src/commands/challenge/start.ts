@@ -63,6 +63,12 @@ export const ChallengeStartCommand: SubCommand = {
         type: 'SUB_COMMAND',
         options: [
           {
+            name: 'target',
+            description: await I18n.translate(locale, 'commands:challenge.start.race.args.target'),
+            type: 'INTEGER',
+            required: true
+          },
+          {
             name: 'delay',
             description: await I18n.translate(locale, 'commands:challenge.start.race.args.delay'),
             type: 'INTEGER',
@@ -85,12 +91,6 @@ export const ChallengeStartCommand: SubCommand = {
             description: await I18n.translate(locale, 'commands:challenge.start.race.args.name'),
             type: 'STRING',
             required: false
-          },
-          {
-            name: 'target',
-            description: await I18n.translate(locale, 'commands:challenge.start.race.args.target'),
-            type: 'INTEGER',
-            required: true
           },
           {
             name: 'type',
