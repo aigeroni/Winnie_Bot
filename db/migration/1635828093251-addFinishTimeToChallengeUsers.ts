@@ -2,7 +2,7 @@ import { MigrationInterface, QueryRunner, TableColumn } from 'typeorm'
 
 export class addFinishTimeToChallengeUsers1635828093251 implements MigrationInterface {
   public async up (queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.addColumn('challenge_user', new TableColumn({
+    await queryRunner.addColumn('challenge_users', new TableColumn({
       name: 'finished_at',
       type: 'varchar',
       isNullable: true

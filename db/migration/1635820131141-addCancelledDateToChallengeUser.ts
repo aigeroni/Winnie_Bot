@@ -1,8 +1,8 @@
 import { MigrationInterface, QueryRunner, TableColumn } from 'typeorm'
 
-export class addCancelledDateToChallengeUser implements MigrationInterface {
+export class addCancelledDateToChallengeUser1635820131141 implements MigrationInterface {
   public async up (queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.addColumn('challenge_user', new TableColumn({
+    await queryRunner.addColumn('challenge_users', new TableColumn({
       name: 'cancelled_at',
       type: 'varchar',
       isNullable: true
