@@ -184,7 +184,6 @@ async function sendChallengeMessage (challengeId: number, getMessage: (guildConf
     return
   }
 
-  Logger.info('reached message send')
   challengeController.channels.forEach((channel) => {
     DiscordService.sendMessageToChannel(channel.channelId, getMessage).catch(() => {})
   })
