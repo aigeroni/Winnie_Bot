@@ -4,6 +4,7 @@ import { ChainWar, Race, War } from '.'
 import { ChallengeUser } from './challenge-user'
 import { ChallengeChannel } from './challenge-channel'
 import { Challenge } from './bases/challenge'
+import { Logger } from '../core'
 
 /**
  * Tracks universal challenge ids, unique across all challenge types.
@@ -56,11 +57,13 @@ export class ChallengeController extends BaseModel {
   channels!: ChallengeChannel[]
 
   challenge (): Challenge | undefined {
+    Logger.info('pulling challenge')
     if (this.chainWar != null) {
       return this.chainWar
     }
 
     if (this.war != null) {
+      Logger.info('returning war')
       return this.war
     }
 

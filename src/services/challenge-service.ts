@@ -191,6 +191,7 @@ async function sendChallengeMessage (challengeId: number, getMessage: (guildConf
 
 async function getChallengeFromCommand (interaction: CommandInteraction, guildConfig: GuildConfig): Promise<Challenge | undefined> {
   const challengeId = interaction.options.getInteger('id')
+  Logger.info(challengeId)
   let challenge: Challenge | undefined
 
   if (challengeId == null) {
@@ -200,7 +201,9 @@ async function getChallengeFromCommand (interaction: CommandInteraction, guildCo
       await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:challenge.error.noChallengeSpecified'))
     }
   } else {
-    challenge = (await ChallengeController.findOne({ where: { id: interaction.options.getInteger('id') } }))?.challenge()
+    Logger.info('entered else block')
+    challenge = (await ChallengeController.findOne({ where: { id: challengeId } }))?.challenge()
+    Logger.info(JSON.stringify(challenge))
   }
 
   if (challenge == null) {
