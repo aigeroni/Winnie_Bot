@@ -17,6 +17,7 @@ async function createGoal (options: GoalCreateOptions): Promise<Goal> {
   if (options.channelId != null) { goal.channelId = options.channelId }
   if (options.duration != null) { goal.goalDuration = options.duration }
   if (options.type != null) { goal.goalType = options.type }
+  if (options.progress != null) { goal.progress = options.progress }
 
   goal.expectedEndAt = estimateCompletionDate(options.timezone, goal.goalDuration)
 

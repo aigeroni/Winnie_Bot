@@ -53,8 +53,13 @@ export const GoalResetCommand: SubCommand = {
     const goalTimezone = await userTimezone(interaction, guildConfig)
     if (goalTimezone == null) { return }
 
+    let goalProgress = 0
+    if (interaction.options.getString('type') as GoalTypes == oldGoal.goalType) {
+      goalProgress = oldGoal.progress
+    }
+
     await oldGoal.cancel()
-    const newGoal = await createNewGoal(interaction, oldGoal, goalTimezone)
+    const newGoal = await createNewGoal(interaction, oldGoal, goalProgress, goalTimezone)
 
     if (oldGoal.errors.length > 0 && newGoal.errors.length > 0) {
       await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:goal.reset.error.couldNotResetGoal'))
@@ -92,11 +97,12 @@ async function userTimezone (interaction: CommandInteraction, guildConfig: Guild
  * @param newGoalOptions The new goal options passed to the command
  * @returns The newly created goal.
  */
-async function createNewGoal (interaction: CommandInteraction, oldGoal: Goal, timezone: IANAZone): Promise<Goal> {
+async function createNewGoal (interaction: CommandInteraction, oldGoal: Goal, progress: number, timezone: IANAZone): Promise<Goal> {
   return await GoalService.createGoal({
     ownerId: oldGoal.ownerId,
     target: interaction.options.getInteger('target') ?? oldGoal.target,
     type: interaction.options.getString('type') as GoalTypes ?? oldGoal.goalType,
+    progress: progress,
     duration: interaction.options.getString('duration') as GoalDurations ?? oldGoal.goalDuration,
     channelId: interaction.channel?.id ?? oldGoal.channelId,
     timezone

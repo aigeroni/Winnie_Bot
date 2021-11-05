@@ -116,6 +116,7 @@ function getGoalOptions (interaction: CommandInteraction, timezone: IANAZone): G
     ownerId: interaction.user?.id,
     target: interaction.options.getInteger('target') ?? 0,
     type: interaction.options.getString('type') as GoalTypes,
+    progress: 0,
     timezone: timezone
   }
 }
