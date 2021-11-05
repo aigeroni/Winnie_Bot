@@ -30,7 +30,7 @@ async function createGoal (options: GoalCreateOptions): Promise<Goal> {
   */
 async function activeGoalForUser (userId: Snowflake, goalDuration: GoalDurations): Promise<Goal | null> {
   const userGoals = await Goal.find({
-    where: { ownerId: userId, goal_duration: goalDuration },
+    where: { ownerId: userId, goalDuration: goalDuration },
     order: { createdAt: 'DESC' } // is this right???
   })
 
