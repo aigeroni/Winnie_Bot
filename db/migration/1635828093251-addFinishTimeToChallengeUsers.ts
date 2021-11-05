@@ -10,6 +10,6 @@ export class addFinishTimeToChallengeUsers1635828093251 implements MigrationInte
   }
 
   public async down (queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.dropColumn('challenge_user', 'finished_at')
+    await queryRunner.dropColumn('challenge_users', 'finished_at')
   }
 }

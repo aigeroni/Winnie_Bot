@@ -162,9 +162,24 @@ async function chain (interaction: CommandInteraction, guildConfig: GuildConfig)
 
   if (challenge.errors.length > 0) {
     await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:challenge.start.chain.error.couldNotStartChain'))
+  } else if (challenge.universalId == null) {
+    await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:challenge.start.chain.error.couldNotStartChain'))
+  } else if (challenge.wars.length < 1) {
+    await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:challenge.start.chain.error.couldNotStartChain'))
   } else {
-    await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:challenge.start.chain.success'))
+    await interaction.reply(await I18n.translate(guildConfig.locale, 'challenges:startsIn', {
+      challengeType: await I18n.translate(guildConfig.locale, 'challenges:challengeTypes.chain'),
+      challengeName: challenge.name,
+      id: challenge.universalId.id,
+      delay: await I18n.translate(guildConfig.locale, 'challenges:minutesWithCount.minutes', { count: chainOptions.delay/1000/60 }),
+      data: await I18n.translate(guildConfig.locale, 'challenges:data.chain', {
+        current: challenge.wars.length,
+        count: challenge.numberOfWars,
+        duration: await I18n.translate(guildConfig.locale, 'challenges:minutesWithCount.minutes', { count: challenge.duration })
+      }),
+    }))
   }
+
 
   try {
     const challengeJobData = getJobData(challenge)
@@ -180,8 +195,19 @@ async function race (interaction: CommandInteraction, guildConfig: GuildConfig):
 
   if (challenge.errors.length > 0) {
     await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:challenge.start.race.error.couldNotStartRace'))
+  } else if (challenge.universalId == null) {
+    await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:challenge.start.race.error.couldNotStartRace'))
   } else {
-    await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:challenge.start.race.success'))
+    await interaction.reply(await I18n.translate(guildConfig.locale, 'challenges:startsIn', {
+      challengeType: await I18n.translate(guildConfig.locale, 'challenges:challengeTypes.race'),
+      challengeName: challenge.name,
+      id: challenge.universalId.id,
+      delay: await I18n.translate(guildConfig.locale, 'challenges:minutesWithCount.minutes', { count: raceOptions.delay/1000/60 }),
+      data: await I18n.translate(guildConfig.locale, 'challenges:data.race', {
+        target: await I18n.translate(guildConfig.locale, 'challenges:typesWithCount.words', { count: challenge.target }),
+        duration: await I18n.translate(guildConfig.locale, 'challenges:minutesWithCount.minutes', { count: challenge.timeOut })
+      }),
+    }))
   }
 
   try {
@@ -198,8 +224,18 @@ async function war (interaction: CommandInteraction, guildConfig: GuildConfig): 
 
   if (challenge.errors.length > 0) {
     await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:challenge.start.war.error.couldNotStartWar'))
+  } else if (challenge.universalId == null) {
+    await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:challenge.start.war.error.couldNotStartWar'))
   } else {
-    await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:challenge.start.war.success'))
+    await interaction.reply(await I18n.translate(guildConfig.locale, 'challenges:startsIn', {
+      challengeType: await I18n.translate(guildConfig.locale, 'challenges:challengeTypes.war'),
+      challengeName: challenge.name,
+      id: challenge.universalId.id,
+      delay: await I18n.translate(guildConfig.locale, 'challenges:minutesWithCount.minutes', { count: warOptions.delay/1000/60 }),
+      data: await I18n.translate(guildConfig.locale, 'challenges:data.war', {
+        duration: await I18n.translate(guildConfig.locale, 'challenges:minutesWithCount.minutes', { count: challenge.duration })
+      }),
+    }))
   }
 
   try {
@@ -242,7 +278,7 @@ function getChainOptions (interaction: CommandInteraction): ChainWarCreateOption
 function getRaceOptions (interaction: CommandInteraction): RaceCreateOptions {
   return {
     channelId: interaction.channel?.id,
-    delay: getDelay(interaction.options.getInteger('delay')),
+    delay: getDelay(interaction.options.getInteger('delay')) ?? 5,
     duration: interaction.options.getInteger('duration') ?? 30,
     join: interaction.options.getBoolean('join') ?? false,
     ownerId: interaction.user?.id,
@@ -291,8 +327,8 @@ function getJobData (challenge: Challenge): StartChallengeJobData {
  * @param delayMinnutes
  * @returns The delay in milliseconds
  */
-function getDelay (delayMinnutes: number | null): number {
-  if (delayMinnutes == null) { return 300000 } // 5 minutes
+function getDelay (delayMinutes: number | null): number {
+  if (delayMinutes == null) { return 300000 } // 5 minutes
 
-  return delayMinnutes * 60 * 1000
+  return delayMinutes * 60 * 1000
 }

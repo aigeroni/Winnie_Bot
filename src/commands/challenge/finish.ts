@@ -79,6 +79,9 @@ async function canFinishRace (challenge: Challenge, interaction: CommandInteract
  * @returns The ChallengeUser object, undefined if an error occured
  */
 async function getChallengeUser (race: Race, interaction: CommandInteraction, guildConfig: GuildConfig): Promise<ChallengeUser | undefined> {
+  if (race.universalId == null) {
+    return // challenge didn't save properly
+  }
   let challengeUser = await ChallengeUser.findOne({ where: { userId: interaction.user.id, challengeController: race.universalId.id } })
   if (challengeUser != null) { return challengeUser }
 

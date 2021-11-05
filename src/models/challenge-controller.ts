@@ -1,5 +1,5 @@
 import { BaseModel } from './bases/base-model'
-import { Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn } from 'typeorm'
+import { Entity, JoinColumn, OneToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm'
 import { ChainWar, Race, War } from '.'
 import { ChallengeUser } from './challenge-user'
 import { ChallengeChannel } from './challenge-channel'
@@ -22,8 +22,8 @@ export class ChallengeController extends BaseModel {
    * Only present if the challenge is a war.
    */
   @OneToOne(() => War, war => war.universalId)
-  @JoinColumn({ name: 'war_id' })
-  war?: War
+  @JoinColumn({ name: 'war_id'})
+  war?: War | null
 
   /**
    * The challenge's Chain War instance
@@ -31,8 +31,8 @@ export class ChallengeController extends BaseModel {
    * Only present if the challenge is a chain.
    */
   @OneToOne(() => ChainWar, chainWar => chainWar.universalId)
-  @JoinColumn({ name: 'chain_war_id' })
-  chainWar?: ChainWar
+  @JoinColumn({ name: 'chain_war_id'})
+  chainWar?: ChainWar | null
 
   /**
    * The challenge's Race instance.
@@ -40,8 +40,8 @@ export class ChallengeController extends BaseModel {
    * Only present if the challenge is a race.
    */
   @OneToOne(() => Race, race => race.universalId)
-  @JoinColumn({ name: 'race_id' })
-  race?: Race
+  @JoinColumn({ name: 'race_id'})
+  race?: Race | null
 
   /**
    * A list of users currently joined to the challenge

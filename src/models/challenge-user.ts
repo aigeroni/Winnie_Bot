@@ -29,7 +29,7 @@ export class ChallengeUser extends BaseModel {
   /**
    * The Discord ID of the channel which the user joined from
    */
-  @Column()
+  @Column({ name: 'channel_id' })
   @MaxLength(30)
   channelId!: Snowflake
 

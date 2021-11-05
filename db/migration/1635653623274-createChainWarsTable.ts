@@ -12,7 +12,8 @@ export class createChainWarsTable1635653623274 implements MigrationInterface {
         },
         {
           name: 'current_war_id',
-          type: 'int'
+          type: 'int',
+          isNullable: true
         },
 
         {

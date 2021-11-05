@@ -1,20 +1,39 @@
 {
-  "startsIn": "Your {{challengeType}}, {{challengeName}}, (ID {{id}}), starts in {{minutes}}.",
+  "startsIn": "Your {{challengeType}}, {{challengeName}}, (ID {{id}}, {{data}}), starts in {{delay}}.",
   "startWar": "{{ challengeName }} (ID {{ id }}, {{ duration }}) starts now!\n\n{{joinedUsers}}",
   "startRace": "{{ challengeName }} (ID {{ id }}) starts now! Race to {{ target }} {{ type }}! (times out in {{ timeout }})\n\n{{ joined_users }}",
   "status": "**{{id}}**: {{challengeName}} {{data}}, {{server}}",
   "summary": "",
   "total": "Your total of **{{total}}** {{type}} has been added to the summary for {{challengeName}} (ID {{id}}).",
   "data": {
+    "chain": "{{current}}/{{count}}) ({{duration}}",
+    "race": "{{target}}, {{duration}}",
+    "war": "{{duration}}"
+  },
+  "dataWithRemaining": {
     "chain": "({{current}}/{{count}}) ({{minutes}}, {{timeLeft}} remaining)",
     "race": "({{words}}, {{minutes}}, {{timeLeft}} remaining)",
     "war": "({{minutes}}, {{timeLeft}} remaining)"
   },
-  "plurals": {
-    "minutes": "{{duration}} minute",
-    "minutes_plural": "{{duration}} minutes",
-    "words": "{{target}} word",
-    "words_plural": "{{target}} words"
+  "minutesWithCount": {
+    "minutes": "{{count}} minute",
+    "minutes_plural": "{{count}} minutes"
+  },
+  "minutes": {
+    "minutes": "minute",
+    "minutes_plural": "minutes"
+  },
+  "typesWithCount": {
+    "items": "{{ count }} item",
+    "items_plural": "{{ count }} items",
+    "lines": "{{ count }} line",
+    "lines_plural": "{{ count }} lines",
+    "minutes": "{{ count }} minute",
+    "minutes_plural": "{{ count }} minutes",
+    "pages": "{{ count }} page",
+    "pages_plural": "{{ count }} pages",
+    "words": "{{ count }} word",
+    "words_plural": "{{ count }} words"
   },
   "types": {
     "items": "item",
@@ -28,7 +47,7 @@
     "words": "word",
     "words_plural": "words"
   },
-  "challenge_types": {
+  "challengeTypes": {
     "chainWar": "chain war",
     "war": "war",
     "race": "race"

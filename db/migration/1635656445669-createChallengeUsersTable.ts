@@ -18,7 +18,8 @@ export class createChallengeUsersTable1635656445669 implements MigrationInterfac
         },
         {
           name: 'channel_id',
-          type: 'int',
+          type: 'varchar',
+          length: '30',
           isNullable: false
         },
         {

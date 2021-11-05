@@ -1,5 +1,5 @@
 import { Challenge } from './bases/challenge'
-import { Column, Entity, OneToOne } from 'typeorm'
+import { Column, Entity, OneToOne, JoinColumn } from 'typeorm'
 import { IsNotEmpty, IsPositive } from 'class-validator'
 import { RaceTypes } from '../types'
 import { ChallengeController } from './challenge-controller'
@@ -42,5 +42,6 @@ export class Race extends Challenge {
    * as well as a list of users and channels joined to the challenge
    */
   @OneToOne(() => ChallengeController, challengeController => challengeController.race)
-  universalId!: ChallengeController
+  @JoinColumn({ name: 'universal_id' })
+  universalId!: ChallengeController | null
 }

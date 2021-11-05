@@ -12,15 +12,18 @@ export class createChallengesControllerTable1635656439985 implements MigrationIn
         },
         {
           name: 'war_id',
-          type: 'int'
+          type: 'int',
+          isNullable: true
         },
         {
           name: 'race_id',
-          type: 'int'
+          type: 'int',
+          isNullable: true
         },
         {
           name: 'chain_war_id',
-          type: 'int'
+          type: 'int',
+          isNullable: true
         }
       ]
     })

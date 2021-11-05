@@ -25,14 +25,15 @@ export class War extends Challenge {
    */
   @ManyToOne(() => ChainWar, chainWar => chainWar.wars)
   @JoinColumn({ name: 'chain_war_id' })
-  chainWar?: ChainWar
+  chainWar?: ChainWar | null
 
   /**
    * Challenge controller instance, contains the universal challenge id
    * as well as a list of users and channels joined to the challenge
    */
   @OneToOne(() => ChallengeController, challengeController => challengeController.war)
-  universalId!: ChallengeController
+  @JoinColumn({ name: 'universal_id' })
+  universalId!: ChallengeController | null
 
   olderThanTwelveHours (): boolean {
     const now = DateTime.utc()

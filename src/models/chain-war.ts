@@ -1,5 +1,5 @@
 import { Challenge } from './bases/challenge'
-import { Column, Entity, JoinColumn, OneToMany, OneToOne } from 'typeorm'
+import { Column, Entity, JoinColumn, OneToMany, OneToOne} from 'typeorm'
 import { ChallengeController } from './challenge-controller'
 import { War } from './war'
 
@@ -32,9 +32,9 @@ export class ChainWar extends Challenge {
    *
    * Null if the chain war is not active
    */
-  @OneToOne(() => War)
+  @OneToOne(() => War, war => war.chainWar)
   @JoinColumn({ name: 'current_war_id' })
-  currentWar?: War
+  currentWar?: War | null
 
   /**
    * The amount of time, in minutes, between the end of one war
@@ -56,7 +56,8 @@ export class ChainWar extends Challenge {
    * as well as a list of users and channels joined to the challenge
    */
   @OneToOne(() => ChallengeController, challengeController => challengeController.war)
-  universalId!: ChallengeController
+  @JoinColumn({ name: 'universal_id' })
+  universalId!: ChallengeController | null
 
   /**
    * Determines if there are additional wars in the chain.

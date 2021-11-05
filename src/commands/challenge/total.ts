@@ -96,6 +96,9 @@ async function canUpdateTotals (challenge: Challenge, interaction: CommandIntera
  * @returns The ChallengeUser object, undefined if an error occured
  */
 async function getChallengeUser (war: War, interaction: CommandInteraction, guildConfig: GuildConfig): Promise<ChallengeUser | undefined> {
+  if (war.universalId == null) {
+    return // challenge didn't save properly
+  }
   let challengeUser = await ChallengeUser.findOne({ where: { userId: interaction.user.id, challengeController: war.universalId.id } })
   if (challengeUser != null) { return challengeUser }
 

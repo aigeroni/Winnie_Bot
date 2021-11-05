@@ -9,7 +9,7 @@ import {
   ChallengeUser,
   GuildConfig
 } from '../models'
-import { ChainWarCreateOptions, RaceCreateOptions, WarCreateOptions } from '../types'
+import { ChainWarCreateOptions, RaceCreateOptions, RaceTypes, WarCreateOptions } from '../types'
 import { CommandInteraction, Snowflake } from 'discord.js'
 import { I18n, Logger } from '../core'
 import { DiscordService } from '.'
@@ -30,9 +30,12 @@ async function createChainWar (options: ChainWarCreateOptions): Promise<ChainWar
   if (options.split != null) { chain.warMargin = options.split }
 
   chain.startAt = getStartTime(options.delay)
+  await chain.save()
 
   const controller = new ChallengeController()
   controller.chainWar = chain
+  await controller.save()
+  chain.universalId = controller
 
   if (options.channelId != null) {
     await addChannelToChallenge(options.channelId, controller.id)
@@ -60,9 +63,12 @@ async function createRace (options: RaceCreateOptions): Promise<Race> {
   if (options.type != null) { race.targetType = options.type }
 
   race.startAt = getStartTime(options.delay)
+  await race.save()
 
   const controller = new ChallengeController()
   controller.race = race
+  await controller.save()
+  race.universalId = controller
 
   if (options.channelId != null) {
     await addChannelToChallenge(options.channelId, controller.id)
@@ -87,9 +93,12 @@ async function createWar (options: WarCreateOptions): Promise<War> {
   if (options.name != null) { war.name = options.name }
 
   war.startAt = getStartTime(options.delay)
+  await war.save()
 
   const controller = new ChallengeController()
   controller.war = war
+  await controller.save()
+  war.universalId = controller
 
   if (options.channelId != null) {
     await addChannelToChallenge(options.channelId, controller.id)
@@ -113,6 +122,7 @@ async function addUserToChallenge (userId: Snowflake, controllerId: number, chan
   challengeUser.challengeController = controllerId
   challengeUser.userId = userId
   challengeUser.channelId = channelId
+  challengeUser.totalType = 'words' as RaceTypes
 
   return await challengeUser.save()
 }
@@ -174,6 +184,7 @@ async function sendChallengeMessage (challengeId: number, getMessage: (guildConf
     return
   }
 
+  Logger.info('reached message send')
   challengeController.channels.forEach((channel) => {
     DiscordService.sendMessageToChannel(channel.channelId, getMessage).catch(() => {})
   })
@@ -187,14 +198,14 @@ async function getChallengeFromCommand (interaction: CommandInteraction, guildCo
     challenge = await ChallengeService.activeChallengeForUser(interaction.user.id)
 
     if (challenge == null) {
-      await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:challenge.general.error.noChallengeSpecified'))
+      await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:challenge.error.noChallengeSpecified'))
     }
   } else {
     challenge = (await ChallengeController.findOne({ where: { id: interaction.options.getInteger('id') } }))?.challenge()
   }
 
   if (challenge == null) {
-    await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:challenge.general.error.challengeDoesNotExist'))
+    await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:challenge.error.challengeDoesNotExist'))
     return
   }
 
