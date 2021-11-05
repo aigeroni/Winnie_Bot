@@ -70,7 +70,7 @@ export const GoalSetCommand: SubCommand = {
   * @returns true if the user has an active goal.
   */
 async function userHasActiveGoal (interaction: CommandInteraction, locale: string): Promise<boolean> {
-  const goalDuration = interaction.options.getString('duration') as GoalDurations ?? 'daily'
+  const goalDuration = interaction.options.getString('duration') as GoalDurations
   const goal = await GoalService.activeGoalForUser(interaction.user.id, goalDuration)
 
   if (goal != null) {
@@ -112,7 +112,7 @@ async function userTimezone (interaction: CommandInteraction, guildConfig: Guild
 function getGoalOptions (interaction: CommandInteraction, timezone: IANAZone): GoalCreateOptions {
   return {
     channelId: interaction.channel?.id,
-    duration: interaction.options.getString('duration') as GoalDurations ?? 'daily',
+    duration: interaction.options.getString('duration') as GoalDurations,
     ownerId: interaction.user?.id,
     target: interaction.options.getInteger('target') ?? 0,
     type: interaction.options.getString('type') as GoalTypes,

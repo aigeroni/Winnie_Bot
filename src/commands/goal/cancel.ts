@@ -26,7 +26,7 @@ export const GoalCancelCommand: SubCommand = {
     ]
   }),
   execute: async (interaction: CommandInteraction, guildConfig: GuildConfig) => {
-    const goalDuration = interaction.options.getString('duration') as GoalDurations ?? 'daily'
+    const goalDuration = interaction.options.getString('duration') as GoalDurations ?? 'daily' as GoalDurations
     const goal = await GoalService.activeGoalForUser(interaction.user.id, goalDuration)
     if (goal == null) {
       await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:goal.cancel.error.noActiveGoal'))

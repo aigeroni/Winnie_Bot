@@ -2,7 +2,7 @@ import { CommandInteraction } from 'discord.js'
 import { Goal, GuildConfig, UserConfig } from '../../models'
 import { GoalDurations, GoalTypes, SubCommand } from '../../types'
 import { GoalService } from '../../services'
-import { I18n } from '../../core'
+import { I18n, Logger } from '../../core'
 import { IANAZone } from 'luxon'
 
 const NAME = 'reset'
@@ -43,7 +43,7 @@ export const GoalResetCommand: SubCommand = {
     ]
   }),
   execute: async (interaction: CommandInteraction, guildConfig: GuildConfig) => {
-    const goalDuration = interaction.options.getString('duration') as GoalDurations ?? 'daily'
+    const goalDuration = interaction.options.getString('duration') as GoalDurations ?? 'daily' as GoalDurations
     const oldGoal = await GoalService.activeGoalForUser(interaction.user.id, goalDuration)
     if (oldGoal == null) {
       await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:goal.reset.error.noActiveGoal'))
@@ -53,8 +53,10 @@ export const GoalResetCommand: SubCommand = {
     const goalTimezone = await userTimezone(interaction, guildConfig)
     if (goalTimezone == null) { return }
 
+    const newGoalType = interaction.options.getString('type') as GoalTypes ?? 'words' as GoalTypes
     let goalProgress = 0
-    if (interaction.options.getString('type') as GoalTypes == oldGoal.goalType) {
+    Logger.info(oldGoal.goalType)
+    if (newGoalType === oldGoal.goalType) {
       goalProgress = oldGoal.progress
     }
 
