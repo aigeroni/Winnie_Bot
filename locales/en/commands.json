@@ -4,7 +4,6 @@
     "error": "**Unknown Error**: Commands failed to deploy.",
     "success": "Commands deployed successfully."
   },
-
   "config": {
     "description": "Configures Winnie_Bot to meet your needs.",
     "crossGuild": {
@@ -54,7 +53,6 @@
       }
     }
   },
-
   "goal": {
     "description": "Sets, updates, and resets your goals.",
     "cancel": {
@@ -129,7 +127,6 @@
       }
     }
   },
-
   "server": {
     "description": "Configures Winnie_Bot to meet your server's needs. Requires Manage Server permissions.",
     "announcementsChannel": {
