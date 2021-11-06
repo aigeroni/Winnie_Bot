@@ -57,6 +57,9 @@
     "description": "Définis, mets à jour ou réinitialise ton objectif.",
     "cancel": {
       "description": "Annule ton objectif actuel.",
+      "args": {
+        "duration": "`daily`, `weekly`, `monthly`, or `yearly`. Defaults to daily."
+      },
       "success": "Ton objectif actuel a été annulé avec succès.",
       "error": {
         "couldNotCancelGoal": "**ERREUR**: Impossible d'annuler l'objectif actuel (erreur de validation de la base de données).",
@@ -65,6 +68,9 @@
     },
     "info": {
       "description": "Rappelle votre objectif actuel",
+      "args": {
+        "duration": "`daily`, `weekly`, `monthly`, or `yearly`. Defaults to daily."
+      },
       "error": {
         "noActiveGoal": "**ERREUR**: Tu n'as pas d'objectif actuellement."
       }
@@ -72,6 +78,7 @@
     "overwrite": {
       "description": "Remplace la progression de ton objectif par une nouvelle valeur.",
       "args": {
+        "duration": "`daily`, `weekly`, `monthly`, or `yearly`. Defaults to daily.",
         "progress": "Ta progression quant à ton objectif total"
       },
       "error": {
@@ -81,7 +88,7 @@
       }
     },
     "reset": {
-        "description": "Change ton objectif actuel. Ta progression ne change pas si ton nouvel objectif est du même type.",
+      "description": "Change ton objectif actuel. Ta progression ne change pas si ton nouvel objectif est du même type.",
       "success": "You have successfully reset your goal. \n\n{{goal}}",
       "args": {
         "duration": "`daily`, `weekly`, `monthly`, or `yearly`. Defaults to daily.",
@@ -110,6 +117,7 @@
     "update": {
       "description": "Updates progress on your goal.",
       "args": {
+        "duration": "`daily`, `weekly`, `monthly`, or `yearly`. Defaults to daily.",
         "progress": "The amount to add to your current total."
       },
       "error": {

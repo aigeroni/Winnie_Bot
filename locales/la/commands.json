@@ -57,6 +57,9 @@
     "description": "Ponere et delere et ostendere metam.",
     "cancel": {
       "description": "Delet metam.",
+      "args": {
+        "duration": "`daily`, `weekly`, `monthly`, or `yearly`. Defaltam ad cottidianam. Utere vocibus Anglicis."
+      },
       "success": "Metam deletum est.",
       "error": {
         "couldNotCancelGoal": "**Error incognitus occurrit:** Delere non potest. Datorum frangitur. Superos clama!",
@@ -65,6 +68,9 @@
     },
     "info": {
       "description": "Metam ostendit.",
+      "args": {
+        "duration": "`daily`, `weekly`, `monthly`, or `yearly`. Defaltam ad cottidianam. Utere vocibus Anglicis."
+      },
       "error": {
         "noActiveGoal": "**Error occurrit:** Metam non habes."
       }
@@ -72,6 +78,7 @@
     "overwrite": {
       "description": "Progressum tuum cum novo numero substituit.",
       "args": {
+        "duration": "`daily`, `weekly`, `monthly`, or `yearly`. Defaltam ad cottidianam. Utere vocibus Anglicis.",
         "progress": "Novus numerus. Profectum tuum mutat."
       },
       "error": {
@@ -110,6 +117,7 @@
     "update": {
       "description": "Progressum tuum ad metam renovat.",
       "args": {
+        "duration": "`daily`, `weekly`, `monthly`, or `yearly`. Defaltam ad cottidianam. Utere vocibus Anglicis.",
         "progress": "Numerum addere ad totalis."
       },
       "error": {
