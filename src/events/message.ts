@@ -16,7 +16,11 @@ async function handleMention (message: Message, guildConfig: GuildConfig): Promi
   if (!message.mentions.has(WinnieClient.client.user?.id)) { return }
 
   const response = await I18n.translate(guildConfig.locale, 'mentionResponse')
-  await message.channel.send(response)
+  try {
+    await message.channel.send(response)
+  } catch (error) {
+    Logger.error(`Unable to send message to channel ${message.channel.id}`)
+  }
   await deployCommands(message, guildConfig)
 }
 

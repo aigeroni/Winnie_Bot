@@ -1,5 +1,5 @@
 import { Snowflake, Guild, GuildChannel, TextChannel } from 'discord.js'
-import { WinnieClient } from '../core'
+import { Logger, WinnieClient } from '../core'
 import { GuildConfig } from '../models'
 
 async function getGuildFromChannel (channelId: Snowflake): Promise<Guild | undefined> {
@@ -21,7 +21,11 @@ async function sendMessageToChannel (channelId: Snowflake, getMessage: (guildCon
   const guildConfig = await GuildConfig.findOrCreate(guild.id)
 
   const message = await getMessage(guildConfig)
-  await channel.send(message)
+  try {
+    await channel.send(message)
+  } catch (error) {
+    Logger.error(`Unable to send message to channel ${channel.id}`)
+  }
 }
 
 export const DiscordService = {

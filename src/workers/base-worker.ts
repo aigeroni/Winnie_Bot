@@ -34,7 +34,11 @@ export class BaseWorker {
 
       const jobType = jobTypes.find((j) => j.name === job.name)
 
-      await jobType?.execute(job)
+      try {
+        await jobType?.execute(job)
+      } catch (error) {
+        Logger.error(`Unable to process job ${job.name}`)
+      }
     }
   }
 }
