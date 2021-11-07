@@ -70,7 +70,7 @@ export const GoalSetCommand: SubCommand = {
   * @returns true if the user has an active goal.
   */
 async function userHasActiveGoal (interaction: CommandInteraction, locale: string): Promise<boolean> {
-  const goalDuration = interaction.options.getString('duration') as GoalDurations
+  const goalDuration = interaction.options.getString('duration') as GoalDurations ?? 'daily' as GoalDurations
   const goal = await GoalService.activeGoalForUser(interaction.user.id, goalDuration)
 
   if (goal != null) {

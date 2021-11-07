@@ -2,7 +2,7 @@ import { CommandInteraction } from 'discord.js'
 import { Goal, GuildConfig, UserConfig } from '../../models'
 import { GoalDurations, GoalTypes, SubCommand } from '../../types'
 import { GoalService } from '../../services'
-import { I18n, Logger } from '../../core'
+import { I18n } from '../../core'
 import { IANAZone } from 'luxon'
 
 const NAME = 'reset'
@@ -18,7 +18,7 @@ export const GoalResetCommand: SubCommand = {
         name: 'target',
         description: await I18n.translate(locale, 'commands:goal.reset.args.target'),
         type: 'INTEGER',
-        required: false
+        required: true
       },
       {
         name: 'type',
@@ -55,7 +55,6 @@ export const GoalResetCommand: SubCommand = {
 
     const newGoalType = interaction.options.getString('type') as GoalTypes ?? 'words' as GoalTypes
     let goalProgress = 0
-    Logger.info(oldGoal.goalType)
     if (newGoalType === oldGoal.goalType) {
       goalProgress = oldGoal.progress
     }
