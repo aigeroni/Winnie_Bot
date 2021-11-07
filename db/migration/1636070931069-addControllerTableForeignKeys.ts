@@ -1,7 +1,7 @@
-import { MigrationInterface, QueryRunner, TableColumn, TableForeignKey } from 'typeorm';
+import { MigrationInterface, QueryRunner, TableColumn, TableForeignKey } from 'typeorm'
 
 export class addControllerTableForeignKeys1636070931069 implements MigrationInterface {
-  public async up(queryRunner: QueryRunner): Promise<void> {
+  public async up (queryRunner: QueryRunner): Promise<void> {
     await queryRunner.addColumn('chain_wars', new TableColumn({
       name: 'universal_id',
       type: 'int',
@@ -37,7 +37,7 @@ export class addControllerTableForeignKeys1636070931069 implements MigrationInte
     await queryRunner.createForeignKey('wars', controllerWarForeignKey)
   }
 
-  public async down(queryRunner: QueryRunner): Promise<void> {
+  public async down (queryRunner: QueryRunner): Promise<void> {
     await queryRunner.dropColumn('chain_wars', 'universal_id')
     await queryRunner.dropColumn('races', 'universal_id')
     await queryRunner.dropColumn('wars', 'universal_id')

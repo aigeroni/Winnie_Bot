@@ -171,15 +171,14 @@ async function chain (interaction: CommandInteraction, guildConfig: GuildConfig)
       challengeType: await I18n.translate(guildConfig.locale, 'challenges:challengeTypes.chain'),
       challengeName: challenge.name,
       id: challenge.universalId.id,
-      delay: await I18n.translate(guildConfig.locale, 'challenges:minutesWithCount.minutes', { count: chainOptions.delay/1000/60 }),
+      delay: await I18n.translate(guildConfig.locale, 'challenges:minutesWithCount.minutes', { count: chainOptions.delay / 1000 / 60 }),
       data: await I18n.translate(guildConfig.locale, 'challenges:data.chain', {
         current: challenge.wars.length,
         count: challenge.numberOfWars,
         duration: await I18n.translate(guildConfig.locale, 'challenges:minutesWithCount.minutes', { count: challenge.duration })
-      }),
+      })
     }))
   }
-
 
   try {
     const challengeJobData = getJobData(challenge)
@@ -202,11 +201,11 @@ async function race (interaction: CommandInteraction, guildConfig: GuildConfig):
       challengeType: await I18n.translate(guildConfig.locale, 'challenges:challengeTypes.race'),
       challengeName: challenge.name,
       id: challenge.universalId.id,
-      delay: await I18n.translate(guildConfig.locale, 'challenges:minutesWithCount.minutes', { count: raceOptions.delay/1000/60 }),
+      delay: await I18n.translate(guildConfig.locale, 'challenges:minutesWithCount.minutes', { count: raceOptions.delay / 1000 / 60 }),
       data: await I18n.translate(guildConfig.locale, 'challenges:data.race', {
         target: await I18n.translate(guildConfig.locale, 'challenges:typesWithCount.words', { count: challenge.target }),
         duration: await I18n.translate(guildConfig.locale, 'challenges:minutesWithCount.minutes', { count: challenge.timeOut })
-      }),
+      })
     }))
   }
 
@@ -231,10 +230,10 @@ async function war (interaction: CommandInteraction, guildConfig: GuildConfig): 
       challengeType: await I18n.translate(guildConfig.locale, 'challenges:challengeTypes.war'),
       challengeName: challenge.name,
       id: challenge.universalId.id,
-      delay: await I18n.translate(guildConfig.locale, 'challenges:minutesWithCount.minutes', { count: warOptions.delay/1000/60 }),
+      delay: await I18n.translate(guildConfig.locale, 'challenges:minutesWithCount.minutes', { count: warOptions.delay / 1000 / 60 }),
       data: await I18n.translate(guildConfig.locale, 'challenges:data.war', {
         duration: await I18n.translate(guildConfig.locale, 'challenges:minutesWithCount.minutes', { count: challenge.duration })
-      }),
+      })
     }))
   }
 
