@@ -1,10 +1,10 @@
-import { StartChallengeJob } from './start-challenge-job'
+import { CreateChallenge } from './start-challenge'
 
 const all = [
-  StartChallengeJob
+  CreateChallenge
 ]
 
 export const challengeJobs = {
   all,
-  StartChallengeJob
+  CreateChallenge
 }

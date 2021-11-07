@@ -1,3 +1,3 @@
-export interface StartChallengeJobData {
+export interface ChallengeHandlerData {
   challengeId: number
 }
