@@ -14,11 +14,10 @@ import { Message, Permissions } from 'discord.js'
 async function handleMention (message: Message, guildConfig: GuildConfig): Promise<void> {
   if (WinnieClient.client.user == null) { return }
   if (!message.mentions.has(WinnieClient.client.user, { ignoreEveryone: true, ignoreRoles: true })) { return }
-  Logger.info('Winnie successfully registered mention')
 
   const response = await I18n.translate(guildConfig.locale, 'mentionResponse')
   await message.channel.send(response)
-  Logger.info('attempting to deploy commands')
+  Logger.info('Winnie registered mention. Attempting to deploy commands.')
   await deployCommands(message, guildConfig)
 }
 
