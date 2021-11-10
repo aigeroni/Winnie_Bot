@@ -22,7 +22,7 @@ export class ChallengeController extends BaseModel {
    *
    * Only present if the challenge is a war.
    */
-  @OneToOne(() => War, war => war.universalId)
+  @OneToOne(() => War, war => war.universal)
   @JoinColumn({ name: 'war_id' })
   war?: War | null
 
@@ -31,7 +31,7 @@ export class ChallengeController extends BaseModel {
    *
    * Only present if the challenge is a chain.
    */
-  @OneToOne(() => ChainWar, chainWar => chainWar.universalId)
+  @OneToOne(() => ChainWar, chainWar => chainWar.universal)
   @JoinColumn({ name: 'chain_war_id' })
   chainWar?: ChainWar | null
 
@@ -40,7 +40,7 @@ export class ChallengeController extends BaseModel {
    *
    * Only present if the challenge is a race.
    */
-  @OneToOne(() => Race, race => race.universalId)
+  @OneToOne(() => Race, race => race.universal)
   @JoinColumn({ name: 'race_id' })
   race?: Race | null
 
@@ -59,6 +59,7 @@ export class ChallengeController extends BaseModel {
   challenge (): Challenge | undefined {
     Logger.info('pulling challenge')
     if (this.chainWar != null) {
+      Logger.info('returning chain')
       return this.chainWar
     }
 
@@ -68,6 +69,7 @@ export class ChallengeController extends BaseModel {
     }
 
     if (this.race != null) {
+      Logger.info('returning race')
       return this.race
     }
   }

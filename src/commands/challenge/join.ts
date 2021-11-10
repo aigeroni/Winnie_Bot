@@ -1,7 +1,7 @@
 import { CommandInteraction } from 'discord.js'
 import { GuildConfig, ChallengeChannel, ChallengeController, ChallengeUser } from '../../models'
 import { ChallengeService } from '../../services'
-import { I18n } from '../../core'
+import { I18n, Logger } from '../../core'
 import { SubCommand } from '../../types'
 
 const NAME = 'join'
@@ -23,15 +23,18 @@ export const ChallengeJoinCommand: SubCommand = {
   }),
 
   execute: async (interaction: CommandInteraction, guildConfig: GuildConfig) => {
+    Logger.info('active challenge pull')
     const activeChallenge = await ChallengeService.activeChallengeForUser(interaction.user.id)
     if (activeChallenge != null) {
       await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:challenge.join.error.challengeAlreadyJoined'))
       return
     }
 
+    Logger.info('challenge pull')
     const challengeId = interaction.options.getInteger('id')
     if (challengeId == null) { throw new Error() } // uh.... yikes?
 
+    Logger.info('controller pull')
     const challengeController = await ChallengeController.findOne({ where: { id: challengeId } })
     if (challengeController == null) {
       await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:challenge.join.error.challengeDoesNotExist'))
@@ -50,13 +53,16 @@ export const ChallengeJoinCommand: SubCommand = {
       }
     }
 
+    Logger.info('user pull')
     const userId = interaction.user.id
     const challengeUser = await ChallengeUser.findOne({
       where: { userId: userId, challengeController: challengeId }
     })
     if (challengeUser != null) {
+      Logger.info('entered if block')
       await challengeUser.rejoin(channelId)
     } else {
+      Logger.info('entered else block')
       const userAdd = await ChallengeService.addUserToChallenge(userId, challengeId, channelId)
       if (userAdd.errors.length > 0) {
         await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:challenge.join.error.couldNotJoinChallenge'))

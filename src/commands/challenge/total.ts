@@ -96,13 +96,13 @@ async function canUpdateTotals (challenge: Challenge, interaction: CommandIntera
  * @returns The ChallengeUser object, undefined if an error occured
  */
 async function getChallengeUser (war: War, interaction: CommandInteraction, guildConfig: GuildConfig): Promise<ChallengeUser | undefined> {
-  if (war.universalId == null) {
+  if (war.universal == null) {
     return // challenge didn't save properly
   }
-  let challengeUser = await ChallengeUser.findOne({ where: { userId: interaction.user.id, challengeController: war.universalId.id } })
+  let challengeUser = await ChallengeUser.findOne({ where: { userId: interaction.user.id, challengeController: war.universal.id } })
   if (challengeUser != null) { return challengeUser }
 
-  challengeUser = await ChallengeService.addUserToChallenge(interaction.user.id, war.universalId.id, interaction.channelId)
+  challengeUser = await ChallengeService.addUserToChallenge(interaction.user.id, war.universal.id, interaction.channelId)
   if (challengeUser.errors.length <= 0) { return challengeUser }
 
   await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:challenge.total.error.couldNotAddTotal'))

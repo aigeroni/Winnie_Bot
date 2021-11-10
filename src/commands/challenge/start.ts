@@ -162,7 +162,7 @@ async function chain (interaction: CommandInteraction, guildConfig: GuildConfig)
 
   if (challenge.errors.length > 0) {
     await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:challenge.start.chain.error.couldNotStartChain'))
-  } else if (challenge.universalId == null) {
+  } else if (challenge.universal == null) {
     await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:challenge.start.chain.error.couldNotStartChain'))
   } else if (challenge.wars.length < 1) {
     await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:challenge.start.chain.error.couldNotStartChain'))
@@ -170,7 +170,7 @@ async function chain (interaction: CommandInteraction, guildConfig: GuildConfig)
     await interaction.reply(await I18n.translate(guildConfig.locale, 'challenges:startsIn', {
       challengeType: await I18n.translate(guildConfig.locale, 'challenges:challengeTypes.chain'),
       challengeName: challenge.name,
-      id: challenge.universalId.id,
+      id: challenge.universal.id,
       delay: await I18n.translate(guildConfig.locale, 'challenges:minutesWithCount.minutes', { count: chainOptions.delay / 1000 / 60 }),
       data: await I18n.translate(guildConfig.locale, 'challenges:data.chain', {
         current: challenge.wars.length,
@@ -180,7 +180,7 @@ async function chain (interaction: CommandInteraction, guildConfig: GuildConfig)
     }))
 
     try {
-      await Jobs.challengeJobs.CreateChallenge(challenge.universalId.id, chainOptions.delay)
+      await Jobs.challengeJobs.CreateChallenge(challenge.universal.id, chainOptions.delay)
     } catch {
       await interaction.followUp(await I18n.translate(guildConfig.locale, 'commands:challenge.start.chain.error.couldNotStartChain'))
     }
@@ -193,13 +193,13 @@ async function race (interaction: CommandInteraction, guildConfig: GuildConfig):
 
   if (challenge.errors.length > 0) {
     await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:challenge.start.race.error.couldNotStartRace'))
-  } else if (challenge.universalId == null) {
+  } else if (challenge.universal == null) {
     await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:challenge.start.race.error.couldNotStartRace'))
   } else {
     await interaction.reply(await I18n.translate(guildConfig.locale, 'challenges:startsIn', {
       challengeType: await I18n.translate(guildConfig.locale, 'challenges:challengeTypes.race'),
       challengeName: challenge.name,
-      id: challenge.universalId.id,
+      id: challenge.universal.id,
       delay: await I18n.translate(guildConfig.locale, 'challenges:minutesWithCount.minutes', { count: raceOptions.delay / 1000 / 60 }),
       data: await I18n.translate(guildConfig.locale, 'challenges:data.race', {
         target: await I18n.translate(guildConfig.locale, 'challenges:typesWithCount.words', { count: challenge.target }),
@@ -208,7 +208,7 @@ async function race (interaction: CommandInteraction, guildConfig: GuildConfig):
     }))
 
     try {
-      await Jobs.challengeJobs.CreateChallenge(challenge.universalId.id, raceOptions.delay)
+      await Jobs.challengeJobs.CreateChallenge(challenge.universal.id, raceOptions.delay)
     } catch {
       await interaction.followUp(await I18n.translate(guildConfig.locale, 'commands:challenge.start.race.error.couldNotStartRace'))
     }
@@ -221,13 +221,13 @@ async function war (interaction: CommandInteraction, guildConfig: GuildConfig): 
 
   if (challenge.errors.length > 0) {
     await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:challenge.start.war.error.couldNotStartWar'))
-  } else if (challenge.universalId == null) {
+  } else if (challenge.universal == null) {
     await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:challenge.start.war.error.couldNotStartWar'))
   } else {
     await interaction.reply(await I18n.translate(guildConfig.locale, 'challenges:startsIn', {
       challengeType: await I18n.translate(guildConfig.locale, 'challenges:challengeTypes.war'),
       challengeName: challenge.name,
-      id: challenge.universalId.id,
+      id: challenge.universal.id,
       delay: await I18n.translate(guildConfig.locale, 'challenges:minutesWithCount.minutes', { count: warOptions.delay / 1000 / 60 }),
       data: await I18n.translate(guildConfig.locale, 'challenges:data.war', {
         duration: await I18n.translate(guildConfig.locale, 'challenges:minutesWithCount.minutes', { count: challenge.duration })
@@ -235,7 +235,7 @@ async function war (interaction: CommandInteraction, guildConfig: GuildConfig): 
     }))
 
     try {
-      await Jobs.challengeJobs.CreateChallenge(challenge.universalId.id, warOptions.delay)
+      await Jobs.challengeJobs.CreateChallenge(challenge.universal.id, warOptions.delay)
     } catch {
       await interaction.followUp(await I18n.translate(guildConfig.locale, 'commands:challenge.start.war.error.couldNotStartWar'))
     }

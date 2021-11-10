@@ -6,14 +6,14 @@ import { ChallengeService } from '../../services'
 export async function CreateChallenge (challengeId: number, delay: number) {
   console.log(delay)
   const delayString = delay.toString() + 'm'
-  var timer = new NanoTimer();
-  timer.setTimeout(StartChallenge, [challengeId], delayString);
+  var timer = new NanoTimer()
+  timer.setTimeout(StartChallenge, [challengeId], delayString)
 }
 
 async function StartChallenge (challengeId: number): Promise<void> {
   Logger.info('entered challenge start')
-  Logger.info(JSON.stringify(await ChallengeController.findOne({ where: { id: challengeId } })))
-  const challenge = (await ChallengeController.findOne({ where: { id: challengeId } }))?.challenge()
+  Logger.info(JSON.stringify(await ChallengeController.findOne({ where: { id: challengeId }, relations: ['war', 'race', 'chainWar', 'users', 'channels'] })))
+  const challenge = (await ChallengeController.findOne({ where: { id: challengeId }, relations: ['war', 'race', 'chainWar', 'users', 'channels'] }))?.challenge()
   if (challenge == null) { throw new Error(`Could not find challenge with id: ${challengeId}`) }
   if (challenge.hasStarted) { throw new Error(`Challenge with id ${challenge.id} has already been started, it cannot be started again.`) }
   Logger.info('bypassed errors')
@@ -44,17 +44,17 @@ async function sendRaceMessages (challengeId: number, race: Race): Promise<void>
       id: challengeId,
       target: race.target,
       type: await I18n.translate(guildConfig.locale, `challenges:types.${race.targetType}`, { count: race.target }),
-      timeout: await I18n.translate(guildConfig.locale, 'challenges:purals.minutes', { count: race.timeOut })
+      timeout: await I18n.translate(guildConfig.locale, 'challenges:minutesWithCount.minutes', { count: race.timeOut })
     })
   })
 }
 
 async function sendWarMessages (challengeId: number, war: War | ChainWar): Promise<void> {
   await ChallengeService.sendChallengeMessage(challengeId, async (guildConfig: GuildConfig): Promise<string> => {
-    return await I18n.translate(guildConfig.locale, 'challenges:startRace', {
+    return await I18n.translate(guildConfig.locale, 'challenges:startWar', {
       challengeName: war.name,
       id: challengeId,
-      duration: await I18n.translate(guildConfig.locale, 'challenges:purals.minutes', { count: war.duration })
+      duration: await I18n.translate(guildConfig.locale, 'challenges:minutesWithCount.minutes', { count: war.duration })
     })
   })
 }

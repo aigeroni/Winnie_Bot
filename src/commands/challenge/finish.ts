@@ -79,13 +79,13 @@ async function canFinishRace (challenge: Challenge, interaction: CommandInteract
  * @returns The ChallengeUser object, undefined if an error occured
  */
 async function getChallengeUser (race: Race, interaction: CommandInteraction, guildConfig: GuildConfig): Promise<ChallengeUser | undefined> {
-  if (race.universalId == null) {
+  if (race.universal == null) {
     return // challenge didn't save properly
   }
-  let challengeUser = await ChallengeUser.findOne({ where: { userId: interaction.user.id, challengeController: race.universalId.id } })
+  let challengeUser = await ChallengeUser.findOne({ where: { userId: interaction.user.id, challengeController: race.universal.id } })
   if (challengeUser != null) { return challengeUser }
 
-  challengeUser = await ChallengeService.addUserToChallenge(interaction.user.id, race.universalId.id, interaction.channelId)
+  challengeUser = await ChallengeService.addUserToChallenge(interaction.user.id, race.universal.id, interaction.channelId)
   if (challengeUser.errors.length <= 0) { return challengeUser }
 
   await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:challenge.finish.error.couldNotFinishChallenge'))

@@ -35,7 +35,7 @@ async function createChainWar (options: ChainWarCreateOptions): Promise<ChainWar
   const controller = new ChallengeController()
   controller.chainWar = chain
   await controller.save()
-  chain.universalId = controller
+  chain.universal = controller
 
   if (options.channelId != null) {
     await addChannelToChallenge(options.channelId, controller.id)
@@ -68,7 +68,7 @@ async function createRace (options: RaceCreateOptions): Promise<Race> {
   const controller = new ChallengeController()
   controller.race = race
   await controller.save()
-  race.universalId = controller
+  race.universal = controller
 
   if (options.channelId != null) {
     await addChannelToChallenge(options.channelId, controller.id)
@@ -98,7 +98,7 @@ async function createWar (options: WarCreateOptions): Promise<War> {
   const controller = new ChallengeController()
   controller.war = war
   await controller.save()
-  war.universalId = controller
+  war.universal = controller
 
   if (options.channelId != null) {
     await addChannelToChallenge(options.channelId, controller.id)
@@ -118,6 +118,7 @@ async function createWar (options: WarCreateOptions): Promise<War> {
   * @returns a challenge/user link
   */
 async function addUserToChallenge (userId: Snowflake, controllerId: number, channelId: Snowflake): Promise<ChallengeUser> {
+  Logger.info('adding user')
   const challengeUser = new ChallengeUser()
   challengeUser.challengeController = controllerId
   challengeUser.userId = userId
@@ -149,10 +150,11 @@ async function addChannelToChallenge (channelId: Snowflake, controllerId: number
   * @returns The user's active challenge, null if the don't have one
   */
 async function activeChallengeForUser (userId: Snowflake): Promise<Challenge | undefined> {
-  const userJoinedChallenges = await ChallengeController.find({
-    where: { ChallengeUser: { ownerId: userId } },
-    relations: ['ChallengeUser']
-  })
+  const userJoinedChallenges = await ChallengeController
+    .createQueryBuilder('challenges_controller')
+    .leftJoin('challenges_controller.users', 'challenge_users')
+    .where('challenge_users.user_id = :id', { id: userId })
+    .getMany()
 
   const activeChallenges: Challenge[] = userJoinedChallenges.reduce(
     (active: Challenge[], controller: ChallengeController): Challenge[] => {
@@ -178,7 +180,7 @@ async function activeChallengeForUser (userId: Snowflake): Promise<Challenge | u
  * @param messageKey the localisation key of the message to send
  */
 async function sendChallengeMessage (challengeId: number, getMessage: (guildConfig: GuildConfig) => Promise<string>): Promise<void> {
-  const challengeController = await ChallengeController.findOne({ where: { id: challengeId } })
+  const challengeController = await ChallengeController.findOne({ where: { id: challengeId }, relations: ['war', 'race', 'chainWar', 'users', 'channels'] })
   if (challengeController == null) {
     Logger.error(`Unable to send messages for challenge with id: ${challengeId}. The challenge could not be found.`)
     return
@@ -202,7 +204,7 @@ async function getChallengeFromCommand (interaction: CommandInteraction, guildCo
     }
   } else {
     Logger.info('entered else block')
-    challenge = (await ChallengeController.findOne({ where: { id: challengeId } }))?.challenge()
+    challenge = (await ChallengeController.findOne({ where: { id: challengeId }, relations: ['war', 'race', 'chainWar', 'users', 'channels'] }))?.challenge()
     Logger.info(JSON.stringify(challenge))
   }
 

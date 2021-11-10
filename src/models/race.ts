@@ -42,6 +42,5 @@ export class Race extends Challenge {
    * as well as a list of users and channels joined to the challenge
    */
   @OneToOne(() => ChallengeController, challengeController => challengeController.race)
-  @JoinColumn({ name: 'universal_id' })
-  universalId!: ChallengeController | null
+  universal!: ChallengeController | null
 }

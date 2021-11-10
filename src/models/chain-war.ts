@@ -56,8 +56,7 @@ export class ChainWar extends Challenge {
    * as well as a list of users and channels joined to the challenge
    */
   @OneToOne(() => ChallengeController, challengeController => challengeController.war)
-  @JoinColumn({ name: 'universal_id' })
-  universalId!: ChallengeController | null
+  universal!: ChallengeController | null
 
   /**
    * Determines if there are additional wars in the chain.
