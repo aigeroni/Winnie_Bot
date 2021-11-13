@@ -1,6 +1,6 @@
 import NanoTimer = require('nanotimer')
 import { I18n } from '../core'
-import { ChainWar, ChallengeController, GuildConfig, Race, War } from '../models'
+import { ChainWar, Challenge, ChallengeController, GuildConfig, Race, War } from '../models'
 import { ChallengeService } from '.'
 import { EndChallengeService } from './end-challenge-service'
 
@@ -22,22 +22,34 @@ async function startChallenge (challengeId: number): Promise<void> {
   } else {
     switch (challenge.challenge_type) {
       case 'race':
-        const currentRace = challenge as Race
-        await sendRaceMessages(challengeId, currentRace)
-        await EndChallengeService.handleChallengeOnStart(challengeId, currentRace.timeOut * 1000 * 60)
+        await commenceRace(challengeId, challenge)
         break
       case 'war':
-        const currentWar = challenge as War
-        await sendWarMessages(challengeId, currentWar)
-        await EndChallengeService.handleChallengeOnStart(challengeId, currentWar.duration * 1000 * 60)
+        await commenceWar(challengeId, challenge)
         break
       case 'chain_war':
-        const currentChain = challenge as ChainWar
-        await sendWarMessages(challengeId, currentChain)
-        await EndChallengeService.handleChallengeOnStart(challengeId, currentChain.duration * 1000 * 60)
+        await commenceChain(challengeId, challenge)
         break
     }
   }
+}
+
+async function commenceRace (challengeId: number, challenge: Challenge): Promise<void> {
+  const currentRace = challenge as Race
+  await sendRaceMessages(challengeId, currentRace)
+  await EndChallengeService.handleChallengeOnStart(challengeId, currentRace.timeOut * 1000 * 60)
+}
+
+async function commenceWar (challengeId: number, challenge: Challenge): Promise<void> {
+  const currentWar = challenge as War
+  await sendWarMessages(challengeId, currentWar)
+  await EndChallengeService.handleChallengeOnStart(challengeId, currentWar.duration * 1000 * 60)
+}
+
+async function commenceChain (challengeId: number, challenge: Challenge): Promise<void> {
+  const currentChain = challenge as ChainWar
+  await sendWarMessages(challengeId, currentChain)
+  await EndChallengeService.handleChallengeOnStart(challengeId, currentChain.duration * 1000 * 60)
 }
 
 async function sendRaceMessages (challengeId: number, race: Race): Promise<void> {
