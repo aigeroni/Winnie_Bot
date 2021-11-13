@@ -1,9 +1,8 @@
 import { CommandInteraction } from 'discord.js'
-import { Jobs } from '../../jobs'
 import { GuildConfig } from '../../models'
 import { ChallengeService, StartChallengeService } from '../../services'
 import { I18n } from '../../core'
-import { ChainWarCreateOptions, RaceCreateOptions, WarCreateOptions, RaceTypes, SubCommand, ChallengeHandlerData } from '../../types'
+import { ChainWarCreateOptions, RaceCreateOptions, WarCreateOptions, RaceTypes, SubCommand } from '../../types'
 
 const NAME = 'start'
 

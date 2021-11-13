@@ -1,5 +1,5 @@
 import { Challenge } from './bases/challenge'
-import { Column, Entity, OneToOne, JoinColumn } from 'typeorm'
+import { Column, Entity, OneToOne } from 'typeorm'
 import { IsNotEmpty, IsPositive } from 'class-validator'
 import { RaceTypes } from '../types'
 import { ChallengeController } from './challenge-controller'

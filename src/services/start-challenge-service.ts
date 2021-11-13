@@ -1,10 +1,10 @@
 import NanoTimer = require('nanotimer')
-import { I18n, Logger } from '../core'
+import { I18n } from '../core'
 import { ChainWar, ChallengeController, GuildConfig, Race, War } from '../models'
 import { ChallengeService } from '.'
 import { EndChallengeService } from './end-challenge-service'
 
-export async function handleChallengeOnCreate (challengeId: number, delay: number) {
+export async function handleChallengeOnCreate (challengeId: number, delay: number): Promise<void> {
   const delayString = delay.toString() + 'm'
   var startTimer = new NanoTimer()
   startTimer.setTimeout(startChallenge, [challengeId], delayString)
@@ -65,4 +65,3 @@ async function sendWarMessages (challengeId: number, war: War | ChainWar): Promi
 export const StartChallengeService = {
   handleChallengeOnCreate
 }
-
