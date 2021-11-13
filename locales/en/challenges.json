@@ -1,8 +1,10 @@
 {
   "startsIn": "Your {{challengeType}}, {{challengeName}}, (ID {{id}}, {{data}}), starts in {{delay}}.",
   "startWar": "{{ challengeName }} (ID {{ id }}, {{ duration }}) starts now!\n\n{{joinedUsers}}",
-  "startRace": "{{ challengeName }} (ID {{ id }}) starts now! Race to {{ target }} {{ type }}! (times out in {{ timeout }})\n\n{{ joined_users }}",
+  "startRace": "{{ challengeName }} (ID {{ id }}) starts now! Race to {{ target }} {{ type }}! (times out in {{ timeout }})\n{{ joined_users }}",
   "status": "**{{id}}**: {{challengeName}} {{data}}, {{server}}",
+  "completeWar": "{{ challengeName }} (ID {{ id }}) has ended! Post your total using `/challenge total` to be included in the summary.\n{{ joined_users }}",
+  "completeRace": "You have one hour remaining to complete {{ challengeName }} (ID {{ id }}, {{ target }} {{ type }}) using `/challenge finish`.\n{{ joined_users }}",
   "summary": "",
   "total": "Your total of **{{total}}** {{type}} has been added to the summary for {{challengeName}} (ID {{id}}).",
   "data": {

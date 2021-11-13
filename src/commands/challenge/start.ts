@@ -1,7 +1,7 @@
 import { CommandInteraction } from 'discord.js'
 import { Jobs } from '../../jobs'
-import { Challenge, GuildConfig } from '../../models'
-import { ChallengeService } from '../../services'
+import { GuildConfig } from '../../models'
+import { ChallengeService, StartChallengeService } from '../../services'
 import { I18n } from '../../core'
 import { ChainWarCreateOptions, RaceCreateOptions, WarCreateOptions, RaceTypes, SubCommand, ChallengeHandlerData } from '../../types'
 
@@ -180,7 +180,7 @@ async function chain (interaction: CommandInteraction, guildConfig: GuildConfig)
     }))
 
     try {
-      await Jobs.challengeJobs.CreateChallenge(challenge.universal.id, chainOptions.delay)
+      await StartChallengeService.handleChallengeOnCreate(challenge.universal.id, chainOptions.delay)
     } catch {
       await interaction.followUp(await I18n.translate(guildConfig.locale, 'commands:challenge.start.chain.error.couldNotStartChain'))
     }
@@ -208,7 +208,7 @@ async function race (interaction: CommandInteraction, guildConfig: GuildConfig):
     }))
 
     try {
-      await Jobs.challengeJobs.CreateChallenge(challenge.universal.id, raceOptions.delay)
+      await StartChallengeService.handleChallengeOnCreate(challenge.universal.id, raceOptions.delay)
     } catch {
       await interaction.followUp(await I18n.translate(guildConfig.locale, 'commands:challenge.start.race.error.couldNotStartRace'))
     }
@@ -235,7 +235,7 @@ async function war (interaction: CommandInteraction, guildConfig: GuildConfig): 
     }))
 
     try {
-      await Jobs.challengeJobs.CreateChallenge(challenge.universal.id, warOptions.delay)
+      await StartChallengeService.handleChallengeOnCreate(challenge.universal.id, warOptions.delay)
     } catch {
       await interaction.followUp(await I18n.translate(guildConfig.locale, 'commands:challenge.start.war.error.couldNotStartWar'))
     }
