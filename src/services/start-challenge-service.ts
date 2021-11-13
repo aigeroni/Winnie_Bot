@@ -24,17 +24,17 @@ async function startChallenge (challengeId: number): Promise<void> {
       case 'race':
         const currentRace = challenge as Race
         await sendRaceMessages(challengeId, currentRace)
-        await EndChallengeService.handleChallengeOnStart(challengeId, currentRace.timeOut * 1000 * 60)
+        EndChallengeService.handleChallengeOnStart(challengeId, currentRace.timeOut * 1000 * 60)
         break
       case 'war':
         const currentWar = challenge as War
         await sendWarMessages(challengeId, currentWar)
-        await EndChallengeService.handleChallengeOnStart(challengeId, currentWar.duration * 1000 * 60)
+        EndChallengeService.handleChallengeOnStart(challengeId, currentWar.duration * 1000 * 60)
         break
       case 'chain_war':
         const currentChain = challenge as ChainWar
         await sendWarMessages(challengeId, currentChain)
-        await EndChallengeService.handleChallengeOnStart(challengeId, currentChain.duration * 1000 * 60)
+        EndChallengeService.handleChallengeOnStart(challengeId, currentChain.duration * 1000 * 60)
         break
     }
   }
