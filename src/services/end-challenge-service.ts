@@ -6,7 +6,7 @@ import { ChallengeService } from '.'
 export async function handleChallengeOnStart (challengeId: number, duration: number): Promise<void> {
   const durationString = duration.toString() + 'm'
   var endTimer = new NanoTimer()
-  endTimer.setTimeout(endChallenge, [challengeId], durationString)
+  endTimer.setTimeout(() => { endChallenge(challengeId).catch(() => {}) }, [], durationString)
 }
 
 async function endChallenge (challengeId: number): Promise<void> {

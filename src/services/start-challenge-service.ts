@@ -7,7 +7,7 @@ import { EndChallengeService } from './end-challenge-service'
 export async function handleChallengeOnCreate (challengeId: number, delay: number): Promise<void> {
   const delayString = delay.toString() + 'm'
   var startTimer = new NanoTimer()
-  startTimer.setTimeout(startChallenge, [challengeId], delayString)
+  startTimer.setTimeout(() => { startChallenge(challengeId).catch(() => {}) }, [challengeId], delayString)
 }
 
 async function startChallenge (challengeId: number): Promise<void> {
