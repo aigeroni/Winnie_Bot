@@ -48,7 +48,7 @@ async function sendWarMessages (challengeId: number, war: War | ChainWar): Promi
   await ChallengeService.sendChallengeMessage(challengeId, async (guildConfig: GuildConfig): Promise<string> => {
     return await I18n.translate(guildConfig.locale, 'challenges:completeWar', {
       challengeName: war.name,
-      id: challengeId,
+      id: challengeId
     })
   })
 }
