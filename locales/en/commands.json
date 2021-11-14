@@ -258,7 +258,7 @@
       "success": "You have left {{ challengeName }} ( ID {{ id }}).",
       "error": {
         "couldNotLeaveChallenge": "**Unknown Error**: Could not leave challenge {{ id }} (database validation error).",
-        "noActiveChallenge": "**Error**: You haven't joind a challenge yet."
+        "noActiveChallenge": "**Error**: You haven't joined a challenge yet."
       }
     },
     "list": {

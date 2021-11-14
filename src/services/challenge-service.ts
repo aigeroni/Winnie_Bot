@@ -156,6 +156,12 @@ async function activeChallengeForUser (userId: Snowflake): Promise<Challenge | u
     .where('challenge_users.user_id = :id', { id: userId })
     .getMany()
 
+  Logger.info(JSON.stringify(userJoinedChallenges))
+
+  /*
+  if we can get a war/race/chain ID out of the query builder, then we can go and look those up and reduce from there
+  */
+
   const activeChallenges: Challenge[] = userJoinedChallenges.reduce(
     (active: Challenge[], controller: ChallengeController): Challenge[] => {
       const challenge = controller.challenge()

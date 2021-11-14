@@ -257,7 +257,7 @@ function getChainOptions (interaction: CommandInteraction): ChainWarCreateOption
     join: interaction.options.getBoolean('join') ?? false,
     chainLength: interaction.options.getInteger('chain_length') ?? 0,
     ownerId: interaction.user?.id,
-    name: interaction.options.getString('type') ?? `${interaction.user.username}'s chain war`,
+    name: interaction.options.getString('name') ?? `${interaction.user.username}'s chain war`,
     split: interaction.options.getInteger('split') ?? 5
   }
 }
@@ -277,7 +277,7 @@ function getRaceOptions (interaction: CommandInteraction): RaceCreateOptions {
     duration: interaction.options.getInteger('duration') ?? 30,
     join: interaction.options.getBoolean('join') ?? false,
     ownerId: interaction.user?.id,
-    name: interaction.options.getString('type') ?? `${interaction.user.username}'s race`,
+    name: interaction.options.getString('name') ?? `${interaction.user.username}'s race`,
     target: interaction.options.getInteger('target') ?? 0,
     type: interaction.options.getString('type') as RaceTypes
   }
@@ -298,7 +298,7 @@ function getWarOptions (interaction: CommandInteraction): WarCreateOptions {
     duration: interaction.options.getInteger('duration') ?? 10,
     join: interaction.options.getBoolean('join') ?? false,
     ownerId: interaction.user?.id,
-    name: interaction.options.getString('type') ?? `${interaction.user.username}'s war`
+    name: interaction.options.getString('name') ?? `${interaction.user.username}'s war`
   }
 }
 
