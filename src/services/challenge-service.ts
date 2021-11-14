@@ -36,11 +36,12 @@ async function createChainWar (options: ChainWarCreateOptions): Promise<ChainWar
   controller.chainWar = chain
   await controller.save()
   chain.universal = controller
+  Logger.info(options.join)
 
   if (options.channelId != null) {
     await addChannelToChallenge(options.channelId, controller.id)
   }
-  if (options.join != null && options.ownerId != null && options.channelId != null) {
+  if (options.join && options.ownerId != null && options.channelId != null) {
     await addUserToChallenge(options.ownerId, controller.id, options.channelId)
   }
 
@@ -73,7 +74,7 @@ async function createRace (options: RaceCreateOptions): Promise<Race> {
   if (options.channelId != null) {
     await addChannelToChallenge(options.channelId, controller.id)
   }
-  if (options.join != null && options.ownerId != null && options.channelId != null) {
+  if (options.join && options.ownerId != null && options.channelId != null) {
     await addUserToChallenge(options.ownerId, controller.id, options.channelId)
   }
 
@@ -103,7 +104,7 @@ async function createWar (options: WarCreateOptions): Promise<War> {
   if (options.channelId != null) {
     await addChannelToChallenge(options.channelId, controller.id)
   }
-  if (options.join != null && options.ownerId != null && options.channelId != null) {
+  if (options.join && options.ownerId != null && options.channelId != null) {
     await addUserToChallenge(options.ownerId, controller.id, options.channelId)
   }
 
@@ -118,7 +119,6 @@ async function createWar (options: WarCreateOptions): Promise<War> {
   * @returns a challenge/user link
   */
 async function addUserToChallenge (userId: Snowflake, controllerId: number, channelId: Snowflake): Promise<ChallengeUser> {
-  Logger.info('adding user')
   const challengeUser = new ChallengeUser()
   challengeUser.challengeController = controllerId
   challengeUser.userId = userId
