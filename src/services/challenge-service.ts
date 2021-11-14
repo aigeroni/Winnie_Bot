@@ -218,7 +218,7 @@ async function getChallengeFromCommand (interaction: CommandInteraction, guildCo
 
 function getStartTime (delay: number): DateTime {
   const createTime = DateTime.local()
-  const difference = Duration.fromObject({ minutes: delay })
+  const difference = Duration.fromObject({ milliseconds: delay })
   return createTime.plus(difference)
 }
 

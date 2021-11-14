@@ -201,7 +201,7 @@ async function race (interaction: CommandInteraction, guildConfig: GuildConfig):
       id: challenge.universal.id,
       delay: await I18n.translate(guildConfig.locale, 'challenges:minutesWithCount.minutes', { count: raceOptions.delay / 1000 / 60 }),
       data: await I18n.translate(guildConfig.locale, 'challenges:data.race', {
-        target: await I18n.translate(guildConfig.locale, 'challenges:typesWithCount.words', { count: challenge.target }),
+        target: await I18n.translate(guildConfig.locale, `challenges:typesWithCount.${challenge.targetType}`, { count: challenge.target }),
         duration: await I18n.translate(guildConfig.locale, 'challenges:minutesWithCount.minutes', { count: challenge.timeOut })
       })
     }))
