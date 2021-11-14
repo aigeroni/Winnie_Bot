@@ -355,6 +355,10 @@
         "couldNotAddTotal": "**Unknown Error**: Could not add a total for war {{ id }} (database validation error).",
         "noChallengeSpecified": "**Error**: I don't know which war this total is for!  Use `/challenge total` with an ID number to post a total for a specific war."
       }
+    },
+    "error": {
+      "challengeDoesNotExist": "**Error**: Challenge {{ id }} does not exist!",
+      "noChallengeSpecified": "**Error**: I don't know which challenge to find!"
     }
   }
 }
