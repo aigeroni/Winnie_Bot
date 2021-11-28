@@ -48,6 +48,12 @@ export abstract class Challenge extends Mission {
   guildId!: Snowflake
 
   /**
+   * The list of channels that the challenge prints to.
+   */
+  @Column({ type: 'varchar', array: true })
+  channels!: Snowflake[]
+
+  /**
    * Marks the challenge as started
    */
   async start (): Promise<void> {
