@@ -1,6 +1,6 @@
 import { MaxLength, ValidateIf } from 'class-validator'
 import { Permissions, Snowflake } from 'discord.js'
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm'
+import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm'
 import { ChainWar, GuildConfig, UserConfig } from '.'
 import { WinnieClient } from '../core'
 import { ChallengeTotalTypes } from '../types'
@@ -16,7 +16,7 @@ import { IsChannelWithPermission } from './validators/channel-with-permission'
 export class ChallengeTotal extends BaseModel {
   /**
    * The challenge to which the user is joined
-   * 
+   *
    * Part of the primary key, along with userId
    */
   @ManyToOne(() => Challenge, challenge => challenge.id, { primary: true })
@@ -25,7 +25,7 @@ export class ChallengeTotal extends BaseModel {
 
   /**
    * The user's discord Id
-   * 
+   *
    * Part of the primary key, along with the challenge
    */
   @ManyToOne(() => UserConfig, user => user.id, { primary: true })

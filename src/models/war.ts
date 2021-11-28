@@ -1,5 +1,5 @@
 import { Challenge } from './bases/challenge'
-import { Column, Entity, JoinColumn, ManyToOne, OneToOne } from 'typeorm'
+import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm'
 import { ChainWar } from '.'
 
 @Entity({ name: 'wars' })
@@ -20,5 +20,4 @@ export class War extends Challenge {
   @ManyToOne(() => ChainWar, chainWar => chainWar.wars)
   @JoinColumn({ name: 'chain_war_id' })
   chainId?: ChainWar
-
 }

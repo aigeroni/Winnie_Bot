@@ -1,5 +1,5 @@
-import { Column, Entity, PrimaryColumn } from "typeorm"
-import { BaseModel } from "./bases/base-model"
+import { Column, Entity, PrimaryColumn } from 'typeorm'
+import { BaseModel } from './bases/base-model'
 
 /**
  * Stores date and time periods for raptor leaderboards.
@@ -11,7 +11,7 @@ export class PeriodConfig extends BaseModel {
    */
   @PrimaryColumn({ type: 'varchar' })
   id!: string
-  
+
   /**
    * The year of the period.
    */

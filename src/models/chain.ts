@@ -1,5 +1,5 @@
 import { Challenge } from './bases/challenge'
-import { Column, Entity, JoinColumn, OneToMany, OneToOne } from 'typeorm'
+import { Column, Entity, OneToMany } from 'typeorm'
 import { War } from './war'
 
 /**

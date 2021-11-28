@@ -1,6 +1,6 @@
 import { BaseModel } from './bases/base-model'
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm'
-import { MaxLength, Min } from 'class-validator'
+import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm'
+import { Min } from 'class-validator'
 import { Snowflake } from 'discord.js'
 import { GuildConfig, UserConfig } from '.'
 import { PeriodConfig } from './period-config'

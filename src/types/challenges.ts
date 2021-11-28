@@ -23,7 +23,7 @@ export enum ChallengeTotalTypes {
 /**
  * All the possible statuses for challenges, goals, and projects.
  */
- export enum StatusTypes {
+export enum StatusTypes {
   CREATED = 'created',
   RUNNING = 'running',
   CANCELED = 'canceled',
@@ -33,7 +33,7 @@ export enum ChallengeTotalTypes {
 /**
  * The challenge types.
  */
- export enum ChallengeTypes {
+export enum ChallengeTypes {
   RACE = 'race',
   WAR = 'war',
 }

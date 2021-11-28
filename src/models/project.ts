@@ -1,22 +1,22 @@
-import { IsNotEmpty, IsPositive, MaxLength, ValidateIf } from "class-validator"
-import { Permissions, Snowflake } from "discord.js"
-import { Column, Entity } from "typeorm"
-import { WinnieClient } from "../core"
-import { GoalTypes } from "../types"
-import { Mission } from "./bases/mission"
-import { IsChannelWithPermission } from "./validators/channel-with-permission"
+import { IsNotEmpty, IsPositive, MaxLength, ValidateIf } from 'class-validator'
+import { Permissions, Snowflake } from 'discord.js'
+import { Column, Entity } from 'typeorm'
+import { WinnieClient } from '../core'
+import { GoalTypes } from '../types'
+import { Mission } from './bases/mission'
+import { IsChannelWithPermission } from './validators/channel-with-permission'
 
 @Entity({ name: 'projects' })
 export class Project extends Mission {
   /**
    * The project's name, used in project views.
    */
-   @Column()
-   @MaxLength(150)
-   // Cannot contain profanity
-   // Cannot mention entities
-   // Cannot contain URLs
-   name!: string
+  @Column()
+  @MaxLength(150)
+  // Cannot contain profanity
+  // Cannot mention entities
+  // Cannot contain URLs
+  name!: string
 
   /**
    * The target for the project.

@@ -7,7 +7,6 @@ import { I18n, WinnieClient } from '../core'
 import { Guild, GuildChannel, Permissions, Snowflake } from 'discord.js'
 import { DateTimeTransformer } from './transformers/date-time'
 import { Mission } from './bases/mission'
-import { UserConfig } from '.'
 import { PeriodConfig } from './period-config'
 import { Project } from './project'
 
