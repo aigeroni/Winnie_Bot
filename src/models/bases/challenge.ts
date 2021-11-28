@@ -1,9 +1,11 @@
-import { MaxLength } from 'class-validator'
+import { IsNotEmpty, MaxLength } from 'class-validator'
 import { Snowflake } from 'discord.js'
-import { Column } from 'typeorm'
+import { Column, JoinColumn, ManyToOne } from 'typeorm'
 import { Mission } from './mission'
 import { DateTime } from 'luxon'
 import { DateTimeTransformer } from '../transformers/date-time'
+import { GuildConfig, UserConfig } from '..'
+import { StatusTypes } from '../../types'
 
 /**
  * The base class for all challenges
@@ -32,23 +34,24 @@ export abstract class Challenge extends Mission {
   startAt!: DateTime
 
   /**
-   * Whether of not the challenge has started
-   */
-  @Column({ name: 'has_started' })
-  hasStarted: boolean = false
-
-  /**
    * The ID of the user that created the challenge.
    */
-  @Column({ name: 'created_by' })
-  @MaxLength(30)
+  @ManyToOne(() => UserConfig, user => user.id, { primary: true })
+  @JoinColumn({ name: 'created_by' })
   createdBy!: Snowflake
+
+  /**
+   * The guild in which the challenge was created.
+   */
+  @ManyToOne(() => GuildConfig, guild => guild.id)
+  @JoinColumn({ name: 'guild_id' })
+  guildId!: Snowflake
 
   /**
    * Marks the challenge as started
    */
   async start (): Promise<void> {
-    this.hasStarted = true
+    this.status = StatusTypes.RUNNING
 
     await this.save()
   }

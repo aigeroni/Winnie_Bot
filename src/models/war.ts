@@ -19,6 +19,6 @@ export class War extends Challenge {
    */
   @ManyToOne(() => ChainWar, chainWar => chainWar.wars)
   @JoinColumn({ name: 'chain_war_id' })
-  chainWar?: ChainWar
+  chainId?: ChainWar
 
 }

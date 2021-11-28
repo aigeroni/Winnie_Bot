@@ -2,6 +2,8 @@ import { BaseModel } from './base-model'
 import { BeforeInsert, BeforeUpdate, Column, PrimaryGeneratedColumn } from 'typeorm'
 import { DateTime } from 'luxon'
 import { DateTimeTransformer, NullableDateTimeTransformer } from '../transformers/date-time'
+import { StatusTypes } from '../../types'
+import { IsNotEmpty } from 'class-validator'
 
 /**
  * Abstract class for Goals and Challenges.
@@ -14,6 +16,13 @@ export abstract class Mission extends BaseModel {
    */
   @PrimaryGeneratedColumn()
   id!: number
+
+  /**
+   * The current status of the mission.  Can be Created, Running (for challenges only), Completed, or Canceled.
+   */
+  @Column()
+  @IsNotEmpty()
+  status: StatusTypes = StatusTypes.CREATED
 
   /**
     * The timestamp of when this mission was created.
@@ -98,6 +107,7 @@ export abstract class Mission extends BaseModel {
    */
   async complete (): Promise<void> {
     this.completedAt = DateTime.utc()
+    this.status = StatusTypes.COMPLETED
     await this.save()
   }
 
@@ -106,6 +116,7 @@ export abstract class Mission extends BaseModel {
    */
   async cancel (): Promise<void> {
     this.canceledAt = DateTime.utc()
+    this.status = StatusTypes.CANCELED
     await this.save()
   }
 }
