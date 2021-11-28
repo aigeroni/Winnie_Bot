@@ -9,6 +9,7 @@ import { DateTimeTransformer } from './transformers/date-time'
 import { Mission } from './bases/mission'
 import { UserConfig } from '.'
 import { PeriodConfig } from './period-config'
+import { Project } from './project'
 
 /**
  * Represents a goal users can set.
@@ -74,6 +75,13 @@ export class Goal extends Mission {
    */
   @Column({ name: 'expected_end_at', transformer: new DateTimeTransformer(), type: 'varchar' })
   expectedEndAt!: DateTime
+
+  /**
+   * The id of the project that the goal is associated with.
+   */
+  @ManyToOne(() => Project, project => project.id)
+  @JoinColumn({ name: 'project_id' })
+  projectId!: Snowflake
 
   /**
     * Gets the end date for the goal.

@@ -6,6 +6,7 @@ import { WinnieClient } from '../core'
 import { ChallengeTotalTypes } from '../types'
 import { BaseModel } from './bases/base-model'
 import { Challenge } from './bases/challenge'
+import { Project } from './project'
 import { IsChannelWithPermission } from './validators/channel-with-permission'
 
 /**
@@ -67,4 +68,11 @@ export class ChallengeTotal extends BaseModel {
   @IsChannelWithPermission(Permissions.FLAGS.SEND_MESSAGES)
   @MaxLength(30)
   channelId!: Snowflake
+
+  /**
+   * The id of the project that the total is associated with.
+   */
+  @ManyToOne(() => Project, project => project.id)
+  @JoinColumn({ name: 'project_id' })
+  projectId!: Snowflake
 }
