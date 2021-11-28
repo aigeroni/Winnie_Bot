@@ -45,6 +45,12 @@ export class UserConfig extends BaseModel {
   crossGuild: boolean = true
 
   /**
+   * The number of minutes remaining until the user is guaranteed a challenge raptor.
+   */
+  @Column({ name: 'minutes_to_raptor' })
+  minutesToRaptor: number = 0
+
+  /**
    * Finds the config object for a given user id.
    * If no config exists, creates a new one.
    *
