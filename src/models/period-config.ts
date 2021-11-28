@@ -29,4 +29,10 @@ export class PeriodConfig extends BaseModel {
    */
   @Column({ name: 'period_text', type: 'varchar' })
   periodText!: string
+
+  /**
+   * A text string describing any outages or data loss on Winnie during the period.
+   */
+   @Column({ name: 'period_note', type: 'varchar' })
+   periodNote!: string
 }
