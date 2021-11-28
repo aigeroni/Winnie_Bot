@@ -1,9 +1,10 @@
 import { BaseModel } from './bases/base-model'
-import { Column, Entity, PrimaryColumn } from 'typeorm'
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm'
 import { IANAZone } from 'luxon'
 import { IsOptional, MaxLength } from 'class-validator'
 import { IsTimeZone } from './validators/time-zone'
 import { Snowflake } from 'discord.js'
+import { GuildConfig } from '.'
 
 /**
  * Stores various settings specific to a user.
@@ -16,6 +17,13 @@ export class UserConfig extends BaseModel {
   @PrimaryColumn({ type: 'varchar' })
   @MaxLength(30)
   id!: Snowflake
+
+  /**
+   * The guild to which the user wants their raptors to hatch.
+   */
+  @ManyToOne(() => GuildConfig, guild => guild.id)
+  @JoinColumn({ name: 'home_guild' })
+  homeGuild!: Snowflake
 
   /**
    * The timezone the user is in, used for hatching raptors.
