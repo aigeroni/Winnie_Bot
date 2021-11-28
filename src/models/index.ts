@@ -1,5 +1,4 @@
-export * from './chain-war'
-export * from './challenge-controller'
+export * from './chain'
 export * from './goal'
 export * from './guild-config'
 export * from './race'
