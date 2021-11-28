@@ -1,7 +1,7 @@
 import { MaxLength, ValidateIf } from 'class-validator'
 import { Permissions, Snowflake } from 'discord.js'
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm'
-import { GuildConfig, UserConfig } from '.'
+import { ChainWar, GuildConfig, UserConfig } from '.'
 import { WinnieClient } from '../core'
 import { ChallengeTotalTypes } from '../types'
 import { BaseModel } from './bases/base-model'
@@ -49,6 +49,13 @@ export class ChallengeTotal extends BaseModel {
   @ManyToOne(() => GuildConfig, guild => guild.id, { primary: true })
   @JoinColumn({ name: 'guild_id' })
   guildId!: Snowflake
+
+  /**
+   * The chain that the joined challenge is part of, if any.
+   */
+  @ManyToOne(() => ChainWar, chain => chain.id)
+  @JoinColumn({ name: 'chain_id' })
+  chainId!: number
 
   /**
    * The id of the channel from which the user joined the challenge.
