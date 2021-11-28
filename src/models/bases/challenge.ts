@@ -1,10 +1,9 @@
-import { IsNotEmpty, MaxLength } from 'class-validator'
+import { MaxLength } from 'class-validator'
 import { Snowflake } from 'discord.js'
-import { Column, JoinColumn, ManyToOne } from 'typeorm'
+import { Column } from 'typeorm'
 import { Mission } from './mission'
 import { DateTime } from 'luxon'
 import { DateTimeTransformer } from '../transformers/date-time'
-import { GuildConfig, UserConfig } from '..'
 import { ChallengeTypes, StatusTypes } from '../../types'
 
 /**
@@ -32,20 +31,6 @@ export abstract class Challenge extends Mission {
    */
   @Column({ name: 'start_at', transformer: new DateTimeTransformer(), type: 'varchar' })
   startAt!: DateTime
-
-  /**
-   * The ID of the user that created the challenge.
-   */
-  @ManyToOne(() => UserConfig, user => user.id, { primary: true })
-  @JoinColumn({ name: 'created_by' })
-  createdBy!: Snowflake
-
-  /**
-   * The guild in which the challenge was created.
-   */
-  @ManyToOne(() => GuildConfig, guild => guild.id)
-  @JoinColumn({ name: 'guild_id' })
-  guildId!: Snowflake
 
   /**
    * The list of channels that the challenge prints to.

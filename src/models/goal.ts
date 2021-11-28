@@ -52,20 +52,6 @@ export class Goal extends Mission {
   goalDuration: GoalDurations = GoalDurations.DAILY
 
   /**
-   * The id of the user that set the goal.
-   */
-  @ManyToOne(() => UserConfig, user => user.id)
-  @JoinColumn({ name: 'owner_id' })
-  ownerId!: Snowflake
-
-  /**
-   * The id of the guild where the goal was set.
-   */
-  @ManyToOne(() => Guild, guild => guild.id)
-  @JoinColumn({ name: 'guild_id' })
-  guildId!: Snowflake
-
-  /**
    * The period in which the goal will end.
    */
   @ManyToOne(() => PeriodConfig, period => period.id)

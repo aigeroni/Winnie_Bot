@@ -1,9 +1,11 @@
 import { BaseModel } from './base-model'
-import { BeforeInsert, BeforeUpdate, Column, PrimaryGeneratedColumn } from 'typeorm'
+import { BeforeInsert, BeforeUpdate, Column, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm'
 import { DateTime } from 'luxon'
 import { DateTimeTransformer, NullableDateTimeTransformer } from '../transformers/date-time'
 import { StatusTypes } from '../../types'
 import { IsNotEmpty } from 'class-validator'
+import { Guild, Snowflake } from 'discord.js'
+import { UserConfig } from '..'
 
 /**
  * Abstract class for Goals and Challenges.
@@ -23,6 +25,20 @@ export abstract class Mission extends BaseModel {
   @Column()
   @IsNotEmpty()
   status: StatusTypes = StatusTypes.CREATED
+
+  /**
+   * The id of the guild that the mission belongs to.
+   */
+  @ManyToOne(() => Guild, guild => guild.id)
+  @JoinColumn({ name: 'guild_id' })
+  guildId!: Snowflake
+
+  /**
+   * The id of the user that created the mission.
+   */
+  @ManyToOne(() => UserConfig, user => user.id)
+  @JoinColumn({ name: 'owner_id' })
+  ownerId!: Snowflake
 
   /**
     * The timestamp of when this mission was created.
