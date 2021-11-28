@@ -1,4 +1,4 @@
-import { Column, Entity } from 'typeorm'
+import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm'
 import { DateTime, Duration, Interval } from 'luxon'
 import { GoalDurations, GoalTypes } from '../types'
 import { IsChannelWithPermission } from './validators/channel-with-permission'
@@ -7,6 +7,8 @@ import { I18n, WinnieClient } from '../core'
 import { Guild, GuildChannel, Permissions, Snowflake } from 'discord.js'
 import { DateTimeTransformer } from './transformers/date-time'
 import { Mission } from './bases/mission'
+import { UserConfig } from '.'
+import { PeriodConfig } from './period-config'
 
 /**
  * Represents a goal users can set.
@@ -52,9 +54,23 @@ export class Goal extends Mission {
   /**
    * The id of the user that set the goal.
    */
-  @Column({ name: 'owner_id' })
-  @MaxLength(30)
+  @ManyToOne(() => UserConfig, user => user.id)
+  @JoinColumn({ name: 'owner_id' })
   ownerId!: Snowflake
+
+  /**
+   * The id of the guild where the goal was set.
+   */
+  @ManyToOne(() => Guild, guild => guild.id)
+  @JoinColumn({ name: 'guild_id' })
+  guildId!: Snowflake
+
+  /**
+   * The period in which the goal will end.
+   */
+  @ManyToOne(() => PeriodConfig, period => period.id)
+  @JoinColumn({ name: 'period' })
+  period!: string
 
   /**
    * The id of the channel in which the goal was set.
