@@ -5,7 +5,7 @@ import { Mission } from './mission'
 import { DateTime } from 'luxon'
 import { DateTimeTransformer } from '../transformers/date-time'
 import { GuildConfig, UserConfig } from '..'
-import { StatusTypes } from '../../types'
+import { ChallengeTypes, StatusTypes } from '../../types'
 
 /**
  * The base class for all challenges
@@ -52,6 +52,12 @@ export abstract class Challenge extends Mission {
    */
   @Column({ type: 'varchar', array: true })
   channels!: Snowflake[]
+
+  /**
+   * The type of the challenge; either war or race.  Null for chains.
+   */
+  @Column({ name: 'challenge_type' })
+  challengeType?: ChallengeTypes
 
   /**
    * Marks the challenge as started

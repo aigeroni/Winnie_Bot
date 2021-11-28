@@ -29,3 +29,11 @@ export enum ChallengeTotalTypes {
   CANCELED = 'canceled',
   COMPLETED = 'completed',
 }
+
+/**
+ * The challenge types.
+ */
+ export enum ChallengeTypes {
+  RACE = 'race',
+  WAR = 'war',
+}
