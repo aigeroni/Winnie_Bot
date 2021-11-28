@@ -1,8 +1,7 @@
 import { Challenge } from './bases/challenge'
-import { Column, Entity, OneToOne } from 'typeorm'
+import { Column, Entity } from 'typeorm'
 import { IsNotEmpty, IsPositive } from 'class-validator'
 import { RaceTypes } from '../types'
-import { ChallengeController } from './challenge-controller'
 
 @Entity({ name: 'races' })
 export class Race extends Challenge {
@@ -29,13 +28,6 @@ export class Race extends Challenge {
    *
    * default = 30 minutes
    */
-  @Column({ name: 'time_out' })
-  timeOut: number = 30
-
-  /**
-   * Challenge controller instance, contains the universal challenge id
-   * as well as a list of users and channels joined to the challenge
-   */
-  @OneToOne(() => ChallengeController, challengeController => challengeController.race)
-  universalId!: ChallengeController
+  @Column({ name: 'duration' })
+  duration: number = 30
 }

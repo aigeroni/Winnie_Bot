@@ -1,6 +1,6 @@
 import { Challenge } from './bases/challenge'
 import { Column, Entity, JoinColumn, ManyToOne, OneToOne } from 'typeorm'
-import { ChainWar, ChallengeController } from '.'
+import { ChainWar } from '.'
 
 @Entity({ name: 'wars' })
 export class War extends Challenge {
@@ -21,10 +21,4 @@ export class War extends Challenge {
   @JoinColumn({ name: 'chain_war_id' })
   chainWar?: ChainWar
 
-  /**
-   * Challenge controller instance, contains the universal challenge id
-   * as well as a list of users and channels joined to the challenge
-   */
-  @OneToOne(() => ChallengeController, challengeController => challengeController.war)
-  universalId!: ChallengeController
 }
