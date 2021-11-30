@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner, Table } from 'typeorm'
+import { MigrationInterface, QueryRunner, Table, TableForeignKey } from 'typeorm'
 
 export class createChallengesTable1638107150209 implements MigrationInterface {
   public async up (queryRunner: QueryRunner): Promise<void> {
@@ -93,6 +93,26 @@ export class createChallengesTable1638107150209 implements MigrationInterface {
     })
 
     await queryRunner.createTable(challengesTable, true)
+
+    const challengeGuildForeignKey = new TableForeignKey({
+      columnNames: ['guild_id'],
+      referencedColumnNames: ['id'],
+      referencedTableName: 'guild_config'
+    })
+    const challengeOwnerForeignKey = new TableForeignKey({
+      columnNames: ['owner_id'],
+      referencedColumnNames: ['id'],
+      referencedTableName: 'user_config'
+    })
+    const challengeChainForeignKey = new TableForeignKey({
+      columnNames: ['chain_war_id'],
+      referencedColumnNames: ['id'],
+      referencedTableName: 'chain_wars'
+    })
+
+    await queryRunner.createForeignKey('challenges', challengeGuildForeignKey)
+    await queryRunner.createForeignKey('challenges', challengeOwnerForeignKey)
+    await queryRunner.createForeignKey('challenges', challengeChainForeignKey)
   }
 
   public async down (queryRunner: QueryRunner): Promise<void> {
