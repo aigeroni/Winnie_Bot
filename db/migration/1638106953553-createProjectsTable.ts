@@ -1,9 +1,9 @@
 import { MigrationInterface, QueryRunner, Table } from 'typeorm'
 
-export class createGoalsTable1627451784152 implements MigrationInterface {
+export class createProjectsTable1638106953553 implements MigrationInterface {
   public async up (queryRunner: QueryRunner): Promise<void> {
-    const goalTable = new Table({
-      name: 'goals',
+    const projectsTable = new Table({
+      name: 'projects',
       columns: [
         {
           name: 'id',
@@ -11,23 +11,32 @@ export class createGoalsTable1627451784152 implements MigrationInterface {
           isPrimary: true
         },
         {
+          name: 'name',
+          type: 'varchar',
+          length: '150'
+        },
+        {
           name: 'target',
           type: 'int'
         },
         {
-          name: 'goal_type',
+          name: 'target_type',
           type: 'enum',
           enum: ['items', 'lines', 'minutes', 'pages', 'words']
         },
         {
-          name: 'goal_duration',
-          type: 'enum',
-          enum: ['daily', 'monthly', 'weekly', 'yearly'],
-          isNullable: false
-        },
-        {
           name: 'progress',
           type: 'int'
+        },
+        {
+          name: 'status',
+          type: 'enum',
+          enum: ['created', 'canceled', 'completed']
+        },
+        {
+          name: 'guild_id',
+          type: 'varchar',
+          length: '30'
         },
         {
           name: 'owner_id',
@@ -58,14 +67,19 @@ export class createGoalsTable1627451784152 implements MigrationInterface {
           name: 'completed_at',
           type: 'varchar',
           isNullable: true
+        },
+        {
+          name: 'due_at',
+          type: 'varchar',
+          isNullable: true
         }
       ]
     })
 
-    await queryRunner.createTable(goalTable, true)
+    await queryRunner.createTable(projectsTable, true)
   }
 
   public async down (queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.dropTable('goals')
+    await queryRunner.dropTable('projects')
   }
 }
