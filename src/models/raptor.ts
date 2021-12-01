@@ -27,6 +27,14 @@ export class Raptor extends BaseModel {
   userId!: Snowflake
 
   /**
+   * The period in which the raptors were earned.
+   *
+   * Part of the table's primary key, along with guildId.
+   */
+  @PrimaryColumn({ name: 'period_id', type: 'varchar' })
+  periodId!: string
+
+  /**
    * The number of blue raptors this user has earned in this server
    *
    * Awarded for completing weekly goals.
@@ -111,13 +119,14 @@ export class Raptor extends BaseModel {
     await this.save()
   }
 
-  static async findOrCreate (userId: Snowflake, guildId: Snowflake): Promise<Raptor> {
+  static async findOrCreate (userId: Snowflake, guildId: Snowflake, periodId: string): Promise<Raptor> {
     let raptor = (await Raptor.find({ where: { userId, guildId } }))[0]
     if (raptor != null) { return raptor }
 
     raptor = new Raptor()
     raptor.userId = userId
     raptor.guildId = guildId
+    raptor.periodId = periodId
     await raptor.save()
 
     return raptor
