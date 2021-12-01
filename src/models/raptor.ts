@@ -120,7 +120,7 @@ export class Raptor extends BaseModel {
   }
 
   static async findOrCreate (userId: Snowflake, guildId: Snowflake, periodId: string): Promise<Raptor> {
-    let raptor = (await Raptor.find({ where: { userId, guildId } }))[0]
+    let raptor = (await Raptor.find({ where: { userId, guildId, periodId } }))[0]
     if (raptor != null) { return raptor }
 
     raptor = new Raptor()
