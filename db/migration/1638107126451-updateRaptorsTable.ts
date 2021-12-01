@@ -6,8 +6,7 @@ export class updateRaptorsTable1638107126451 implements MigrationInterface {
       name: 'period_id',
       type: 'varchar',
       length: '7',
-      default: '2021-11',
-      isPrimary: true
+      default: '2021-11'
     }))
 
     const raptorGuildForeignKey = new TableForeignKey({
