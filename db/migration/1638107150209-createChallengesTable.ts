@@ -61,7 +61,6 @@ export class createChallengesTable1638107150209 implements MigrationInterface {
         {
           name: 'channels',
           type: 'varchar',
-          length: '30',
           isArray: true
         },
         {

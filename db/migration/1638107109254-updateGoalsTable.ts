@@ -25,7 +25,7 @@ export class updateGoalsTable1638107109254 implements MigrationInterface {
         type: 'enum',
         enum: ['created', 'canceled', 'completed'],
         isNullable: true
-      }),
+      })
     ])
 
     const goalGuildForeignKey = new TableForeignKey({

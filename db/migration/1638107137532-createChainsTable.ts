@@ -53,14 +53,8 @@ export class createChainsTable1638107137532 implements MigrationInterface {
           default: 5
         },
         {
-          name: 'wars',
-          type: 'int',
-          isArray: true
-        },
-        {
           name: 'channels',
           type: 'varchar',
-          length: '30',
           isArray: true
         },
         {
