@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner, TableColumn, TableForeignKey } from 'typeorm'
+import { MigrationInterface, QueryRunner, TableColumn } from 'typeorm'
 
 export class updateGoalsTable1638107109254 implements MigrationInterface {
   public async up (queryRunner: QueryRunner): Promise<void> {

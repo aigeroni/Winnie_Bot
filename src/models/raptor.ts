@@ -33,7 +33,6 @@ export class Raptor extends BaseModel {
    */
   @PrimaryColumn({ name: 'period_id', type: 'varchar' })
   periodId!: string
- 
 
   /**
    * The number of blue raptors this user has earned in this server
