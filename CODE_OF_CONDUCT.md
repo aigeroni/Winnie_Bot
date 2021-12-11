@@ -1,76 +1,25 @@
-# Contributor Covenant Code of Conduct
+# The `Winnie_Bot` Code of Professional Conduct
 
-## Our Pledge
+Click [here](./CODE_OF_CONDUCT_PLAIN_LANGUAGE.md) for a plain language version.
 
-In the interest of fostering an open and welcoming environment, we as
-contributors and maintainers pledge to making participation in our project and
-our community a harassment-free experience for everyone, regardless of age, body
-size, disability, ethnicity, sex characteristics, gender identity and expression,
-level of experience, education, socio-economic status, nationality, personal
-appearance, race, religion, or sexual identity and orientation.
+The `Winnie_Bot` initiative includes contributors from around the world, volunteering their time and expertise to support this valuable open-source project. Many of these contributors identify with historically marginalized communities or have experienced significant trauma in their personal lives. For that reason, a clear and enforced code of conduct is essential to ensure that all volunteers participate with dignity and that the work unfolds without causing personal harm or delaying the progress of the project.
 
-## Our Standards
+The goal of this framework isn't to suppress speech. All contributors, regardless of their individual beliefs and experiences, are and should be free to express themselves openly. However, a person's beliefs and experiences are not a source of debate or discussion -- at least, not in a space that's focused on enhancements to open-source software. To ensure that we can make Winnie the Best Bot Ever:tm:, it's helpful to set ground rules for people participating in the rewrite project.
 
-Examples of behavior that contributes to creating a positive environment
-include:
+## Ground Rules
 
-* Using welcoming and inclusive language
-* Being respectful of differing viewpoints and experiences
-* Gracefully accepting constructive criticism
-* Focusing on what is best for the community
-* Showing empathy towards other community members
+Please observe the following conduct standards while participating in this project:
 
-Examples of unacceptable behavior by participants include:
+1. **Don't be a dick.** In a text-heavy social environment where people may lack deep personal familiarity, sarcasm and venting may not be received in the spirit in which they were offered. Aim for communication that's friendly and avoids boundary-crossing, negativity, one-upsmanship, or intrusion into personal space. Professionalism is essential for happy and productive relationships!
+2. **Avoid contentious topics within the team space.** We do not expect people to downplay their demographic attributes, philosophical positions, or personal identities. We realize, however, that in a diverse group, these traits can be like dry tinder awaiting a spark. Therefore, discussion of contentious topics (politics, race, sex, gender, religion, psychology, etc.) should be reserved to private messages only, away from the public team space.
+3. **Respect the personhood of others.** People are who they say they are. Please identify others as they wish to be identified. Part of identity includes the varied experiences -- good and bad -- we each accumulate on our life's journey. Remain sensitive to people who may struggle with physical, emotional, or spiritual challenges or who may have suffered trauma in their lives. For example, if a person says, "I need a day off because I saw my ex and now I'm stressed," accept that statement at face value. It's not an invitation to offer unsolicited advice or counseling, or to probe at that person's life history.
+4. **Front-channel everything.** Raise all questions, comments, or concerns in the relevant Discord conversation. We value transparency, and a transparent community thrives when all communication -- even the hard stuff -- is aired in broad daylight. Please refrain from engaging in private back-channel communication, even for seemingly minor things like clarifications, because it's likely that others may be interested in the response. More eyeballs on questions makes for fewer errors in the long run.
+5. **Observe the `Winnie_Bot` Code of Conduct while testing or coding the product.** Unless you're deliberately testing programmatic content filters as part of a defined/approved task, avoid inserting sarcastic, obscene, or insensitive language into the code (even as comments or placeholders) or into the titles of test challenges or projects. All public-facing language must be appropriate for audiences of every age level and life history.
 
-* The use of sexualized language or imagery and unwelcome sexual attention or
- advances
-* Trolling, insulting/derogatory comments, and personal or political attacks
-* Public or private harassment
-* Publishing others' private information, such as a physical or electronic
- address, without explicit permission
-* Other conduct which could reasonably be considered inappropriate in a
- professional setting
+## Conduct Violations
 
-## Our Responsibilities
+The `Winnie_Bot` team consists of volunteers working primarily asynchronously and by text. It's therefore inevitable that misunderstandings will occasionally arise. People who believe they've observed a violation of these ground rules are encouraged to raise the matter with the product owner, project manager, or lead developer. People who are not party to a potential violation are discouraged from acting as the "enforcement police" by intervening on their own. If you are on the receiving end of inappropriate conduct, you are welcome to approach the transgressor personally if you are comfortable doing so. If you aren't, then please seek support from the appropriate project leader. It is better to raise a concern that opens the door to an amicable resolution than to suffer in silence and thereby engender mistrust and toxicity that proves more challenging to address as time and ill will accumulate.
 
-Project maintainers are responsible for clarifying the standards of acceptable
-behavior and are expected to take appropriate and fair corrective action in
-response to any instances of unacceptable behavior.
+A person who appears to have broken a conduct standard will be approached by the product owner, project manager, or lead developer to discuss the situation and its optimal remediation. In our experience with other projects, it's usually the case that a friendly private chat proves sufficient to educate the team member.
 
-Project maintainers have the right and responsibility to remove, edit, or
-reject comments, commits, code, wiki edits, issues, and other contributions
-that are not aligned to this Code of Conduct, or to ban temporarily or
-permanently any contributor for other behaviors that they deem inappropriate,
-threatening, offensive, or harmful.
-
-## Scope
-
-This Code of Conduct applies both within project spaces and in public spaces
-when an individual is representing the project or its community. Examples of
-representing a project or community include using an official project e-mail
-address, posting via an official social media account, or acting as an appointed
-representative at an online or offline event. Representation of a project may be
-further defined and clarified by project maintainers.
-
-## Enforcement
-
-Instances of abusive, harassing, or otherwise unacceptable behavior may be
-reported by contacting the maintainer on Discord at Dawnbug#8975. All
-complaints will be reviewed and investigated and will result in a response that
-is deemed necessary and appropriate to the circumstances. The project team is
-obligated to maintain confidentiality with regard to the reporter of an incident.
-Further details of specific enforcement policies may be posted separately.
-
-Project maintainers who do not follow or enforce the Code of Conduct in good
-faith may face temporary or permanent repercussions as determined by other
-members of the project's leadership.
-
-## Attribution
-
-This Code of Conduct is adapted from the [Contributor Covenant][homepage], version 1.4,
-available at https://www.contributor-covenant.org/version/1/4/code-of-conduct.html
-
-[homepage]: https://www.contributor-covenant.org
-
-For answers to common questions about this code of conduct, see
-https://www.contributor-covenant.org/faq
+If, however, a person continues to behave in an inappropriate fashion, that person will be removed from the project entirely. To promote full transparency, the relevant leader will announce the decision and its rationale to the entire project team.
