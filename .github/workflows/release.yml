@@ -20,11 +20,15 @@ jobs:
       with:
         terraform_wrapper: false
         cli_config_credentials_token: ${{ secrets.TERRAFORM_API_TOKEN }}
+    - name: Get GH Actions runner IP address
+      id: ip
+      uses: haythem/public-ip@v1.2
     - name: Build tfvars file
       run: cd ./terraform && printf "do_token = \"%s\"\ntest_ip_address = \"%s\"" $DO_TOKEN $TEST_IP > cd.auto.tfvars
       env:
         DO_TOKEN: ${{ secrets.DO_PAT }}
         TEST_IP: ${{ secrets.TEST_IP }}
+        GH_ACTIONS_IP: ${{ steps.ip.outputs.ipv4 }}
     - name: Run terraform
       run: cd ./terraform && terraform init && terraform plan && terraform apply -auto-approve
     - name: Save droplet IP address as env var
