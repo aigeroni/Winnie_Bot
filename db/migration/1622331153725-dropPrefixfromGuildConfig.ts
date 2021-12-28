@@ -9,6 +9,9 @@ export class dropPrefixfromGuildConfig1622331153725 implements MigrationInterfac
 
   public async down (queryRunner: QueryRunner): Promise<void> {
     await queryRunner.addColumn('guild_config', new TableColumn({
+      /**
+       * The prefix of Winnie's bot commands in this guild.
+       */
       name: 'prefix',
       type: 'varchar',
       length: '3',
