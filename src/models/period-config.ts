@@ -31,7 +31,9 @@ export class PeriodConfig extends BaseModel {
   periodText!: string
 
   /**
-   * A text string describing any outages or data loss on Winnie during the period.
+   * A text string describing any abnormal events during the period.
+   * 
+   * This can include outages, data loss, or configuration changes.
    */
   @Column({ name: 'period_note', type: 'varchar' })
   periodNote!: string
