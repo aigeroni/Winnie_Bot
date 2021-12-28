@@ -1,4 +1,4 @@
-import { Column, Entity } from 'typeorm'
+import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm'
 import { DateTime, Duration, Interval } from 'luxon'
 import { GoalDurations, GoalTypes } from '../types'
 import { IsChannelWithPermission } from './validators/channel-with-permission'
@@ -7,6 +7,8 @@ import { I18n, WinnieClient } from '../core'
 import { Guild, Permissions, Snowflake } from 'discord.js'
 import { DateTimeTransformer } from './transformers/date-time'
 import { Mission } from './bases/mission'
+import { PeriodConfig } from './period-config'
+import { Project } from './project'
 import { DiscordService } from '../services'
 
 /**
@@ -51,11 +53,11 @@ export class Goal extends Mission {
   goalDuration: GoalDurations = GoalDurations.DAILY
 
   /**
-   * The id of the user that set the goal.
+   * The period in which the goal will end.
    */
-  @Column({ name: 'owner_id' })
-  @MaxLength(30)
-  ownerId!: Snowflake
+  @ManyToOne(() => PeriodConfig, period => period.id)
+  @JoinColumn({ name: 'period' })
+  period!: string
 
   /**
    * The id of the channel in which the goal was set.
@@ -75,13 +77,20 @@ export class Goal extends Mission {
   expectedEndAt!: DateTime
 
   /**
-    * Gets the end date for the goal.
-    *
-    * If the goal has ended, returns the date it ended.
-    * If the goal is active, returns the expected end date.
-    *
-    * @returns The end date for the goal
-    */
+   * The id of the project that the goal is associated with.
+   */
+  @ManyToOne(() => Project, project => project.id)
+  @JoinColumn({ name: 'project_id' })
+  projectId!: Snowflake
+
+  /**
+   * Gets the end date for the goal.
+   *
+   * If the goal has ended, returns the date it ended.
+   * If the goal is active, returns the expected end date.
+   *
+   * @returns The end date for the goal
+   */
   endDate (): DateTime {
     if (this.canceledAt != null) { return this.canceledAt }
     if (this.completedAt != null) { return this.completedAt }

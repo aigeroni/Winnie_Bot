@@ -1,10 +1,9 @@
 import { Challenge } from './bases/challenge'
-import { Column, Entity, OneToOne } from 'typeorm'
+import { Column, Entity } from 'typeorm'
 import { IsNotEmpty, IsPositive } from 'class-validator'
 import { RaceTypes } from '../types'
-import { ChallengeController } from './challenge-controller'
 
-@Entity({ name: 'races' })
+@Entity({ name: 'challenges' })
 export class Race extends Challenge {
   /**
    * The challenge name as a localisation key.
@@ -21,10 +20,10 @@ export class Race extends Challenge {
   target!: number
 
   /**
-    * The type of goal for which the user is aiming.
-    *
-    * Can be one of pages, words, minutes, lines, or items
-    */
+   * The type of goal for which entrants are aiming.
+   *
+   * Can be one of pages, words, minutes, lines, or items
+   */
   @Column({ name: 'target_type', type: 'enum', enum: RaceTypes })
   @IsNotEmpty()
   targetType: RaceTypes = RaceTypes.WORDS
@@ -34,13 +33,6 @@ export class Race extends Challenge {
    *
    * default = 30 minutes
    */
-  @Column({ name: 'time_out' })
-  timeOut: number = 30
-
-  /**
-   * Challenge controller instance, contains the universal challenge id
-   * as well as a list of users and channels joined to the challenge
-   */
-  @OneToOne(() => ChallengeController, challengeController => challengeController.race)
-  universal!: ChallengeController | null
+  @Column({ name: 'duration' })
+  duration: number = 30
 }

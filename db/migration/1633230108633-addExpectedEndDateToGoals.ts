@@ -4,6 +4,9 @@ export class addExpectedEndDateToGoals1633230108633 implements MigrationInterfac
   name = 'addExpectedEndDateToGoals1633230108633'
 
   public async up (queryRunner: QueryRunner): Promise<void> {
+    /**
+   * The anticipated time the goal will end, based on the creation time.
+   */
     await queryRunner.addColumn('goals', new TableColumn({
       name: 'expected_end_at',
       type: 'varchar',

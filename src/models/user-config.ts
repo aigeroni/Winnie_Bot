@@ -1,9 +1,10 @@
 import { BaseModel } from './bases/base-model'
-import { Column, Entity, PrimaryColumn } from 'typeorm'
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm'
 import { IANAZone } from 'luxon'
 import { IsOptional, MaxLength } from 'class-validator'
 import { IsTimeZone } from './validators/time-zone'
 import { Snowflake } from 'discord.js'
+import { GuildConfig } from '.'
 
 /**
  * Stores various settings specific to a user.
@@ -11,11 +12,18 @@ import { Snowflake } from 'discord.js'
 @Entity()
 export class UserConfig extends BaseModel {
   /**
-   * The Discord ID of the user this configuration object represents.
+   * The Discord ID of the user that this configuration object represents.
    */
   @PrimaryColumn({ type: 'varchar' })
   @MaxLength(30)
   id!: Snowflake
+
+  /**
+   * The guild to which the user wants their raptors to hatch.
+   */
+  @ManyToOne(() => GuildConfig, guild => guild.id)
+  @JoinColumn({ name: 'home_guild' })
+  homeGuild!: Snowflake
 
   /**
    * The timezone the user is in, used for hatching raptors.
@@ -43,6 +51,12 @@ export class UserConfig extends BaseModel {
    */
   @Column({ name: 'cross_guild' })
   crossGuild: boolean = true
+
+  /**
+   * The number of minutes remaining until the user is guaranteed a challenge raptor.
+   */
+  @Column({ name: 'minutes_to_raptor' })
+  minutesToRaptor: number = 0
 
   /**
    * Finds the config object for a given user id.

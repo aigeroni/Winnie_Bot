@@ -50,3 +50,21 @@ export interface WarCreateOptions {
   ownerId?: Snowflake
   name: string
 }
+
+/**
+ * All the possible statuses for challenges, goals, and projects.
+ */
+export enum StatusTypes {
+  CREATED = 'created',
+  RUNNING = 'running',
+  CANCELED = 'canceled',
+  COMPLETED = 'completed',
+}
+
+/**
+ * The challenge types.
+ */
+export enum ChallengeTypes {
+  RACE = 'race',
+  WAR = 'war',
+}

@@ -5,18 +5,16 @@ import { Mission } from './mission'
 import { DateTime } from 'luxon'
 import { DateTimeTransformer } from '../transformers/date-time'
 import { I18n } from '../../core'
+import { ChallengeTypes, StatusTypes } from '../../types'
 
 /**
  * The base class for all challenges
  */
 export abstract class Challenge extends Mission {
   /**
-   * The challenge name as a localisation key.
-   */
-  challenge_type!: string
-
-  /**
-   * The challenge's name, used in challenge lists.
+   * The challenge's name.
+   *
+   * Used in challenge lists.
    */
   @Column()
   @MaxLength(150)
@@ -32,34 +30,33 @@ export abstract class Challenge extends Mission {
   isVisible: boolean = true
 
   /**
-   * When the challenge should start
+   * When the challenge should start.
    */
   @Column({ name: 'start_at', transformer: new DateTimeTransformer(), type: 'varchar' })
   startAt!: DateTime
 
   /**
-   * Whether of not the challenge has started
+   * The list of channels that the challenge prints to.
    */
-  @Column({ name: 'has_started' })
-  hasStarted: boolean = false
+  @Column({ type: 'varchar', array: true })
+  channels!: Snowflake[]
 
   /**
-   * The ID of the user that created the challenge.
+   * The type of the challenge; either war or race.  Null for chains.
    */
-  @Column({ name: 'created_by' })
-  @MaxLength(30)
-  createdBy!: Snowflake
+  @Column({ name: 'challenge_type' })
+  challengeType?: ChallengeTypes
 
   /**
    * Marks the challenge as started
    */
   async start (): Promise<void> {
-    this.hasStarted = true
+    this.status = StatusTypes.RUNNING
 
     await this.save()
   }
 
   async challenge_name (locale: string): Promise<string> {
-    return await I18n.translate(locale, `challenges:challenge_types.${this.challenge_type}`)
+    return await I18n.translate(locale, `challenges:challenge_types.${this.challengeType}`)
   }
 }

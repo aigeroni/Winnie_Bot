@@ -1,9 +1,9 @@
 import { Challenge } from './bases/challenge'
-import { Column, Entity, JoinColumn, ManyToOne, OneToOne } from 'typeorm'
-import { ChainWar, ChallengeController } from '.'
+import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm'
+import { ChainWar } from '.'
 import { DateTime, Duration } from 'luxon'
 
-@Entity({ name: 'wars' })
+@Entity({ name: 'challenges' })
 export class War extends Challenge {
   /**
    * The challenge name as a localisation key.
@@ -25,14 +25,7 @@ export class War extends Challenge {
    */
   @ManyToOne(() => ChainWar, chainWar => chainWar.wars)
   @JoinColumn({ name: 'chain_war_id' })
-  chainWar?: ChainWar | null
-
-  /**
-   * Challenge controller instance, contains the universal challenge id
-   * as well as a list of users and channels joined to the challenge
-   */
-  @OneToOne(() => ChallengeController, challengeController => challengeController.war)
-  universal!: ChallengeController | null
+  chainId?: ChainWar
 
   olderThanTwelveHours (): boolean {
     const now = DateTime.utc()

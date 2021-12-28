@@ -1,7 +1,9 @@
 import { BaseModel } from './bases/base-model'
-import { Column, Entity, PrimaryColumn } from 'typeorm'
-import { MaxLength, Min } from 'class-validator'
+import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm'
+import { Min } from 'class-validator'
 import { Snowflake } from 'discord.js'
+import { GuildConfig, UserConfig } from '.'
+import { PeriodConfig } from './period-config'
 
 /**
  * A model for keeping track of how many raptors a user has hatched in a given guild.
@@ -11,19 +13,19 @@ export class Raptor extends BaseModel {
   /**
    * The guild in which these raptors have been earned.
    *
-   * Part of the table's primary key, along with userId.
+   * Part of the table's primary key, along with userId and period.
    */
-  @PrimaryColumn({ name: 'guild_id', type: 'varchar' })
-  @MaxLength(30)
+  @ManyToOne(() => GuildConfig, guild => guild.id, { primary: true })
+  @JoinColumn({ name: 'guild_id' })
   guildId!: Snowflake
 
   /**
-   * The user which has earned these raptors.
+   * The user that earned these raptors.
    *
-   * Part of the table's primary key, along with guildId.
+   * Part of the table's primary key, along with guildId and period.
    */
-  @PrimaryColumn({ name: 'user_id', type: 'varchar' })
-  @MaxLength(30)
+  @ManyToOne(() => UserConfig, user => user.id, { primary: true })
+  @JoinColumn({ name: 'user_id' })
   userId!: Snowflake
 
   /**
@@ -31,11 +33,12 @@ export class Raptor extends BaseModel {
    *
    * Part of the table's primary key, along with guildId.
    */
-  @PrimaryColumn({ name: 'period_id', type: 'varchar' })
+  @ManyToOne(() => PeriodConfig, period => period.id, { primary: true })
+  @JoinColumn({ name: 'period_id' })
   periodId!: string
 
   /**
-   * The number of blue raptors this user has earned in this server
+   * The number of blue raptors this user has earned in this server for a given time period
    *
    * Awarded for completing weekly goals.
    */
@@ -44,7 +47,7 @@ export class Raptor extends BaseModel {
   blue: number = 0
 
   /**
-   * The number of green raptors this user has earned in this server
+   * The number of green raptors this user has earned in this server for a given time period
    *
    * Awarded for completing challenges.
    */
@@ -53,7 +56,7 @@ export class Raptor extends BaseModel {
   green: number = 0
 
   /**
-   * The number of orange raptors this user has earned in this server
+   * The number of orange raptors this user has earned in this server for a given time period
    *
    * Awarded for completing yearly goals.
    */
@@ -62,7 +65,7 @@ export class Raptor extends BaseModel {
   orange: number = 0
 
   /**
-   * The number of purple raptors this user has earned in this server
+   * The number of purple raptors this user has earned in this server for a given time period
    *
    * Awarded for completing monthly goals.
    */
@@ -71,7 +74,7 @@ export class Raptor extends BaseModel {
   purple: number = 0
 
   /**
-   * The number of white raptors this user has earned in this server
+   * The number of white raptors this user has earned in this server for a given time period
    *
    * Awarded for completing daily goals.
    */

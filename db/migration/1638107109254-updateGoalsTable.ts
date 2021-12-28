@@ -3,23 +3,37 @@ import { MigrationInterface, QueryRunner, TableColumn } from 'typeorm'
 export class updateGoalsTable1638107109254 implements MigrationInterface {
   public async up (queryRunner: QueryRunner): Promise<void> {
     await queryRunner.addColumns('goals', [
+      /**
+       * The period in which the goal will end.
+       */
       new TableColumn({
         name: 'period_id',
         type: 'varchar',
         length: '7',
         default: '2021-11'
       }),
+      /**
+       * The id of the guild that the goal belongs to.
+       */
       new TableColumn({
         name: 'guild_id',
         type: 'varchar',
         length: '30',
         isNullable: true
       }),
+      /**
+       * The id of the project that the goal is associated with.
+       */
       new TableColumn({
         name: 'project_id',
         type: 'int',
         isNullable: true
       }),
+      /**
+       * The current status of the goal.
+       *
+       * Can be Created, Completed, or Canceled.
+       */
       new TableColumn({
         name: 'status',
         type: 'enum',

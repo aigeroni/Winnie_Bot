@@ -1,7 +1,11 @@
 import { BaseModel } from './base-model'
-import { BeforeInsert, BeforeUpdate, Column, PrimaryGeneratedColumn } from 'typeorm'
+import { BeforeInsert, BeforeUpdate, Column, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm'
 import { DateTime } from 'luxon'
 import { DateTimeTransformer, NullableDateTimeTransformer } from '../transformers/date-time'
+import { StatusTypes } from '../../types'
+import { IsNotEmpty } from 'class-validator'
+import { Guild, Snowflake } from 'discord.js'
+import { UserConfig } from '..'
 
 /**
  * Abstract class for Goals and Challenges.
@@ -16,32 +20,55 @@ export abstract class Mission extends BaseModel {
   id!: number
 
   /**
-    * The timestamp of when this mission was created.
-    */
+   * The current status of the mission.
+   *
+   * Can be Created, Running (for challenges only), Completed, or Canceled.
+   */
+  @Column()
+  @IsNotEmpty()
+  status: StatusTypes = StatusTypes.CREATED
+
+  /**
+   * The id of the guild that the mission belongs to.
+   */
+  @ManyToOne(() => Guild, guild => guild.id)
+  @JoinColumn({ name: 'guild_id' })
+  guildId!: Snowflake
+
+  /**
+   * The id of the user that created the mission.
+   */
+  @ManyToOne(() => UserConfig, user => user.id)
+  @JoinColumn({ name: 'owner_id' })
+  ownerId!: Snowflake
+
+  /**
+   * Timestamp of when this mission was created.
+   */
   @Column({ name: 'created_at', transformer: new DateTimeTransformer(), type: 'varchar' })
   createdAt!: DateTime
 
   /**
- * The timestamp of the most recent time this mission was updated.
- *
- * Null if the mission has never been updated.
- */
+   * Timestamp of the most recent update to the mission.
+   *
+   * Null if never updated.
+   */
   @Column({ name: 'updated_at', transformer: new NullableDateTimeTransformer(), type: 'varchar' })
   updatedAt?: DateTime
 
   /**
-* Timestamp of when this mission was canceled.
-*
-* Null if not canceled
-*/
+   * Timestamp of when this mission was canceled.
+   *
+   * Null if not canceled.
+   */
   @Column({ name: 'canceled_at', transformer: new NullableDateTimeTransformer(), type: 'varchar' })
   canceledAt?: DateTime
 
   /**
-* Timestamp of when this mission was completed.
-*
-* Null if not completed
-*/
+   * Timestamp of when this mission was completed.
+   *
+   * Null if not completed.
+   */
   @Column({ name: 'completed_at', transformer: new NullableDateTimeTransformer(), type: 'varchar' })
   completedAt?: DateTime
 
@@ -56,10 +83,10 @@ export abstract class Mission extends BaseModel {
   }
 
   /**
-  * Listener for the beforeUpdate event.
-  *
-  * Sets the updated at timestamp.
-  */
+   * Listener for the beforeUpdate event.
+   *
+   * Sets the updated at timestamp.
+   */
   @BeforeUpdate()
   onBeforeUpdate (): void {
     this.updatedAt = DateTime.utc()
@@ -72,7 +99,7 @@ export abstract class Mission extends BaseModel {
    * @returns true if the mission is active
    */
   isActive (): boolean {
-    return !this.isCanceled() && !this.isCompleted()
+    return !(this.status === StatusTypes.COMPLETED || this.status === StatusTypes.CANCELED)
   }
 
   /**
@@ -94,18 +121,20 @@ export abstract class Mission extends BaseModel {
   }
 
   /**
-   * Takes the current mission and makes it as complete.
+   * Takes the current mission and marks it as complete.
    */
   async complete (): Promise<void> {
     this.completedAt = DateTime.utc()
+    this.status = StatusTypes.COMPLETED
     await this.save()
   }
 
   /**
-   * Takes the current mission and makes it as canceled.
+   * Takes the current mission and marks it as canceled.
    */
   async cancel (): Promise<void> {
     this.canceledAt = DateTime.utc()
+    this.status = StatusTypes.CANCELED
     await this.save()
   }
 }
