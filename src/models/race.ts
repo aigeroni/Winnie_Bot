@@ -15,10 +15,10 @@ export class Race extends Challenge {
   target!: number
 
   /**
-    * The type of goal for which the user is aiming.
-    *
-    * Can be one of pages, words, minutes, lines, or items
-    */
+   * The type of goal for which entrants are aiming.
+   *
+   * Can be one of pages, words, minutes, lines, or items
+   */
   @Column({ name: 'target_type', type: 'enum', enum: RaceTypes })
   @IsNotEmpty()
   targetType: RaceTypes = RaceTypes.WORDS
