@@ -1,6 +1,7 @@
 # Terraform resources for the Winnie_Bot database.
 
-/* The cluster on which the database is hosted.
+/**
+ * The cluster on which the database is hosted.
  * Currently the smallest cluster that Digital Ocean offers,
  * running Postgres 13 in AMS3 (Amsterdam).
  */
@@ -13,14 +14,16 @@ resource "digitalocean_database_cluster" "winnie-db-cluster" {
   node_count = 1
 }
 
-/* The Winnie database within the cluster.
+/**
+ * The Winnie database within the cluster.
  */
 resource "digitalocean_database_db" "winnie-db" {
   cluster_id = digitalocean_database_cluster.winnie-db-cluster.id
   name       = "Winnie_DB"
 }
 
-/* Database firewall rules.
+/**
+ * Database firewall rules.
  * These rules are two-way; we don't need both inbound and outbound.
  */
 resource "digitalocean_database_firewall" "winnie-db-firewall" {
@@ -39,7 +42,8 @@ resource "digitalocean_database_firewall" "winnie-db-firewall" {
   }
 }
 
-/* A private database connection URI.
+/**
+ * A private database connection URI.
  * Github Actions uses this to set up a database connection from
  * the Winnie code.  It's only usable from within Digital Ocean.
  */

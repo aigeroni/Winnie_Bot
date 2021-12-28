@@ -1,6 +1,7 @@
 # Terraform resources for the Winnie_Bot droplet.
 
-/* Winnie's SSH key.  Saved in Github Actions secrets.
+/**
+ * Winnie's SSH key.  Saved in Github Actions secrets.
  * You need to allow your IP through the firewall and
  * have this SSH key to get into the droplet.
  */
@@ -8,7 +9,8 @@ data "digitalocean_ssh_key" "winnie-key" {
   name = "winnie-key"
 }
 
-/* Winnie's droplet.
+/**
+ * Winnie's droplet.
  * Currently the smallest droplet that Digital Ocean offers,
  * running Debian 11 in AMS3 (Amsterdam).
  */
@@ -22,7 +24,8 @@ resource "digitalocean_droplet" "winnie-bot" {
   ]
 }
 
-/* Firewall rules for the Winnie droplet.
+/**
+ * Firewall rules for the Winnie droplet.
  * Any ports not specified are caught by a block-all rule.
  */
 resource "digitalocean_firewall" "winnie-bot-firewall" {
@@ -66,7 +69,8 @@ resource "digitalocean_firewall" "winnie-bot-firewall" {
   }
 }
 
-/* The IP address of Winnie's droplet.
+/**
+ * The IP address of Winnie's droplet.
  */
 output "droplet-ip-address" {
   value      = digitalocean_droplet.winnie-bot.ipv4_address
