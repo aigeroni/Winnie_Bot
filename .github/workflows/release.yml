@@ -24,7 +24,7 @@ jobs:
       id: runner_ip
       uses: haythem/public-ip@v1.2
     - name: Build tfvars file
-      run: cd ./terraform && printf "do_token = \"%s\"\ntest_ip_address = \"%s\"\nrunner_ip_address = \"%s\"" $DO_TOKEN $TEST_IP $GH_ACTIONS_IP > cd.auto.tfvars
+      run: cd ./terraform && printf "do_token = \"%s\"\nredash_ip_address = \"%s\"\nrunner_ip_address = \"%s\"" $DO_TOKEN $TEST_IP $GH_ACTIONS_IP > cd.auto.tfvars
       env:
         DO_TOKEN: ${{ secrets.DO_PAT }}
         TEST_IP: ${{ secrets.TEST_IP }}
