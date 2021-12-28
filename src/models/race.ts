@@ -3,7 +3,7 @@ import { Column, Entity } from 'typeorm'
 import { IsNotEmpty, IsPositive } from 'class-validator'
 import { RaceTypes } from '../types'
 
-@Entity({ name: 'races' })
+@Entity({ name: 'challenges' })
 export class Race extends Challenge {
   /**
    * The target for the race.

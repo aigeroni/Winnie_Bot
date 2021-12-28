@@ -2,7 +2,7 @@ import { Challenge } from './bases/challenge'
 import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm'
 import { ChainWar } from '.'
 
-@Entity({ name: 'wars' })
+@Entity({ name: 'challenges' })
 export class War extends Challenge {
   /**
    * The amount of time, in minutes, the war should last.
