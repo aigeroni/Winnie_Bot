@@ -36,7 +36,8 @@ jobs:
       run: cd ./terraform && echo SSH_HOST_IP=$(terraform output droplet-ip-address) | tr -d '"' >> $GITHUB_ENV
     - name: Save private database connection string as env var
       run: cd ./terraform && echo DB_CONNECTION_STRING=$(terraform output database-connection-uri) >> $GITHUB_ENV
-    - run: |
+    - name: Set up dotenv file
+      run: |
         @(
           'POSTGRES_CONNECTION_STRING="${{ env.DB_CONNECTION_STRING }}"'
           'TYPEORM_URL=${{ env.DB_CONNECTION_STRING }}' -replace 'postgresql', 'postgres'
@@ -50,7 +51,7 @@ jobs:
           'NODE_ENV="production"'
         ) | Out-File .env -Encoding utf8 -Force
       shell: pwsh
-    - name: copy env file
+    - name: Copy dotenv file
       uses: appleboy/scp-action@master
       with:
         host: ${{ env.SSH_HOST_IP }}
