@@ -10,13 +10,13 @@ export class ChainWar extends Challenge {
   /**
    * How long each war should last, in minutes.
    *
-   * If not present, the default war length will be used
+   * If not present, the default war length of 10 minutes will be used.
    */
   @Column()
   duration?: number
 
   /**
-   * The total number of wars in the chain
+   * The total number of wars in the chain.
    */
   @Column({ name: 'number_of_wars' })
   numberOfWars!: number
@@ -25,7 +25,7 @@ export class ChainWar extends Challenge {
    * The amount of time, in minutes, between the end of one war
    * and the beginning of the next.
    *
-   * default = 5 minutes
+   * default = 5
    */
   @Column({ name: 'war_margin' })
   warMargin: number = 5

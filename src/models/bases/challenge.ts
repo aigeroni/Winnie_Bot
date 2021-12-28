@@ -11,7 +11,9 @@ import { ChallengeTypes, StatusTypes } from '../../types'
  */
 export abstract class Challenge extends Mission {
   /**
-   * The challenge's name, used in challenge lists.
+   * The challenge's name.
+   *
+   * Used in challenge lists.
    */
   @Column()
   @MaxLength(150)
@@ -27,7 +29,7 @@ export abstract class Challenge extends Mission {
   isVisible: boolean = true
 
   /**
-   * When the challenge should start
+   * When the challenge should start.
    */
   @Column({ name: 'start_at', transformer: new DateTimeTransformer(), type: 'varchar' })
   startAt!: DateTime
