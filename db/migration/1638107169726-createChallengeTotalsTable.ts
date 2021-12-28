@@ -5,42 +5,74 @@ export class createChallengeTotalsTable1638107169726 implements MigrationInterfa
     const challengeTotalsTable = new Table({
       name: 'challenge_totals',
       columns: [
+        /**
+         * The challenge to which the user is joined.
+         *
+         * Part of the primary key, along with userId
+         */
         {
           name: 'challenge_id',
           type: 'int',
           isPrimary: true
         },
+        /**
+         * The user's discord ID.
+         *
+         * Part of the primary key, along with the challenge ID.
+         */
         {
           name: 'user_id',
           type: 'varchar',
           length: '30',
           isPrimary: true
         },
+        /**
+         * The guild from which the user joined the challenge.
+         */
         {
           name: 'guild_id',
           type: 'varchar',
           length: '30'
         },
+        /**
+         * The user's total for the challenge.
+         */
         {
           name: 'total',
           type: 'int',
           default: 0
         },
+        /**
+         * The type of the total.
+         *
+         * Can be items, lines, minutes, pages, or words.
+         */
         {
           name: 'total_type',
           type: 'enum',
           enum: ['items', 'lines', 'minutes', 'pages', 'words']
         },
+        /**
+         * The chain that the joined challenge is part of, if any.
+         */
         {
           name: 'chain_war_id',
           type: 'int',
           isNullable: true
         },
+        /**
+         * The id of the channel from which the user joined the challenge.
+         *
+         * Used to construct pings.
+         */
         {
           name: 'channel_id',
           type: 'varchar',
           length: '30'
         },
+        /**
+         * The id of the project that the total is associated with.
+         */
         {
           name: 'project_id',
           type: 'int',
