@@ -21,7 +21,7 @@ export abstract class Mission extends BaseModel {
 
   /**
    * The current status of the mission.
-   * 
+   *
    * Can be Created, Running (for challenges only), Completed, or Canceled.
    */
   @Column()
