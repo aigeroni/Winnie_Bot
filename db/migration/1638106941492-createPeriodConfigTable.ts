@@ -37,7 +37,7 @@ export class createPeriodConfigTable1638106941492 implements MigrationInterface 
         },
         /**
          * A text string describing any abnormal events during the period.
-         * 
+         *
          * This can include outages, data loss, or configuration changes.
          */
         {

@@ -32,7 +32,7 @@ export class PeriodConfig extends BaseModel {
 
   /**
    * A text string describing any abnormal events during the period.
-   * 
+   *
    * This can include outages, data loss, or configuration changes.
    */
   @Column({ name: 'period_note', type: 'varchar' })
