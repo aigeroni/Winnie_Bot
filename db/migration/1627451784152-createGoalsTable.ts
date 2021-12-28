@@ -7,7 +7,7 @@ export class createGoalsTable1627451784152 implements MigrationInterface {
       columns: [
         /**
          * The ID of the goal.
-         * 
+         *
          * Primary key, auto-incrementing.
          */
         {
