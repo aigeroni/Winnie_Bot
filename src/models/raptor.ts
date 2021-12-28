@@ -20,7 +20,7 @@ export class Raptor extends BaseModel {
   guildId!: Snowflake
 
   /**
-   * The user which has earned these raptors.
+   * The user that earned these raptors.
    *
    * Part of the table's primary key, along with guildId and period.
    */
