@@ -228,6 +228,8 @@
         "id": "The ID of the challenge that you want to cancel."
       },
       "error": {
+        "challengeDoesNotExist": "**Error**: Challenge {{ id }} does not exist!",
+        "challengeHasAlreadyStarted": "**Error**: Challenge {{ id }} has already started!",
         "couldNotCancelChallenge": "**Unknown Error**: Could not cancel challenge {{ id }} (database validation error).",
         "userIsNotOwner": "**Error**: Only the creator of {{ challengeName }} (ID {{ id }}) can cancel the challenge."
       }
@@ -241,7 +243,7 @@
       "error": {
         "challengeDoesNotExist": "**Error**: Challenge {{ id }} does not exist!",
         "challengeHasNotStarted": "**Error**: Challenge {{ id }} has not started yet!",
-        "challengeIsWar": "You cannot set a finish time for a war.  Use `/challenge total` to set your total.",
+        "challengeIsNotRace": "You can only set finish times for races.  Use `/challenge total` to set your total for a war.",
         "couldNotFinishChallenge": "**Unknown Error**: Could not finish race {{ id }} (database validation error).",
         "noChallengeSpecified": "**Error**: I don't know which race to finish!  Use `/challenge finish` with an ID number to finish a specific race."
       }
@@ -262,7 +264,8 @@
       "description": "Leaves the challenge that you have joined.",
       "success": "You have left {{ challengeName }} ( ID {{ id }}).",
       "error": {
-        "couldNotLeaveChallenge": "**Unknown Error**: Could not leave challenge {{ id }} (database validation error)."
+        "couldNotLeaveChallenge": "**Unknown Error**: Could not leave challenge {{ id }} (database validation error).",
+        "noActiveChallenge": "**Error**: You haven't joined a challenge yet."
       }
     },
     "list": {
@@ -275,17 +278,48 @@
     },
     "start": {
       "description": "Creates a new challenge.",
-      "args": {
-        "duration": "`daily`, `weekly`, `monthly`, or `yearly`. Defaults to daily.",
-        "target": "The total you plan to achieve.",
-        "type": "`items`, `lines`, `minutes`, `pages`, `words`. Defaults to words."
+      "chain": {
+        "args": {
+          "delay": "The time to wait before starting the first war in minutes. Defaults to 5.",
+          "duration": "The duration of each war in the chain in minutes. Defaults to 10.",
+          "join": "A boolean value. true to join the chain, false to not. Defaults to false.",
+          "length": "The number of wars in the chain.",
+          "name": "The name of the chain.  Defaults to `$USER`'s chain war.",
+          "split": "The time between wars in the chain in minutes. Defaults to 5."
+        },
+        "error": {
+          "couldNotStartChain": "**Unknown Error**: Could not start a new chain (database validation error)."
+        }
       },
-      "error": {
+      "race": {
+        "args": {
+          "delay": "The time to wait before starting the race in minutes. Defaults to 5.",
+          "duration": "The time that the race will be listed in minutes. Defaults to 30.",
+          "join": "A boolean value. true to join the race, false to not. Defaults to false.",
+          "name": "The name of the race.  Defaults to `$USER`'s race.",
+          "target": "The total that you want to race to.",
+          "type": "`items`, `lines`, `minutes`, `pages`, `words`. Defaults to words."
+        },
+        "error": {
+          "couldNotStartRace": "**Unknown Error**: Could not start a new race (database validation error)."
+        }
+      },
+      "war": {
+        "args": {
+          "delay": "The time to wait before starting the war in minutes. Defaults to 5.",
+          "duration": "The duration of the war in minutes. Defaults to 10.",
+          "join": "A boolean value. true to join the war, false to not. Defaults to false.",
+          "name": "The name of the war.  Defaults to `$USER`'s war."
+        },
+        "error": {
+          "couldNotStartWar": "**Unknown Error**: Could not start a new war (database validation error)."
+        }
+      },
+      "error" : {
         "challengeNameHasMentions": "**Error**: Challenge names cannot contain Discord objects (users, roles, channels, etc).",
         "challengeNameHasProfanity": "**Error**: Challenge names cannot contain profanity.",
         "challengeNameHasURL": "**Error**: Challenge names cannot contain URLs.",
-        "challengeNameTooLong": "**Error**: Challenge names must be 150 characters or less.",
-        "couldNotStartChallenge": "**Unknown Error**: Could not start a new challenge (database validation error)."
+        "challengeNameTooLong": "**Error**: Challenge names must be 150 characters or less."
       }
     },
     "status": {

@@ -13,10 +13,14 @@ import { Message, Permissions } from 'discord.js'
  */
 async function handleMention (message: Message, guildConfig: GuildConfig): Promise<void> {
   if (WinnieClient.client.user == null) { return }
-  if (!message.mentions.has(WinnieClient.client.user, { ignoreEveryone: true, ignoreRoles: true })) { return }
+  if (!message.mentions.has(WinnieClient.client.user?.id)) { return }
 
   const response = await I18n.translate(guildConfig.locale, 'mentionResponse')
-  await message.channel.send(response)
+  try {
+    await message.channel.send(response)
+  } catch (error) {
+    Logger.error(`Unable to send message to channel ${message.channel.id}`)
+  }
   Logger.info('Winnie registered mention. Attempting to deploy commands.')
   await deployCommands(message, guildConfig)
 }
@@ -28,7 +32,8 @@ async function deployCommands (message: Message, guildConfig: GuildConfig): Prom
   if (author.permissions.has(Permissions.FLAGS.ADMINISTRATOR)) {
     try {
       await CommandUtils.deployCommands(guildConfig)
-    } catch {
+    } catch (error) {
+      Logger.error(error)
       await message.reply(await I18n.translate(guildConfig.locale, 'commands:deploy.error'))
       return
     }

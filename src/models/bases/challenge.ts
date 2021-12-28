@@ -4,6 +4,7 @@ import { Column } from 'typeorm'
 import { Mission } from './mission'
 import { DateTime } from 'luxon'
 import { DateTimeTransformer } from '../transformers/date-time'
+import { I18n } from '../../core'
 import { ChallengeTypes, StatusTypes } from '../../types'
 
 /**
@@ -53,5 +54,9 @@ export abstract class Challenge extends Mission {
     this.status = StatusTypes.RUNNING
 
     await this.save()
+  }
+
+  async challenge_name (locale: string): Promise<string> {
+    return await I18n.translate(locale, `challenges:challenge_types.${this.challengeType}`)
   }
 }

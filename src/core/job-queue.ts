@@ -1,4 +1,4 @@
-import { Queue } from 'bullmq'
+import { Queue, QueueScheduler } from 'bullmq'
 
 export const redisConnectionOptions = {
   host: process.env.REDIS_HOST,
@@ -7,16 +7,28 @@ export const redisConnectionOptions = {
 }
 
 export const queueNames = {
-  goals: 'goals_queue'
+  goals: 'goals_queue',
+  challenges: 'challenges_queue',
+  challengesScheduler: 'challenges_queue_scheduler'
 }
 
 const goalsQueue = new Queue(queueNames.goals, {
   connection: redisConnectionOptions
 })
 
+const challengesQueue = new Queue(queueNames.challenges, {
+  connection: redisConnectionOptions
+})
+
+const challengesQueueScheduler = new QueueScheduler(queueNames.challengesScheduler, {
+  connection: redisConnectionOptions
+})
+
 export const JobQueue = {
   queues: {
-    goalsQueue
+    goalsQueue,
+    challengesQueue,
+    challengesQueueScheduler
   },
   queueNames,
   connectionOptions: redisConnectionOptions

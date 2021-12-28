@@ -1,7 +1,12 @@
 export * from './chain'
+export * from './challenge-totals'
 export * from './goal'
 export * from './guild-config'
+export * from './period-config'
+export * from './project'
 export * from './race'
 export * from './raptor'
 export * from './user-config'
 export * from './war'
+
+export * from './bases/challenge'

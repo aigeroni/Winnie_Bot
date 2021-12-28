@@ -10,6 +10,7 @@
     "i18next": "^19.8.4",
     "i18next-fs-backend": "^1.0.7",
     "luxon": "^1.25.0",
+    "nanotimer": "^0.3.15",
     "node-cron": "^3.0.0",
     "pg": "^8.4.0",
     "reflect-metadata": "^0.1.13",
@@ -20,6 +21,7 @@
     "@tsconfig/node16": "^1.0.2",
     "@types/i18next-fs-backend": "^1.0.0",
     "@types/luxon": "^1.25.0",
+    "@types/nanotimer": "^0.3.0",
     "@types/node": "^14.11.10",
     "@types/node-cron": "^2.0.4",
     "dotenv": "^8.2.0",
@@ -34,9 +36,10 @@
     "dotenv:test": "tsc && node -r dotenv/config test.js",
     "lint": "ts-standard",
     "lint:fix": "ts-standard --fix",
-    "start": "tsc && NODE_TLS_REJECT_UNAUTHORIZED='0' node -r dotenv/config dist/src/index.js",
-    "start:worker:goal": "tsc && NODE_TLS_REJECT_UNAUTHORIZED='0' node -r dotenv/config dist/src/workers/goal-worker.js",
-    "typeorm": "tsc && NODE_TLS_REJECT_UNAUTHORIZED='0' node -r dotenv/config ./node_modules/typeorm/cli.js"
+    "start": "tsc && node -r dotenv/config dist/src/index.js",
+    "start:worker:challenge": "tsc && node -r dotenv/config dist/src/workers/challenge-worker.js",
+    "start:worker:goal": "tsc && node -r dotenv/config dist/src/workers/goal-worker.js",
+    "typeorm": "tsc && node -r dotenv/config ./node_modules/typeorm/cli.js"
   },
   "repository": {
     "type": "git",

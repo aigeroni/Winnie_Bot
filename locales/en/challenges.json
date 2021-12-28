@@ -1,18 +1,53 @@
 {
-  "start": "Your {{challengeType}}, {{challengeName}}, (ID {{id}}), starts in {{minutes}}.",
-  "status": "**{{id}}**: {{challengeName}} {{data}}, {{server}}",
+  "startsIn": "Your {{ challengeType }}, {{ challengeName }}, (ID {{ id }}, {{ data }}), starts in {{ delay }}.",
+  "startWar": "{{ challengeName }} (ID {{ id }}, {{ duration }}) starts now!\n\n{{ joinedUsers }}",
+  "startRace": "{{ challengeName }} (ID {{ id }}) starts now! Race to {{ target }} {{ type }}! (times out in {{ timeout }})\n{{ joined_users }}",
+  "status": {
+    "warBeforeStart": "**{{ id }}**: {{ challengeName }} ({{ data }}), {{ home_server }}",
+    "raceBeforeStart": "**{{ id }}**: {{ challengeName }} ({{ data }}), {{ home_server }}",
+    "chainBeforeStart": "**{{ id }}**: {{ challengeName }} ({{ data }}), {{ home_server }}",
+    "warAfterStart": "**{{ id }}**: {{ challengeName }} ({{ data }}), {{ home_server }}",
+    "raceAfterStart": "**{{ id }}**: {{ challengeName }} ({{ data }}), {{ home_server }}",
+    "chainAfterStart": "**{{ id }}**: {{ challengeName }} ({{ data }}), {{ home_server }}"
+  },
+  "completeWar": "{{ challengeName }} (ID {{ id }}) has ended! Post your total using `/challenge total` to be included in the summary.\n{{ joined_users }}",
+  "completeRace": "You have one hour remaining to complete {{ challengeName }} (ID {{ id }}, {{ target }} {{ type }}) using `/challenge finish`.\n{{ joined_users }}",
   "summary": "",
   "total": "Your total of **{{total}}** {{type}} has been added to the summary for {{challengeName}} (ID {{id}}).",
   "data": {
-    "chain": "({{current}}/{{count}}) ({{minutes}}, {{timeLeft}} remaining)",
-    "race": "({{words}}, {{minutes}}, {{timeLeft}} remaining)",
-    "war": "({{minutes}}, {{timeLeft}} remaining)"
+    "chain": "{{current}}/{{count}}) ({{duration}}",
+    "race": "{{target}}, {{duration}}",
+    "war": "{{duration}}"
   },
-  "plurals": {
-    "minutes": "{{duration}} minute",
-    "minutes_plural": "{{duration}} minutes",
-    "words": "{{target}} word",
-    "words_plural": "{{target}} words"
+  "dataWithRemaining": {
+    "chain": "{{current}}/{{count}}) ({{duration}}, {{timeLeft}} remaining",
+    "race": "{{target}}, {{duration}}, {{timeLeft}} remaining",
+    "war": "{{duration}}, {{timeLeft}} remaining"
+  },
+  "dataWithDelay": {
+    "chain": "{{current}}/{{count}}) ({{ duration }}, starts in {{ delayRemaining }}",
+    "race": "{{ target }}, {{duration}}, starts in {{ delayRemaining }}",
+    "war": "{{ duration }}, starts in {{ delayRemaining }}"
+  },
+  "minutesWithCount": {
+    "minutes": "{{count}} minute",
+    "minutes_plural": "{{count}} minutes"
+  },
+  "minutes": {
+    "minutes": "minute",
+    "minutes_plural": "minutes"
+  },
+  "typesWithCount": {
+    "items": "{{ count }} item",
+    "items_plural": "{{ count }} items",
+    "lines": "{{ count }} line",
+    "lines_plural": "{{ count }} lines",
+    "minutes": "{{ count }} minute",
+    "minutes_plural": "{{ count }} minutes",
+    "pages": "{{ count }} page",
+    "pages_plural": "{{ count }} pages",
+    "words": "{{ count }} word",
+    "words_plural": "{{ count }} words"
   },
   "types": {
     "items": "item",
@@ -25,5 +60,10 @@
     "pages_plural": "pages",
     "words": "word",
     "words_plural": "words"
+  },
+  "challengeTypes": {
+    "chainWar": "chain war",
+    "war": "war",
+    "race": "race"
   }
 }

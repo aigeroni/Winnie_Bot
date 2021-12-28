@@ -4,11 +4,12 @@ import { GoalDurations, GoalTypes } from '../types'
 import { IsChannelWithPermission } from './validators/channel-with-permission'
 import { IsNotEmpty, IsPositive, MaxLength, Min, ValidateIf } from 'class-validator'
 import { I18n, WinnieClient } from '../core'
-import { Guild, GuildChannel, Permissions, Snowflake } from 'discord.js'
+import { Guild, Permissions, Snowflake } from 'discord.js'
 import { DateTimeTransformer } from './transformers/date-time'
 import { Mission } from './bases/mission'
 import { PeriodConfig } from './period-config'
 import { Project } from './project'
+import { DiscordService } from '../services'
 
 /**
  * Represents a goal users can set.
@@ -118,14 +119,7 @@ export class Goal extends Mission {
    *          undefined if the guild was not able to be looked up.
    */
   async getGuild (): Promise<Guild | undefined> {
-    if (!WinnieClient.isLoggedIn()) { return }
-
-    const channel = await WinnieClient.client.channels.fetch(this.channelId)
-    if (channel == null) { return }
-
-    if (channel instanceof GuildChannel) {
-      return channel.guild
-    }
+    return await DiscordService.getGuildFromChannel(this.channelId)
   }
 
   /**

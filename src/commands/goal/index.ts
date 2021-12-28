@@ -25,7 +25,7 @@ export const GoalCommand: Command = {
   name: NAME,
   commandData: async (locale: string): Promise<ApplicationCommandData> => ({
     name: NAME,
-    description: await I18n.translate(locale, 'commands:config.description'),
+    description: await I18n.translate(locale, 'commands:goal.description'),
     options: [
       await GoalCancelCommand.commandData(locale),
       await GoalInfoCommand.commandData(locale),
