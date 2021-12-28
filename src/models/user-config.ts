@@ -12,7 +12,7 @@ import { GuildConfig } from '.'
 @Entity()
 export class UserConfig extends BaseModel {
   /**
-   * The Discord ID of the user this configuration object represents.
+   * The Discord ID of the user that this configuration object represents.
    */
   @PrimaryColumn({ type: 'varchar' })
   @MaxLength(30)

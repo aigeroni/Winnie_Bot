@@ -24,7 +24,7 @@ export class GuildConfig extends BaseModel {
   /**
    * The Discord ID of the channel in which announcements should be sent.
    *
-   * Channel where Winnie sends daily goals and other announcements
+   * Channel where Winnie sends announcements and raptors for users with a home guild set.
    */
   @Column({ name: 'announcements_channel_id', type: 'varchar' })
   @IsChannelWithPermission(Permissions.FLAGS.SEND_MESSAGES)
