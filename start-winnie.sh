@@ -7,8 +7,6 @@ yarn typeorm migration:run
 
 cp ./services/*.service /lib/systemd/system/
 
-sudo systemctl stop goal-worker.service
-sudo systemctl revert goal-worker.service
 sudo systemctl stop goal-worker@1.service
 sudo systemctl enable goal-worker@1.service
 sudo systemctl start goal-worker@1.service

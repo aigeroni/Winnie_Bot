@@ -34,8 +34,8 @@ export class Raptor extends BaseModel {
    * Part of the table's primary key, along with guildId.
    */
   @ManyToOne(() => PeriodConfig, period => period.id, { primary: true })
-  @JoinColumn({ name: 'period' })
-  period!: string
+  @JoinColumn({ name: 'period_id' })
+  periodId!: string
 
   /**
    * The number of blue raptors this user has earned in this server for a given time period
@@ -122,13 +122,14 @@ export class Raptor extends BaseModel {
     await this.save()
   }
 
-  static async findOrCreate (userId: Snowflake, guildId: Snowflake): Promise<Raptor> {
-    let raptor = (await Raptor.find({ where: { userId, guildId } }))[0]
+  static async findOrCreate (userId: Snowflake, guildId: Snowflake, periodId: string): Promise<Raptor> {
+    let raptor = (await Raptor.find({ where: { userId, guildId, periodId } }))[0]
     if (raptor != null) { return raptor }
 
     raptor = new Raptor()
     raptor.userId = userId
     raptor.guildId = guildId
+    raptor.periodId = periodId
     await raptor.save()
 
     return raptor
