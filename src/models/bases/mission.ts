@@ -97,7 +97,7 @@ export abstract class Mission extends BaseModel {
    * @returns true if the mission is active
    */
   isActive (): boolean {
-    return !this.isCanceled() && !this.isCompleted()
+    return !(this.status === StatusTypes.COMPLETED || this.status === StatusTypes.CANCELED)
   }
 
   /**
