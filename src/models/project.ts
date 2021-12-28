@@ -1,9 +1,11 @@
-import { IsNotEmpty, IsPositive, MaxLength, ValidateIf } from 'class-validator'
+import { IsNotEmpty, IsPositive, MaxLength, Min, ValidateIf } from 'class-validator'
 import { Permissions, Snowflake } from 'discord.js'
+import { DateTime } from 'luxon'
 import { Column, Entity } from 'typeorm'
 import { WinnieClient } from '../core'
 import { GoalTypes } from '../types'
 import { Mission } from './bases/mission'
+import { DateTimeTransformer } from './transformers/date-time'
 import { IsChannelWithPermission } from './validators/channel-with-permission'
 
 @Entity({ name: 'projects' })
@@ -37,6 +39,15 @@ export class Project extends Mission {
   goalType: GoalTypes = GoalTypes.WORDS
 
   /**
+   * The progress towards completing the project.
+   *
+   * example: 73 out of 120 pages
+   */
+  @Column()
+  @Min(0)
+  progress: number = 0
+
+  /**
    * The id of the channel in which the project was created.
    *
    * Used for sending messages about the project's status later.
@@ -46,4 +57,10 @@ export class Project extends Mission {
   @IsChannelWithPermission(Permissions.FLAGS.SEND_MESSAGES)
   @MaxLength(30)
   channelId!: Snowflake
+
+  /**
+   * The due date of the project.
+   */
+  @Column({ name: 'due_at', transformer: new DateTimeTransformer(), type: 'varchar' })
+  dueAt!: DateTime
 }
