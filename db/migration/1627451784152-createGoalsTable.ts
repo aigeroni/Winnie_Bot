@@ -101,9 +101,9 @@ export class createGoalsTable1627451784152 implements MigrationInterface {
           isNullable: true
         },
         /**
-         * Timestamp of when this mission was completed.
+         * Timestamp of when the goal was completed.
          *
-         * Null if not completed
+         * Null if not completed.
          */
         {
           name: 'completed_at',
