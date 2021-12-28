@@ -15,7 +15,7 @@ import { IsChannelWithPermission } from './validators/channel-with-permission'
 @Entity({ name: 'challenge_totals' })
 export class ChallengeTotal extends BaseModel {
   /**
-   * The challenge to which the user is joined
+   * The challenge to which the user is joined.
    *
    * Part of the primary key, along with userId
    */
@@ -24,22 +24,24 @@ export class ChallengeTotal extends BaseModel {
   challenge!: number
 
   /**
-   * The user's discord Id
+   * The user's discord ID.
    *
-   * Part of the primary key, along with the challenge
+   * Part of the primary key, along with the challenge ID.
    */
   @ManyToOne(() => UserConfig, user => user.id, { primary: true })
   @JoinColumn({ name: 'user_id' })
   userId!: Snowflake
 
   /**
-   * The user's total for the challenge
+   * The user's total for the challenge.
    */
   @Column()
   total: number = 0
 
   /**
    * The type of the total.
+   *
+   * Can be items, lines, minutes, pages, or words.
    */
   @Column({ name: 'total_type', type: 'enum', enum: ChallengeTotalTypes })
   totalType!: ChallengeTotalTypes
