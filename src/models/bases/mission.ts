@@ -41,32 +41,32 @@ export abstract class Mission extends BaseModel {
   ownerId!: Snowflake
 
   /**
-    * The timestamp of when this mission was created.
-    */
+   * Timestamp of when this mission was created.
+   */
   @Column({ name: 'created_at', transformer: new DateTimeTransformer(), type: 'varchar' })
   createdAt!: DateTime
 
   /**
- * The timestamp of the most recent time this mission was updated.
- *
- * Null if the mission has never been updated.
- */
+   * Timestamp of the most recent update to the mission.
+   *
+   * Null if never updated.
+   */
   @Column({ name: 'updated_at', transformer: new NullableDateTimeTransformer(), type: 'varchar' })
   updatedAt?: DateTime
 
   /**
-* Timestamp of when this mission was canceled.
-*
-* Null if not canceled
-*/
+   * Timestamp of when this mission was canceled.
+   *
+   * Null if not canceled.
+   */
   @Column({ name: 'canceled_at', transformer: new NullableDateTimeTransformer(), type: 'varchar' })
   canceledAt?: DateTime
 
   /**
-* Timestamp of when this mission was completed.
-*
-* Null if not completed
-*/
+   * Timestamp of when this mission was completed.
+   *
+   * Null if not completed.
+   */
   @Column({ name: 'completed_at', transformer: new NullableDateTimeTransformer(), type: 'varchar' })
   completedAt?: DateTime
 
@@ -81,10 +81,10 @@ export abstract class Mission extends BaseModel {
   }
 
   /**
-  * Listener for the beforeUpdate event.
-  *
-  * Sets the updated at timestamp.
-  */
+   * Listener for the beforeUpdate event.
+   *
+   * Sets the updated at timestamp.
+   */
   @BeforeUpdate()
   onBeforeUpdate (): void {
     this.updatedAt = DateTime.utc()
@@ -119,7 +119,7 @@ export abstract class Mission extends BaseModel {
   }
 
   /**
-   * Takes the current mission and makes it as complete.
+   * Takes the current mission and marks it as complete.
    */
   async complete (): Promise<void> {
     this.completedAt = DateTime.utc()
@@ -128,7 +128,7 @@ export abstract class Mission extends BaseModel {
   }
 
   /**
-   * Takes the current mission and makes it as canceled.
+   * Takes the current mission and marks it as canceled.
    */
   async cancel (): Promise<void> {
     this.canceledAt = DateTime.utc()

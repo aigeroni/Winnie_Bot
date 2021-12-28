@@ -83,13 +83,13 @@ export class Goal extends Mission {
   projectId!: Snowflake
 
   /**
-    * Gets the end date for the goal.
-    *
-    * If the goal has ended, returns the date it ended.
-    * If the goal is active, returns the expected end date.
-    *
-    * @returns The end date for the goal
-    */
+   * Gets the end date for the goal.
+   *
+   * If the goal has ended, returns the date it ended.
+   * If the goal is active, returns the expected end date.
+   *
+   * @returns The end date for the goal
+   */
   endDate (): DateTime {
     if (this.canceledAt != null) { return this.canceledAt }
     if (this.completedAt != null) { return this.completedAt }
