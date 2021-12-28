@@ -52,7 +52,7 @@ export class createProjectsTable1638106953553 implements MigrationInterface {
           type: 'int'
         },
         /**
-         * The current status of the mission.  Can be Created, Running (for challenges only), Completed, or Canceled.
+         * The current status of the project.  Can be Created, Running (for challenges only), Completed, or Canceled.
          */
         {
           name: 'status',
@@ -60,7 +60,7 @@ export class createProjectsTable1638106953553 implements MigrationInterface {
           enum: ['created', 'canceled', 'completed']
         },
         /**
-         * The id of the guild that the mission belongs to.
+         * The id of the guild that the project belongs to.
          */
         {
           name: 'guild_id',
@@ -68,7 +68,7 @@ export class createProjectsTable1638106953553 implements MigrationInterface {
           length: '30'
         },
         /**
-         * The id of the user that created the mission.
+         * The id of the user that created the project.
          */
         {
           name: 'owner_id',
@@ -86,7 +86,7 @@ export class createProjectsTable1638106953553 implements MigrationInterface {
           length: '30'
         },
         /**
-         * Timestamp of when this mission was created.
+         * Timestamp of when this project was created.
          */
         {
           name: 'created_at',
@@ -94,7 +94,7 @@ export class createProjectsTable1638106953553 implements MigrationInterface {
           isNullable: true
         },
         /**
-         * Timestamp of the most recent update to the mission.
+         * Timestamp of the most recent update to the project.
          *
          * Null if never updated.
          */
@@ -104,7 +104,7 @@ export class createProjectsTable1638106953553 implements MigrationInterface {
           isNullable: true
         },
         /**
-         * Timestamp of when this mission was canceled.
+         * Timestamp of when this project was canceled.
          *
          * Null if not canceled.
          */
@@ -114,7 +114,7 @@ export class createProjectsTable1638106953553 implements MigrationInterface {
           isNullable: true
         },
         /**
-         * Timestamp of when this mission was completed.
+         * Timestamp of when this project was completed.
          *
          * Null if not completed.
          */

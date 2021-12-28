@@ -13,7 +13,7 @@ export class updateGoalsTable1638107109254 implements MigrationInterface {
         default: '2021-11'
       }),
       /**
-       * The id of the guild that the mission belongs to.
+       * The id of the guild that the goal belongs to.
        */
       new TableColumn({
         name: 'guild_id',
