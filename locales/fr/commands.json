@@ -19,7 +19,7 @@
         "success": "Tes préférences en matière de visibilité de tes défis ont été réinitialisées. Les défis **seront** désormais visibles sur les autres serveurs."
       },
       "set": {
-        "description": "Définis si tes défis sont visibles sur les autres serveurs..",
+        "description": "Définis si tes défis sont visibles sur les autres serveurs.",
         "disabled": "Tes défis **ne seront pas** visibles sur les autres serveurs.",
         "enabled": "Tes défis **seront** visibles sur les autres serveurs.",
         "error": "**ERREUR**: Tes préférences en matière de visibilité sur les autres serveurs ne peuvent être définies (erreur de validation de la base de données).",
@@ -57,6 +57,9 @@
     "description": "Définis, mets à jour ou réinitialise ton objectif.",
     "cancel": {
       "description": "Annule ton objectif actuel.",
+      "args": {
+        "duration": "`daily`, `weekly`, `monthly`, or `yearly`. Defaults to daily."
+      },
       "success": "Ton objectif actuel a été annulé avec succès.",
       "error": {
         "couldNotCancelGoal": "**ERREUR**: Impossible d'annuler l'objectif actuel (erreur de validation de la base de données).",
@@ -65,6 +68,9 @@
     },
     "info": {
       "description": "Rappelle votre objectif actuel",
+      "args": {
+        "duration": "`daily`, `weekly`, `monthly`, or `yearly`. Defaults to daily."
+      },
       "error": {
         "noActiveGoal": "**ERREUR**: Tu n'as pas d'objectif actuellement."
       }
@@ -72,6 +78,7 @@
     "overwrite": {
       "description": "Remplace la progression de ton objectif par une nouvelle valeur.",
       "args": {
+        "duration": "`daily`, `weekly`, `monthly`, or `yearly`. Defaults to daily.",
         "progress": "Ta progression quant à ton objectif total"
       },
       "error": {
@@ -81,7 +88,7 @@
       }
     },
     "reset": {
-        "description": "Change ton objectif actuel. Ta progression ne change pas si ton nouvel objectif est du même type.",
+      "description": "Change ton objectif actuel. Ta progression ne change pas si ton nouvel objectif est du même type.",
       "success": "You have successfully reset your goal. \n\n{{goal}}",
       "args": {
         "duration": "`daily`, `weekly`, `monthly`, or `yearly`. Defaults to daily.",
@@ -110,6 +117,7 @@
     "update": {
       "description": "Updates progress on your goal.",
       "args": {
+        "duration": "`daily`, `weekly`, `monthly`, or `yearly`. Defaults to daily.",
         "progress": "The amount to add to your current total."
       },
       "error": {
@@ -120,7 +128,7 @@
     }
   },
   "server": {
-    "description": "Configures Winnie_Bot to meet your server's needs. Only usable by people with Manage Server permissions",
+    "description": "Configures Winnie_Bot to meet your server's needs. Requires Manage Server permissions",
     "announcementsChannel": {
       "description": "Chooses the channel which Winnie_Bot makes announcements to.",
       "get": {
@@ -159,7 +167,7 @@
         "enabled": "Your server's challenges **will** display on other servers.",
         "error": "**Unknown Error**: Your server's challenge display preference cannot be set (database validation error).",
         "args": {
-          "enabled": "A boolean value for whether challenges should be visible in other servers (true for visible, false for hidden)."
+          "enabled": "A boolean value for cross-server visibility (true for visible, false for hidden)."
         }
       }
     },
@@ -178,7 +186,7 @@
         "description": "Sets a new language for Winnie_Bot to speak.",
         "success": "Winnie_Bot now speaks {{locale}}.",
         "args": {
-          "locale": "An ISO 639-1 language code. Current options are `en` (English), `fr` (Français), `hu` (Magyar), `la` (Latina), `ms` (Bahasa Melayu), `nl` (Nederlands), and `sv` (Svenska)."
+          "locale": "An ISO 639-1 language code."
         },
         "error": "**Error**: The locale that you are trying to set does not exist (database validation error)."
       }

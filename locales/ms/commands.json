@@ -1,6 +1,5 @@
 {
   "defaultError": "**Ralat tidak diketahui:** Minta maaf, saya tidak dapat berbuat demikian. Kejadian ini telah dilogkan ke dashboard.",
-  
   "deploy": {
     "error": "**Unknown Error**: Commands failed to deploy.",
     "success": "Commands deployed successfully."
@@ -25,7 +24,7 @@
         "enabled": "Cabaran awak **akan** dipaparkan di pelayan lain.",
         "error": "**Ralat tidak diketahui**: Pilihan paparan cabaran awak tidak dapat ditetapkan (ralat pengesahan pangkalan data).",
         "args": {
-          "enabled": "Nilai boolean untuk sama ada cabaran dapat dilihat di pelayan lain (benar untuk dapat dilihat, palsu untuk tersembunyi)."
+          "enabled": "Nilai boolean sama ada cabaran dapat dilihat di pelayan lain (benar untuk dapat dilihat, palsu untuk tersembunyi)."
         }
       }
     },
@@ -58,6 +57,9 @@
     "description": "Menetapkan, memadamkan, atau memaparkan matlamat awak.",
     "cancel": {
       "description": "Membatalkan matlamat semasa awak.",
+      "args": {
+        "duration": "`daily`, `weekly`, `monthly`, atau `yearly`. Tetapan asal ialah harian."
+      },
       "success": "Matlamat semasa awak telah dibatalkan.",
       "error": {
         "couldNotCancelGoal": "**Ralat tidak diketahui**: Tidak dapat membatalkan matlamat (ralat pengesahan pangkalan data).",
@@ -66,6 +68,9 @@
     },
     "info": {
       "description": "Mengingatkan awak tentang matlamat semasa awak.",
+      "args": {
+        "duration": "`daily`, `weekly`, `monthly`, atau `yearly`. Tetapan asal ialah harian."
+      },
       "error": {
         "noActiveGoal": "**Ralat**: Awak tidak mempunyai matlamat yang aktif."
       }
@@ -73,6 +78,7 @@
     "overwrite": {
       "description": "Menggantikan kemajuan matlamat awak dengan nilai baru.",
       "args": {
+        "duration": "`daily`, `weekly`, `monthly`, atau `yearly`. Tetapan asal ialah harian.",
         "progress": "Kemajuan matlamat keseluruhan awak."
       },
       "error": {
@@ -111,6 +117,7 @@
     "update": {
       "description": "Mengemas kini kemajuan matlamat awak.",
       "args": {
+        "duration": "`daily`, `weekly`, `monthly`, atau `yearly`. Tetapan asal ialah harian.",
         "progress": "Jumlah untuk ditambahkan ke jumlah semasa awak."
       },
       "error": {
@@ -121,7 +128,7 @@
     }
   },
   "server": {
-    "description": "Mengkonfigurasi Winnie_Bot untuk memenuhi keperluan pelayan awak. Hanya boleh digunakan oleh orang yang mempunyai kebenaran `manage server`.",
+    "description": "Mengkonfigurasi Winnie_Bot untuk keperluan pelayan. Hanya boleh digunakan oleh orang yang mempunyai kebenaran `manage server`.",
     "announcementsChannel": {
       "description": "Memilih saluran di mana Winnie_Bot membuat pengumuman.",
       "get": {
@@ -160,7 +167,7 @@
         "enabled": "Cabaran pelayan awak **akan** dipaparkan di pelayan lain.",
         "error": "**Ralat tidak diketahui**: Pilihan paparan cabaran pelayan awak tidak dapat ditetapkan (ralat pengesahan pangkalan data).",
         "args": {
-          "enabled": "Nilai boolean untuk sama ada cabaran dapat dilihat di pelayan lain (benar untuk dapat dilihat, palsu untuk tersembunyi)."
+          "enabled": "Nilai boolean sama ada cabaran dapat dilihat di pelayan lain (benar untuk dapat dilihat, palsu untuk tersembunyi)."
         }
       }
     },

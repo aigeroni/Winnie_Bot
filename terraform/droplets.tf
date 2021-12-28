@@ -20,13 +20,13 @@ resource "digitalocean_firewall" "winnie-bot-firewall" {
   inbound_rule {
     protocol         = "tcp"
     port_range       = "22"
-    source_addresses = ["0.0.0.0/0"] // TODO: we will need to look at limiting this using the Github Actions API
+    source_addresses = [var.runner_ip_address]
   }
 
   inbound_rule {
     protocol         = "tcp"
     port_range       = "443"
-    source_addresses = ["0.0.0.0/0"] // TODO: we will need to look at limiting this using the Github Actions API
+    source_addresses = ["0.0.0.0/0"]
   }
 
   outbound_rule {

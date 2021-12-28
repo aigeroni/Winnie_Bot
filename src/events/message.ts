@@ -21,6 +21,7 @@ async function handleMention (message: Message, guildConfig: GuildConfig): Promi
   } catch (error) {
     Logger.error(`Unable to send message to channel ${message.channel.id}`)
   }
+  Logger.info('Winnie registered mention. Attempting to deploy commands.')
   await deployCommands(message, guildConfig)
 }
 

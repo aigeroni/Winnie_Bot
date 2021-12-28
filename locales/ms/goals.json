@@ -35,5 +35,11 @@
     "pages_plural": "muka surat",
     "words": "perkataan",
     "words_plural": "perkataan"
+  },
+  "raptors": {
+    "announceWhiteRaptor": "{{user}}, awak telah menetas seekor raptor putih!",
+    "announceBlueRaptor": "{{user}}, awak telah menetas seekor raptor biru!",
+    "announcePurpleRaptor": "{{user}}, awak telah menetas seekor raptor ungu!",
+    "announceOrangeRaptor": "{{user}}, awak telah menetas seekor raptor oren!"
   }
 }

@@ -1,8 +1,8 @@
 import { MigrationInterface, QueryRunner, Table } from 'typeorm'
 
-export class createGoalTable1607590446829 implements MigrationInterface {
+export class createGoalsTable1627451784152 implements MigrationInterface {
   public async up (queryRunner: QueryRunner): Promise<void> {
-    const guildConfigTable = new Table({
+    const goalTable = new Table({
       name: 'goals',
       columns: [
         {
@@ -62,7 +62,7 @@ export class createGoalTable1607590446829 implements MigrationInterface {
       ]
     })
 
-    await queryRunner.createTable(guildConfigTable, true)
+    await queryRunner.createTable(goalTable, true)
   }
 
   public async down (queryRunner: QueryRunner): Promise<void> {

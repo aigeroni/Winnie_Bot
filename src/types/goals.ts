@@ -32,4 +32,5 @@ export interface GoalCreateOptions {
   duration?: GoalDurations
   channelId?: Snowflake
   timezone: IANAZone
+  progress: number
 }
