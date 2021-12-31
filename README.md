@@ -221,6 +221,6 @@ This project is licensed under the GNU General Public License, v3.0 - see the [L
 * Prompts were brainstormed by NaNo's Australia::Melbourne region.
 * Winnie's avatar, 'Tiny Cities', was created by [Rachael Wheeler](http://www.rachaelw.com.au/).  Prints, notebooks, and other items featuring 'Tiny Cities' are available for purchase [here](https://www.redbubble.com/people/scorpiraw/works/33012468-tiny-cities).
 
-## Data Deletion
+## Privacy Policy and Data Deletion
 
-Winnie only stores data that you provide to her, and your data is only stored under the unique identifier that Discord uses for your account. If you wish to request deletion of your user data on the public Winnie_Bot instance, please contact dawn@dawnbug.com with your request.
+Please see our Privacy Policy [here](./PRIVACY.md).
