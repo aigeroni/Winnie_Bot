@@ -4,6 +4,8 @@
 
 ## What we don't store
 
+## Who has access
+
 ## Data security
 
 ## Data deletion
