@@ -2,11 +2,36 @@
 
 ## What we do store
 
+* Discord identifiers
+* Challenge and goal history
+* Timezone and home server (if you give us that data; we don't extrapolate it)
+
 ## What we don't store
+
+* Your Discord display name (queried via API)
+* Your server's name (queried via API)
+* Any information that you don't explicitly give us
 
 ## Who has access
 
+* The core team via Redash (this is currently three people, and that's very unlikely to change)
+* Winnie via database queries
+
+## Where we store/process it
+
+* Stored on a server hosted in The Netherlands
+* Query server is (presumably?) hosted in the United States of America
+* Data is processed locally in Australia and the United States of America
+
 ## Data security
+
+* Database access is locked down to the Redash instance and the Winnie droplet (potentially a second droplet that hosts Lily and Marcus in the future - those instances are not public)
+* Some data is visible cross-server - server names and raptor totals on the raptor leaderboard, and aggregate server summaries at the end of challenges
+
+## Data exports
+
+* We don't do this automatically yet; it is on the roadmap to allow for automatic challenge and goal history exports to CSV
+* You can request all of the data 
 
 ## Data deletion
 
