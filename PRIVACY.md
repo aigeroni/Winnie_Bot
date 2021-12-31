@@ -17,6 +17,12 @@
 * The core team via Redash (this is currently three people, and that's very unlikely to change)
 * Winnie via database queries
 
+## What we use it for
+
+* Winnie's features
+* Checking for inappropriate challenge names that we need to filter
+* Querying and analytics to help us build out a feature roadmap
+
 ## Where we store/process it
 
 * Stored on a server hosted in The Netherlands
