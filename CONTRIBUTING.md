@@ -1,5 +1,7 @@
 # The `Winnie_Bot` Contributor Rules of Engagement
 
+The `Winnie_Bot` Code of Professional Conduct is licensed under the [CC BY-4.0](https://creativecommons.org/licenses/by/4.0/) license.
+
 So you're interested in helping us out with Winnie?
 
 ## Where to go with problems
