@@ -1,6 +1,6 @@
 # `Winnie_Bot` Privacy Policy
 
-The `Winnie_Bot` Code of Professional Conduct is licensed under the [CC BY-4.0](https://creativecommons.org/licenses/by/4.0/) license.
+The `Winnie_Bot` Privacy Policy is licensed under the [CC BY-4.0](https://creativecommons.org/licenses/by/4.0/) license.
 
 This privacy policy outlines the ways in which we store and use your data, 
 
