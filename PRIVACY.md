@@ -37,10 +37,11 @@ Winnie's database is hosted on a server in The Netherlands.  The external tool t
 * Database access is locked down to the Redash instance and the Winnie droplet (potentially a second droplet that hosts Lily and Marcus in the future - those instances are not public)
 * Some data is visible cross-server - server names and raptor totals on the raptor leaderboard, and aggregate server summaries at the end of challenges
 
-## Data exports
+## Data exports and access
 
-* We don't do this automatically yet; it is on the roadmap to allow for automatic challenge and goal history exports to CSV
-* You can request all of the data 
+You can request all of the data that we store about you by sending an email to `info at winniebot dot org` with your Discord account's snowflake identifier.  Follow [these instructions](https://support.discord.com/hc/en-us/articles/206346498-Where-can-I-find-my-User-Server-Message-ID-) to get your snowflake.
+
+In future, we plan to allow you to automatically export your challenge, goal, and project history to the `.csv` format, for download onto your own machine.
 
 ## Data deletion
 
