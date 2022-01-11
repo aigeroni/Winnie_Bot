@@ -1,6 +1,6 @@
 # The `Winnie_Bot` Plain Language Code of Professional Conduct
 
-You can use this Code of Conduct, or bits of it, as long as you follow the rules of the [CC BY-4.0](https://creativecommons.org/licenses/by/4.0/) license.  A license is a document that tells you what you can and can't do with someone else's work. Click [here](./CODE_OF_CONDUCT.md) for a non-plain language version.
+You can use this Code of Conduct, or bits of it, as long as you follow the rules of the [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) license.  A license is a document that tells you what you can and can't do with someone else's work. Click [here](./CODE_OF_CONDUCT.md) for a non-plain language version.
 
 The people that work on `Winnie_Bot` live all over the world. We have worked on a lot of computer code before we started making Winnie, and we spend a lot of time working on the bot because many people get good things from using her. Many of us are part of groups that have been treated badly in the past, or have had things happen to us that were traumatic. Because of this, it's important for us to have a code of conduct that everyone can understand, and make sure that everyone is following it. A code of conduct is a set of rules that people need to follow to work on the project. That way, everyone will feel good about working on Winnie, and nobody will be hurt because they worked on the project.
 
