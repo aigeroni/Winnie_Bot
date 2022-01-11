@@ -1,4 +1,4 @@
-import { ApplicationCommandData, CommandInteraction } from 'discord.js'
+import { ApplicationCommandData, CommandInteraction, Snowflake } from 'discord.js'
 import { I18n } from '../../core'
 import { GuildConfig } from '../../models'
 import { Command } from '../../types'
@@ -27,4 +27,47 @@ export const RaptorCommand: Command = {
   execute: async (interaction: CommandInteraction, guildConfig: GuildConfig) => {
     true
   }
+}
+
+/**
+  * Gets experience counts, based on raptors, for all guilds.
+  *
+  * @param interaction The interaction that was executed
+  * @returns an array of raptor information for guilds.
+  */
+async function getGlobalRaptors (interaction: CommandInteraction): Promise<[]> {
+  return []
+}
+
+/**
+  * Gets experience counts, based on raptors, for all users in the calling guild.
+  *
+  * @param interaction The interaction that was executed
+  * @param guild the locale to use when looking up strings
+  * @returns an array of raptor information for users in the guild.
+  */
+async function getUserRaptors (interaction: CommandInteraction, guild: Snowflake): Promise<[]> {
+  return []
+}
+
+/**
+  * Builds a global leaderboard from the raptor experience.
+  *
+  * @param interaction The interaction that was executed
+  * @param data The current state of the raptor database
+  * @returns a text string of the guild leaderboard.
+  */
+async function buildGlobalLeaderboard (interaction: CommandInteraction, data: []): Promise<string> {
+  return ''
+}
+
+/**
+  * Builds a leaderboard for all users in the calling guild based on raptor experience.
+  *
+  * @param interaction The interaction that was executed
+  * @param data The current state of the raptor database
+  * @returns an array of raptor information for users in the guild.
+  */
+async function buildUserLeaderboard (interaction: CommandInteraction, data: []): Promise<string> {
+  return ''
 }
