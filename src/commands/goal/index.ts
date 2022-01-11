@@ -8,6 +8,7 @@ import { GoalResetCommand } from './reset'
 import { GoalSetCommand } from './set'
 import { GoalUpdateCommand } from './update'
 import { GuildConfig } from '../../models'
+import { executeTopLevelCommand } from '../utils/execute-top-level-command'
 import { I18n } from '../../core'
 
 const NAME = 'goal'
@@ -36,6 +37,6 @@ export const GoalCommand: Command = {
     ]
   }),
   execute: async (interaction: CommandInteraction, guildConfig: GuildConfig) => {
-    await CommandUtils.executeTopLevelCommand(commands, interaction, guildConfig)
+    await executeTopLevelCommand(commands, interaction, guildConfig)
   }
 }
