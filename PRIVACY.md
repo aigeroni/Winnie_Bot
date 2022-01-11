@@ -2,7 +2,7 @@
 
 The `Winnie_Bot` Privacy Policy is licensed under the [CC BY-4.0](https://creativecommons.org/licenses/by/4.0/) license.
 
-This privacy policy outlines the ways in which we store and use your data, 
+This privacy policy outlines the ways in which we store and use your data, how to get a copy of all of the data that we store, and how to request that we delete your data.
 
 ## What we do store
 
