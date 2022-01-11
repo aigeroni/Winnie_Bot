@@ -1,6 +1,6 @@
 # `Winnie_Bot` Privacy Policy
 
-The `Winnie_Bot` Privacy Policy is licensed under the [CC BY-4.0](https://creativecommons.org/licenses/by/4.0/) license.
+The `Winnie_Bot` Privacy Policy is licensed under the [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) license.
 
 This privacy policy outlines the ways in which we store and use your data, how to get a copy of all of the data that we store, and how to request that we delete your data.
 
@@ -20,13 +20,13 @@ If the server that you use Winnie from sets a server timezone, and you don't, th
 
 ## Who has access
 
-Access to Winnie's database is tightly restricted.  When you run a command, Winnie only accesses the sections of the database that she needs to complete that command.  Otherwise, access is limited to members of the core team, who use an external tool hosted by a core team member to query the database.
+Access to Winnie's database is tightly restricted.  When you run a command, Winnie only accesses the sections of the database that she needs to complete that command.  Otherwise, access is limited to members of the core team, who use an external tool hosted by a core team member to query the database.  We do not sell your data, nor do we give it to anyone who is not directly involved with the development of Winnie.
 
 Your server's name may be visible to users in other servers through the raptor leaderboard and cross-server summaries at the end of challenges.
 
 ## What we use it for
 
-Winnie uses the data in her database to provide you with access to her features.  The core team uses the database to check for inappropriate challenge names.  We also analyse the data in the database to understand the ways that people use Winnie, which helps us to decide which new features to prioritise.  We do not sell or give your data to anyone who is not directly involved with the development of Winnie.
+Winnie uses the data in her database to provide you with access to her features.  The core team uses the database to check for inappropriate challenge names.  We also analyse the data in the database to understand the ways that people use Winnie, which helps us to decide which new features to prioritise.
 
 ## Where we store/process it
 
