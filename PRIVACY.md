@@ -24,9 +24,7 @@ Access to Winnie's database is tightly restricted.  When you run a command, Winn
 
 ## What we use it for
 
-* Winnie's features
-* Checking for inappropriate challenge names that we need to filter
-* Querying and analytics to help us build out a feature roadmap
+Winnie uses the data in her database to provide you with access to her features.  The core team uses the database to check for inappropriate challenge names.  We also analyse the data in the database to understand the ways that people use Winnie, which helps us to decide which new features to prioritise.  We do not sell or give your data to anyone who is not directly involved with the development of Winnie.
 
 ## Where we store/process it
 
