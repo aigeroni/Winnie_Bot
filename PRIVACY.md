@@ -22,6 +22,8 @@ If the server that you use Winnie from sets a server timezone, and you don't, th
 
 Access to Winnie's database is tightly restricted.  When you run a command, Winnie only accesses the sections of the database that she needs to complete that command.  Otherwise, access is limited to members of the core team, who use an external tool hosted by a core team member to query the database.
 
+Your server's name may be visible to users in other servers through the raptor leaderboard and cross-server summaries at the end of challenges.
+
 ## What we use it for
 
 Winnie uses the data in her database to provide you with access to her features.  The core team uses the database to check for inappropriate challenge names.  We also analyse the data in the database to understand the ways that people use Winnie, which helps us to decide which new features to prioritise.  We do not sell or give your data to anyone who is not directly involved with the development of Winnie.
@@ -29,11 +31,6 @@ Winnie uses the data in her database to provide you with access to her features.
 ## Where we store/process it
 
 Winnie's database is hosted on a server in The Netherlands.  The external tool that the core team uses to access Winnie is hosted on a server in the United States of America.  The core team processes data on our local machines in Australia and the United States of America.
-
-## Data security
-
-* Database access is locked down to the Redash instance and the Winnie droplet (potentially a second droplet that hosts Lily and Marcus in the future - those instances are not public)
-* Some data is visible cross-server - server names and raptor totals on the raptor leaderboard, and aggregate server summaries at the end of challenges
 
 ## Data exports and access
 
