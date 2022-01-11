@@ -14,6 +14,7 @@ async function createGoal (options: GoalCreateOptions): Promise<Goal> {
   goal.target = options.target
 
   if (options.ownerId != null) { goal.ownerId = options.ownerId }
+  if (options.guildId != null) { goal.guildId = options.guildId }
   if (options.channelId != null) { goal.channelId = options.channelId }
   if (options.duration != null) { goal.goalDuration = options.duration }
   if (options.type != null) { goal.goalType = options.type }

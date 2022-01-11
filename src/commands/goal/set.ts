@@ -111,6 +111,7 @@ async function userTimezone (interaction: CommandInteraction, guildConfig: Guild
    */
 function getGoalOptions (interaction: CommandInteraction, timezone: IANAZone): GoalCreateOptions {
   return {
+    guildId: interaction.guild?.id,
     channelId: interaction.channel?.id,
     duration: interaction.options.getString('duration') as GoalDurations,
     ownerId: interaction.user?.id,

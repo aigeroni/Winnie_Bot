@@ -26,6 +26,7 @@ export enum GoalDurations {
   * The options for creating a goal.
   */
 export interface GoalCreateOptions {
+  guildId?: Snowflake
   ownerId?: Snowflake
   target: number
   type?: GoalTypes

@@ -1,7 +1,9 @@
 import { BaseModel } from './base-model'
-import { BeforeInsert, BeforeUpdate, Column, PrimaryGeneratedColumn } from 'typeorm'
+import { BeforeInsert, BeforeUpdate, Column, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm'
 import { DateTime } from 'luxon'
 import { DateTimeTransformer, NullableDateTimeTransformer } from '../transformers/date-time'
+import { Snowflake } from 'discord.js'
+import { GuildConfig } from '../guild-config'
 
 /**
  * Abstract class for Goals and Challenges.
@@ -14,6 +16,13 @@ export abstract class Mission extends BaseModel {
    */
   @PrimaryGeneratedColumn()
   id!: number
+
+  /**
+   * The id of the guild that the mission belongs to.
+   */
+  @ManyToOne(() => GuildConfig, guild => guild.id)
+  @JoinColumn({ name: 'guild_id' })
+  guildId!: Snowflake
 
   /**
     * The timestamp of when this mission was created.
