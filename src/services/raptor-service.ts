@@ -28,7 +28,11 @@ async function awardRaptorForGoalDuration (goal: Goal): Promise<void> {
 
   const aoeIana = new IANAZone('Etc/GMT+12')
   const currentDate = DateTime.utc().setZone(aoeIana)
-  const currentPeriod = currentDate.get('year').toString() + '-' + currentDate.get('month').toString()
+  var month = currentDate.get('month').toString()
+  if (month.length == 1) {
+    month = '0' + month
+  }
+  const currentPeriod = currentDate.get('year').toString() + '-' + month
   const raptor = await Raptor.findOrCreate(goal.ownerId, guild.id, currentPeriod)
 
   switch (goal.goalDuration) {
