@@ -32,6 +32,7 @@
   * [Basic Features](#basic-features)
   * [Commands](#commands)
 * [Dependencies and frameworks](#Dependencies-and-frameworks)
+* [Privacy Policy and Data Deletion](#privacy-policy-and-data-deletion)
 * [Contributing to Winnie](#contributing-to-winnie)
   * [Bug reports](#bug-reports)
   * [Translations](#translations)
@@ -45,7 +46,6 @@
 * [Authors](#authors)
 * [License](#license)
 * [Acknowledgments](#acknowledgments)
-* [Data Deletion](#data-deletion)
 
 ## Adding Winnie to your Discord server
 
@@ -102,9 +102,15 @@ Click the 'Generate OAuth2 URL' button in the Discord Developer pane to generate
 * [TypeORM](https://typeorm.io/#/) - Database Interaction
 * [Winston](https://github.com/winstonjs/winston) - Log management
 
+## Privacy Policy and Data Deletion
+
+Please see our Privacy Policy [here](./PRIVACY.md).
+
 ## Contributing to Winnie
 
-We welcome all contributors to Winnie.  Your pull requests will be reviewed by the authors prior to merging.  Please document your code, and play nicely with other contributors.
+We welcome all contributions to Winnie.  Please see the [contributing guidelines](./CONTRIBUTING.md) for more information on how to get involved.
+
+Additionally, we expect all contributors to follow the [Code of Conduct](./CODE_OF_CONDUCT.md).
 
 ### Bug reports
 
@@ -171,7 +177,7 @@ If you're looking to help improve the translations for an existing language you 
     <pre>$ cp .env.sample .env</pre>
   </li>
   <li>
-    Setup your evironment variables in the <code>.env</code> file.
+    Setup your environment variables in the <code>.env</code> file.
   </li>
   <li>
     Start the docker processes 
@@ -201,10 +207,10 @@ If you're looking to help improve the translations for an existing language you 
 * `yarn docker:local:down` - Teardown local docker processes
 * `yarn docker:local:up` - Start up local docker processes
 * `yarn lint:all` - Run eslint over Winnie's code
-* `yarn lint:fix` - Run eslint over Winnie's code, ficing mistakes
+* `yarn lint:fix` - Run eslint over Winnie's code, fixing mistakes
 * `yarn start` - Compile Winnie and start up the bot process
 * `start:worker:goal` - Starts the goals worker, needed for goals to complete.
-* `yarn typeorm` - Access Typeorm's CLI
+* `yarn typeorm` - Access the [TypeORM CLI](https://typeorm.io/#/using-cli)
 
 ## Core Team
 
@@ -220,7 +226,3 @@ This project is licensed under the GNU General Public License, v3.0 - see the [L
 * Winnie is inspired by Timmy, ChatNaNo's IRC bot.  Timmy can be found at [utoxin/TimTheWordWarBot](https://github.com/utoxin/TimTheWordWarBot).
 * Prompts were brainstormed by NaNo's Australia::Melbourne region.
 * Winnie's avatar, 'Tiny Cities', was created by [Rachael Wheeler](http://www.rachaelw.com.au/).  Prints, notebooks, and other items featuring 'Tiny Cities' are available for purchase [here](https://www.redbubble.com/people/scorpiraw/works/33012468-tiny-cities).
-
-## Privacy Policy and Data Deletion
-
-Please see our Privacy Policy [here](./PRIVACY.md).
