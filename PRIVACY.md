@@ -1,8 +1,8 @@
 # `Winnie_Bot` Privacy Policy
 
-The `Winnie_Bot` Privacy Policy is licensed under the [CC BY-4.0](https://creativecommons.org/licenses/by/4.0/) license.
+The `Winnie_Bot` Privacy Policy is licensed under the [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) license.
 
-This privacy policy outlines the ways in which we store and use your data, 
+This privacy policy outlines the ways in which we store and use your data, how to get a copy of all of the data that we store, and how to request that we delete your data.
 
 ## What we do store
 
@@ -20,13 +20,13 @@ If the server that you use Winnie from sets a server timezone, and you don't, th
 
 ## Who has access
 
-Access to Winnie's database is tightly restricted.  When you run a command, Winnie only accesses the sections of the database that she needs to complete that command.  Otherwise, access is limited to members of the core team, who use an external tool hosted by a core team member to query the database.
+Access to Winnie's database is tightly restricted.  When you run a command, Winnie only accesses the sections of the database that she needs to complete that command.  Otherwise, access is limited to members of the core team, who use an external tool hosted by a core team member to query the database.  We do not sell your data, nor do we give it to anyone who is not directly involved with the development of Winnie.
 
 Your server's name may be visible to users in other servers through the raptor leaderboard and cross-server summaries at the end of challenges.
 
 ## What we use it for
 
-Winnie uses the data in her database to provide you with access to her features.  The core team uses the database to check for inappropriate challenge names.  We also analyse the data in the database to understand the ways that people use Winnie, which helps us to decide which new features to prioritise.  We do not sell or give your data to anyone who is not directly involved with the development of Winnie.
+Winnie uses the data in her database to provide you with access to her features.  The core team uses the database to check for inappropriate challenge names.  We also analyse the data in the database to understand the ways that people use Winnie, which helps us to decide which new features to prioritise.
 
 ## Where we store/process it
 
@@ -40,6 +40,6 @@ In future, we plan to allow you to automatically export your challenge, goal, an
 
 ## Data deletion
 
-Winnie only stores data that you provide to her, and your data is only stored under the unique identifier that Discord uses for your account. If you wish to request deletion of your user data on the public Winnie_Bot instance, please contact `info at winniebot dot org` with your Discord account's snowflake identifier.  Follow [these instructions](https://support.discord.com/hc/en-us/articles/206346498-Where-can-I-find-my-User-Server-Message-ID-) to get your snowflake.
+If you wish to request deletion of your user data on the public Winnie_Bot instance, please contact `info at winniebot dot org` with your Discord account's snowflake identifier.  Follow [these instructions](https://support.discord.com/hc/en-us/articles/206346498-Where-can-I-find-my-User-Server-Message-ID-) to get your snowflake.
 
 Our standard procedure for deleting user data is to delete your user record, goals, and projects entirely, and anonymise all raptor and challenge data by replacing your snowflake with a nonsense string.  This permanently deletes all data that could be used to get your Discord profile or calculate your timezone, while preserving raptor and challenge statistics.  If this is not sufficient, please let us know in the email and we'll work with you to find an amicable resolution.

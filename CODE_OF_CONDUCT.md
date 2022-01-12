@@ -1,6 +1,6 @@
 # The `Winnie_Bot` Code of Professional Conduct
 
-The `Winnie_Bot` Code of Professional Conduct is licensed under the [CC BY-4.0](https://creativecommons.org/licenses/by/4.0/) license. Click [here](./CODE_OF_CONDUCT_PLAIN_LANGUAGE.md) for a plain language version.
+The `Winnie_Bot` Code of Professional Conduct is licensed under the [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) license. Click [here](./CODE_OF_CONDUCT_PLAIN_LANGUAGE.md) for a plain language version.
 
 The `Winnie_Bot` initiative includes contributors from around the world, volunteering their time and expertise to support this valuable open-source project. Many of these contributors identify with historically marginalized communities or have experienced significant trauma in their personal lives. For that reason, a clear and enforced code of conduct is essential to ensure that all volunteers participate with dignity and that the work unfolds without causing personal harm or delaying the progress of the project.
 

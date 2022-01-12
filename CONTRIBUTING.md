@@ -1,6 +1,6 @@
 # The `Winnie_Bot` Contributor Rules of Engagement
 
-The `Winnie_Bot` Contributor Rules of Engagement are licensed under the [CC BY-4.0](https://creativecommons.org/licenses/by/4.0/) license.
+The `Winnie_Bot` Contributor Rules of Engagement are licensed under the [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) license.
 
 So you're interested in helping us out with Winnie?
 
