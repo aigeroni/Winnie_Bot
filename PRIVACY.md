@@ -4,6 +4,16 @@ The `Winnie_Bot` Privacy Policy is licensed under the [CC BY 4.0](https://creati
 
 This privacy policy outlines the ways in which we store and use your data, how to get a copy of all of the data that we store, and how to request that we delete your data.
 
+## Table of Contents
+
+* [What we do store](#what-we-do-store)
+* [What we don't store](#what-we-dont-store)
+* [Who has access](#who-has-access)
+* [What we use it for](#what-we-use-it-for)
+* [Where we store/process it](#where-we-store-process-it)
+* [Data exports and access](#data-exports-and-access)
+* [Data deletion](#data-deletion)
+
 ## What we do store
 
 We only store data that you give us by interacting with `Winnie_Bot`.
