@@ -23,7 +23,7 @@
 ## Table of Contents
 
 * [Adding Winnie to your Discord server](#adding-winnie-to-your-discord-server)
-  * [Inviting the public Winnie_Bot account](#inviting-the-public-winnie-bot-account)
+  * [Inviting the public Winnie_Bot account](#inviting-the-public-winnie_bot-account)
   * [Setting up your own instance of Winnie](#setting-up-your-own-instance-of-winnie)
     * [Requirements](#requirements)
     * [Setting up a Discord bot instance](#setting-up-a-discord-bot-instance)
