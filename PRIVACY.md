@@ -10,7 +10,7 @@ This privacy policy outlines the ways in which we store and use your data, how t
 * [What we don't store](#what-we-dont-store)
 * [Who has access](#who-has-access)
 * [What we use it for](#what-we-use-it-for)
-* [Where we store/process it](#where-we-store-process-it)
+* [Where we store/process it](#where-we-storeprocess-it)
 * [Data exports and access](#data-exports-and-access)
 * [Data deletion](#data-deletion)
 
