@@ -112,7 +112,7 @@ We have a pull request template, which you can edit accordingly.  Feel free to d
 
 ### Documentation
 
-If you want to update Winnie's documentation, you'll need to submit a pull request in the [docs repo]().  You can find instructions for doing so there.
+If you want to update Winnie's documentation, you'll need to submit a pull request in the [docs repo](https://github.com/aigeroni/Winnie_Docs).  You can find instructions for doing so there.
 
 If you're struggling with doing so, join the [community server](https://discord.gg/mvZZMhK), and come and find us in the `#website-documentation` channel to get help.
 
