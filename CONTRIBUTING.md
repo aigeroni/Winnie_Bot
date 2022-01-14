@@ -7,7 +7,7 @@ So you're interested in helping out?  You can find everything that you need to k
 ## Table of Contents
 
 * [Where to go with problems](#where-to-go-with-problems)
-* [Making improvements](#what-we-dont-store)
+* [Making improvements](#making-improvements)
   * [Code](#code)
     * [Requirements](#requirements)
     * [Running Winnie for local development](#running-winnie-for-local-development)
