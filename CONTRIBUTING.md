@@ -9,8 +9,17 @@ So you're interested in helping out?  You can find everything that you need to k
 * [Where to go with problems](#where-to-go-with-problems)
 * [Making improvements](#what-we-dont-store)
   * [Code](#code)
+    * [Requirements](#requirements)
+    * [Running Winnie for local development](#running-winnie-for-local-development)
+    * [`package.json` scripts](#packagejson-scripts)
+    * [Code standards](#code-standards)
+    * [Pull requests](#pull-requests)
   * [Documentation](#documentation)
   * [Translations](#translations)
+    * [Languages](#languages)
+    * [Files](#files)
+    * [Improving an existing translation](#improving-an-existing-translation)
+    * [Translating Winnie into a new language](#translating-winnie-into-a-new-language)
 
 ## Where to go with problems
 
@@ -34,40 +43,40 @@ You'll need the following dependencies to develop Winnie locally:
 
 <ol>
   <li>
-    clone the repo and move into the directory
+    Clone the repo, and open the repo directory:
     <br>
     <pre>$ git clone https://github.com/aigeroni/Winnie_Bot.git winnie_bot && cd winnie_bot</pre>
   </li>
   <li>
-    Install dependencies with yarn 
+    Install dependencies with <code>yarn</code>:
     <br>
     <pre>$ yarn install</pre>
   </li>
   <li>
-    Create <code>.env</code> file
+    Create <code>.env</code> file:
     <br>
     <pre>$ cp .env.sample .env</pre>
   </li>
   <li>
-    Setup your environment variables in the <code>.env</code> file.
+    Setup your environment variables in the <code>.env</code> file:
   </li>
   <li>
-    Start the docker processes 
+    Start the Docker processes:
     <br>
     <pre>$ yarn docker:local:up -d</pre>
   </li>
   <li>
-    Run the mirgations to set up the database
+    Run the migrations to set up the database:
     <br>
     <pre>$ yarn typeorm migration:run</pre>
   </li>
   <li>
-    Start Winnie
+    Start Winnie:
     <br>
     <pre>$ yarn start</pre>
   </li>
   <li>
-    In seperate terminal windows start the job workers
+    In seperate terminal windows, start the job workers:
     <br>
     <pre>$ yarn start:worker:goal</pre>
   </li>
@@ -97,13 +106,15 @@ We favour heavily commented code; this makes it easier for all of our contributo
 
 #### Pull requests
 
-* pull requests should explain what you've done; even at a high level is fine
-* Use pull request templates
+Pull requests should explain what you've done at a high level.  If you're making major changes to the code, then a detailed explanation in both the pull request and the comments is ideal.
+
+We have a pull request template, which you can edit accordingly.  Feel free to delete any headings that aren't relevant.
 
 ### Documentation
 
-* Go to the docs repo and PR there
-* Discuss in the server if you're not technically capable enough
+If you want to update Winnie's documentation, you'll need to submit a pull request in the [docs repo]().  You can find instructions for doing so there.
+
+If you're struggling with doing so, join the [community server](https://discord.gg/mvZZMhK), and come and find us in the `#website-documentation` channel to get help.
 
 ### Translations
 
@@ -155,6 +166,8 @@ For minor changes, use the following instructions:
   </li>
 </ol>
 
-#### Translating Winnie into new language
+#### Translating Winnie into a new language
 
 If you want to help translate Winnie into a language she does not currently support, please join our [community Discord](https://discord.gg/mvZZMhK), go to the `#new_features` channel, and tag `@Core Team` with the language that you want to translate Winnie into.  We'll then set up localisation files for your language, and help you to get set up with our frameworks.
+
+[Back to README](./README.md)

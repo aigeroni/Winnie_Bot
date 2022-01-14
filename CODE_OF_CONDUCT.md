@@ -23,3 +23,5 @@ The `Winnie_Bot` team consists of volunteers working primarily asynchronously an
 A person who appears to have broken a conduct standard will be approached by the product owner, project manager, or lead developer to discuss the situation and its optimal remediation. In our experience with other projects, it's usually the case that a friendly private chat proves sufficient to educate the team member.
 
 If, however, a person continues to behave in an inappropriate fashion, that person will be removed from the project entirely. To promote full transparency, the relevant leader will announce the decision and its rationale to the entire project team.
+
+[Back to README](./README.md)

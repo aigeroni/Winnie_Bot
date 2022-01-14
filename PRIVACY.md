@@ -53,3 +53,5 @@ In future, we plan to allow you to automatically export your challenge, goal, an
 If you wish to request deletion of your user data on the public Winnie_Bot instance, please contact `info at winniebot dot org` with your Discord account's snowflake identifier.  Follow [these instructions](https://support.discord.com/hc/en-us/articles/206346498-Where-can-I-find-my-User-Server-Message-ID-) to get your snowflake.
 
 Our standard procedure for deleting user data is to delete your user record, goals, and projects entirely, and anonymise all raptor and challenge data by replacing your snowflake with a nonsense string.  This permanently deletes all data that could be used to get your Discord profile or calculate your timezone, while preserving raptor and challenge statistics.  If this is not sufficient, please let us know in the email and we'll work with you to find an amicable resolution.
+
+[Back to README](./README.md)

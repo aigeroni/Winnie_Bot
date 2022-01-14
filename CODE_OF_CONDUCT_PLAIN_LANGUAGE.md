@@ -23,3 +23,5 @@ The `Winnie_Bot` team works mostly over text, and we don't always work at the sa
 If someone does something that's against these rules, the person who's running the bit of the project that they're working on will talk to them about how to solve the problem.  When we've seen these situations before, a friendly private chat has usually been enough to come up with a good solution.
 
 If someone continues to behave badly after that, though, then they won't be allowed to keep working on Winnie.  Because we want everyone to know about how we run the project, we'll tell people working on it what we've decided and why we made that decision.
+
+[Back to README](./README.md)
