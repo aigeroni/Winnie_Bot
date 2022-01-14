@@ -1,10 +1,10 @@
 # The `Winnie_Bot` Plain Language Code of Professional Conduct
 
-Click [here](./CODE_OF_CONDUCT.md) for a non-plain language version.
+You can use this Code of Conduct, or bits of it, as long as you follow the rules of the [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) license.  A license is a document that tells you what you can and can't do with someone else's work. Click [here](./CODE_OF_CONDUCT.md) for a non-plain language version.
 
-The people that work on `Winnie_Bot` live all over the world. We have a lot of experience with working on computer code, and we spend a lot of time working on the bot because many people benefit from using her. Many of us are part of groups that have been treated badly in the past, or have had things happen to us that were traumatic. Because of this, it's important for us to have a code of conduct that everyone can understand, and make sure that everyone is following it. A code of conduct is a set of rules that people need to follow to work on the project. That way, everyone will feel good about working on Winnie, and nobody will be hurt while we work on the project.
+The people that work on `Winnie_Bot` live all over the world. We have worked on a lot of computer code before we started making Winnie, and we spend a lot of time working on the bot because many people get good things from using her. Many of us are part of groups that have been treated badly in the past, or have had things happen to us that were traumatic. Because of this, it's important for us to have a code of conduct that everyone can understand, and make sure that everyone is following it. A code of conduct is a set of rules that people need to follow to work on the project. That way, everyone will feel good about working on Winnie, and nobody will be hurt because they worked on the project.
 
-We don't want to stop people from talking about things - we want everyone to be able to talk openly. What we don't want is for people's beliefs and experiences to be a reason that people working on Winnie start fights with each other. We all want Winnie to be the Best Bot Ever:tm:, so we have some ground rules for anyone who wants to help us with her.
+We don't want to stop people from talking about things - we want everyone to be able to talk without having to worry. What we don't want is for people's beliefs and experiences to be a reason for people working on Winnie to start fights with each other. We all want Winnie to be the Best Bot Ever:tm:, so we have some ground rules for anyone who wants to help us with her.
 
 ## Ground Rules
 
@@ -23,3 +23,5 @@ The `Winnie_Bot` team works mostly over text, and we don't always work at the sa
 If someone does something that's against these rules, the person who's running the bit of the project that they're working on will talk to them about how to solve the problem.  When we've seen these situations before, a friendly private chat has usually been enough to come up with a good solution.
 
 If someone continues to behave badly after that, though, then they won't be allowed to keep working on Winnie.  Because we want everyone to know about how we run the project, we'll tell people working on it what we've decided and why we made that decision.
+
+[Back to README](./README.md)
