@@ -102,6 +102,12 @@ export class Goal extends Mission {
     return timeRemaining.shiftTo('months', 'days', 'hours', 'minutes')
   }
 
+    /**
+   * The period in which the goal was set.
+   */
+  @Column({ name: 'period_id', type: 'varchar' })
+  periodId!: string
+
   /**
    * Gets the guild this goal was created in
    *

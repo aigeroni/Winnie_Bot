@@ -2,6 +2,7 @@ import { DateTime, IANAZone } from 'luxon'
 import { Goal } from '../models'
 import { GoalCreateOptions, GoalDurations } from '../types'
 import { Snowflake } from 'discord.js'
+import { PeriodConfig } from '../models/period-config'
 
 /**
   * Creates a new goal from the arguments passed to the command.
@@ -10,6 +11,12 @@ import { Snowflake } from 'discord.js'
   * @returns the new goal
   */
 async function createGoal (options: GoalCreateOptions): Promise<Goal> {
+  const aoeIana = new IANAZone('Etc/GMT+12')
+  const currentDate = DateTime.utc().setZone(aoeIana)
+  const month = currentDate.get('month')
+  const year = currentDate.get('year')
+  const period = await PeriodConfig.findOrCreate(year, month)
+  
   const goal = new Goal()
   goal.target = options.target
 
@@ -20,6 +27,7 @@ async function createGoal (options: GoalCreateOptions): Promise<Goal> {
   if (options.type != null) { goal.goalType = options.type }
   if (options.progress != null) { goal.progress = options.progress }
 
+  goal.periodId = period.id
   goal.expectedEndAt = estimateCompletionDate(options.timezone, goal.goalDuration)
 
   return await goal.save()
