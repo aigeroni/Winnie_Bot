@@ -4,6 +4,8 @@ import { DateTime } from 'luxon'
 import { DateTimeTransformer, NullableDateTimeTransformer } from '../transformers/date-time'
 import { Snowflake } from 'discord.js'
 import { GuildConfig } from '../guild-config'
+import { IsNotEmpty } from 'class-validator'
+import { StatusTypes } from '../../types/missions'
 
 /**
  * Abstract class for Goals and Challenges.
@@ -31,28 +33,37 @@ export abstract class Mission extends BaseModel {
   createdAt!: DateTime
 
   /**
- * The timestamp of the most recent time this mission was updated.
- *
- * Null if the mission has never been updated.
- */
+   * The timestamp of the most recent time this mission was updated.
+   *
+   * Null if the mission has never been updated.
+   */
   @Column({ name: 'updated_at', transformer: new NullableDateTimeTransformer(), type: 'varchar' })
   updatedAt?: DateTime
 
   /**
-* Timestamp of when this mission was canceled.
-*
-* Null if not canceled
-*/
+    * Timestamp of when this mission was canceled.
+    *
+    * Null if not canceled
+    */
   @Column({ name: 'canceled_at', transformer: new NullableDateTimeTransformer(), type: 'varchar' })
   canceledAt?: DateTime
 
   /**
-* Timestamp of when this mission was completed.
-*
-* Null if not completed
-*/
+    * Timestamp of when this mission was completed.
+    *
+    * Null if not completed
+    */
   @Column({ name: 'completed_at', transformer: new NullableDateTimeTransformer(), type: 'varchar' })
   completedAt?: DateTime
+
+  /**
+   * The type of goal for which the user is aiming.
+   *
+   * Can be one of pages, words, minutes, lines, or items
+   */
+  @Column({ type: 'enum', enum: StatusTypes })
+  @IsNotEmpty()
+  status: StatusTypes = StatusTypes.CREATED
 
   /**
    * Listener for the beforeInsert event.
@@ -107,6 +118,7 @@ export abstract class Mission extends BaseModel {
    */
   async complete (): Promise<void> {
     this.completedAt = DateTime.utc()
+    this.status
     await this.save()
   }
 
