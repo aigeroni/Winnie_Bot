@@ -118,7 +118,7 @@ export abstract class Mission extends BaseModel {
    */
   async complete (): Promise<void> {
     this.completedAt = DateTime.utc()
-    this.status
+    this.status = StatusTypes.COMPLETED
     await this.save()
   }
 
@@ -127,6 +127,7 @@ export abstract class Mission extends BaseModel {
    */
   async cancel (): Promise<void> {
     this.canceledAt = DateTime.utc()
+    this.status = StatusTypes.CANCELED
     await this.save()
   }
 }
