@@ -1,8 +1,7 @@
-import { MigrationInterface, QueryRunner, Table, TableForeignKey } from 'typeorm'
+import { MigrationInterface, QueryRunner, TableForeignKey } from 'typeorm'
 
-export class createChainsForeignKeys1638107137533 implements MigrationInterface {
+export class createChainWarForeignKeys1644104662059 implements MigrationInterface {
   public async up (queryRunner: QueryRunner): Promise<void> {
-
     const chainGuildForeignKey = new TableForeignKey({
       columnNames: ['guild_id'],
       referencedColumnNames: ['id'],

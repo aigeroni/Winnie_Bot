@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner, Table, TableForeignKey } from 'typeorm'
+import { MigrationInterface, QueryRunner, Table } from 'typeorm'
 
 export class createChainsTable1638107137532 implements MigrationInterface {
   public async up (queryRunner: QueryRunner): Promise<void> {
@@ -84,6 +84,6 @@ export class createChainsTable1638107137532 implements MigrationInterface {
   }
 
   public async down (queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.dropTable('chains')
+    await queryRunner.dropTable('chain_wars')
   }
 }
