@@ -16,7 +16,7 @@ async function createGoal (options: GoalCreateOptions): Promise<Goal> {
   const month = currentDate.get('month')
   const year = currentDate.get('year')
   const period = await PeriodConfig.findOrCreate(year, month)
-  
+
   const goal = new Goal()
   goal.target = options.target
 

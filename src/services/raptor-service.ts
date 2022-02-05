@@ -34,7 +34,7 @@ async function awardRaptorForGoalDuration (goal: Goal): Promise<void> {
 
   switch (goal.goalDuration) {
     case GoalDurations.DAILY:
-      await raptor.awardWhiteRaptor() 
+      await raptor.awardWhiteRaptor()
       await announceRaptor(goal, raptor, 'goals:raptors.announceWhiteRaptor')
       break
     case GoalDurations.WEEKLY:
