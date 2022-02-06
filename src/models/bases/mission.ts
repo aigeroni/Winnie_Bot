@@ -92,7 +92,7 @@ export abstract class Mission extends BaseModel {
    * @returns true if the mission is active
    */
   isActive (): boolean {
-    return !this.isCanceled() && !this.isCompleted()
+    return !(this.status == StatusTypes.CANCELED || this.status == StatusTypes.COMPLETED)
   }
 
   /**
@@ -101,7 +101,7 @@ export abstract class Mission extends BaseModel {
    * @returns true if the mission is completed
    */
   isCompleted (): boolean {
-    return this.completedAt != null
+    return this.status == StatusTypes.COMPLETED
   }
 
   /**
@@ -110,7 +110,7 @@ export abstract class Mission extends BaseModel {
    * @returns true if the mission is canceled
    */
   isCanceled (): boolean {
-    return this.canceledAt != null
+    return this.status == StatusTypes.CANCELED
   }
 
   /**
