@@ -100,6 +100,7 @@ async function userTimezone (interaction: CommandInteraction, guildConfig: Guild
  */
 async function createNewGoal (interaction: CommandInteraction, oldGoal: Goal, progress: number, timezone: IANAZone): Promise<Goal> {
   return await GoalService.createGoal({
+    guildId: interaction.guild?.id,
     ownerId: oldGoal.ownerId,
     target: interaction.options.getInteger('target') ?? oldGoal.target,
     type: interaction.options.getString('type') as GoalTypes ?? oldGoal.goalType,
