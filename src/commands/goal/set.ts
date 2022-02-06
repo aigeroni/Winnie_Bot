@@ -43,7 +43,7 @@ export const GoalSetCommand: SubCommand = {
     ]
   }),
   execute: async (interaction: CommandInteraction, guildConfig: GuildConfig) => {
-    const userConfig = await UserConfig.findOrCreate(interaction.user.id)
+    await UserConfig.findOrCreate(interaction.user.id)
     if (await userHasActiveGoal(interaction, guildConfig.locale)) { return }
 
     const goalTimezone = await userTimezone(interaction, guildConfig)
