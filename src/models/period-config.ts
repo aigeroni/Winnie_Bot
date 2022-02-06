@@ -41,14 +41,14 @@ export class PeriodConfig extends BaseModel {
    */
   @Column({ name: 'period_text', type: 'varchar' })
   @MaxLength(20)
-  periodText!: string
+  periodText = ''
 
   /**
    * Any unusual events that happened during the period.
    */
   @Column({ name: 'period_note', type: 'varchar' })
   @MaxLength(150)
-  period_note!: string
+  periodNote = ''
 
   static async findOrCreate (year: number, month: number): Promise<PeriodConfig> {
     let period = (await PeriodConfig.find({ where: { year, month } }))[0]
