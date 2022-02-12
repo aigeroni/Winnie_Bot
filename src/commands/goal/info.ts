@@ -1,8 +1,8 @@
 import { CommandInteraction } from 'discord.js'
+import { GoalDurations, SubCommand } from '../../types'
 import { GoalService } from '../../services'
 import { GuildConfig } from '../../models'
 import { I18n } from '../../core'
-import { GoalDurations, SubCommand } from '../../types'
 
 const NAME = 'info'
 

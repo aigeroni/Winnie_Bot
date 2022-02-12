@@ -1,8 +1,8 @@
-import { TextChannel } from 'discord.js'
 import { DateTime, IANAZone } from 'luxon'
-import { I18n, Logger, WinnieClient } from '../core'
 import { Goal, GuildConfig, Raptor } from '../models'
 import { GoalDurations } from '../types'
+import { I18n, Logger, WinnieClient } from '../core'
+import { TextChannel } from 'discord.js'
 
 async function awardRaptorForGoal (goal: Goal): Promise<void> {
   const goalCompletionPercentage = Math.round((goal.progress / goal.target) * 100)

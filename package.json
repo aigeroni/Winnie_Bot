@@ -22,9 +22,15 @@
     "@types/luxon": "^1.25.0",
     "@types/node": "^14.11.10",
     "@types/node-cron": "^2.0.4",
+    "@typescript-eslint/eslint-plugin": "^5.11.0",
     "dotenv": "^8.2.0",
+    "eslint": "^8.9.0",
+    "eslint-config-standard-with-typescript": "^21.0.1",
+    "eslint-plugin-import": "^2.25.4",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^6.0.0",
+    "eslint-plugin-sort-imports-es6-autofix": "^0.6.0",
     "ts-node": "^9.0.0",
-    "ts-standard": "^10.0.0",
     "typescript": "^4.0.3"
   },
   "scripts": {
@@ -32,8 +38,8 @@
     "docker:local:down": "docker-compose -f docker/docker-compose.local.yml down",
     "docker:local:up": "docker-compose -f docker/docker-compose.local.yml up",
     "dotenv:test": "tsc && node -r dotenv/config test.js",
-    "lint": "ts-standard",
-    "lint:fix": "ts-standard --fix",
+    "lint": "eslint .",
+    "lint:fix": "eslint --fix .",
     "start": "tsc && NODE_TLS_REJECT_UNAUTHORIZED='0' node -r dotenv/config dist/src/index.js",
     "start:worker:goal": "tsc && NODE_TLS_REJECT_UNAUTHORIZED='0' node -r dotenv/config dist/src/workers/goal-worker.js",
     "typeorm": "tsc && NODE_TLS_REJECT_UNAUTHORIZED='0' node -r dotenv/config ./node_modules/typeorm/cli.js"
@@ -51,7 +57,19 @@
     "url": "https://github.com/aigeroni/Winnie_Bot/issues"
   },
   "homepage": "https://github.com/aigeroni/Winnie_Bot#readme",
-  "ts-standard": {
-    "report": "stylish"
+  "eslintConfig": {
+    "extends": "standard-with-typescript",
+    "ignorePatterns": "dist/",
+    "parserOptions": {
+      "project": "./tsconfig.json"
+    },
+    "plugins": ["sort-imports-es6-autofix"],
+    "rules": {
+      "sort-imports-es6-autofix/sort-imports-es6": [2, {
+        "ignoreCase": false,
+        "ignoreMemberSort": false,
+        "memberSyntaxSortOrder": ["all", "single", "multiple", "none"]
+      }]
+    }
   }
 }
