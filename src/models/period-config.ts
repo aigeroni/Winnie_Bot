@@ -1,6 +1,6 @@
 import { BaseModel } from './bases/base-model'
 import { Column, Entity, PrimaryColumn } from 'typeorm'
-import { Max, MaxLength, Min } from 'class-validator'
+import { IsOptional, Max, MaxLength, Min } from 'class-validator'
 import { Logger } from '../core'
 import { DateTime, IANAZone } from 'luxon'
 
@@ -42,14 +42,15 @@ export class PeriodConfig extends BaseModel {
    */
   @Column({ name: 'period_text', type: 'varchar' })
   @MaxLength(20)
-  periodText = ''
+  periodText!: string
 
   /**
    * Any unusual events that happened during the period.
    */
   @Column({ name: 'period_note', type: 'varchar' })
   @MaxLength(150)
-  periodNote = ''
+  @IsOptional()
+  periodNote?: string | null
 
   static async findOrCreate (): Promise<PeriodConfig> {
     // We currently use Anywhere on Earth for our periods.
