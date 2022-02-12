@@ -1,7 +1,6 @@
 import { BaseModel } from './bases/base-model'
 import { Column, Entity, PrimaryColumn } from 'typeorm'
 import { IsOptional, Max, MaxLength, Min } from 'class-validator'
-import { Logger } from '../core'
 import { DateTime, IANAZone } from 'luxon'
 
 /**
