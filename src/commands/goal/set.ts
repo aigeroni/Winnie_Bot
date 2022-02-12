@@ -1,7 +1,7 @@
 import { CommandInteraction } from 'discord.js'
-import { GuildConfig, UserConfig } from '../../models'
 import { GoalCreateOptions, GoalDurations, GoalTypes, SubCommand } from '../../types'
 import { GoalService } from '../../services'
+import { GuildConfig, UserConfig } from '../../models'
 import { I18n } from '../../core'
 import { IANAZone } from 'luxon'
 

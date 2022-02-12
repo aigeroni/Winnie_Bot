@@ -1,5 +1,5 @@
-import path from 'path'
 import Winston from 'winston'
+import path from 'path'
 
 const logPath = path.join(process.cwd(), 'logs', 'debug.log')
 const exceptionPath = path.join(process.cwd(), 'logs', 'exception.log')

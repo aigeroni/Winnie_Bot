@@ -1,5 +1,5 @@
-import { GuildConfig, UserConfig } from '../models'
 import { ApplicationCommandData, CommandInteraction } from 'discord.js'
+import { GuildConfig, UserConfig } from '../models'
 
 /**
  * The shape of a command.

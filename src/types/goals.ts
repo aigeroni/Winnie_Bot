@@ -1,5 +1,5 @@
-import { Snowflake } from 'discord.js'
 import { IANAZone } from 'luxon'
+import { Snowflake } from 'discord.js'
 
 /**
  * All the types of goals settable.

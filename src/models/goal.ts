@@ -1,11 +1,11 @@
 import { Column, Entity } from 'typeorm'
 import { DateTime, Duration, Interval } from 'luxon'
+import { DateTimeTransformer } from './transformers/date-time'
 import { GoalDurations, GoalTypes } from '../types'
+import { Guild, GuildChannel, Permissions, Snowflake } from 'discord.js'
+import { I18n, WinnieClient } from '../core'
 import { IsChannelWithPermission } from './validators/channel-with-permission'
 import { IsNotEmpty, IsPositive, MaxLength, Min, ValidateIf } from 'class-validator'
-import { I18n, WinnieClient } from '../core'
-import { Guild, GuildChannel, Permissions, Snowflake } from 'discord.js'
-import { DateTimeTransformer } from './transformers/date-time'
 import { Mission } from './bases/mission'
 
 /**

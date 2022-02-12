@@ -1,8 +1,8 @@
 import { CommandInteraction } from 'discord.js'
+import { CommandUtils } from '../utils'
 import { GuildConfig } from '../../models'
 import { I18n, Logger } from '../../core'
 import { SubCommand } from '../../types'
-import { CommandUtils } from '../utils'
 
 const NAME = 'locale'
 
