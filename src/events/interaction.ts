@@ -1,8 +1,8 @@
-import { Event } from '../types'
-import { Interaction } from 'discord.js'
 import { Commands } from '../commands'
-import { Logger } from '../core'
+import { Event } from '../types'
 import { GuildConfig } from '../models'
+import { Interaction } from 'discord.js'
+import { Logger } from '../core'
 
 /**
  * Handles the interaction event, fired when a user triggers an interaction.

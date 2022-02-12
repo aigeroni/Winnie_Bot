@@ -1,8 +1,8 @@
 import { BaseModel } from './bases/base-model'
-import { Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn } from 'typeorm'
 import { ChainWar, Race, War } from '.'
-import { ChallengeUser } from './challenge-user'
 import { ChallengeChannel } from './challenge-channel'
+import { ChallengeUser } from './challenge-user'
+import { Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn } from 'typeorm'
 
 /**
  * Tracks universal challenge ids, unique across all challenge types.

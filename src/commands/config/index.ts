@@ -1,10 +1,10 @@
 import { ApplicationCommandData, CommandInteraction } from 'discord.js'
-import { I18n } from '../../core'
-import { GuildConfig } from '../../models'
 import { Command } from '../../types'
-import { executeTopLevelCommand } from '../utils/execute-top-level-command'
 import { ConfigCrossGuildCommand } from './cross-guild'
 import { ConfigTimezoneCommand } from './timezone'
+import { GuildConfig } from '../../models'
+import { I18n } from '../../core'
+import { executeTopLevelCommand } from '../utils/execute-top-level-command'
 
 const NAME = 'config'
 

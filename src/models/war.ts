@@ -1,6 +1,6 @@
+import { ChainWar, ChallengeController } from '.'
 import { Challenge } from './bases/challenge'
 import { Column, Entity, JoinColumn, ManyToOne, OneToOne } from 'typeorm'
-import { ChainWar, ChallengeController } from '.'
 
 @Entity({ name: 'wars' })
 export class War extends Challenge {
