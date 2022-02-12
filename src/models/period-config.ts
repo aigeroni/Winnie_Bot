@@ -2,6 +2,7 @@ import { BaseModel } from './bases/base-model'
 import { Column, Entity, PrimaryColumn } from 'typeorm'
 import { Max, MaxLength, Min } from 'class-validator'
 import { Logger } from '../core'
+import { DateTime, IANAZone } from 'luxon'
 
 /**
  * A model for tracking projects, goals, challenges, and raptors by month.
@@ -50,7 +51,15 @@ export class PeriodConfig extends BaseModel {
   @MaxLength(150)
   periodNote = ''
 
-  static async findOrCreate (year: number, month: number): Promise<PeriodConfig> {
+  static async findOrCreate (): Promise<PeriodConfig> {
+    // We currently use Anywhere on Earth for our periods.
+    // This saves us from having to deal with leaderboards resetting at different times.
+    const aoeIana = new IANAZone('Etc/GMT+12')
+    const currentDate = DateTime.utc().setZone(aoeIana)
+    const month = currentDate.get('month')
+    const year = currentDate.get('year')
+
+    // check for whether the period already exists
     let period = (await PeriodConfig.find({ where: { year, month } }))[0]
     if (period != null) { return period }
 
@@ -61,11 +70,15 @@ export class PeriodConfig extends BaseModel {
     }
     const currentPeriod = year.toString() + '-' + monthString
 
+    // populate the human-readable period string used on leaderboards
+    const periodData = currentDate.monthLong + ' ' + year.toString()
+
     Logger.info('period data generated')
     period = new PeriodConfig()
     period.id = currentPeriod
     period.year = year
     period.month = month
+    period.periodText = periodData
     Logger.info('about to save')
     await period.save()
     Logger.info('saved')

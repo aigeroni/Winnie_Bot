@@ -11,11 +11,7 @@ import { PeriodConfig } from '../models/period-config'
   * @returns the new goal
   */
 async function createGoal (options: GoalCreateOptions): Promise<Goal> {
-  const aoeIana = new IANAZone('Etc/GMT+12')
-  const currentDate = DateTime.utc().setZone(aoeIana)
-  const month = currentDate.get('month')
-  const year = currentDate.get('year')
-  const period = await PeriodConfig.findOrCreate(year, month)
+  const period = await PeriodConfig.findOrCreate()
 
   const goal = new Goal()
   goal.target = options.target

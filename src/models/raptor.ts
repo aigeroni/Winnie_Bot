@@ -120,9 +120,9 @@ export class Raptor extends BaseModel {
     await this.save()
   }
 
-  static async findOrCreate (userId: Snowflake, guildId: Snowflake, month: number, year: number): Promise<Raptor> {
+  static async findOrCreate (userId: Snowflake, guildId: Snowflake): Promise<Raptor> {
     // We need to check whether this month's period exists, and create it if not.
-    const period = await PeriodConfig.findOrCreate(year, month)
+    const period = await PeriodConfig.findOrCreate()
     const periodId = period.id
     let raptor = (await Raptor.find({ where: { userId, guildId, periodId } }))[0]
     if (raptor != null) { return raptor }

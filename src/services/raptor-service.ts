@@ -1,5 +1,4 @@
 import { TextChannel } from 'discord.js'
-import { DateTime, IANAZone } from 'luxon'
 import { I18n, Logger, WinnieClient } from '../core'
 import { Goal, GuildConfig, Raptor } from '../models'
 import { GoalDurations } from '../types'
@@ -26,11 +25,7 @@ async function awardRaptorForGoalDuration (goal: Goal): Promise<void> {
     return
   }
 
-  const aoeIana = new IANAZone('Etc/GMT+12')
-  const currentDate = DateTime.utc().setZone(aoeIana)
-  const month = currentDate.get('month')
-  const year = currentDate.get('year')
-  const raptor = await Raptor.findOrCreate(goal.ownerId, guild.id, month, year)
+  const raptor = await Raptor.findOrCreate(goal.ownerId, guild.id)
 
   switch (goal.goalDuration) {
     case GoalDurations.DAILY:
