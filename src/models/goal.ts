@@ -103,6 +103,12 @@ export class Goal extends Mission {
   }
 
   /**
+   * The period in which the goal was set.
+   */
+  @Column({ name: 'period_id', type: 'varchar' })
+  periodId!: string
+
+  /**
    * Gets the guild this goal was created in
    *
    * @returns The Guild object for the guild this goal was created in.

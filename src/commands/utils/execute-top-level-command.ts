@@ -1,5 +1,5 @@
 import { CommandInteraction } from 'discord.js'
-import { GuildConfig } from '../../models'
+import { GuildConfig, UserConfig } from '../../models'
 import { Logger } from '../../core'
 import { SubCommand } from '../../types'
 
@@ -14,7 +14,8 @@ import { SubCommand } from '../../types'
 async function executeTopLevelCommand (
   commands: SubCommand[],
   interaction: CommandInteraction,
-  guildConfig: GuildConfig
+  guildConfig: GuildConfig,
+  userConfig: UserConfig
 ): Promise<void> {
   const subcommand = interaction.options.getSubcommandGroup(false) ?? interaction.options.getSubcommand(false)
 
@@ -22,8 +23,8 @@ async function executeTopLevelCommand (
   if (command == null) { return }
 
   try {
-    await command.execute(interaction, guildConfig)
-  } catch (error) {
+    await command.execute(interaction, guildConfig, userConfig)
+  } catch (error: any) {
     const subcommandName = subcommand != null ? `::${subcommand}` : ''
     const errorMessage: string = error.toString()
     Logger.error(`An Error occured while executing the command ${interaction.commandName}${subcommandName}: ${errorMessage}`)

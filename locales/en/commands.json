@@ -97,6 +97,7 @@
       },
       "error": {
         "couldNotResetGoal": "**Unknown Error**: Could not reset goal (database validation error).",
+        "noActiveGoal": "**Error**: You have not yet set a goal. Use `/goal set` to set one.",
         "timezoneNotSet": "**Error**: You have not set a timezone. Use `/config timezone set` to set one."
       }
     },

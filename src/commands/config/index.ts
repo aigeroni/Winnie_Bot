@@ -23,7 +23,7 @@ export const ConfigCommand: Command = {
       await ConfigTimezoneCommand.commandData(locale)
     ]
   }),
-  execute: async (interaction: CommandInteraction, guildConfig: GuildConfig) => {
-    await executeTopLevelCommand(commands, interaction, guildConfig)
+  execute: async (interaction: CommandInteraction, guildConfig: GuildConfig, userConfig: UserConfig) => {
+    await executeTopLevelCommand(commands, interaction, guildConfig, userConfig)
   }
 }

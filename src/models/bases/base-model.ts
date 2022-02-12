@@ -1,5 +1,6 @@
 import { BaseEntity, SaveOptions } from 'typeorm'
 import { ValidationError, validate } from 'class-validator'
+import { Logger } from '../../core'
 
 /**
  * A base class for all Winnie_Bot models containing some
@@ -30,6 +31,10 @@ export abstract class BaseModel extends BaseEntity {
 
     if (this.errors.length <= 0) {
       await super.save(options)
+    } else {
+      this.errors.forEach((e: ValidationError) => {
+        Logger.error(e)
+      })
     }
 
     return this

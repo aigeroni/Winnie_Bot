@@ -8,15 +8,18 @@ export class createPeriodConfigTable1638106941492 implements MigrationInterface 
         {
           name: 'id',
           type: 'varchar',
-          length: '7'
+          length: '7',
+          isPrimary: true
         },
         {
           name: 'year',
-          type: 'int'
+          type: 'int',
+          isPrimary: true
         },
         {
           name: 'month',
-          type: 'int'
+          type: 'int',
+          isPrimary: true
         },
         {
           name: 'period_text',

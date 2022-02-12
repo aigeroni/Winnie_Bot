@@ -7,7 +7,7 @@ import { GoalOverwriteCommand } from './overwrite'
 import { GoalResetCommand } from './reset'
 import { GoalSetCommand } from './set'
 import { GoalUpdateCommand } from './update'
-import { GuildConfig } from '../../models'
+import { GuildConfig, UserConfig } from '../../models'
 import { I18n } from '../../core'
 
 const NAME = 'goal'
@@ -35,7 +35,7 @@ export const GoalCommand: Command = {
       await GoalUpdateCommand.commandData(locale)
     ]
   }),
-  execute: async (interaction: CommandInteraction, guildConfig: GuildConfig) => {
-    await CommandUtils.executeTopLevelCommand(commands, interaction, guildConfig)
+  execute: async (interaction: CommandInteraction, guildConfig: GuildConfig, userConfig: UserConfig) => {
+    await CommandUtils.executeTopLevelCommand(commands, interaction, guildConfig, userConfig)
   }
 }
