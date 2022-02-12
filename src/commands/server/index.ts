@@ -1,6 +1,6 @@
 import { ApplicationCommandData, CommandInteraction } from 'discord.js'
 import { Command } from '../../types'
-import { GuildConfig } from '../../models'
+import { GuildConfig, UserConfig } from '../../models'
 import { I18n } from '../../core'
 import { ServerAnnouncementsChannelCommand } from './announcement-channel'
 import { ServerCrossGuildCommand } from './cross-guild'

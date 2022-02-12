@@ -2,7 +2,7 @@ import { ApplicationCommandData, CommandInteraction } from 'discord.js'
 import { Command } from '../../types'
 import { ConfigCrossGuildCommand } from './cross-guild'
 import { ConfigTimezoneCommand } from './timezone'
-import { GuildConfig } from '../../models'
+import { GuildConfig, UserConfig } from '../../models'
 import { I18n } from '../../core'
 import { executeTopLevelCommand } from '../utils/execute-top-level-command'
 
