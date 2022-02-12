@@ -30,11 +30,8 @@ export abstract class BaseModel extends BaseEntity {
     await this.validate()
 
     if (this.errors.length <= 0) {
-      Logger.info('save succeeded')
       await super.save(options)
-      Logger.info('save actually succeeded')
     } else {
-      Logger.info('validations failed')
       this.errors.forEach((e: ValidationError) => {
         Logger.error(e)
       })

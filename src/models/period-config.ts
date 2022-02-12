@@ -74,15 +74,13 @@ export class PeriodConfig extends BaseModel {
     // populate the human-readable period string used on leaderboards
     const periodData = currentDate.monthLong + ' ' + year.toString()
 
-    Logger.info('period data generated')
+    // create and save period row
     period = new PeriodConfig()
     period.id = currentPeriod
     period.year = year
     period.month = month
     period.periodText = periodData
-    Logger.info('about to save')
     await period.save()
-    Logger.info('saved')
 
     return period
   }
