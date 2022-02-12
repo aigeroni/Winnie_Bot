@@ -42,10 +42,10 @@ export const GoalSetCommand: SubCommand = {
       }
     ]
   }),
-  execute: async (interaction: CommandInteraction, guildConfig: GuildConfig) => {
+  execute: async (interaction: CommandInteraction, guildConfig: GuildConfig, userConfig: UserConfig) => {
     if (await userHasActiveGoal(interaction, guildConfig.locale)) { return }
 
-    const goalTimezone = await userTimezone(interaction, guildConfig)
+    const goalTimezone = await userTimezone(interaction, guildConfig, userConfig)
     if (goalTimezone == null) { return }
 
     const goalOptions = getGoalOptions(interaction, goalTimezone)
@@ -90,10 +90,10 @@ async function userHasActiveGoal (interaction: CommandInteraction, locale: strin
   *
   * @param interaction The interaction that was executed
   * @param guildConfig The config object of the guild the interaction was run in.
+  * @param userConfig The config object of the user that executed the command.
   * @returns true if the user or guild does not have a timezone set.
   */
-async function userTimezone (interaction: CommandInteraction, guildConfig: GuildConfig): Promise<IANAZone | null> {
-  const userConfig = await UserConfig.findOne(interaction.user.id)
+async function userTimezone (interaction: CommandInteraction, guildConfig: GuildConfig, userConfig: UserConfig): Promise<IANAZone | null> {
   if (userConfig?.timezone != null) { return userConfig.timezone }
   if (guildConfig.timezone != null) { return guildConfig.timezone }
 

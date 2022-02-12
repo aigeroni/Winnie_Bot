@@ -1,6 +1,6 @@
 import { ApplicationCommandData, CommandInteraction } from 'discord.js'
 import { I18n } from '../../core'
-import { GuildConfig } from '../../models'
+import { GuildConfig, UserConfig } from '../../models'
 import { Command } from '../../types'
 import { executeTopLevelCommand } from '../utils/execute-top-level-command'
 import { ConfigCrossGuildCommand } from './cross-guild'
@@ -23,7 +23,7 @@ export const ConfigCommand: Command = {
       await ConfigTimezoneCommand.commandData(locale)
     ]
   }),
-  execute: async (interaction: CommandInteraction, guildConfig: GuildConfig) => {
-    await executeTopLevelCommand(commands, interaction, guildConfig)
+  execute: async (interaction: CommandInteraction, guildConfig: GuildConfig, userConfig: UserConfig) => {
+    await executeTopLevelCommand(commands, interaction, guildConfig, userConfig)
   }
 }

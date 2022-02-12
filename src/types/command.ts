@@ -1,4 +1,4 @@
-import { GuildConfig } from '../models'
+import { GuildConfig, UserConfig } from '../models'
 import { ApplicationCommandData, CommandInteraction } from 'discord.js'
 
 /**
@@ -31,5 +31,5 @@ export interface Command {
    * @param message - The message which ran the command.
    * @param guildConfig - The configuration object for the guild the command was run in
    */
-  execute: (interaction: CommandInteraction, guildConfig: GuildConfig) => Promise<void>
+  execute: (interaction: CommandInteraction, guildConfig: GuildConfig, userConfig: UserConfig) => Promise<void>
 }
