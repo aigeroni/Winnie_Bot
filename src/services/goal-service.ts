@@ -1,8 +1,8 @@
 import { DateTime, IANAZone } from 'luxon'
 import { Goal } from '../models'
 import { GoalCreateOptions, GoalDurations } from '../types'
-import { Snowflake } from 'discord.js'
 import { PeriodConfig } from '../models/period-config'
+import { Snowflake } from 'discord.js'
 
 /**
   * Creates a new goal from the arguments passed to the command.

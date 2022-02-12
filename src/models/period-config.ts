@@ -1,7 +1,7 @@
 import { BaseModel } from './bases/base-model'
 import { Column, Entity, PrimaryColumn } from 'typeorm'
-import { IsOptional, Max, MaxLength, Min } from 'class-validator'
 import { DateTime, IANAZone } from 'luxon'
+import { IsOptional, Max, MaxLength, Min } from 'class-validator'
 
 /**
  * A model for tracking projects, goals, challenges, and raptors by month.

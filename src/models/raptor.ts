@@ -1,8 +1,8 @@
 import { BaseModel } from './bases/base-model'
 import { Column, Entity, PrimaryColumn } from 'typeorm'
 import { MaxLength, Min } from 'class-validator'
-import { Snowflake } from 'discord.js'
 import { PeriodConfig } from './period-config'
+import { Snowflake } from 'discord.js'
 
 /**
  * A model for keeping track of how many raptors a user has hatched in a given guild.

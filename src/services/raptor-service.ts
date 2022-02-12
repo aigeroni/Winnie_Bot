@@ -1,4 +1,3 @@
-import { DateTime, IANAZone } from 'luxon'
 import { Goal, GuildConfig, Raptor } from '../models'
 import { GoalDurations } from '../types'
 import { I18n, Logger, WinnieClient } from '../core'

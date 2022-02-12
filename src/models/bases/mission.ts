@@ -2,9 +2,9 @@ import { BaseModel } from './base-model'
 import { BeforeInsert, BeforeUpdate, Column, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm'
 import { DateTime } from 'luxon'
 import { DateTimeTransformer, NullableDateTimeTransformer } from '../transformers/date-time'
-import { Snowflake } from 'discord.js'
 import { GuildConfig } from '../guild-config'
 import { IsNotEmpty } from 'class-validator'
+import { Snowflake } from 'discord.js'
 import { StatusTypes } from '../../types/missions'
 
 /**

@@ -1,6 +1,6 @@
 import { BaseEntity, SaveOptions } from 'typeorm'
-import { ValidationError, validate } from 'class-validator'
 import { Logger } from '../../core'
+import { ValidationError, validate } from 'class-validator'
 
 /**
  * A base class for all Winnie_Bot models containing some
