@@ -2,7 +2,7 @@ import { Event } from '../types'
 import { Interaction } from 'discord.js'
 import { Commands } from '../commands'
 import { Logger } from '../core'
-import { GuildConfig } from '../models'
+import { GuildConfig, UserConfig } from '../models'
 
 /**
  * Handles the interaction event, fired when a user triggers an interaction.
@@ -20,6 +20,7 @@ export const InteractionEvent: Event = {
     const command = Commands.commandList.find((c) => c.name === interaction.commandName)
     if (command == null) { return }
 
+    await UserConfig.findOrCreate(interaction.user.id)
     const guildConfig = await GuildConfig.findOrCreate(interaction.guildId)
 
     try {
