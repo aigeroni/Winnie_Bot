@@ -1,8 +1,7 @@
-import { TextChannel } from 'discord.js'
-import { DateTime, IANAZone } from 'luxon'
-import { I18n, Logger, WinnieClient } from '../core'
 import { Goal, GuildConfig, Raptor } from '../models'
 import { GoalDurations } from '../types'
+import { I18n, Logger, WinnieClient } from '../core'
+import { TextChannel } from 'discord.js'
 
 async function awardRaptorForGoal (goal: Goal): Promise<void> {
   const goalCompletionPercentage = Math.round((goal.progress / goal.target) * 100)
@@ -26,10 +25,7 @@ async function awardRaptorForGoalDuration (goal: Goal): Promise<void> {
     return
   }
 
-  const aoeIana = new IANAZone('Etc/GMT+12')
-  const currentDate = DateTime.utc().setZone(aoeIana)
-  const currentPeriod = currentDate.get('year').toString() + '-' + currentDate.get('month').toString()
-  const raptor = await Raptor.findOrCreate(goal.ownerId, guild.id, currentPeriod)
+  const raptor = await Raptor.findOrCreate(goal.ownerId, guild.id)
 
   switch (goal.goalDuration) {
     case GoalDurations.DAILY:

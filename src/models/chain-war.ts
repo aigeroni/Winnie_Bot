@@ -1,6 +1,6 @@
 import { Challenge } from './bases/challenge'
-import { Column, Entity, JoinColumn, OneToMany, OneToOne } from 'typeorm'
 import { ChallengeController } from './challenge-controller'
+import { Column, Entity, JoinColumn, OneToMany, OneToOne } from 'typeorm'
 import { War } from './war'
 
 /**

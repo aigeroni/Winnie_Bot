@@ -38,13 +38,13 @@ export const ConfigCrossGuildCommand: SubCommand = {
     ]
   }),
 
-  execute: async (interaction: CommandInteraction, guildConfig: GuildConfig) => {
+  execute: async (interaction: CommandInteraction, guildConfig: GuildConfig, userConfig: UserConfig) => {
     const subcommand = interaction.options.getSubcommand()
     if (subcommand == null) { return }
 
     switch (subcommand) {
       case 'get':
-        await get(interaction, guildConfig)
+        await get(interaction, guildConfig, userConfig)
         break
       case 'reset':
         await reset(interaction, guildConfig)
@@ -56,8 +56,7 @@ export const ConfigCrossGuildCommand: SubCommand = {
   }
 }
 
-async function get (interaction: CommandInteraction, guildConfig: GuildConfig): Promise<void> {
-  const userConfig = await UserConfig.findOrCreate(interaction.user.id)
+async function get (interaction: CommandInteraction, guildConfig: GuildConfig, userConfig: UserConfig): Promise<void> {
   const key = userConfig.crossGuild ? 'enabled' : 'disabled'
 
   await interaction.reply(await I18n.translate(guildConfig.locale, `commands:config.crossGuild.get.${key}`))

@@ -1,7 +1,7 @@
+import { CommandUtils } from '../commands/utils'
 import { Event } from '../types'
 import { Guild } from 'discord.js'
 import { GuildConfig } from '../models'
-import { CommandUtils } from '../commands/utils'
 
 /**
  * Handles the guildCreate event, fired whenever Winnie_Bot joins a new guild.

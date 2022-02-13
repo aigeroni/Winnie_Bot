@@ -1,7 +1,7 @@
-import { JobQueue, Logger } from '../../core'
-import { Goal } from '../../models'
-import { CompleteGoalJobData, WinnieJob } from '../../types'
 import { AwardRaptorForGoalJob } from './award-raptors-for-goal-job'
+import { CompleteGoalJobData, WinnieJob } from '../../types'
+import { Goal } from '../../models'
+import { JobQueue, Logger } from '../../core'
 
 const NAME = 'mark_goal_as_complete_job'
 

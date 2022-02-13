@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner, Table, TableForeignKey } from 'typeorm'
+import { MigrationInterface, QueryRunner, Table } from 'typeorm'
 
 export class createChainsTable1638107137532 implements MigrationInterface {
   public async up (queryRunner: QueryRunner): Promise<void> {
@@ -81,23 +81,9 @@ export class createChainsTable1638107137532 implements MigrationInterface {
     })
 
     await queryRunner.createTable(chainsTable, true)
-
-    const chainGuildForeignKey = new TableForeignKey({
-      columnNames: ['guild_id'],
-      referencedColumnNames: ['id'],
-      referencedTableName: 'guild_config'
-    })
-    const chainOwnerForeignKey = new TableForeignKey({
-      columnNames: ['owner_id'],
-      referencedColumnNames: ['id'],
-      referencedTableName: 'user_config'
-    })
-
-    await queryRunner.createForeignKey('chain_wars', chainGuildForeignKey)
-    await queryRunner.createForeignKey('chain_wars', chainOwnerForeignKey)
   }
 
   public async down (queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.dropTable('chains')
+    await queryRunner.dropTable('chain_wars')
   }
 }

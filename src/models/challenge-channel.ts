@@ -1,10 +1,10 @@
-import { Permissions, Snowflake } from 'discord.js'
-import { Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm'
 import { BaseModel } from './bases/base-model'
-import { IsChannelWithPermission } from './validators/channel-with-permission'
-import { ValidateIf, MaxLength } from 'class-validator'
-import { WinnieClient } from '../core'
 import { ChallengeController } from './challenge-controller'
+import { Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm'
+import { IsChannelWithPermission } from './validators/channel-with-permission'
+import { MaxLength, ValidateIf } from 'class-validator'
+import { Permissions, Snowflake } from 'discord.js'
+import { WinnieClient } from '../core'
 
 /**
  * Represents a channel joined to a challenge.
