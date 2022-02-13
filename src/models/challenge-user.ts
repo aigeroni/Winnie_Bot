@@ -1,9 +1,9 @@
-import { MaxLength } from 'class-validator'
-import { Snowflake } from 'discord.js'
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm'
+import { BaseModel } from './bases/base-model'
 import { ChallengeController } from './challenge-controller'
 import { ChallengeTotalTypes } from '../types'
-import { BaseModel } from './bases/base-model'
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm'
+import { MaxLength } from 'class-validator'
+import { Snowflake } from 'discord.js'
 
 /**
  * Represents a user joined to a challenge.

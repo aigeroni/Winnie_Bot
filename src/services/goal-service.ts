@@ -1,6 +1,7 @@
 import { DateTime, IANAZone } from 'luxon'
 import { Goal } from '../models'
 import { GoalCreateOptions, GoalDurations } from '../types'
+import { PeriodConfig } from '../models/period-config'
 import { Snowflake } from 'discord.js'
 
 /**
@@ -10,15 +11,19 @@ import { Snowflake } from 'discord.js'
   * @returns the new goal
   */
 async function createGoal (options: GoalCreateOptions): Promise<Goal> {
+  const period = await PeriodConfig.findOrCreate()
+
   const goal = new Goal()
   goal.target = options.target
 
   if (options.ownerId != null) { goal.ownerId = options.ownerId }
+  if (options.guildId != null) { goal.guildId = options.guildId }
   if (options.channelId != null) { goal.channelId = options.channelId }
   if (options.duration != null) { goal.goalDuration = options.duration }
   if (options.type != null) { goal.goalType = options.type }
   if (options.progress != null) { goal.progress = options.progress }
 
+  goal.periodId = period.id
   goal.expectedEndAt = estimateCompletionDate(options.timezone, goal.goalDuration)
 
   return await goal.save()

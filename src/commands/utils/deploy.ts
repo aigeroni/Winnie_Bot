@@ -1,6 +1,6 @@
-import { WinnieClient } from '../../core'
-import { GuildConfig } from '../../models'
 import { Commands } from '..'
+import { GuildConfig } from '../../models'
+import { WinnieClient } from '../../core'
 
 async function deployCommands (guildConfig: GuildConfig): Promise<void> {
   if (!WinnieClient.isLoggedIn()) { return }

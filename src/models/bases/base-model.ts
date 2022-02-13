@@ -1,4 +1,5 @@
 import { BaseEntity, SaveOptions } from 'typeorm'
+import { Logger } from '../../core'
 import { ValidationError, validate } from 'class-validator'
 
 /**
@@ -30,6 +31,10 @@ export abstract class BaseModel extends BaseEntity {
 
     if (this.errors.length <= 0) {
       await super.save(options)
+    } else {
+      this.errors.forEach((e: ValidationError) => {
+        Logger.error(e)
+      })
     }
 
     return this
