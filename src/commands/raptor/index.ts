@@ -1,7 +1,7 @@
 import { ApplicationCommandData, CommandInteraction, Snowflake } from 'discord.js'
-import { I18n } from '../../core'
-import { GuildConfig } from '../../models'
 import { Command } from '../../types'
+import { GuildConfig } from '../../models'
+import { I18n } from '../../core'
 import { RaptorPeriods } from '../../types/raptors'
 
 const NAME = 'raptor'
