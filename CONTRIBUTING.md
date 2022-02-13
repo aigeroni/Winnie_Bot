@@ -37,7 +37,7 @@ You'll need the following dependencies to develop Winnie locally:
 
 * [Docker](https://www.docker.com/)/[Docker Compose](https://docs.docker.com/compose/)
 * [Node.js](https://nodejs.org/en/) 14.0 or higher
-* [Yarn](https://yarnpkg.com/)
+* [pnpm](https://pnpm.io//)
 
 #### Running Winnie for local development
 
@@ -48,9 +48,9 @@ You'll need the following dependencies to develop Winnie locally:
     <pre>$ git clone https://github.com/aigeroni/Winnie_Bot.git winnie_bot && cd winnie_bot</pre>
   </li>
   <li>
-    Install dependencies with <code>yarn</code>:
+    Install dependencies with <code>pnpm</code>:
     <br>
-    <pre>$ yarn install</pre>
+    <pre>$ pnpm install</pre>
   </li>
   <li>
     Create <code>.env</code> file:
@@ -63,22 +63,22 @@ You'll need the following dependencies to develop Winnie locally:
   <li>
     Start the Docker processes:
     <br>
-    <pre>$ yarn docker:local:up -d</pre>
+    <pre>$ docker-compose up -d</pre>
   </li>
   <li>
     Run the migrations to set up the database:
     <br>
-    <pre>$ yarn typeorm migration:run</pre>
+    <pre>$ pnpm typeorm migration:run</pre>
   </li>
   <li>
     Start Winnie:
     <br>
-    <pre>$ yarn start</pre>
+    <pre>$ pnpm start</pre>
   </li>
   <li>
     In seperate terminal windows, start the job workers:
     <br>
-    <pre>$ yarn start:worker:goal</pre>
+    <pre>$ pnpm start:worker:goal</pre>
   </li>
 </ol>
 
@@ -86,14 +86,12 @@ You'll need the following dependencies to develop Winnie locally:
 
 You can use the following scripts on your local CLI to complete tasks:
 
-* `yarn build` - Compile Winnie's TypeScript code into plain JavaScript
-* `yarn docker:local:down` - Shut down local Docker processes
-* `yarn docker:local:up` - Start up local Docker processes
-* `yarn lint:all` - Run ESLint over Winnie's code
-* `yarn lint:fix` - Run ESLint over Winnie's code, fixing basic linting errors
-* `yarn start` - Compile Winnie and start up the bot process
+* `pnpm build` - Compile Winnie's TypeScript code into plain JavaScript
+* `pnpm lint` - Run ESLint over Winnie's code
+* `pnpm lint:fix` - Run ESLint over Winnie's code, fixing basic linting errors
+* `pnpm start` - Compile Winnie and start up the bot process
 * `start:worker:goal` - Start the goals worker, needed for goals to complete.
-* `yarn typeorm` - Access the [TypeORM CLI](https://typeorm.io/#/using-cli)
+* `pnpm typeorm` - Access the [TypeORM CLI](https://typeorm.io/#/using-cli)
 
 #### Code standards
 

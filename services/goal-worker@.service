@@ -5,7 +5,7 @@ Description=Winnie_Bot goal worker
 WorkingDirectory=/srv/winnie/Winnie_Bot
 Type=simple
 User=root
-ExecStart=/usr/bin/yarn start:worker:goal
+ExecStart=/usr/bin/pnpm start:worker:goal
 Restart=on-failure
 
 [Install]

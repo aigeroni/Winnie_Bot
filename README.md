@@ -51,7 +51,7 @@ If you want to invite the public Winnie_Bot account to your server, go [here](ht
 #### Requirements
 
 * [Node.js](https://nodejs.org/en/)
-* [Yarn Package Manager](https://yarnpkg.com/)
+* [pnpm Package Manager](https://pnpm.io/)
 * [Docker](https://www.docker.com/)/[Docker Compose](https://docs.docker.com/compose/)
 
 #### Setting up a Discord bot instance

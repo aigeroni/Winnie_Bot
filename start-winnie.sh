@@ -1,9 +1,9 @@
 #!/bin/bash
 set -euxo pipefail
 
-yarn install && yarn build
-yarn dotenv:test
-yarn typeorm migration:run
+pnpm install && pnpm build
+pnpm dotenv:test
+pnpm typeorm migration:run
 
 cp ./services/*.service /lib/systemd/system/
 

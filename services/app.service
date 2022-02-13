@@ -5,7 +5,7 @@ Description=Main Winnie_Bot process
 WorkingDirectory=/srv/winnie/Winnie_Bot
 Type=simple
 User=root
-ExecStart=/usr/bin/yarn start
+ExecStart=/usr/bin/pnpm start
 Restart=on-failure
 
 [Install]
