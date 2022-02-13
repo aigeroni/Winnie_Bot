@@ -1,5 +1,5 @@
+import { I18n, JobQueue, Logger, WinnieClient } from '../core'
 import { Job, Worker } from 'bullmq'
-import { I18n, Logger, JobQueue, WinnieClient } from '../core'
 import { WinnieJob } from '../types'
 
 export class BaseWorker {

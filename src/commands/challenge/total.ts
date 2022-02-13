@@ -1,8 +1,8 @@
-import { CommandInteraction } from 'discord.js'
 import { Challenge, ChallengeUser, GuildConfig, War } from '../../models'
-import { I18n } from '../../core'
-import { SubCommand, RaceTypes } from '../../types'
 import { ChallengeService } from '../../services'
+import { CommandInteraction } from 'discord.js'
+import { I18n } from '../../core'
+import { RaceTypes, SubCommand } from '../../types'
 
 const NAME = 'total'
 

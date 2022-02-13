@@ -1,8 +1,8 @@
-import { CommandInteraction } from 'discord.js'
 import { ChallengeController, ChallengeUser, GuildConfig } from '../../models'
+import { ChallengeService } from '../../services'
+import { CommandInteraction } from 'discord.js'
 import { I18n } from '../../core'
 import { SubCommand } from '../../types'
-import { ChallengeService } from '../../services'
 
 const NAME = 'leave'
 

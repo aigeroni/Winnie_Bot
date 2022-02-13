@@ -1,11 +1,10 @@
-import { MaxLength } from 'class-validator'
-import { Snowflake } from 'discord.js'
+import { ChallengeTypes, StatusTypes } from '../../types'
 import { Column } from 'typeorm'
-import { Mission } from './mission'
 import { DateTime } from 'luxon'
 import { DateTimeTransformer } from '../transformers/date-time'
-import { I18n } from '../../core'
-import { ChallengeTypes, StatusTypes } from '../../types'
+import { MaxLength } from 'class-validator'
+import { Mission } from './mission'
+import { Snowflake } from 'discord.js'
 
 /**
  * The base class for all challenges

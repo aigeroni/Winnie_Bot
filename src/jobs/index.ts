@@ -1,5 +1,5 @@
-import { goalJobs } from './goals'
 import { challengeJobs } from './challenges'
+import { goalJobs } from './goals'
 
 export const Jobs = {
   goalJobs,

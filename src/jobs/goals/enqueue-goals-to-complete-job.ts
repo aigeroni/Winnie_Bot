@@ -1,8 +1,8 @@
-import { DateTime } from 'luxon'
-import { JobQueue, Logger } from '../../core'
-import { GoalService } from '../../services'
-import { WinnieJob } from '../../types'
 import { CompleteGoalJob } from './complete-goal-job'
+import { DateTime } from 'luxon'
+import { GoalService } from '../../services'
+import { JobQueue, Logger } from '../../core'
+import { WinnieJob } from '../../types'
 
 const NAME = 'enqueue_goals_to_complete_job'
 

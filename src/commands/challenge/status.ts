@@ -1,9 +1,9 @@
-import { CommandInteraction } from 'discord.js'
 import { ChainWar, Challenge, GuildConfig, Race, War } from '../../models'
 import { ChallengeService } from '../../services'
+import { CommandInteraction } from 'discord.js'
+import { DateTime, Duration } from 'luxon'
 import { I18n, Logger } from '../../core'
 import { SubCommand } from '../../types'
-import { DateTime, Duration } from 'luxon'
 
 const NAME = 'status'
 

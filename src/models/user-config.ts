@@ -1,10 +1,10 @@
 import { BaseModel } from './bases/base-model'
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm'
+import { GuildConfig } from '.'
 import { IANAZone } from 'luxon'
 import { IsOptional, MaxLength } from 'class-validator'
 import { IsTimeZone } from './validators/time-zone'
 import { Snowflake } from 'discord.js'
-import { GuildConfig } from '.'
 
 /**
  * Stores various settings specific to a user.

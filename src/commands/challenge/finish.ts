@@ -1,9 +1,9 @@
-import { CommandInteraction } from 'discord.js'
 import { Challenge, ChallengeUser, GuildConfig, Race } from '../../models'
+import { ChallengeService } from '../../services'
+import { CommandInteraction } from 'discord.js'
+import { DateTime, Duration } from 'luxon'
 import { I18n } from '../../core'
 import { SubCommand } from '../../types'
-import { ChallengeService } from '../../services'
-import { DateTime, Duration } from 'luxon'
 
 const NAME = 'finish'
 

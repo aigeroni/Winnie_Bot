@@ -1,15 +1,15 @@
 import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm'
 import { DateTime, Duration, Interval } from 'luxon'
+import { DateTimeTransformer } from './transformers/date-time'
+import { DiscordService } from '../services'
 import { GoalDurations, GoalTypes } from '../types'
+import { Guild, Permissions, Snowflake } from 'discord.js'
+import { I18n, WinnieClient } from '../core'
 import { IsChannelWithPermission } from './validators/channel-with-permission'
 import { IsNotEmpty, IsPositive, MaxLength, Min, ValidateIf } from 'class-validator'
-import { I18n, WinnieClient } from '../core'
-import { Guild, Permissions, Snowflake } from 'discord.js'
-import { DateTimeTransformer } from './transformers/date-time'
 import { Mission } from './bases/mission'
 import { PeriodConfig } from './period-config'
 import { Project } from './project'
-import { DiscordService } from '../services'
 
 /**
  * Represents a goal users can set.
@@ -111,6 +111,12 @@ export class Goal extends Mission {
     const timeRemaining = Interval.fromDateTimes(DateTime.utc(), this.endDate()).toDuration()
     return timeRemaining.shiftTo('months', 'days', 'hours', 'minutes')
   }
+
+  /**
+   * The period in which the goal was set.
+   */
+  @Column({ name: 'period_id', type: 'varchar' })
+  periodId!: string
 
   /**
    * Gets the guild this goal was created in

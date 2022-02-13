@@ -1,9 +1,9 @@
 import { BaseModel } from './bases/base-model'
 import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm'
-import { Min } from 'class-validator'
-import { Snowflake } from 'discord.js'
 import { GuildConfig, UserConfig } from '.'
+import { Min } from 'class-validator'
 import { PeriodConfig } from './period-config'
+import { Snowflake } from 'discord.js'
 
 /**
  * A model for keeping track of how many raptors a user has hatched in a given guild.
@@ -122,7 +122,10 @@ export class Raptor extends BaseModel {
     await this.save()
   }
 
-  static async findOrCreate (userId: Snowflake, guildId: Snowflake, periodId: string): Promise<Raptor> {
+  static async findOrCreate (userId: Snowflake, guildId: Snowflake): Promise<Raptor> {
+    // We need to check whether this month's period exists, and create it if not.
+    const period = await PeriodConfig.findOrCreate()
+    const periodId = period.id
     let raptor = (await Raptor.find({ where: { userId, guildId, periodId } }))[0]
     if (raptor != null) { return raptor }
 

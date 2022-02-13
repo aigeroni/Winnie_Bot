@@ -1,6 +1,6 @@
-import { CommandInteraction } from 'discord.js'
-import { GuildConfig, ChallengeChannel, ChallengeController, ChallengeUser } from '../../models'
+import { ChallengeChannel, ChallengeController, ChallengeUser, GuildConfig } from '../../models'
 import { ChallengeService } from '../../services'
+import { CommandInteraction } from 'discord.js'
 import { I18n, Logger } from '../../core'
 import { SubCommand } from '../../types'
 

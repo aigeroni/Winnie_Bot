@@ -1,12 +1,12 @@
 import { ApplicationCommandData, CommandInteraction } from 'discord.js'
-import { I18n } from '../../core'
-import { GuildConfig } from '../../models'
 import { Command } from '../../types'
-import { executeTopLevelCommand } from '../utils/execute-top-level-command'
+import { GuildConfig, UserConfig } from '../../models'
+import { I18n } from '../../core'
 import { ServerAnnouncementsChannelCommand } from './announcement-channel'
 import { ServerCrossGuildCommand } from './cross-guild'
 import { ServerLocaleCommand } from './locale'
 import { ServerTimezoneCommand } from './timezone'
+import { executeTopLevelCommand } from '../utils/execute-top-level-command'
 
 const NAME = 'server'
 
@@ -29,7 +29,7 @@ export const ServerCommand: Command = {
       await ServerTimezoneCommand.commandData(locale)
     ]
   }),
-  execute: async (interaction: CommandInteraction, guildConfig: GuildConfig) => {
-    await executeTopLevelCommand(commands, interaction, guildConfig)
+  execute: async (interaction: CommandInteraction, guildConfig: GuildConfig, userConfig: UserConfig) => {
+    await executeTopLevelCommand(commands, interaction, guildConfig, userConfig)
   }
 }

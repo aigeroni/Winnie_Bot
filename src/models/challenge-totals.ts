@@ -1,13 +1,13 @@
+import { BaseModel } from './bases/base-model'
+import { ChainWar, GuildConfig, UserConfig } from '.'
+import { Challenge } from './bases/challenge'
+import { ChallengeTotalTypes } from '../types'
+import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm'
+import { IsChannelWithPermission } from './validators/channel-with-permission'
 import { MaxLength, ValidateIf } from 'class-validator'
 import { Permissions, Snowflake } from 'discord.js'
-import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm'
-import { ChainWar, GuildConfig, UserConfig } from '.'
-import { WinnieClient } from '../core'
-import { ChallengeTotalTypes } from '../types'
-import { BaseModel } from './bases/base-model'
-import { Challenge } from './bases/challenge'
 import { Project } from './project'
-import { IsChannelWithPermission } from './validators/channel-with-permission'
+import { WinnieClient } from '../core'
 
 /**
  * Represents a user joined to a challenge.

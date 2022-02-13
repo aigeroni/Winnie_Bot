@@ -1,7 +1,7 @@
-import { JobQueue } from '../../core'
-import { Goal } from '../../models'
-import { RaptorService } from '../../services'
 import { AwardRaptorForGoalJobData, WinnieJob } from '../../types'
+import { Goal } from '../../models'
+import { JobQueue } from '../../core'
+import { RaptorService } from '../../services'
 
 const NAME = 'award_raptors_for_goal_job'
 

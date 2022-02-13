@@ -1,12 +1,12 @@
-import { IsNotEmpty, IsPositive, MaxLength, Min, ValidateIf } from 'class-validator'
-import { Permissions, Snowflake } from 'discord.js'
-import { DateTime } from 'luxon'
 import { Column, Entity } from 'typeorm'
-import { WinnieClient } from '../core'
-import { GoalTypes } from '../types'
-import { Mission } from './bases/mission'
+import { DateTime } from 'luxon'
 import { DateTimeTransformer } from './transformers/date-time'
+import { GoalTypes } from '../types'
 import { IsChannelWithPermission } from './validators/channel-with-permission'
+import { IsNotEmpty, IsPositive, MaxLength, Min, ValidateIf } from 'class-validator'
+import { Mission } from './bases/mission'
+import { Permissions, Snowflake } from 'discord.js'
+import { WinnieClient } from '../core'
 
 @Entity({ name: 'projects' })
 export class Project extends Mission {

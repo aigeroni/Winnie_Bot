@@ -1,6 +1,6 @@
+import { ChainWar } from '.'
 import { Challenge } from './bases/challenge'
 import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm'
-import { ChainWar } from '.'
 import { DateTime, Duration } from 'luxon'
 
 @Entity({ name: 'challenges' })

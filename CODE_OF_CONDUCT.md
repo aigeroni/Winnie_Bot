@@ -1,6 +1,6 @@
 # The `Winnie_Bot` Code of Professional Conduct
 
-Click [here](./CODE_OF_CONDUCT_PLAIN_LANGUAGE.md) for a plain language version.
+The `Winnie_Bot` Code of Professional Conduct is licensed under the [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) license. Click [here](./CODE_OF_CONDUCT_PLAIN_LANGUAGE.md) for a plain language version.
 
 The `Winnie_Bot` initiative includes contributors from around the world, volunteering their time and expertise to support this valuable open-source project. Many of these contributors identify with historically marginalized communities or have experienced significant trauma in their personal lives. For that reason, a clear and enforced code of conduct is essential to ensure that all volunteers participate with dignity and that the work unfolds without causing personal harm or delaying the progress of the project.
 
@@ -23,3 +23,5 @@ The `Winnie_Bot` team consists of volunteers working primarily asynchronously an
 A person who appears to have broken a conduct standard will be approached by the product owner, project manager, or lead developer to discuss the situation and its optimal remediation. In our experience with other projects, it's usually the case that a friendly private chat proves sufficient to educate the team member.
 
 If, however, a person continues to behave in an inappropriate fashion, that person will be removed from the project entirely. To promote full transparency, the relevant leader will announce the decision and its rationale to the entire project team.
+
+[Back to README](./README.md)

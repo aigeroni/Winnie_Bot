@@ -1,18 +1,18 @@
-import { DateTime, Duration } from 'luxon'
 import {
   ChainWar,
-  Race,
-  War,
   Challenge,
-  ChallengeController,
   ChallengeChannel,
+  ChallengeController,
   ChallengeUser,
-  GuildConfig
+  GuildConfig,
+  Race,
+  War
 } from '../models'
 import { ChainWarCreateOptions, RaceCreateOptions, RaceTypes, WarCreateOptions } from '../types'
 import { CommandInteraction, Snowflake } from 'discord.js'
-import { I18n, Logger } from '../core'
+import { DateTime, Duration } from 'luxon'
 import { DiscordService } from '.'
+import { I18n, Logger } from '../core'
 
 /**
   * Creates a new chain war from the arguments passed to the command.

@@ -1,11 +1,11 @@
 import NanoTimer = require('nanotimer')
-import { I18n } from '../core'
 import { ChainWar, ChallengeController, GuildConfig, Race, War } from '../models'
 import { ChallengeService } from '.'
+import { I18n } from '../core'
 
 export async function handleChallengeOnStart (challengeId: number, duration: number): Promise<void> {
   const durationString = duration.toString() + 'm'
-  var endTimer = new NanoTimer()
+  const endTimer = new NanoTimer()
   endTimer.setTimeout(() => { endChallenge(challengeId).catch(() => {}) }, [], durationString)
 }
 

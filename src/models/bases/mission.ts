@@ -2,10 +2,11 @@ import { BaseModel } from './base-model'
 import { BeforeInsert, BeforeUpdate, Column, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm'
 import { DateTime } from 'luxon'
 import { DateTimeTransformer, NullableDateTimeTransformer } from '../transformers/date-time'
-import { StatusTypes } from '../../types'
+import { GuildConfig } from '../guild-config'
 import { IsNotEmpty } from 'class-validator'
-import { Guild, Snowflake } from 'discord.js'
-import { UserConfig } from '..'
+import { Snowflake } from 'discord.js'
+import { StatusTypes } from '../../types/missions'
+import { UserConfig } from '../user-config'
 
 /**
  * Abstract class for Goals and Challenges.
@@ -20,18 +21,9 @@ export abstract class Mission extends BaseModel {
   id!: number
 
   /**
-   * The current status of the mission.
-   *
-   * Can be Created, Running (for challenges only), Completed, or Canceled.
-   */
-  @Column()
-  @IsNotEmpty()
-  status: StatusTypes = StatusTypes.CREATED
-
-  /**
    * The id of the guild that the mission belongs to.
    */
-  @ManyToOne(() => Guild, guild => guild.id)
+  @ManyToOne(() => GuildConfig, guild => guild.id)
   @JoinColumn({ name: 'guild_id' })
   guildId!: Snowflake
 
@@ -43,15 +35,15 @@ export abstract class Mission extends BaseModel {
   ownerId!: Snowflake
 
   /**
-   * Timestamp of when this mission was created.
-   */
+    * The timestamp of when this mission was created.
+    */
   @Column({ name: 'created_at', transformer: new DateTimeTransformer(), type: 'varchar' })
   createdAt!: DateTime
 
   /**
-   * Timestamp of the most recent update to the mission.
+   * The timestamp of the most recent time this mission was updated.
    *
-   * Null if never updated.
+   * Null if the mission has never been updated.
    */
   @Column({ name: 'updated_at', transformer: new NullableDateTimeTransformer(), type: 'varchar' })
   updatedAt?: DateTime
@@ -71,6 +63,15 @@ export abstract class Mission extends BaseModel {
    */
   @Column({ name: 'completed_at', transformer: new NullableDateTimeTransformer(), type: 'varchar' })
   completedAt?: DateTime
+
+  /**
+   * The current status of the mission.
+   *
+   * Can be Created, Running (for challenges only), Completed, or Canceled.
+   */
+  @Column({ type: 'enum', enum: StatusTypes })
+  @IsNotEmpty()
+  status: StatusTypes = StatusTypes.CREATED
 
   /**
    * Listener for the beforeInsert event.
@@ -99,7 +100,7 @@ export abstract class Mission extends BaseModel {
    * @returns true if the mission is active
    */
   isActive (): boolean {
-    return !(this.status === StatusTypes.COMPLETED || this.status === StatusTypes.CANCELED)
+    return !(this.status === StatusTypes.CANCELED || this.status === StatusTypes.COMPLETED)
   }
 
   /**
@@ -108,7 +109,7 @@ export abstract class Mission extends BaseModel {
    * @returns true if the mission is completed
    */
   isCompleted (): boolean {
-    return this.completedAt != null
+    return this.status === StatusTypes.COMPLETED
   }
 
   /**
@@ -117,7 +118,7 @@ export abstract class Mission extends BaseModel {
    * @returns true if the mission is canceled
    */
   isCanceled (): boolean {
-    return this.canceledAt != null
+    return this.status === StatusTypes.CANCELED
   }
 
   /**

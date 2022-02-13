@@ -37,7 +37,9 @@ export class createUserConfigTable1607791764966 implements MigrationInterface {
          */
         {
           name: 'cross_guild',
-          type: 'boolean'
+          type: 'boolean',
+          isNullable: false,
+          default: true
         }
       ]
     })

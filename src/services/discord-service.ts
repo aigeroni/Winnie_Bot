@@ -1,6 +1,6 @@
-import { Snowflake, Guild, GuildChannel, TextChannel } from 'discord.js'
-import { Logger, WinnieClient } from '../core'
+import { Guild, GuildChannel, Snowflake, TextChannel } from 'discord.js'
 import { GuildConfig } from '../models'
+import { Logger, WinnieClient } from '../core'
 
 async function getGuildFromChannel (channelId: Snowflake): Promise<Guild | undefined> {
   if (!WinnieClient.isLoggedIn()) { return }

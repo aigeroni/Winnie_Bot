@@ -1,7 +1,7 @@
-import { I18n, JobQueue } from '../../core'
 import { ChainWar, ChallengeController, GuildConfig, Race, War } from '../../models'
-import { ChallengeService } from '../../services'
 import { ChallengeHandlerData, WinnieJob } from '../../types'
+import { ChallengeService } from '../../services'
+import { I18n, JobQueue } from '../../core'
 
 const NAME = 'start_challenge_job'
 

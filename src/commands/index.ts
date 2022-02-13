@@ -1,6 +1,6 @@
 import { ApplicationCommandData } from 'discord.js'
-import { Command } from '../types'
 import { ChallengeCommand } from './challenge'
+import { Command } from '../types'
 import { ConfigCommand } from './config'
 import { GoalCommand } from './goal'
 import { ServerCommand } from './server'
