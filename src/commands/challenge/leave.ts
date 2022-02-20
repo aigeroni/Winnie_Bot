@@ -1,8 +1,8 @@
-import { ChallengeController, ChallengeUser, GuildConfig } from '../../models'
 import { ChallengeService } from '../../services'
+import { ChallengeTotal, GuildConfig } from '../../models'
 import { CommandInteraction } from 'discord.js'
 import { I18n } from '../../core'
-import { SubCommand } from '../../types'
+import { StatusTypes, SubCommand } from '../../types'
 
 const NAME = 'leave'
 
@@ -21,18 +21,16 @@ export const ChallengeLeaveCommand: SubCommand = {
       return
     }
 
-    const challengeController = await ChallengeController.findOne({ where: { id: activeChallenge.id } })
-
-    const challengeUser = await ChallengeUser.findOne({
-      where: { userId: interaction.user.id, challengeController: challengeController }
+    const challengeTotal = await ChallengeTotal.findOne({
+      where: { userId: interaction.user.id, challenge: activeChallenge }
     })
-    if (challengeUser == null || challengeUser.isCanceled()) {
+    if (challengeTotal == null || challengeTotal.status === StatusTypes.CANCELED) {
       throw new Error() // I don't think this is actually a possible state
     }
 
-    await challengeUser.cancel()
+    await challengeTotal.cancel()
 
-    if (challengeUser.errors.length > 0) {
+    if (challengeTotal.errors.length > 0) {
       await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:challenge.leave.error.couldNotLeaveChallenge'))
     } else {
       await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:challenge.leave.success'))

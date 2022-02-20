@@ -1,8 +1,9 @@
-import { Challenge, ChallengeUser, GuildConfig, War } from '../../models'
+import { Challenge, ChallengeTotal, GuildConfig, War } from '../../models'
 import { ChallengeService } from '../../services'
 import { CommandInteraction } from 'discord.js'
 import { I18n } from '../../core'
 import { RaceTypes, SubCommand } from '../../types'
+import { StatusTypes } from '../../types/missions'
 
 const NAME = 'total'
 
@@ -44,10 +45,10 @@ export const ChallengeTotalCommand: SubCommand = {
 
     if (!(await canUpdateTotals(challenge, interaction, guildConfig))) { return }
 
-    const challengeUser = await getChallengeUser(challenge as War, interaction, guildConfig)
-    if (challengeUser == null) { return }
+    const challengeTotal = await getchallengeTotal(challenge as War, interaction, guildConfig)
+    if (challengeTotal == null) { return }
 
-    await updateTotals(challengeUser, interaction, guildConfig)
+    await updateTotals(challengeTotal, interaction, guildConfig)
   }
 }
 
@@ -65,12 +66,12 @@ async function canUpdateTotals (challenge: Challenge, interaction: CommandIntera
     return false
   }
 
-  if (challenge.challenge_type !== 'war') { // ensure the challenge is a war
+  if (challenge.challengeType !== 'war') { // ensure the challenge is a war
     await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:challenge.total.error.challengeIsRace'))
     return false
   }
 
-  if (!(challenge.hasStarted)) { // check whether the challenge has started
+  if (!(challenge.status !== StatusTypes.COMPLETED)) { // check whether the challenge has started
     await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:challenge.total.error.challengeHasNotStarted'))
     return false
   }
@@ -86,24 +87,21 @@ async function canUpdateTotals (challenge: Challenge, interaction: CommandIntera
 }
 
 /**
- * Returns the ChallengeUser for the given user and challenge.
+ * Returns the challengeTotal for the given user and challenge.
  *
- * If there is not a ChallengeUser record yet, create one first.
+ * If there is not a challengeTotal record yet, create one first.
  *
  * @param war The war which we are gettign the user for
  * @param interaction the interaction used to trigger the command
  * @param guildConfig the config of the guild where the command was used
- * @returns The ChallengeUser object, undefined if an error occured
+ * @returns The challengeTotal object, undefined if an error occured
  */
-async function getChallengeUser (war: War, interaction: CommandInteraction, guildConfig: GuildConfig): Promise<ChallengeUser | undefined> {
-  if (war.universal == null) {
-    return // challenge didn't save properly
-  }
-  let challengeUser = await ChallengeUser.findOne({ where: { userId: interaction.user.id, challengeController: war.universal.id } })
-  if (challengeUser != null) { return challengeUser }
+async function getchallengeTotal (war: War, interaction: CommandInteraction, guildConfig: GuildConfig): Promise<ChallengeTotal | undefined> {
+  const challengeTotal = await ChallengeTotal.findOne({ where: { userId: interaction.user.id, challengeController: war.id } })
+  if (challengeTotal != null) { return challengeTotal }
 
-  challengeUser = await ChallengeService.addUserToChallenge(interaction.user.id, war.universal.id, interaction.channelId)
-  if (challengeUser.errors.length <= 0) { return challengeUser }
+  const newChallengeTotal = await ChallengeService.addUserToChallenge(interaction.user.id, war.id, interaction.channelId)
+  if (newChallengeTotal.errors.length <= 0) { return challengeTotal }
 
   await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:challenge.total.error.couldNotAddTotal'))
 }
@@ -111,11 +109,11 @@ async function getChallengeUser (war: War, interaction: CommandInteraction, guil
 /**
  * Attempts to update the Challenge totals.
  *
- * @param challengeUser The ChallengeUser updating their totals
+ * @param challengeTotal The ChallengeTotal updating their totals
  * @param interaction the interaction used to trigger the command
  * @param guildConfig the config of the guild where the command was used
  */
-async function updateTotals (challengeUser: ChallengeUser, interaction: CommandInteraction, guildConfig: GuildConfig): Promise<void> {
+async function updateTotals (challengeTotal: ChallengeTotal, interaction: CommandInteraction, guildConfig: GuildConfig): Promise<void> {
   const total = interaction.options.getNumber('total')
   const type = interaction.options.getString('type')
 
@@ -124,11 +122,11 @@ async function updateTotals (challengeUser: ChallengeUser, interaction: CommandI
     return
   }
 
-  challengeUser.total = total
-  challengeUser.totalType = type as RaceTypes
+  challengeTotal.total = total
+  challengeTotal.totalType = type as RaceTypes
 
-  await challengeUser.save()
-  if (challengeUser.errors.length <= 0) {
+  await challengeTotal.save()
+  if (challengeTotal.errors.length <= 0) {
     await interaction.reply(await I18n.translate(guildConfig.locale, 'challenge:total'))
     return
   }

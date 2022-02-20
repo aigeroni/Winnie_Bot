@@ -1,8 +1,9 @@
-import { ChainWar, Challenge, GuildConfig, Race, War } from '../../models'
+import { Challenge, GuildConfig, Race, War } from '../../models'
 import { ChallengeService } from '../../services'
 import { CommandInteraction } from 'discord.js'
 import { DateTime, Duration } from 'luxon'
-import { I18n, Logger } from '../../core'
+import { I18n } from '../../core'
+import { StatusTypes } from '../../types/missions'
 import { SubCommand } from '../../types'
 
 const NAME = 'status'
@@ -44,23 +45,22 @@ async function printStatus (challenge: Challenge, interaction: CommandInteractio
       id: interaction.options.getInteger('id') ?? ''
     }))
   } else {
-    switch (challenge.challenge_type) {
+    switch (challenge.challengeType) {
       case 'race':
         await raceStatus(challenge as Race, interaction, guildConfig)
         break
       case 'war':
-        Logger.info('entered case')
         await warStatus(challenge as War, interaction, guildConfig)
         break
-      case 'chain_war':
-        await chainStatus(challenge as ChainWar, interaction, guildConfig)
-        break
+      // case 'chain':
+      //   await chainStatus(challenge as ChainWar, interaction, guildConfig)
+      //   break
     }
   }
 }
 
 async function warStatus (war: War, interaction: CommandInteraction, guildConfig: GuildConfig): Promise<void> {
-  if (war.hasStarted) { // war is running
+  if (war.status === StatusTypes.RUNNING) { // war is running
     await interaction.reply(await I18n.translate(guildConfig.locale, 'challenges:status.warAfterStart', {
       challengeName: war.name,
       id: interaction.options.getInteger('id') ?? '',
@@ -81,37 +81,37 @@ async function warStatus (war: War, interaction: CommandInteraction, guildConfig
   }
 }
 
-async function chainStatus (chain: ChainWar, interaction: CommandInteraction, guildConfig: GuildConfig): Promise<void> {
-  if (chain.hasStarted) { // chain is running
-    await interaction.reply(await I18n.translate(guildConfig.locale, 'challenges:status.chainAfterStart', {
-      challengeName: chain.name,
-      id: interaction.options.getInteger('id') ?? '',
-      data: await I18n.translate(guildConfig.locale, 'challenges:dataWithRemaining.chain', {
-        duration: await I18n.translate(guildConfig.locale, 'challenges:minutesWithCount.minutes', { count: chain.duration }),
-        timeLeft: await getTimeRemaining(chain.startAt.plus(Duration.fromObject({ minutes: chain.duration })))
-      })
-    }))
-  } else { // chain hasn't started
-    await interaction.reply(await I18n.translate(guildConfig.locale, 'challenges:status.chainBeforeStart', {
-      challengeName: chain.name,
-      id: interaction.options.getInteger('id') ?? '',
-      data: await I18n.translate(guildConfig.locale, 'challenges:dataWithDelay.chain', {
-        duration: await I18n.translate(guildConfig.locale, 'challenges:minutesWithCount.minutes', { count: chain.duration }),
-        delayRemaining: await getTimeRemaining(chain.startAt)
-      })
-    }))
-  }
-}
+// async function chainStatus (chain: ChainWar, interaction: CommandInteraction, guildConfig: GuildConfig): Promise<void> {
+//   if (chain.status === StatusTypes.RUNNING) { // chain is running
+//     await interaction.reply(await I18n.translate(guildConfig.locale, 'challenges:status.chainAfterStart', {
+//       challengeName: chain.name,
+//       id: interaction.options.getInteger('id') ?? '',
+//       data: await I18n.translate(guildConfig.locale, 'challenges:dataWithRemaining.chain', {
+//         duration: await I18n.translate(guildConfig.locale, 'challenges:minutesWithCount.minutes', { count: chain.duration }),
+//         timeLeft: await getTimeRemaining(chain.startAt.plus(Duration.fromObject({ minutes: chain.duration })))
+//       })
+//     }))
+//   } else { // chain hasn't started
+//     await interaction.reply(await I18n.translate(guildConfig.locale, 'challenges:status.chainBeforeStart', {
+//       challengeName: chain.name,
+//       id: interaction.options.getInteger('id') ?? '',
+//       data: await I18n.translate(guildConfig.locale, 'challenges:dataWithDelay.chain', {
+//         duration: await I18n.translate(guildConfig.locale, 'challenges:minutesWithCount.minutes', { count: chain.duration }),
+//         delayRemaining: await getTimeRemaining(chain.startAt)
+//       })
+//     }))
+//   }
+// }
 
 async function raceStatus (race: Race, interaction: CommandInteraction, guildConfig: GuildConfig): Promise<void> {
-  if (race.hasStarted) { // race is running
+  if (race.status === StatusTypes.RUNNING) { // race is running
     await interaction.reply(await I18n.translate(guildConfig.locale, 'challenges:status.raceAfterStart', {
       challengeName: race.name,
       id: interaction.options.getInteger('id') ?? '',
       data: await I18n.translate(guildConfig.locale, 'challenges:dataWithRemaining.race', {
         target: await I18n.translate(guildConfig.locale, `challenges:typesWithCount.${race.targetType}`, { count: race.target }),
-        duration: await I18n.translate(guildConfig.locale, 'challenges:minutesWithCount.minutes', { count: race.timeOut }),
-        timeLeft: await getTimeRemaining(race.startAt.plus(Duration.fromObject({ minutes: race.timeOut })))
+        duration: await I18n.translate(guildConfig.locale, 'challenges:minutesWithCount.minutes', { count: race.duration }),
+        timeLeft: await getTimeRemaining(race.startAt.plus(Duration.fromObject({ minutes: race.duration })))
       })
     }))
   } else { // race hasn't started
@@ -120,7 +120,7 @@ async function raceStatus (race: Race, interaction: CommandInteraction, guildCon
       id: interaction.options.getInteger('id') ?? '',
       data: await I18n.translate(guildConfig.locale, 'challenges:dataWithDelay.race', {
         target: await I18n.translate(guildConfig.locale, `challenges:typesWithCount.${race.targetType}`, { count: race.target }),
-        duration: await I18n.translate(guildConfig.locale, 'challenges:minutesWithCount.minutes', { count: race.timeOut }),
+        duration: await I18n.translate(guildConfig.locale, 'challenges:minutesWithCount.minutes', { count: race.duration }),
         delayRemaining: await getTimeRemaining(race.startAt)
       })
     }))

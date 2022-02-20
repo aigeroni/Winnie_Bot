@@ -1,4 +1,4 @@
-import { ChallengeChannel, ChallengeController, ChallengeUser, GuildConfig } from '../../models'
+import { ChallengeChannel, ChallengeTotal, GuildConfig } from '../../models'
 import { ChallengeService } from '../../services'
 import { CommandInteraction } from 'discord.js'
 import { I18n, Logger } from '../../core'
@@ -34,12 +34,6 @@ export const ChallengeJoinCommand: SubCommand = {
     const challengeId = interaction.options.getInteger('id')
     if (challengeId == null) { throw new Error() } // uh.... yikes?
 
-    const challengeController = await ChallengeController.findOne({ where: { id: challengeId }, relations: ['war', 'race', 'chainWar', 'users', 'channels'] })
-    if (challengeController == null) {
-      await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:challenge.join.error.challengeDoesNotExist'))
-      return
-    }
-
     const channelId = interaction.channelId
     let channelAdd = null
     const challengeChannel = await ChallengeChannel.findOne({
@@ -53,11 +47,11 @@ export const ChallengeJoinCommand: SubCommand = {
     }
 
     const userId = interaction.user.id
-    const challengeUser = await ChallengeUser.findOne({
-      where: { userId: userId, challengeController: challengeId }
+    const challengeTotal = await ChallengeTotal.findOne({
+      where: { userId: userId, challenge: challengeId }
     })
-    if (challengeUser != null) {
-      await challengeUser.rejoin(channelId)
+    if (challengeTotal != null) {
+      await challengeTotal.rejoin(channelId)
     } else {
       const userAdd = await ChallengeService.addUserToChallenge(userId, challengeId, channelId)
       if (userAdd.errors.length > 0) {
@@ -65,7 +59,7 @@ export const ChallengeJoinCommand: SubCommand = {
         return
       }
     }
-    const challengeName = challengeController.challenge()?.name
+    const challengeName = challenge.challenge()?.name
     await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:challenge.join.success', {
       challengeName: challengeName ?? '',
       id: challengeId

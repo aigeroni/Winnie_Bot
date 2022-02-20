@@ -1,4 +1,4 @@
-import { Challenge, ChallengeUser, GuildConfig, Race } from '../../models'
+import { Challenge, ChallengeTotal, GuildConfig, Race } from '../../models'
 import { ChallengeService } from '../../services'
 import { CommandInteraction } from 'discord.js'
 import { DateTime, Duration } from 'luxon'

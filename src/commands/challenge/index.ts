@@ -8,7 +8,7 @@ import { ChallengeStatusCommand } from './status'
 import { ChallengeTotalCommand } from './total'
 import { Command } from '../../types'
 import { CommandUtils } from '../utils'
-import { GuildConfig } from '../../models'
+import { GuildConfig, UserConfig } from '../../models'
 import { I18n } from '../../core'
 
 const NAME = 'challenge'
@@ -38,7 +38,7 @@ export const ChallengeCommand: Command = {
       await ChallengeTotalCommand.commandData(locale)
     ]
   }),
-  execute: async (interaction: CommandInteraction, guildConfig: GuildConfig) => {
-    await CommandUtils.executeTopLevelCommand(commands, interaction, guildConfig)
+  execute: async (interaction: CommandInteraction, guildConfig: GuildConfig, userConfig: UserConfig) => {
+    await CommandUtils.executeTopLevelCommand(commands, interaction, guildConfig, userConfig)
   }
 }
