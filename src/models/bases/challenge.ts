@@ -2,6 +2,7 @@ import { ChallengeTypes, StatusTypes } from '../../types'
 import { Column } from 'typeorm'
 import { DateTime } from 'luxon'
 import { DateTimeTransformer } from '../transformers/date-time'
+import { I18n } from '../../core'
 import { MaxLength } from 'class-validator'
 import { Mission } from './mission'
 import { Snowflake } from 'discord.js'
@@ -55,7 +56,10 @@ export abstract class Challenge extends Mission {
     await this.save()
   }
 
-  async challenge_name (locale: string): Promise<string> {
-    return await I18n.translate(locale, `challenges:challenge_types.${this.challengeType}`)
+  async getChallengeType (locale: string): Promise<string> {
+    if (this.challengeType == null) {
+      return await I18n.translate(locale, 'challenges:challengeTypes.chainWar')
+    }
+    return await I18n.translate(locale, `challenges:challengeTypes.${this.challengeType}`)
   }
 }

@@ -3,6 +3,7 @@ import { ChallengeService } from '../../services'
 import { CommandInteraction } from 'discord.js'
 import { DateTime, Duration } from 'luxon'
 import { I18n } from '../../core'
+import { StatusTypes } from '../../types/missions'
 import { SubCommand } from '../../types'
 
 const NAME = 'finish'
@@ -50,18 +51,18 @@ async function canFinishRace (challenge: Challenge, interaction: CommandInteract
     return false
   }
 
-  if (challenge.challenge_type !== 'race') { // check whether challenge is race
+  if (challenge.challengeType !== 'race') { // check whether challenge is race
     await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:challenge.finish.error.challengeIsNotRace'))
     return false
   }
 
-  if (!(challenge.hasStarted)) { // check whether the challenge has started
+  if (challenge.status === StatusTypes.CREATED) { // check whether the challenge has started
     await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:challenge.finish.error.challengeHasNotStarted'))
     return false
   }
 
   const race = challenge as Race
-  if ((race.startAt.plus(Duration.fromObject({ minutes: (race.timeOut + 60) })).diff(DateTime.utc())).milliseconds <= 0) { // check whether race finished more than 12 hours ago
+  if ((race.startAt.plus(Duration.fromObject({ minutes: (race.duration + 60) })).diff(DateTime.utc())).milliseconds <= 0) { // check whether race finished more than 12 hours ago
     await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:challenge.finish.error.challengeTooOld'))
   }
 
@@ -78,15 +79,12 @@ async function canFinishRace (challenge: Challenge, interaction: CommandInteract
  * @param guildConfig the config of the guild where the command was used
  * @returns The ChallengeUser object, undefined if an error occured
  */
-async function getChallengeUser (race: Race, interaction: CommandInteraction, guildConfig: GuildConfig): Promise<ChallengeUser | undefined> {
-  if (race.universal == null) {
-    return // challenge didn't save properly
-  }
-  let challengeUser = await ChallengeUser.findOne({ where: { userId: interaction.user.id, challengeController: race.universal.id } })
-  if (challengeUser != null) { return challengeUser }
+async function getChallengeUser (race: Race, interaction: CommandInteraction, guildConfig: GuildConfig): Promise<ChallengeTotal | undefined> {
+  let challengeTotal = await ChallengeTotal.findOne({ where: { userId: interaction.user.id, challenge: race.id } })
+  if (challengeTotal != null) { return challengeTotal }
 
-  challengeUser = await ChallengeService.addUserToChallenge(interaction.user.id, race.universal.id, interaction.channelId)
-  if (challengeUser.errors.length <= 0) { return challengeUser }
+  challengeTotal = await ChallengeService.addUserToChallenge(interaction.user.id, race.id, interaction.channelId)
+  if (challengeTotal.errors.length <= 0) { return challengeTotal }
 
   await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:challenge.finish.error.couldNotFinishChallenge'))
 }
@@ -98,10 +96,10 @@ async function getChallengeUser (race: Race, interaction: CommandInteraction, gu
  * @param interaction the interaction used to trigger the command
  * @param guildConfig the config of the guild where the command was used
  */
-async function finishRace (challengeUser: ChallengeUser, race: Race, interaction: CommandInteraction, guildConfig: GuildConfig): Promise<void> {
+async function finishRace (challengeUser: ChallengeTotal, race: Race, interaction: CommandInteraction, guildConfig: GuildConfig): Promise<void> {
   challengeUser.total = race.target
   challengeUser.totalType = race.targetType
-  challengeUser.finishedAt = DateTime.utc()
+  challengeUser.completedAt = DateTime.utc()
 
   await challengeUser.save()
   if (challengeUser.errors.length <= 0) {

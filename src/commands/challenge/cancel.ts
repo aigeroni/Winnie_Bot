@@ -1,6 +1,7 @@
+import { Challenge, GuildConfig } from '../../models'
 import { CommandInteraction } from 'discord.js'
-import { GuildConfig } from '../../models'
 import { I18n } from '../../core'
+import { StatusTypes } from '../../types/missions'
 import { SubCommand } from '../../types'
 
 const NAME = 'cancel'
@@ -25,15 +26,14 @@ export const ChallengeCancelCommand: SubCommand = {
     const challengeId = interaction.options.getInteger('id')
     if (challengeId == null) { throw new Error() } // uh... yikes?
 
-    const challengeController = await ChallengeController.findOne({ where: { id: challengeId } })
-    const challenge = challengeController?.challenge()
+    const challenge = await Challenge.findOne({ where: { id: challengeId } })
     if (challenge == null) {
       await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:challenge.cancel.error.challengeDoesNotExist'))
       return
-    } else if (challenge.hasStarted) {
+    } else if (challenge.status !== StatusTypes.CREATED) {
       await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:challenge.cancel.error.challengeHasAlreadyStarted'))
       return
-    } else if (challenge.createdBy !== interaction.user.id) {
+    } else if (challenge.ownerId !== interaction.user.id) {
       await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:challenge.cancel.error.userIsNotOwner'))
       return
     }
