@@ -1,9 +1,7 @@
 import {
   ChainWar,
   Challenge,
-  ChallengeChannel,
-  ChallengeController,
-  ChallengeUser,
+  ChallengeTotal,
   GuildConfig,
   Race,
   War
@@ -11,7 +9,7 @@ import {
 import { ChainWarCreateOptions, RaceCreateOptions, RaceTypes, WarCreateOptions } from '../types'
 import { CommandInteraction, Snowflake } from 'discord.js'
 import { DateTime, Duration } from 'luxon'
-import { DiscordService } from '.'
+// import { DiscordService } from '.'
 import { I18n, Logger } from '../core'
 
 /**
@@ -25,24 +23,20 @@ async function createChainWar (options: ChainWarCreateOptions): Promise<ChainWar
   chain.numberOfWars = options.chainLength
 
   if (options.duration != null) { chain.duration = options.duration }
-  if (options.ownerId != null) { chain.createdBy = options.ownerId }
+  if (options.ownerId != null) { chain.ownerId = options.ownerId }
   if (options.name != null) { chain.name = options.name }
   if (options.split != null) { chain.warMargin = options.split }
 
   chain.startAt = getStartTime(options.delay)
   await chain.save()
 
-  const controller = new ChallengeController()
-  controller.chainWar = chain
-  await controller.save()
-  chain.universal = controller
   Logger.info(options.join)
 
-  if (options.channelId != null) {
-    await addChannelToChallenge(options.channelId, controller.id)
-  }
+  // if (options.channelId != null) {
+  //   await addChannelToChallenge(options.channelId, chain.id)
+  // }
   if (options.join && options.ownerId != null && options.channelId != null) {
-    await addUserToChallenge(options.ownerId, controller.id, options.channelId)
+    await addUserToChallenge(options.ownerId, chain.id, options.channelId)
   }
 
   return await chain.save()
@@ -58,24 +52,19 @@ async function createRace (options: RaceCreateOptions): Promise<Race> {
   const race = new Race()
   race.target = options.target
 
-  if (options.duration != null) { race.timeOut = options.duration }
-  if (options.ownerId != null) { race.createdBy = options.ownerId }
+  if (options.duration != null) { race.duration = options.duration }
+  if (options.ownerId != null) { race.ownerId = options.ownerId }
   if (options.name != null) { race.name = options.name }
   if (options.type != null) { race.targetType = options.type }
 
   race.startAt = getStartTime(options.delay)
   await race.save()
 
-  const controller = new ChallengeController()
-  controller.race = race
-  await controller.save()
-  race.universal = controller
-
-  if (options.channelId != null) {
-    await addChannelToChallenge(options.channelId, controller.id)
-  }
+  // if (options.channelId != null) {
+  //   await addChannelToChallenge(options.channelId, race.id)
+  // }
   if (options.join && options.ownerId != null && options.channelId != null) {
-    await addUserToChallenge(options.ownerId, controller.id, options.channelId)
+    await addUserToChallenge(options.ownerId, race.id, options.channelId)
   }
 
   return await race.save()
@@ -90,22 +79,17 @@ async function createRace (options: RaceCreateOptions): Promise<Race> {
 async function createWar (options: WarCreateOptions): Promise<War> {
   const war = new War()
   if (options.duration != null) { war.duration = options.duration }
-  if (options.ownerId != null) { war.createdBy = options.ownerId }
+  if (options.ownerId != null) { war.ownerId = options.ownerId }
   if (options.name != null) { war.name = options.name }
 
   war.startAt = getStartTime(options.delay)
   await war.save()
 
-  const controller = new ChallengeController()
-  controller.war = war
-  await controller.save()
-  war.universal = controller
-
-  if (options.channelId != null) {
-    await addChannelToChallenge(options.channelId, controller.id)
-  }
+  // if (options.channelId != null) {
+  //   await addChannelToChallenge(options.channelId, war.id)
+  // }
   if (options.join && options.ownerId != null && options.channelId != null) {
-    await addUserToChallenge(options.ownerId, controller.id, options.channelId)
+    await addUserToChallenge(options.ownerId, war.id, options.channelId)
   }
 
   return await war.save()
@@ -118,30 +102,30 @@ async function createWar (options: WarCreateOptions): Promise<War> {
   * @param controllerId The ID of the challenge to link in the controller table
   * @returns a challenge/user link
   */
-async function addUserToChallenge (userId: Snowflake, controllerId: number, channelId: Snowflake): Promise<ChallengeUser> {
-  const challengeUser = new ChallengeUser()
-  challengeUser.challengeController = controllerId
-  challengeUser.userId = userId
-  challengeUser.channelId = channelId
-  challengeUser.totalType = 'words' as RaceTypes
+async function addUserToChallenge (userId: Snowflake, challengeId: number, channelId: Snowflake): Promise<ChallengeTotal> {
+  const challengeTotal = new ChallengeTotal()
+  challengeTotal.challenge = challengeId
+  challengeTotal.userId = userId
+  challengeTotal.channelId = channelId
+  challengeTotal.totalType = 'words' as RaceTypes
 
-  return await challengeUser.save()
+  return await challengeTotal.save()
 }
 
-/**
-  * Creates a database link between a channel and a challenge.
-  *
-  * @param channelId The ID of the channel to link
-  * @param controllerId The ID of the challenge to link in the controller table
-  * @returns a challenge/channel link
-  */
-async function addChannelToChallenge (channelId: Snowflake, controllerId: number): Promise<ChallengeChannel> {
-  const challengeChannel = new ChallengeChannel()
-  challengeChannel.challengeController = controllerId
-  challengeChannel.channelId = channelId
+// /**
+//   * Creates a database link between a channel and a challenge.
+//   *
+//   * @param channelId The ID of the channel to link
+//   * @param controllerId The ID of the challenge to link in the controller table
+//   * @returns a challenge/channel link
+//   */
+// async function addChannelToChallenge (channelId: Snowflake, controllerId: number): Promise<ChallengeChannel> {
+//   const challengeChannel = new ChallengeChannel()
+//   challengeChannel.challengeController = controllerId
+//   challengeChannel.channelId = channelId
 
-  return await challengeChannel.save()
-}
+//   return await challengeChannel.save()
+// }
 
 /**
   * Gets the active challenge for the given user
@@ -150,33 +134,33 @@ async function addChannelToChallenge (channelId: Snowflake, controllerId: number
   * @returns The user's active challenge, null if the don't have one
   */
 async function activeChallengeForUser (userId: Snowflake): Promise<Challenge | undefined> {
-  const userJoinedChallenges = await ChallengeController
-    .createQueryBuilder('challenges_controller')
-    .leftJoin('challenges_controller.users', 'challenge_users')
-    .where('challenge_users.user_id = :id', { id: userId })
-    .getMany()
+  // const userJoinedChallenges = await ChallengeController
+  //   .createQueryBuilder('challenges_controller')
+  //   .leftJoin('challenges_controller.users', 'challenge_users')
+  //   .where('challenge_users.user_id = :id', { id: userId })
+  //   .getMany()
 
-  Logger.info(JSON.stringify(userJoinedChallenges))
+  // Logger.info(JSON.stringify(userJoinedChallenges))
 
   /*
   if we can get a war/race/chain ID out of the query builder, then we can go and look those up and reduce from there
   */
 
-  const activeChallenges: Challenge[] = userJoinedChallenges.reduce(
-    (active: Challenge[], controller: ChallengeController): Challenge[] => {
-      const challenge = controller.challenge()
-      if (challenge == null) { return active }
-      if (!challenge.isActive()) { return active }
+  // const activeChallenges: Challenge[] = userJoinedChallenges.reduce(
+  //   (active: Challenge[], controller: ChallengeController): Challenge[] => {
+  //     const challenge = controller.challenge()
+  //     if (challenge == null) { return active }
+  //     if (!challenge.isActive()) { return active }
 
-      return [...active, challenge]
-    }, []
-  )
+  //     return [...active, challenge]
+  //   }, []
+  // )
 
-  if (activeChallenges.length === 0) {
-    return
-  }
+  // if (activeChallenges.length === 0) {
+  //   return
+  // }
 
-  return activeChallenges[0]
+  // return activeChallenges[0]
 }
 
 /**
@@ -186,15 +170,15 @@ async function activeChallengeForUser (userId: Snowflake): Promise<Challenge | u
  * @param messageKey the localisation key of the message to send
  */
 async function sendChallengeMessage (challengeId: number, getMessage: (guildConfig: GuildConfig) => Promise<string>): Promise<void> {
-  const challengeController = await ChallengeController.findOne({ where: { id: challengeId }, relations: ['war', 'race', 'chainWar', 'users', 'channels'] })
-  if (challengeController == null) {
+  const challenge = await Challenge.findOne({ where: { id: challengeId }, relations: ['war', 'race', 'chainWar', 'users', 'channels'] })
+  if (challenge == null) {
     Logger.error(`Unable to send messages for challenge with id: ${challengeId}. The challenge could not be found.`)
-    return
+    // return
   }
 
-  challengeController.channels.forEach((channel) => {
-    DiscordService.sendMessageToChannel(channel.channelId, getMessage).catch(() => {})
-  })
+  // challenge.channels.forEach((channel) => {
+  //   DiscordService.sendMessageToChannel(channel.channelId, getMessage).catch(() => {})
+  // })
 }
 
 async function getChallengeFromCommand (interaction: CommandInteraction, guildConfig: GuildConfig): Promise<Challenge | undefined> {
@@ -210,7 +194,7 @@ async function getChallengeFromCommand (interaction: CommandInteraction, guildCo
     }
   } else {
     Logger.info('entered else block')
-    challenge = (await ChallengeController.findOne({ where: { id: challengeId }, relations: ['war', 'race', 'chainWar', 'users', 'channels'] }))?.challenge()
+    challenge = (await Challenge.findOne({ where: { id: challengeId }, relations: ['war', 'race', 'chainWar', 'users', 'channels'] }))
     Logger.info(JSON.stringify(challenge))
   }
 
@@ -230,7 +214,7 @@ function getStartTime (delay: number): DateTime {
 
 export const ChallengeService = {
   activeChallengeForUser,
-  addChannelToChallenge,
+  // addChannelToChallenge,
   addUserToChallenge,
   createChainWar,
   createRace,

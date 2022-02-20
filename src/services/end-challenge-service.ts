@@ -1,7 +1,8 @@
 import NanoTimer = require('nanotimer')
-import { ChainWar, GuildConfig, Race, War } from '../models'
+import { ChainWar, Challenge, GuildConfig, Race, War } from '../models'
 import { ChallengeService } from '.'
 import { I18n } from '../core'
+import { StatusTypes } from '../types'
 
 export async function handleChallengeOnStart (challengeId: number, duration: number): Promise<void> {
   const durationString = duration.toString() + 'm'
@@ -10,25 +11,25 @@ export async function handleChallengeOnStart (challengeId: number, duration: num
 }
 
 async function endChallenge (challengeId: number): Promise<void> {
-  const challenge = (await ChallengeController.findOne({ where: { id: challengeId }, relations: ['war', 'race', 'chainWar', 'users', 'channels'] }))?.challenge()
+  const challenge = (await Challenge.findOne({ where: { id: challengeId }, relations: ['war', 'race', 'chainWar', 'users', 'channels'] }))
   if (challenge == null) { throw new Error(`Could not find challenge with id: ${challengeId}`) }
-  if (challenge.isCompleted() || challenge.isCanceled()) { throw new Error(`Challenge with id ${challenge.id} has already been ended, it cannot be ended again.`) }
+  if (challenge.status === StatusTypes.COMPLETED || challenge.status === StatusTypes.CANCELED) { throw new Error(`Challenge with id ${challenge.id} has already been ended, it cannot be ended again.`) }
 
   await challenge.complete()
 
   if (challenge.errors.length > 0) {
     throw new Error(`An error occured ending challenge with id: ${challenge.id}`)
   } else {
-    switch (challenge.challenge_type) {
+    switch (challenge.challengeType) {
       case 'race':
         await sendRaceMessages(challengeId, challenge as Race)
         break
       case 'war':
         await sendWarMessages(challengeId, challenge as War)
         break
-      case 'chain_war':
-        await sendWarMessages(challengeId, challenge as ChainWar)
-        break
+      // case 'chain_war':
+      //   await sendWarMessages(challengeId, challenge as ChainWar)
+      //   break
     }
   }
 }
