@@ -30,10 +30,10 @@ export const ChallengeFinishCommand: SubCommand = {
 
     if (!(await canFinishRace(challenge, interaction, guildConfig))) { return }
 
-    const challengeUser = await getChallengeUser(challenge as Race, interaction, guildConfig)
-    if (challengeUser == null) { return }
+    const challengeTotal = await getChallengeTotal(challenge as Race, interaction, guildConfig)
+    if (challengeTotal == null) { return }
 
-    await finishRace(challengeUser, challenge as Race, interaction, guildConfig)
+    await finishRace(challengeTotal, challenge as Race, interaction, guildConfig)
   }
 }
 
@@ -70,16 +70,16 @@ async function canFinishRace (challenge: Challenge, interaction: CommandInteract
 }
 
 /**
- * Returns the ChallengeUser for the given user and challenge.
+ * Returns the ChallengeTotal for the given user and challenge.
  *
- * If there is not a ChallengeUser record yet, create one first.
+ * If there is not a ChallengeTotal record yet, create one first.
  *
  * @param war The war which we are gettign the user for
  * @param interaction the interaction used to trigger the command
  * @param guildConfig the config of the guild where the command was used
- * @returns The ChallengeUser object, undefined if an error occured
+ * @returns The ChallengeTotal object, undefined if an error occured
  */
-async function getChallengeUser (race: Race, interaction: CommandInteraction, guildConfig: GuildConfig): Promise<ChallengeTotal | undefined> {
+async function getChallengeTotal (race: Race, interaction: CommandInteraction, guildConfig: GuildConfig): Promise<ChallengeTotal | undefined> {
   let challengeTotal = await ChallengeTotal.findOne({ where: { userId: interaction.user.id, challenge: race.id } })
   if (challengeTotal != null) { return challengeTotal }
 
@@ -92,17 +92,17 @@ async function getChallengeUser (race: Race, interaction: CommandInteraction, gu
 /**
  * Attempts to finish the challenge
  *
- * @param challengeUser The ChallengeUser updating their totals
+ * @param challengeTotal The ChallengeTotal updating their totals
  * @param interaction the interaction used to trigger the command
  * @param guildConfig the config of the guild where the command was used
  */
-async function finishRace (challengeUser: ChallengeTotal, race: Race, interaction: CommandInteraction, guildConfig: GuildConfig): Promise<void> {
-  challengeUser.total = race.target
-  challengeUser.totalType = race.targetType
-  challengeUser.completedAt = DateTime.utc()
+async function finishRace (challengeTotal: ChallengeTotal, race: Race, interaction: CommandInteraction, guildConfig: GuildConfig): Promise<void> {
+  challengeTotal.total = race.target
+  challengeTotal.totalType = race.targetType
+  challengeTotal.completedAt = DateTime.utc()
 
-  await challengeUser.save()
-  if (challengeUser.errors.length <= 0) {
+  await challengeTotal.save()
+  if (challengeTotal.errors.length <= 0) {
     await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:challenge.finish.success'))
     return
   }

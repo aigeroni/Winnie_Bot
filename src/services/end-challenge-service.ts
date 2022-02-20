@@ -1,4 +1,4 @@
-import NanoTimer = require('nanotimer')
+import NanoTimer from 'nanotimer'
 import { ChainWar, Challenge, GuildConfig, Race, War } from '../models'
 import { ChallengeService } from '.'
 import { I18n } from '../core'
