@@ -14,7 +14,7 @@ export const ReadyEvent: Event = {
   handle: async () => {
     try {
       await createConnection()
-    } catch (error) {
+    } catch (error: any) {
       const errorMessage: string = error.toString()
       Logger.error(`An error occured while connecting to the database: ${errorMessage}`)
       process.exit()

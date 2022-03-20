@@ -1,16 +1,6 @@
 import { IANAZone } from 'luxon'
 import { Snowflake } from 'discord.js'
-
-/**
- * All the types of goals settable.
- */
-export enum GoalTypes {
-  ITEMS = 'items',
-  LINES = 'lines',
-  MINUTES = 'minutes',
-  PAGES = 'pages',
-  WORDS = 'words',
-}
+import { TargetTypes } from '.'
 
 /**
  * All possible durations of goals.
@@ -29,7 +19,7 @@ export interface GoalCreateOptions {
   guildId?: Snowflake
   ownerId?: Snowflake
   target: number
-  type?: GoalTypes
+  type?: TargetTypes
   duration?: GoalDurations
   channelId?: Snowflake
   timezone: IANAZone

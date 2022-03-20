@@ -2,8 +2,8 @@ import { Challenge, ChallengeTotal, GuildConfig, War } from '../../models'
 import { ChallengeService } from '../../services'
 import { CommandInteraction } from 'discord.js'
 import { I18n } from '../../core'
-import { RaceTypes, SubCommand } from '../../types'
 import { StatusTypes } from '../../types/missions'
+import { SubCommand, TargetTypes } from '../../types'
 
 const NAME = 'total'
 
@@ -24,7 +24,7 @@ export const ChallengeTotalCommand: SubCommand = {
         name: 'type',
         description: await I18n.translate(locale, 'commands:challenge.total.args.type'),
         type: 'STRING',
-        choices: Object.values(RaceTypes).map((type) => ({
+        choices: Object.values(TargetTypes).map((type) => ({
           name: type,
           value: type
         })),
@@ -97,7 +97,7 @@ async function canUpdateTotals (challenge: Challenge, interaction: CommandIntera
  * @returns The challengeTotal object, undefined if an error occured
  */
 async function getchallengeTotal (war: War, interaction: CommandInteraction, guildConfig: GuildConfig): Promise<ChallengeTotal | undefined> {
-  const challengeTotal = await ChallengeTotal.findOne({ where: { userId: interaction.user.id, challengeController: war.id } })
+  const challengeTotal = await ChallengeTotal.findOne({ where: { userId: interaction.user.id, challenge: war.id } })
   if (challengeTotal != null) { return challengeTotal }
 
   const newChallengeTotal = await ChallengeService.addUserToChallenge(interaction.user.id, war.id, interaction.channelId)
@@ -123,7 +123,7 @@ async function updateTotals (challengeTotal: ChallengeTotal, interaction: Comman
   }
 
   challengeTotal.total = total
-  challengeTotal.totalType = type as RaceTypes
+  challengeTotal.totalType = type as TargetTypes
 
   await challengeTotal.save()
   if (challengeTotal.errors.length <= 0) {

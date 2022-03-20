@@ -6,7 +6,7 @@ import {
   Race,
   War
 } from '../models'
-import { ChainWarCreateOptions, RaceCreateOptions, RaceTypes, WarCreateOptions } from '../types'
+import { ChainWarCreateOptions, RaceCreateOptions, TargetTypes, WarCreateOptions } from '../types'
 import { CommandInteraction, Snowflake } from 'discord.js'
 import { DateTime, Duration } from 'luxon'
 // import { DiscordService } from '.'
@@ -99,7 +99,7 @@ async function createWar (options: WarCreateOptions): Promise<War> {
   * Creates a database link between a user and a challenge.
   *
   * @param userId The ID of the user to link
-  * @param controllerId The ID of the challenge to link in the controller table
+  * @param challengeId The ID of the challenge to link
   * @returns a challenge/user link
   */
 async function addUserToChallenge (userId: Snowflake, challengeId: number, channelId: Snowflake): Promise<ChallengeTotal> {
@@ -107,25 +107,23 @@ async function addUserToChallenge (userId: Snowflake, challengeId: number, chann
   challengeTotal.challenge = challengeId
   challengeTotal.userId = userId
   challengeTotal.channelId = channelId
-  challengeTotal.totalType = 'words' as RaceTypes
+  challengeTotal.totalType = 'words' as TargetTypes
 
   return await challengeTotal.save()
 }
 
-// /**
-//   * Creates a database link between a channel and a challenge.
-//   *
-//   * @param channelId The ID of the channel to link
-//   * @param controllerId The ID of the challenge to link in the controller table
-//   * @returns a challenge/channel link
-//   */
-// async function addChannelToChallenge (channelId: Snowflake, controllerId: number): Promise<ChallengeChannel> {
-//   const challengeChannel = new ChallengeChannel()
-//   challengeChannel.challengeController = controllerId
-//   challengeChannel.channelId = channelId
+/**
+  * Adds a channel to the list of channels that a challenge should post to.
+  *
+  * @param channelId The ID of the channel to link
+  * @param challengeId The ID of the challenge to link in the controller table
+  * @returns a challenge/channel link
+  */
+async function addChannelToChallenge (channelId: Snowflake, challenge: Challenge): Promise<Challenge> {
+  challenge.update(groupId, { users: [...group.users, { id: userId }] })
 
-//   return await challengeChannel.save()
-// }
+  return await challenge.save()
+}
 
 /**
   * Gets the active challenge for the given user
@@ -134,35 +132,18 @@ async function addUserToChallenge (userId: Snowflake, challengeId: number, chann
   * @returns The user's active challenge, null if the don't have one
   */
 async function activeChallengeForUser (userId: Snowflake): Promise<Challenge | undefined> {
-  // const userJoinedChallenges = await ChallengeController
-  //   .createQueryBuilder('challenges_controller')
-  //   .leftJoin('challenges_controller.users', 'challenge_users')
-  //   .where('challenge_users.user_id = :id', { id: userId })
-  //   .getMany()
+  const userJoinedTotals = await ChallengeTotal.find({ where: { userId: userId, completedAt: null, canceledAt: null } })
 
-  // Logger.info(JSON.stringify(userJoinedChallenges))
+  const activeChallenges = userJoinedTotals.map(async total => (
+    await Challenge.findOne({ where: { challengeId: total.challenge, completedAt: null, canceledAt: null } })
+  ))
 
-  /*
-  if we can get a war/race/chain ID out of the query builder, then we can go and look those up and reduce from there
-  */
+  if (activeChallenges.length === 0) {
+    return
+  }
 
-  // const activeChallenges: Challenge[] = userJoinedChallenges.reduce(
-  //   (active: Challenge[], controller: ChallengeController): Challenge[] => {
-  //     const challenge = controller.challenge()
-  //     if (challenge == null) { return active }
-  //     if (!challenge.isActive()) { return active }
-
-  //     return [...active, challenge]
-  //   }, []
-  // )
-
-  // if (activeChallenges.length === 0) {
-  //   return
-  // }
-
-  // return activeChallenges[0]
+  return activeChallenges[0]
 }
-
 /**
  * Sends a message to all the channels which are joined to a given challenge.
  *
@@ -214,7 +195,7 @@ function getStartTime (delay: number): DateTime {
 
 export const ChallengeService = {
   activeChallengeForUser,
-  // addChannelToChallenge,
+  addChannelToChallenge,
   addUserToChallenge,
   createChainWar,
   createRace,

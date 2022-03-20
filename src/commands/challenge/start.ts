@@ -1,4 +1,4 @@
-import { ChainWarCreateOptions, RaceCreateOptions, RaceTypes, SubCommand, WarCreateOptions } from '../../types'
+import { ChainWarCreateOptions, RaceCreateOptions, SubCommand, TargetTypes, WarCreateOptions } from '../../types'
 import { ChallengeService, StartChallengeService } from '../../services'
 import { CommandInteraction } from 'discord.js'
 import { GuildConfig } from '../../models'
@@ -95,7 +95,7 @@ export const ChallengeStartCommand: SubCommand = {
             name: 'type',
             description: await I18n.translate(locale, 'commands:challenge.start.race.args.type'),
             type: 'STRING',
-            choices: Object.values(RaceTypes).map((type) => ({
+            choices: Object.values(TargetTypes).map((type) => ({
               name: type,
               value: type
             })),
@@ -270,7 +270,7 @@ function getRaceOptions (interaction: CommandInteraction): RaceCreateOptions {
     ownerId: interaction.user?.id,
     name: interaction.options.getString('name') ?? `${interaction.user.username}'s race`,
     target: interaction.options.getInteger('target') ?? 0,
-    type: interaction.options.getString('type') as RaceTypes
+    type: interaction.options.getString('type') as TargetTypes
   }
 }
 

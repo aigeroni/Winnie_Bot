@@ -2,7 +2,7 @@ import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm'
 import { DateTime, Duration, Interval } from 'luxon'
 import { DateTimeTransformer } from './transformers/date-time'
 import { DiscordService } from '../services'
-import { GoalDurations, GoalTypes } from '../types'
+import { GoalDurations, TargetTypes } from '../types'
 import { Guild, Permissions, Snowflake } from 'discord.js'
 import { I18n, WinnieClient } from '../core'
 import { IsChannelWithPermission } from './validators/channel-with-permission'
@@ -30,9 +30,9 @@ export class Goal extends Mission {
    *
    * Can be one of pages, words, minutes, lines, or items
    */
-  @Column({ name: 'goal_type', type: 'enum', enum: GoalTypes })
+  @Column({ name: 'goal_type', type: 'enum', enum: TargetTypes })
   @IsNotEmpty()
-  goalType: GoalTypes = GoalTypes.WORDS
+  goalType: TargetTypes = TargetTypes.WORDS
 
   /**
    * The progress towards completing the goal.

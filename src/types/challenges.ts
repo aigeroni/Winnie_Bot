@@ -1,15 +1,5 @@
 import { Snowflake } from 'discord.js'
-
-/**
- * All the types of race settable.
- */
-export enum RaceTypes {
-  ITEMS = 'items',
-  LINES = 'lines',
-  MINUTES = 'minutes',
-  PAGES = 'pages',
-  WORDS = 'words',
-}
+import { TargetTypes } from '.'
 
 /**
   * The options for creating a chain war.
@@ -36,7 +26,7 @@ export interface RaceCreateOptions {
   ownerId?: Snowflake
   name: string
   target: number
-  type: RaceTypes
+  type: TargetTypes
 }
 
 /**

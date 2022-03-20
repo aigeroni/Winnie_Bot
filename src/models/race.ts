@@ -1,7 +1,7 @@
 import { Challenge } from './bases/challenge'
 import { Column, Entity } from 'typeorm'
 import { IsNotEmpty, IsPositive } from 'class-validator'
-import { RaceTypes } from '../types'
+import { TargetTypes } from '../types'
 
 @Entity({ name: 'challenges' })
 export class Race extends Challenge {
@@ -24,9 +24,9 @@ export class Race extends Challenge {
    *
    * Can be one of pages, words, minutes, lines, or items
    */
-  @Column({ name: 'target_type', type: 'enum', enum: RaceTypes })
+  @Column({ name: 'target_type', type: 'enum', enum: TargetTypes })
   @IsNotEmpty()
-  targetType: RaceTypes = RaceTypes.WORDS
+  targetType: TargetTypes = TargetTypes.WORDS
 
   /**
    * The amount of time, in minutes, before the race should time out if not completed.

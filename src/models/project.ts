@@ -1,11 +1,11 @@
 import { Column, Entity } from 'typeorm'
 import { DateTime } from 'luxon'
 import { DateTimeTransformer } from './transformers/date-time'
-import { GoalTypes } from '../types'
 import { IsChannelWithPermission } from './validators/channel-with-permission'
 import { IsNotEmpty, IsPositive, MaxLength, Min, ValidateIf } from 'class-validator'
 import { Mission } from './bases/mission'
 import { Permissions, Snowflake } from 'discord.js'
+import { TargetTypes } from '../types'
 import { WinnieClient } from '../core'
 
 @Entity({ name: 'projects' })
@@ -34,9 +34,9 @@ export class Project extends Mission {
    *
    * Can be one of pages, words, minutes, lines, or items
    */
-  @Column({ name: 'goal_type', type: 'enum', enum: GoalTypes })
+  @Column({ name: 'goal_type', type: 'enum', enum: TargetTypes })
   @IsNotEmpty()
-  goalType: GoalTypes = GoalTypes.WORDS
+  goalType: TargetTypes = TargetTypes.WORDS
 
   /**
    * The progress towards completing the project.

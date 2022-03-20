@@ -1,7 +1,7 @@
-import { ChallengeChannel, ChallengeTotal, GuildConfig } from '../../models'
 import { ChallengeService } from '../../services'
+import { ChallengeTotal, GuildConfig } from '../../models'
 import { CommandInteraction } from 'discord.js'
-import { I18n, Logger } from '../../core'
+import { I18n } from '../../core'
 import { SubCommand } from '../../types'
 
 const NAME = 'join'
@@ -23,35 +23,32 @@ export const ChallengeJoinCommand: SubCommand = {
   }),
 
   execute: async (interaction: CommandInteraction, guildConfig: GuildConfig) => {
-    Logger.info('active challenge pull')
     const activeChallenge = await ChallengeService.activeChallengeForUser(interaction.user.id)
     if (activeChallenge != null) {
       await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:challenge.join.error.challengeAlreadyJoined'))
       return
     }
 
-    Logger.info('challenge pull')
-    const challengeId = interaction.options.getInteger('id')
-    if (challengeId == null) { throw new Error() } // uh.... yikes?
-
-    const channelId = interaction.channelId
-    let channelAdd = null
-    const challengeChannel = await ChallengeChannel.findOne({
-      where: { channelId: channelId, challengeController: challengeId }
-    })
-    if (challengeChannel == null) {
-      channelAdd = await ChallengeService.addChannelToChallenge(interaction.channelId, challengeId)
-      if (channelAdd.errors.length > 0) {
-        await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:challenge.join.error.couldNotJoinChallenge'))
-      }
+    const challenge = await ChallengeService.getChallengeFromCommand(interaction, guildConfig)
+    if (challenge == null) {
+      await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:challenge.join.error.challengeDoesNotExist'))
+      return
     }
+
+    const channelAdd = await ChallengeService.addChannelToChallenge(interaction.channelId, challenge)
+    if (channelAdd.errors.length > 0) {
+      await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:challenge.join.error.couldNotJoinChallenge'))
+    }
+
+    if (interaction.guildId == null) { return }
+    const guildId = interaction.guildId
 
     const userId = interaction.user.id
     const challengeTotal = await ChallengeTotal.findOne({
       where: { userId: userId, challenge: challengeId }
     })
     if (challengeTotal != null) {
-      await challengeTotal.rejoin(channelId)
+      await challengeTotal.rejoin(channelId, guildId)
     } else {
       const userAdd = await ChallengeService.addUserToChallenge(userId, challengeId, channelId)
       if (userAdd.errors.length > 0) {
@@ -59,7 +56,7 @@ export const ChallengeJoinCommand: SubCommand = {
         return
       }
     }
-    const challengeName = challenge.challenge()?.name
+    const challengeName = challenge.name
     await interaction.reply(await I18n.translate(guildConfig.locale, 'commands:challenge.join.success', {
       challengeName: challengeName ?? '',
       id: challengeId

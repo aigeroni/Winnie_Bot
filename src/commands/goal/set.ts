@@ -1,5 +1,5 @@
 import { CommandInteraction } from 'discord.js'
-import { GoalCreateOptions, GoalDurations, GoalTypes, SubCommand } from '../../types'
+import { GoalCreateOptions, GoalDurations, SubCommand, TargetTypes } from '../../types'
 import { GoalService } from '../../services'
 import { GuildConfig, UserConfig } from '../../models'
 import { I18n } from '../../core'
@@ -24,7 +24,7 @@ export const GoalSetCommand: SubCommand = {
         name: 'type',
         description: await I18n.translate(locale, 'commands:goal.set.args.type'),
         type: 'STRING',
-        choices: Object.values(GoalTypes).map((type) => ({
+        choices: Object.values(TargetTypes).map((type) => ({
           name: type,
           value: type
         })),
@@ -116,7 +116,7 @@ function getGoalOptions (interaction: CommandInteraction, timezone: IANAZone): G
     duration: interaction.options.getString('duration') as GoalDurations,
     ownerId: interaction.user?.id,
     target: interaction.options.getInteger('target') ?? 0,
-    type: interaction.options.getString('type') as GoalTypes,
+    type: interaction.options.getString('type') as TargetTypes,
     progress: 0,
     timezone: timezone
   }

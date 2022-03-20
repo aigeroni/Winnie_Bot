@@ -1,6 +1,6 @@
 import { CommandInteraction } from 'discord.js'
 import { Goal, GuildConfig, UserConfig } from '../../models'
-import { GoalDurations, GoalTypes, SubCommand } from '../../types'
+import { GoalDurations, SubCommand, TargetTypes } from '../../types'
 import { GoalService } from '../../services'
 import { I18n } from '../../core'
 import { IANAZone } from 'luxon'
@@ -24,7 +24,7 @@ export const GoalResetCommand: SubCommand = {
         name: 'type',
         description: await I18n.translate(locale, 'commands:goal.reset.args.type'),
         type: 'STRING',
-        choices: Object.values(GoalTypes).map((type) => ({
+        choices: Object.values(TargetTypes).map((type) => ({
           name: type,
           value: type
         })),
@@ -53,7 +53,7 @@ export const GoalResetCommand: SubCommand = {
     const goalTimezone = await userTimezone(interaction, guildConfig, userConfig)
     if (goalTimezone == null) { return }
 
-    const newGoalType = interaction.options.getString('type') as GoalTypes ?? GoalTypes.WORDS
+    const newGoalType = interaction.options.getString('type') as TargetTypes ?? TargetTypes.WORDS
     let goalProgress = 0
     if (newGoalType === oldGoal.goalType) {
       goalProgress = oldGoal.progress
@@ -103,7 +103,7 @@ async function createNewGoal (interaction: CommandInteraction, oldGoal: Goal, pr
     guildId: interaction.guild?.id,
     ownerId: oldGoal.ownerId,
     target: interaction.options.getInteger('target') ?? oldGoal.target,
-    type: interaction.options.getString('type') as GoalTypes ?? oldGoal.goalType,
+    type: interaction.options.getString('type') as TargetTypes ?? oldGoal.goalType,
     progress: progress,
     duration: interaction.options.getString('duration') as GoalDurations ?? oldGoal.goalDuration,
     channelId: interaction.channel?.id ?? oldGoal.channelId,
