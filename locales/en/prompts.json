@@ -4,8 +4,16 @@
       "Test Prompt 2 - Adventure"
     ],
     "character": [
-      "Test Prompt 1 - Character",
-      "Test Prompt 2 - Character"
+      "Does your character have any siblings?",
+      "Does your character have hair, and if so, what colour is it?",
+      "How does your character prefer to communicate?",
+      "How many limbs does your character have?",
+      "How old is your character?",
+      "How tall is your character?",
+      "What colour are your character's eyes?",
+      "What colour is your character's skin or other outer protective layer?",
+      "What's your character's favourite colour?",
+      "What's your character's favourite food?"
     ],
     "children": [
       "Test Prompt 1 - Children",
@@ -118,7 +126,8 @@
       "Test Prompt 2 - Thriller"
     ],
     "worldbuilding": [
-      "Test Prompt 1 - Worldbuilding",
-      "Test Prompt 2 - Worldbuilding"
+      "How do characters find food in your world?",
+      "What are the common methods of travel in your world?",
+      "What's the primary mode of communication in your world?"
     ]
 }
