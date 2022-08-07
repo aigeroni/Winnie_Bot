@@ -8,35 +8,35 @@ const NAME = 'locale'
 
 export const ServerLocaleCommand: SubCommand = {
   name: NAME,
-  commandData: async (locale: string) => ({
+  commandData: async (currentLocale: string) => ({
     name: NAME,
-    description: await I18n.translate(locale, 'commands:server.locale.description'),
+    description: await I18n.translate(currentLocale, 'commands:server.locale.description'),
     type: 'SUB_COMMAND_GROUP',
     options: [
       {
         name: 'get',
-        description: await I18n.translate(locale, 'commands:server.locale.get.description'),
+        description: await I18n.translate(currentLocale, 'commands:server.locale.get.description'),
         type: 'SUB_COMMAND'
       },
       {
         name: 'reset',
-        description: await I18n.translate(locale, 'commands:server.locale.reset.description'),
+        description: await I18n.translate(currentLocale, 'commands:server.locale.reset.description'),
         type: 'SUB_COMMAND'
       },
       {
         name: 'set',
-        description: await I18n.translate(locale, 'commands:server.locale.set.description'),
+        description: await I18n.translate(currentLocale, 'commands:server.locale.set.description'),
         type: 'SUB_COMMAND',
         options: [
           {
             name: 'locale',
-            description: await I18n.translate(locale, 'commands:server.locale.set.args.locale'),
+            description: await I18n.translate(currentLocale, 'commands:server.locale.set.args.locale'),
             type: 'STRING',
             required: true,
-            choices: await Promise.all(I18n.SUPPORTED_LANGUAGES.map(async (locale) => {
+            choices: await Promise.all(I18n.SUPPORTED_LANGUAGES.map(async (localeCode) => {
               return {
-                name: await I18n.translate(locale, 'winnie:locale.name'),
-                value: locale
+                name: await I18n.translate(currentLocale, `locale:${localeCode}`),
+                value: localeCode
               }
             }))
           }
