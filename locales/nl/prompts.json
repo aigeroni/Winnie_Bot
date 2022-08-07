@@ -1,59 +1,133 @@
 {
-    "adventure": [
-
-    ],
-    "character": [
-
-    ],
-    "children": [
-
-    ],
-    "comedy": [
-
-    ],
-    "contemporary": [
-
-    ],
-    "fantasy": [
-
-    ],
-    "folk": [
-    
-    ],
-    "historical": [
-    
-    ],
-    "horror": [
-
-    ],
-    "literary": [
-
-    ],
-    "lgbtq": [
-
-    ],
-    "mystery": [
-
-    ],
-    "plot": [
-
-    ],
-    "romance": [
-
-    ],
-    "scifi": [
-
-    ],
-    "story": [
-    
-    ],
-    "supernatural": [
-    
-    ],
-    "thriller": [
-
-    ],
-    "world": [
-
-    ]
+  "adventure": [
+    "Test Prompt 1 - Adventure",
+    "Test Prompt 2 - Adventure"
+  ],
+  "character": [
+    "Does your character have any siblings?",
+    "Does your character have hair, and if so, what colour is it?",
+    "How does your character prefer to communicate?",
+    "How many limbs does your character have?",
+    "How old is your character?",
+    "How tall is your character?",
+    "What colour are your character's eyes?",
+    "What colour is your character's skin or other outer protective layer?",
+    "What's your character's favourite colour?",
+    "What's your character's favourite food?"
+  ],
+  "children": [
+    "Test Prompt 1 - Children",
+    "Test Prompt 2 - Children"
+  ],
+  "comedy": [
+    "Test Prompt 1 - Comedy",
+    "Test Prompt 2 - Comedy"
+  ],
+  "contemporary": [
+    "Test Prompt 1 - Contemporary",
+    "Test Prompt 2 - Contemporary"
+  ],
+  "fantasy": [
+    "Test Prompt 1 - Fantasy",
+    "Test Prompt 2 - Fantasy"
+  ],
+  "folk": [
+    "Test Prompt 1 - Folk",
+    "Test Prompt 2 - Folk"
+  ],
+  "historical": [
+    "Test Prompt 1 - Historical",
+    "Test Prompt 2 - Historical"
+  ],
+  "horror": [
+    "Test Prompt 1 - Horror",
+    "Test Prompt 2 - Horror"
+  ],
+  "literary": [
+    "Test Prompt 1 - Literary Fiction",
+    "Test Prompt 2 - Literary Fiction"
+  ],
+  "lgbtq": [
+    "Test Prompt 1 - LGBTQ+",
+    "Test Prompt 2 - LGBTQ+"
+  ],
+  "mystery": [
+    "Test Prompt 1 - Mystery",
+    "Test Prompt 2 - Mystery"
+  ],
+  "plot": [
+    "Test Prompt 1 - Plot Points",
+    "Test Prompt 2 - Plot Points"
+  ],
+  "romance": [
+    "Test Prompt 1 - Romance",
+    "Test Prompt 2 - Romance"
+  ],
+  "scifi": [
+    "Test Prompt 1 - Science Fiction",
+    "Test Prompt 2 - Science Fiction"
+  ],
+  "story": [
+    "A character breaks a rule.",
+    "A character changes careers.",
+    "A character forgets something important.",
+    "A character gets into a fight.",
+    "A character goes for a walk and discovers something strange.",
+    "A character hallucinates.",
+    "A character is angry at someone they feel is more powerful than them.",
+    "A character is late.",
+    "A character is scared that someone will find out about something they did.",
+    "A character leaves home for the last time.",
+    "A character leaves their comfort zone.",
+    "A character loses someone.",
+    "A character loses something, but then finds or gets it back.",
+    "A character misses something important.",
+    "A character notices someone watching them.",
+    "A character passes out.",
+    "A character suddenly has to travel a long distance.",
+    "A character tells a lie.",
+    "A crowd has gathered.",
+    "An inanimate object moves.",
+    "Choose an object you can see; write it into your story.",
+    "It starts to rain.",
+    "Mars is bright tonight.",
+    "One of your characters isn't who they claim to be.",
+    "One of your characters receives an anonymous gift.",
+    "Someone is injured.",
+    "Someone is searching for something.",
+    "Someone unexpected arrives.",
+    "Something doesn't work as it's supposed to.",
+    "Something has a dual function.",
+    "Something has gone horribly wrong.",
+    "Start and end a paragraph with the same sentence, but give it different meanings.",
+    "The lights go out.",
+    "The only useful thing is in the corner.",
+    "The right thing is there for your character, but at the wrong time.",
+    "The scenery suddenly changes.",
+    "Today's headlines make an announcement that is important to your character.",
+    "Two characters get into a heated argument about work.",
+    "Two things are unexpectedly related.",
+    "Your character cracks a bad joke.",
+    "Your character goes to the other side of town for a day.",
+    "Your character has a skill that has not been mentioned before.",
+    "Your character invites someone they don't like over for dinner.",
+    "Your character is presented with a meal they don't like.",
+    "Your character makes a new friend in an unexpected place.",
+    "Your character tries something wild.",
+    "Your character turns off the music.",
+    "Your characters get dressed up."
+  ],
+  "supernatural": [
+    "Test Prompt 1 - Supernatural",
+    "Test Prompt 2 - Supernatural"
+  ],
+  "thriller": [
+    "Test Prompt 1 - Thriller",
+    "Test Prompt 2 - Thriller"
+  ],
+  "worldbuilding": [
+    "How do characters find food in your world?",
+    "What are the common methods of travel in your world?",
+    "What's the primary mode of communication in your world?"
+  ]
 }

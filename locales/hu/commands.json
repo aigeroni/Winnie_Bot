@@ -4,7 +4,6 @@
     "error": "**Unknown Error**: Commands failed to deploy.",
     "success": "Commands deployed successfully."
   },
-
   "config": {
     "description": "Configures Winnie_Bot to meet your needs.",
     "crossGuild": {
@@ -54,7 +53,6 @@
       }
     }
   },
-
   "goal": {
     "description": "Sets, updates, and resets your goals.",
     "cancel": {
@@ -129,7 +127,6 @@
       }
     }
   },
-
   "server": {
     "description": "Configures Winnie_Bot to meet your server's needs. Requires Manage Server permissions.",
     "announcementsChannel": {
@@ -324,6 +321,12 @@
         "couldNotFinishChallenge": "**Unknown Error**: Could not add a total for war {{ id }} (database validation error).",
         "noChallengeSpecified": "**Error**: I don't know which war this total is for!  Use `/challenge total` with an ID number to post a total for a specific war."
       }
+    }
+  },
+  "prompt": {
+    "description": "Generates story prompts.",
+    "args": {
+      "type": "The type of prompt to generate."
     }
   }
 }
