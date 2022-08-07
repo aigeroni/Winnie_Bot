@@ -45,6 +45,7 @@ async function deployCommands (message: Message, guildConfig: GuildConfig): Prom
  */
 export const MessageEvent: Event = {
   name: 'message',
+  // eslint-disable-next-line @typescript-eslint/no-misused-promises
   handle: async (message: Message): Promise<void> => {
     if (message.guild == null) { return } // Ignore direct messages.
     if (message.author.bot) { return } // Ignore messages from bots

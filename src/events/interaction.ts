@@ -11,6 +11,7 @@ import { Logger } from '../core'
  */
 export const InteractionEvent: Event = {
   name: 'interaction',
+  // eslint-disable-next-line @typescript-eslint/no-misused-promises
   handle: async (interaction: Interaction) => {
     // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
     if (!interaction.isCommand()) { return }
