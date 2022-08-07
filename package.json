@@ -5,7 +5,7 @@
   "main": "src/index.ts",
   "dependencies": {
     "bullmq": "^1.40.1",
-    "class-validator": "^0.12.2",
+    "class-validator": "^0.13.2",
     "discord.js": "^13.1.0",
     "i18next": "^19.8.4",
     "i18next-fs-backend": "^1.0.7",
