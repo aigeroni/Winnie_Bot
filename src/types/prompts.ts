@@ -20,5 +20,5 @@ export enum PromptTypes {
   STORY = 'story',
   SUPERNATURAL = 'supernatural',
   THRILLER = 'thriller',
-  WORLD = 'world'
+  WORLD = 'worldbuilding'
 }

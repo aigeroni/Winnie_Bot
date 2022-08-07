@@ -25,6 +25,10 @@ export const PromptCommand: Command = {
     ]
   }),
   execute: async (interaction: CommandInteraction, guildConfig: GuildConfig) => {
-    true
+    const promptGenre = interaction.options.getString('type', true)
+    const prompts = await I18n.translate(guildConfig.locale, `prompts:${promptGenre}`, { returnObjects: true }) as unknown
+    const promptList = prompts as string[]
+    const promptToReturn = promptList[Math.floor(Math.random() * promptList.length)]
+    await interaction.reply(promptToReturn)
   }
 }
