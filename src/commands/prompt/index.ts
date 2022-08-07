@@ -16,17 +16,17 @@ export const PromptCommand: Command = {
         name: 'type',
         description: await I18n.translate(locale, 'commands:prompt.args.type'),
         type: 'STRING',
-        choices: Object.values(PromptTypes).map((type) => ({
-          name: type,
+        required: true,
+        choices: await Promise.all(Object.values(PromptTypes).map(async (type) => ({
+          name: await I18n.translate(locale, `prompts:${type}.name`),
           value: type
-        })),
-        required: false
+        })))
       }
     ]
   }),
   execute: async (interaction: CommandInteraction, guildConfig: GuildConfig) => {
     const promptGenre = interaction.options.getString('type', true)
-    const prompts = await I18n.translate(guildConfig.locale, `prompts:${promptGenre}`, { returnObjects: true }) as unknown
+    const prompts = await I18n.translate(guildConfig.locale, `prompts:${promptGenre}.prompts`, { returnObjects: true }) as unknown
     const promptList = prompts as string[]
     const promptToReturn = promptList[Math.floor(Math.random() * promptList.length)]
     await interaction.reply(promptToReturn)
