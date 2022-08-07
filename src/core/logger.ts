@@ -22,7 +22,7 @@ export const Logger = Winston.createLogger({
     Winston.format.errors({ stack: true }),
     Winston.format.splat(),
     Winston.format.json(),
-    Winston.format.printf((info) => `${info.timestamp as string} ${info.level}: ${info.message}`)
+    Winston.format.printf((info) => `${info.timestamp as string} ${info.level}: ${info.message as string}`)
   ),
   transports: [
     consoleTransport,

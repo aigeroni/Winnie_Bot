@@ -63,13 +63,23 @@
     "parserOptions": {
       "project": "./tsconfig.json"
     },
-    "plugins": ["sort-imports-es6-autofix"],
+    "plugins": [
+      "sort-imports-es6-autofix"
+    ],
     "rules": {
-      "sort-imports-es6-autofix/sort-imports-es6": [2, {
-        "ignoreCase": false,
-        "ignoreMemberSort": false,
-        "memberSyntaxSortOrder": ["all", "single", "multiple", "none"]
-      }]
+      "sort-imports-es6-autofix/sort-imports-es6": [
+        2,
+        {
+          "ignoreCase": false,
+          "ignoreMemberSort": false,
+          "memberSyntaxSortOrder": [
+            "all",
+            "single",
+            "multiple",
+            "none"
+          ]
+        }
+      ]
     }
   }
 }
