@@ -11,10 +11,11 @@ import { createConnection } from 'typeorm'
  */
 export const ReadyEvent: Event = {
   name: 'ready',
+  // eslint-disable-next-line @typescript-eslint/no-misused-promises
   handle: async () => {
     try {
       await createConnection()
-    } catch (error) {
+    } catch (error: any) {
       const errorMessage: string = error.toString()
       Logger.error(`An error occured while connecting to the database: ${errorMessage}`)
       process.exit()
