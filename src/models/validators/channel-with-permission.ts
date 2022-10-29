@@ -28,7 +28,7 @@ export function IsChannelWithPermission (permission: PermissionResolvable, valid
           if (!(channel instanceof GuildChannel)) { return false }
 
           const guildChannel = channel
-          const winnieMember = guildChannel.guild.me
+          const winnieMember = guildChannel.guild.members.me
           if (winnieMember == null) { return false }
 
           return guildChannel.permissionsFor(winnieMember)?.has(permission) ?? false

@@ -2,7 +2,7 @@ import { Column, Entity } from 'typeorm'
 import { DateTime, Duration, Interval } from 'luxon'
 import { DateTimeTransformer } from './transformers/date-time'
 import { GoalDurations, GoalTypes } from '../types'
-import { Guild, GuildChannel, Permissions, Snowflake } from 'discord.js'
+import { Guild, GuildChannel, PermissionsBitField, Snowflake } from 'discord.js'
 import { I18n, WinnieClient } from '../core'
 import { IsChannelWithPermission } from './validators/channel-with-permission'
 import { IsNotEmpty, IsPositive, MaxLength, Min, ValidateIf } from 'class-validator'
@@ -63,7 +63,7 @@ export class Goal extends Mission {
    */
   @Column({ name: 'channel_id' })
   @ValidateIf(() => WinnieClient.isLoggedIn())
-  @IsChannelWithPermission(Permissions.FLAGS.SEND_MESSAGES)
+  @IsChannelWithPermission(PermissionsBitField.Flags.SendMessages)
   @MaxLength(30)
   channelId!: Snowflake
 

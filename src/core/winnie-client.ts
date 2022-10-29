@@ -1,4 +1,9 @@
-import { ClientOptions, Client as DiscordJsClient, Intents } from 'discord.js'
+import {
+  ClientOptions,
+  Client as DiscordJsClient,
+  IntentsBitField,
+  Partials
+} from 'discord.js'
 import { Event } from '../types'
 import { I18n } from './i18n'
 import { Logger } from './logger'
@@ -14,15 +19,14 @@ class WinnieBotClient {
    */
   static clientOptions: ClientOptions = {
     intents: [
-      Intents.FLAGS.GUILDS,
-      Intents.FLAGS.GUILD_MESSAGES
-      // Intents.FLAGS.GUILD_INTEGRATIONS
+      IntentsBitField.Flags.Guilds,
+      IntentsBitField.Flags.GuildMessages
     ],
     partials: [
-      'USER',
-      'GUILD_MEMBER',
-      'MESSAGE',
-      'REACTION'
+      Partials.User,
+      Partials.GuildMember,
+      Partials.Message,
+      Partials.Reaction
     ]
   }
 

@@ -1,4 +1,3 @@
-import { CommandUtils } from '../commands/utils'
 import { Event } from '../types'
 import { Guild } from 'discord.js'
 import { GuildConfig } from '../models'
@@ -14,7 +13,6 @@ export const GuildCreateEvent: Event = {
   name: 'guildCreate',
   // eslint-disable-next-line @typescript-eslint/no-misused-promises
   handle: async (guild: Guild): Promise<void> => {
-    const guildConfig = await GuildConfig.findOrCreate(guild.id)
-    await CommandUtils.deployCommands(guildConfig)
+    await GuildConfig.findOrCreate(guild.id)
   }
 }

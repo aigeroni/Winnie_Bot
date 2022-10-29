@@ -3,7 +3,7 @@ import { ChallengeController } from './challenge-controller'
 import { Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm'
 import { IsChannelWithPermission } from './validators/channel-with-permission'
 import { MaxLength, ValidateIf } from 'class-validator'
-import { Permissions, Snowflake } from 'discord.js'
+import { PermissionsBitField, Snowflake } from 'discord.js'
 import { WinnieClient } from '../core'
 
 /**
@@ -23,7 +23,7 @@ export class ChallengeChannel extends BaseModel {
    */
   @PrimaryColumn({ name: 'channel_id' })
   @ValidateIf(() => WinnieClient.isLoggedIn())
-  @IsChannelWithPermission(Permissions.FLAGS.SEND_MESSAGES)
+  @IsChannelWithPermission(PermissionsBitField.Flags.SendMessages)
   @MaxLength(30)
   channelId!: Snowflake
 }

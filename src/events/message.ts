@@ -1,8 +1,7 @@
-import { CommandUtils } from '../commands/utils'
 import { Event } from '../types'
 import { GuildConfig } from '../models'
 import { I18n, Logger, WinnieClient } from '../core'
-import { Message, Permissions } from 'discord.js'
+import { Message } from 'discord.js'
 
 /**
  * Check the given message to see if the Winnie_Bot user was mentioned.
@@ -18,23 +17,6 @@ async function handleMention (message: Message, guildConfig: GuildConfig): Promi
   const response = await I18n.translate(guildConfig.locale, 'mentionResponse')
   await message.channel.send(response)
   Logger.info('Winnie registered mention. Attempting to deploy commands.')
-  await deployCommands(message, guildConfig)
-}
-
-async function deployCommands (message: Message, guildConfig: GuildConfig): Promise<void> {
-  const author = message.member
-  if (author == null) { return }
-
-  if (author.permissions.has(Permissions.FLAGS.ADMINISTRATOR)) {
-    try {
-      await CommandUtils.deployCommands(guildConfig)
-    } catch {
-      await message.reply(await I18n.translate(guildConfig.locale, 'commands:deploy.error'))
-      return
-    }
-
-    await message.reply(await I18n.translate(guildConfig.locale, 'commands:deploy.success'))
-  }
 }
 
 /**
