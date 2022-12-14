@@ -12,7 +12,7 @@ import { PermissionsBitField, Snowflake } from 'discord.js'
  */
 @Entity()
 export class GuildConfig extends BaseModel {
-  static DEFAULT_LOCALE = 'en'
+  static DEFAULT_LOCALE = I18n.DEFAULT_LOCALE
 
   /**
    * The Discord ID of the guild this configuration object represents.

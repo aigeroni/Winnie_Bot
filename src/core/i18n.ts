@@ -8,6 +8,11 @@ export const I18n = {
   SUPPORTED_LANGUAGES: ['en', 'fr', 'hu', 'la', 'ms', 'nl', 'sv'],
 
   /**
+ * Default locale used when outside a guild context
+ */
+  DEFAULT_LOCALE: 'en',
+
+  /**
    * Initializes the logger and sets default configurations
    */
   init: async (): Promise<void> => {

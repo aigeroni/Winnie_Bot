@@ -1,16 +1,19 @@
-import { ApplicationCommandData, CommandInteraction } from 'discord.js'
+import {
+  ChatInputCommandInteraction,
+  SlashCommandBuilder,
+  SlashCommandSubcommandBuilder,
+  SlashCommandSubcommandGroupBuilder,
+  SlashCommandSubcommandsOnlyBuilder
+} from 'discord.js'
 import { GuildConfig, UserConfig } from '../models'
 
+type CommandData = SlashCommandBuilder
+| SlashCommandSubcommandBuilder
+| SlashCommandSubcommandGroupBuilder
+| SlashCommandSubcommandsOnlyBuilder
+
 /**
- * The shape of a command.
- *
- * When creating a command, you should be sure to localize all strings
- * which the command will use. There are some localization keys that
- * are used internally by the command logic in Winnie. Some of these
- * keys are required.
- *
- * Command locale strings should always live in `/locales/{{lng}}/commands.json`
- * and the top level key of the localization object should be the command's name.
+ * Command executable by the command handler.
  */
 export interface Command {
   /**
@@ -19,9 +22,9 @@ export interface Command {
   name: string
 
   /**
-   * Builds the command data object that gets sent to discord when registering a command
+   * Data used to create the command with discord
    */
-  commandData: (locale: string) => Promise<ApplicationCommandData>
+  data: (locale: string) => Promise<CommandData>
 
   /**
    * The function used to execute the command.
@@ -31,5 +34,5 @@ export interface Command {
    * @param message - The message which ran the command.
    * @param guildConfig - The configuration object for the guild the command was run in
    */
-  execute: (interaction: CommandInteraction, guildConfig: GuildConfig, userConfig: UserConfig) => Promise<void>
+  execute: (interaction: ChatInputCommandInteraction, guildConfig: GuildConfig, userConfig: UserConfig) => Promise<void>
 }

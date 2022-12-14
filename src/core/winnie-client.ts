@@ -2,7 +2,8 @@ import {
   ClientOptions,
   Client as DiscordJsClient,
   IntentsBitField,
-  Partials
+  Partials,
+  REST
 } from 'discord.js'
 import { Event } from '../types'
 import { I18n } from './i18n'
@@ -97,6 +98,10 @@ class WinnieBotClient {
    */
   registerEvents (events: Event[]): void {
     events.forEach((event) => this.client.on(event.name, event.handle))
+  }
+
+  getRestAPIClient (): REST {
+    return this.client.rest
   }
 }
 
