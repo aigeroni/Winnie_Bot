@@ -9,7 +9,7 @@
     "discord.js": "^13.1.0",
     "i18next": "^19.8.4",
     "i18next-fs-backend": "^1.0.7",
-    "luxon": "^1.25.0",
+    "luxon": "^2.5.2",
     "node-cron": "^3.0.0",
     "pg": "^8.4.0",
     "reflect-metadata": "^0.1.13",
